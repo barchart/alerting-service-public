@@ -67,6 +67,9 @@ h4 {
     color: white;
 }
 
+.alert-action-buttons .text-button {
+    margin-left: 10px;
+}
 
 .table.alert-create td {
     line-height: 34px;

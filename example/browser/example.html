@@ -16,6 +16,8 @@
     <script src="../../dist/barchart-alerts-api.js"></script>
 
     <script type="text/javascript">
+        'use strict';
+        
         var userId = 'barchart-test-user';
 
         var conditionOperators = ko.observable();
@@ -51,7 +53,12 @@
             that.changeToCreate = function() {
                 that.alert = new AlertEntryModel();
 
-                that.activeTemplate('alert-create-template');
+                that.activeTemplate('alert-entry-template');
+            };
+            that.changeToView = function(alertEntryModel) {
+                that.alert = new AlertEntryModel(alertEntryModel.alert());
+
+                that.activeTemplate('alert-entry-template');
             };
             that.deleteAlert = function(alertToDelete) {
                 alertToDelete.processing(true);
@@ -73,7 +80,7 @@
             that.canStart = ko.computed(function() {
                 var alert = that.alert();
 
-                return alert.alert_state === 'Inactive' || alert.alert_state === 'Triggered' ;
+                return alert.alert_state === 'Inactive' || alert.alert_state === 'Triggered';
             });
             that.start = function() {
                 alertManager.resetAlert(that.alert())
@@ -102,14 +109,22 @@
                     });
             };
         }
-        var AlertEntryModel = function() {
+        var AlertEntryModel = function(alert) {
             var that = this;
 
+            that.alert = ko.observable(alert || null);
             that.name = ko.observable();
             that.conditions = ko.observableArray([]);
             that.publishers = ko.observableArray([]);
             that.processing = ko.observable(false);
+            that.complete = ko.observable(false);
 
+            that.clearAlert = function() {
+                that.alert(null);
+                that.name(null);
+                that.conditions([]);
+                that.publishers([]);
+            };
             that.saveAlert = function() {
                 that.processing(true);
 
@@ -127,45 +142,76 @@
 
                 alertManager.createAlert(alert)
                     .then(function(alert) {
-                        console.log(alert);
+                        that.alert(alert);
                     })
                     .finally(function() {
                         that.processing(false);
                     });
             };
-            that.addCondition = function() {
-                that.conditions.push(new AlertConditionModel());
+            that.addCondition = function(conditionToAdd) {
+                that.conditions.push(new AlertConditionModel(that.ready, conditionToAdd || null));
             };
             that.removeCondition = function(conditionToRemove) {
                 that.conditions.remove(conditionToRemove);
             };
-            that.addPublisher = function() {
-                that.publishers.push(new AlertPublisherModel());
+            that.addPublisher = function(publisherToAdd) {
+                that.publishers.push(new AlertPublisherModel(that.ready, publisherToAdd || null));
             };
             that.removePublisher = function(publisherToRemove) {
                 that.publishers.remove(publisherToRemove);
             };
-            that.ready = ko.computed(function() {
-                return !that.processing() && _.isString(that.name()) && that.name().length > 0;
+
+            that.complete = ko.computed(function() {
+                return _.isObject(that.alert());
             });
+            that.ready = ko.computed(function() {
+                return !that.complete() && !that.processing();
+            });
+            that.canSave = ko.computed(function() {
+                return that.ready() && _.isString(that.name()) && that.name().length > 0;
+            });
+
+            if (_.isObject(alert)) {
+                that.name(alert.name);
+
+                _.forEach(alert.conditions, function(condition) {
+                    that.addCondition(condition);
+                });
+                _.forEach(alert.publishers, function(publisher) {
+                    that.addPublisher(publisher);
+                });
+            }
         };
-        var AlertPublisherModel = function() {
+        var AlertPublisherModel = function(ready, publisher) {
             var that = this;
 
             that.publisherTypes = publisherTypes;
-            that.publisherType = ko.observable(_.first(publisherTypes()));
+            that.publisherType = ko.observable(_.first(that.publisherTypes()));
             that.recipient = ko.observable();
             that.format = ko.observable();
+
+            that.ready = ready;
 
             that.selectPublisherType = function(publisherType) {
                 that.publisherType(publisherType);
             };
+
+            if (_.isObject(publisher)) {
+                that.publisherType(_.find(publisherTypes(), function(candidate) {
+                    return candidate.alert_publisher_type_id === publisher.alert_publisher_type_id;
+                }));
+
+                that.recipient(publisher.recipient);
+                that.format(publisher.format);
+            }
         };
-        var AlertConditionModel = function() {
+        var AlertConditionModel = function(ready, condition) {
             var that = this;
 
             that.conditionOperators = conditionOperators;
             that.conditionOperator = ko.observable(_.first(conditionOperators));
+
+            that.ready = ready;
         };
 
         $(document).ready(function() {
@@ -204,8 +250,8 @@
         <table class="table table-striped small">
             <thead>
                 <th class="center col-md-1"></th>
-                <th class="left col-md-2">ID</th>
-                <th class="left col-md-4">Name</th>
+                <th class="left col-md-3">ID</th>
+                <th class="left col-md-3">Name</th>
                 <th class="center col-md-2">State</th>
                 <th class="center col-md-2">Conditions</th>
                 <th class="center col-md-2">Publishers</th>
@@ -215,11 +261,12 @@
     </script>
     <script type="text/html" id="alert-grid-item-template">
         <tr>
-            <td class="center col-md-1">
+            <td class="center col-md-1 alert-action-buttons">
+                <span class="text-button text-button-black glyphicon glyphicon-search" data-bind="click: function() { $parent.changeToView($data); }"></span>
                 <span class="text-button text-button-black glyphicon glyphicon-remove" data-bind="click: function() { $parent.deleteAlert($data); }, visible: !processing()"></span>
             </td>
-            <td class="left col-md-2 truncate" data-bind="text: alert().alert_id"></td>
-            <td class="left col-md-4" data-bind="text: alert().name"></td>
+            <td class="left col-md-3" data-bind="text: alert().alert_id"></td>
+            <td class="left col-md-3" data-bind="text: alert().name"></td>
             <td class="center col-md-2">
                 <div>
                 <span class="alert-state-buttons">
@@ -234,7 +281,7 @@
             <td class="center col-md-2" data-bind="text: alert().publishers.length"></td>
         </tr>
     </script>
-    <script type="text/html" id="alert-create-template">
+    <script type="text/html" id="alert-entry-template">
         <div data-bind="with: alert">
             <div class="panel panel-info">
                 <div class="panel-heading">
@@ -243,9 +290,9 @@
                 <div class="panel-body">
                     <form class="form-horizontal small">
                         <div class="form-group">
-                            <label class="col-sm-1 control-label">Alert Name</label>
-                            <div class="col-sm-8">
-                                <input class="form-control" data-bind="textInput: name" type="text" placeholder="Enter Alert Name" >
+                            <label class="col-sm-1 control-label">Name</label>
+                            <div class="col-sm-6">
+                                <input class="form-control" data-bind="textInput: name, enable: ready" type="text" placeholder="Alert Name" >
                             </div>
                         </div>
                     </form>
@@ -253,7 +300,7 @@
             </div>
             <div class="panel panel-info">
                 <div class="panel-heading">
-                    <h3 class="panel-title"><span class="text-button entry-item-add-button glyphicon glyphicon-plus" data-bind="click: addCondition"></span> Conditions </h3>
+                    <h3 class="panel-title"><span class="text-button entry-item-add-button glyphicon glyphicon-plus" data-bind="click: function() { addCondition(null); }, visible: ready"></span> Conditions</h3>
                 </div>
                 <table class="alert-create table">
                     <tbody data-bind="template: { name: 'alert-create-condition-template', foreach: conditions }"></tbody>
@@ -261,13 +308,14 @@
             </div>
             <div class="panel panel-info">
                 <div class="panel-heading">
-                    <h3 class="panel-title"><span class="text-button entry-item-add-button glyphicon glyphicon-plus" data-bind="click: addPublisher"></span> Publishers</h3>
+                    <h3 class="panel-title"><span class="text-button entry-item-add-button glyphicon glyphicon-plus" data-bind="click: function() { addPublisher(null); }, visible: ready"></span> Publishers</h3>
                 </div>
                 <table class="alert-create table">
                     <tbody class="table" data-bind="template: { name: 'alert-create-publisher-template', foreach: publishers }"></tbody>
                 </table>
             </div>
-            <button class="btn btn-primary btn-default" data-bind="click: saveAlert, enable: ready">Save</button>
+            <button class="btn btn-primary btn-default" data-bind="click: saveAlert, enable: canSave">Save</button>
+            <button class="btn btn-primary btn-default" data-bind="click: clearAlert, visible: complete">New</button>
         </div>
     </script>
     <script type="text/html" id="alert-create-condition-template">
@@ -276,12 +324,12 @@
     <script type="text/html" id="alert-create-publisher-template">
         <tr>
             <td class="col-md-1">
-                <span class="text-button text-button-black glyphicon glyphicon-minus entry-item-remove-button" data-bind="click: function() { $parent.removePublisher($data); }"></span>
+                <span class="text-button text-button-black glyphicon glyphicon-minus entry-item-remove-button" data-bind="click: function() { $parent.removePublisher($data); }, visible: ready"></span>
             </td>
             <td class="col-md-2">
                 <div class="dropdown dropdown-medium">
-                    <button class="btn btn-default dropdown-toggle dropdown-medium" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
-                        <span data-bind="text: publisherType().transport"></span></span>
+                    <button class="btn btn-default dropdown-toggle dropdown-medium" data-bind="enable: ready" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+                        <span data-bind="text: publisherType().transport"></span>
                     </button>
                     <ul class="dropdown-menu" data-bind="foreach: publisherTypes">
                         <li class="center dropdown-medium"><a href="#" data-bind="text: transport, click: function() { $parent.selectPublisherType($data); }"></a></li>
@@ -289,10 +337,10 @@
                 </div>
             </td>
             <td class="col-md-2">
-                <input class="form-control" data-bind="textInput: recipient" type="text" placeholder="Recipient (e.g. phone number)" >
+                <input class="form-control" data-bind="textInput: recipient, enable: ready" type="text" placeholder="Recipient (e.g. phone number)" >
             </td>
             <td class="col-md-8">
-                <input class="form-control" data-bind="textInput: format" type="text" placeholder="Message" >
+                <input class="form-control" data-bind="textInput: format, enable: ready" type="text" placeholder="Message (to include with alert)" >
             </td>
         </tr>
     </script>
