@@ -114,6 +114,7 @@
 
             that.alert = ko.observable(alert || null);
             that.name = ko.observable();
+            that.createDate = ko.observable();
             that.conditions = ko.observableArray([]);
             that.publishers = ko.observableArray([]);
             that.processing = ko.observable(false);
@@ -122,6 +123,7 @@
             that.clearAlert = function() {
                 that.alert(null);
                 that.name(null);
+                that.createDate(null);
                 that.conditions([]);
                 that.publishers([]);
             };
@@ -180,7 +182,7 @@
             });
 
             if (_.isObject(alert)) {
-                that.name(alert.name);
+                that.createDate(new Date(parseInt(alert.create_date)));
 
                 _.forEach(alert.conditions, function(condition) {
                     that.addCondition(condition);
@@ -349,6 +351,13 @@
                             <td class="col-md-8">
                                 <input class="form-control" data-bind="textInput: name, enable: ready" type="text" placeholder="Alert Name">
                             </td>
+                        </tr>
+
+                        <tr data-bind="visible: createDate">
+                            <td class="col-md-1">
+                                <label class="col-sm-1 control-label">Created</label>
+                            </td>
+                            <td class="col-md-8" data-bind="text: createDate"></td>
                         </tr>
                     </tbody>
                 </table>
