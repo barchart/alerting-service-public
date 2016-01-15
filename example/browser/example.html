@@ -242,7 +242,18 @@
             };
 
             if (_.isObject(condition)) {
-                that.value = condition
+                that.targetIdentifier(condition.target_identifier);
+                that.triggerValue(condition.trigger_value);
+
+                var c = _.find(conditionOperators(), function(candidate) {
+                    return condition.alert_condition_operator_id === candidate.alert_condition_operator_id;
+                });
+                that.target(_.find(that.targets(), function(candidate) {
+                    return candidate.alert_condition_target_id = c.alert_condition_target_id;
+                }));
+                that.operator(_.find(that.operators(), function(candidate) {
+                    return that.target().alert_condition_operator_id = c.alert_condition_target_id;
+                }));
             }
         };
         var AlertPublisherModel = function(ready, publisher) {
