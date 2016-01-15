@@ -121,13 +121,14 @@ module.exports = function() {
 	'use strict';
 
 	var RestAlertManager = AlertManager.extend({
-		init: function(baseUrl, port) {
+		init: function(baseUrl, port, secure) {
 			assert.argumentIsOptional(baseUrl, 'baseUrl', String);
 			assert.argumentIsOptional(port, 'port', Number);
+			assert.argumentIsOptional(secure, 'secure', Boolean);
 
 			this._super();
 
-			this._restProvider = new RestProvider(baseUrl || 'http://alert-manager.barchart.com', port || 80);
+			this._restProvider = new RestProvider(baseUrl || 'alerts-management-dev.elasticbeanstalk.com', port || 80, secure || false);
 
 			this._createEndpoint = new RestEndpoint(RestAction.Create, [ 'alerts' ]);
 			this._retireveEndpoint = new RestEndpoint(RestAction.Retrieve, [ 'alerts', 'alert_id' ]);
@@ -479,7 +480,6 @@ module.exports = function() {
             assert.argumentIsArray(pathProperties, 'pathProperties', String);
             assert.argumentIsOptional(payloadProperty, 'payloadProperty', String);
 
-            this._name = name;
             this._action = action;
 
             this._pathProperties = pathProperties;
@@ -490,8 +490,10 @@ module.exports = function() {
             return this._action;
         },
 
-        getUrl: function(data, baseUrl) {
+        getUrl: function(data, baseUrl, port, secure) {
             assert.argumentIsOptional(baseUrl, 'baseUrl', String);
+            assert.argumentIsOptional(port, 'port', Number);
+            assert.argumentIsOptional(secure, 'secure', Boolean);
 
             var path = _.map(this._pathProperties, function(pathProperty) {
                 var pathItem;
@@ -510,7 +512,22 @@ module.exports = function() {
             }
 
             if (baseUrl.length !== 0) {
-                path.unshift('http://' + baseUrl + ':3000');
+                var url;
+
+                if (secure) {
+                    url = 'https://';
+                } else {
+                    url = 'http://';
+                }
+
+                url = url + baseUrl;
+
+                if (_.isNumber(port) && port !== 80) {
+                    url = url + ':' + port;
+                }
+
+
+                path.unshift(url);
             }
 
             return path.join('/');
@@ -549,15 +566,17 @@ module.exports = function() {
         init: function(baseUrl, port, secure) {
             assert.argumentIsRequired(baseUrl, 'baseUrl', String);
             assert.argumentIsRequired(port, 'port', Number);
+            assert.argumentIsRequired(secure, 'secure', Boolean);
 
             this._baseUrl = baseUrl;
             this._port = port;
+            this._secure = secure;
         },
 
         call: function(endpoint, data) {
             assert.argumentIsRequired(endpoint, endpoint, RestEndpoint, 'RestEndpoint');
 
-            return when(this._call(endpoint.getAction(), endpoint.getUrl(data, this._baseUrl, this._port), this._port, endpoint.getPayload(data)));
+            return when(this._call(endpoint.getAction(), endpoint.getUrl(data, this._baseUrl, this._port, this._secure), this._port, endpoint.getPayload(data)));
         },
 
         _call: function(action, url, port, payload) {
