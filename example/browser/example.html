@@ -1,0 +1,308 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8"/>
+
+    <title>Barchart Alert Client API</title>
+
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" integrity="sha384-1q8mTJOASx8j1Au+a5WDVnPi2lkFfwwEAa8hDDdjZlpLegxhjVME1fgjWPGmkzs7" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap-theme.min.css" integrity="sha384-fLW2N01lMqjakBkx3l/M9EahuwpSfeNvV63J5ezn3uZzapT0u7EYsXMjQV+0En5r" crossorigin="anonymous">
+    <link rel="stylesheet" href="example.css" type="text/css">
+
+    <script src="https://code.jquery.com/jquery-2.1.4.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/knockout/3.4.0/knockout-min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/lodash.js/4.0.0/lodash.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js" integrity="sha384-0mSbJDEHialfmuBBQP6A4Qrprq5OVfW37PRR3j5ELqxss1yVqOtnepnHVP9aJ7xS" crossorigin="anonymous"></script>
+    <script src="../../dist/barchart-alerts-api.js"></script>
+
+    <script type="text/javascript">
+        var userId = 'barchart-test-user';
+
+        var conditionOperators = ko.observable();
+        var publisherTypes = ko.observable();
+
+        var alertManager = new Barchart.Alerts.RestAlertManager('localhost', 3000, false);
+
+        function PageModel() {
+            var that = this;
+
+            that.version = ko.observable();
+
+            that.alert = ko.observable();
+            that.alerts = ko.observableArray([ ]);
+            that.activeTemplate = ko.observable('alert-grid-template');
+
+            that.changeToGrid = function() {
+                that.alerts([ ]);
+
+                that.activeTemplate('alert-grid-template');
+
+                alertManager.retrieveAlerts({ user_id: userId })
+                    .then(function(alerts) {
+                        alerts.sort(function(a, b) {
+                            return a.name.localeCompare(b.name);
+                        });
+
+                        _.forEach(alerts, function(alert) {
+                            that.alerts.push(new AlertDisplayModel(alert));
+                        });
+                    });
+            };
+            that.changeToCreate = function() {
+                that.alert = new AlertEntryModel();
+
+                that.activeTemplate('alert-create-template');
+            };
+            that.deleteAlert = function(alertToDelete) {
+                alertToDelete.processing(true);
+
+                alertManager.deleteAlert(alertToDelete.alert())
+                    .then(function() {
+                        that.alerts.remove(alertToDelete);
+                    });
+            };
+
+            that.changeToGrid();
+        }
+        function AlertDisplayModel(alert) {
+            var that = this;
+
+            that.alert = ko.observable(alert);
+            that.processing = ko.observable(false);
+
+            that.canStart = ko.computed(function() {
+                var alert = that.alert();
+
+                return alert.alert_state === 'Inactive' || alert.alert_state === 'Triggered' ;
+            });
+            that.start = function() {
+                alertManager.resetAlert(that.alert())
+                    .then(function(updatedAlert) {
+                        that.alert(updatedAlert);
+                    });
+            };
+            that.canPause = ko.computed(function() {
+                var alert = that.alert();
+
+                return alert.alert_state === 'Active';
+            });
+            that.pause = function() {
+                alertManager.disableAlert(that.alert())
+                    .then(function(updatedAlert) {
+                        that.alert(updatedAlert);
+                    });
+            };
+            that.canRefresh = ko.computed(function() {
+                return !that.canStart() && ! that.canPause();
+            });
+            that.refresh = function() {
+                alertManager.retrieveAlert(that.alert())
+                    .then(function(refreshedAlert) {
+                        that.alert(refreshedAlert);
+                    });
+            };
+        }
+        var AlertEntryModel = function() {
+            var that = this;
+
+            that.name = ko.observable();
+            that.conditions = ko.observableArray([]);
+            that.publishers = ko.observableArray([]);
+            that.processing = ko.observable(false);
+
+            that.saveAlert = function() {
+                that.processing(true);
+
+                var alert = {
+                    name: that.name(),
+                    user_id: userId,
+                    publishers: _.map(that.publishers(), function(publisher) {
+                        return {
+                            alert_publisher_type_id: publisher.publisherType().alert_publisher_type_id,
+                            recipient: publisher.recipient(),
+                            format: publisher.format()
+                        };
+                    })
+                };
+
+                alertManager.createAlert(alert)
+                    .then(function(alert) {
+                        console.log(alert);
+                    })
+                    .finally(function() {
+                        that.processing(false);
+                    });
+            };
+            that.addCondition = function() {
+                that.conditions.push(new AlertConditionModel());
+            };
+            that.removeCondition = function(conditionToRemove) {
+                that.conditions.remove(conditionToRemove);
+            };
+            that.addPublisher = function() {
+                that.publishers.push(new AlertPublisherModel());
+            };
+            that.removePublisher = function(publisherToRemove) {
+                that.publishers.remove(publisherToRemove);
+            };
+            that.ready = ko.computed(function() {
+                return !that.processing() && _.isString(that.name()) && that.name().length > 0;
+            });
+        };
+        var AlertPublisherModel = function() {
+            var that = this;
+
+            that.publisherTypes = publisherTypes;
+            that.publisherType = ko.observable(_.first(publisherTypes()));
+            that.recipient = ko.observable();
+            that.format = ko.observable();
+
+            that.selectPublisherType = function(publisherType) {
+                that.publisherType(publisherType);
+            };
+        };
+        var AlertConditionModel = function() {
+            var that = this;
+
+            that.conditionOperators = conditionOperators;
+            that.conditionOperator = ko.observable(_.first(conditionOperators));
+        };
+
+        $(document).ready(function() {
+            var pageModel = new PageModel();
+
+            alertManager.getServerVersion()
+                .then(function(version) {
+                    pageModel.version(version.semver);
+                });
+
+            alertManager.getConditionOperators()
+                .then(function(co) {
+                    conditionOperators(co);
+                });
+
+            alertManager.getPublisherTypes()
+                .then(function(pt) {
+                    publisherTypes(pt);
+                });
+
+            ko.applyBindings(pageModel, $('body')[0]);
+        });
+    </script>
+
+    <script type="text/html" id="alert-header-template">
+        <div class="pull-left">
+            <h4 class="pull-left">Barchart Alert API</h4>
+
+            <div class="header-action-buttons pull-right">
+                <span class="text-button glyphicon glyphicon-th-list" data-bind="click: changeToGrid"></span>
+                <span class="text-button glyphicon glyphicon-plus" data-bind="click: changeToCreate"></span>
+            </div>
+        </div>
+    </script>
+    <script type="text/html" id="alert-grid-template">
+        <table class="table table-striped small">
+            <thead>
+                <th class="center col-md-1"></th>
+                <th class="left col-md-2">ID</th>
+                <th class="left col-md-4">Name</th>
+                <th class="center col-md-2">State</th>
+                <th class="center col-md-2">Conditions</th>
+                <th class="center col-md-2">Publishers</th>
+            </thead>
+            <tbody data-bind="template: { name: 'alert-grid-item-template', foreach: alerts }"></tbody>
+        </table>
+    </script>
+    <script type="text/html" id="alert-grid-item-template">
+        <tr>
+            <td class="center col-md-1">
+                <span class="text-button text-button-black glyphicon glyphicon-remove" data-bind="click: function() { $parent.deleteAlert($data); }, visible: !processing()"></span>
+            </td>
+            <td class="left col-md-2 truncate" data-bind="text: alert().alert_id"></td>
+            <td class="left col-md-4" data-bind="text: alert().name"></td>
+            <td class="center col-md-2">
+                <div>
+                <span class="alert-state-buttons">
+                    <span class="text-button text-button-black glyphicon glyphicon-play" data-bind="click: start, visible: canStart"></span>
+                    <span class="text-button text-button-black glyphicon glyphicon-pause" data-bind="click: pause, visible: canPause"></span>
+                    <span class="text-button text-button-black glyphicon glyphicon-refresh" data-bind="click: refresh, visible: canRefresh"></span>
+                </span>
+                <span data-bind="text: alert().alert_state"></span>
+                </div>
+            </td>
+            <td class="center col-md-2" data-bind="text: alert().conditions.length"></td>
+            <td class="center col-md-2" data-bind="text: alert().publishers.length"></td>
+        </tr>
+    </script>
+    <script type="text/html" id="alert-create-template">
+        <div data-bind="with: alert">
+            <div class="panel panel-info">
+                <div class="panel-heading">
+                    <h3 class="panel-title">General</h3>
+                </div>
+                <div class="panel-body">
+                    <form class="form-horizontal small">
+                        <div class="form-group">
+                            <label class="col-sm-1 control-label">Alert Name</label>
+                            <div class="col-sm-8">
+                                <input class="form-control" data-bind="textInput: name" type="text" placeholder="Enter Alert Name" >
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+            <div class="panel panel-info">
+                <div class="panel-heading">
+                    <h3 class="panel-title"><span class="text-button entry-item-add-button glyphicon glyphicon-plus" data-bind="click: addCondition"></span> Conditions </h3>
+                </div>
+                <table class="alert-create table">
+                    <tbody data-bind="template: { name: 'alert-create-condition-template', foreach: conditions }"></tbody>
+                </table>
+            </div>
+            <div class="panel panel-info">
+                <div class="panel-heading">
+                    <h3 class="panel-title"><span class="text-button entry-item-add-button glyphicon glyphicon-plus" data-bind="click: addPublisher"></span> Publishers</h3>
+                </div>
+                <table class="alert-create table">
+                    <tbody class="table" data-bind="template: { name: 'alert-create-publisher-template', foreach: publishers }"></tbody>
+                </table>
+            </div>
+            <button class="btn btn-primary btn-default" data-bind="click: saveAlert, enable: ready">Save</button>
+        </div>
+    </script>
+    <script type="text/html" id="alert-create-condition-template">
+
+    </script>
+    <script type="text/html" id="alert-create-publisher-template">
+        <tr>
+            <td class="col-md-1">
+                <span class="text-button text-button-black glyphicon glyphicon-minus entry-item-remove-button" data-bind="click: function() { $parent.removePublisher($data); }"></span>
+            </td>
+            <td class="col-md-2">
+                <div class="dropdown dropdown-medium">
+                    <button class="btn btn-default dropdown-toggle dropdown-medium" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+                        <span data-bind="text: publisherType().transport"></span></span>
+                    </button>
+                    <ul class="dropdown-menu" data-bind="foreach: publisherTypes">
+                        <li class="center dropdown-medium"><a href="#" data-bind="text: transport, click: function() { $parent.selectPublisherType($data); }"></a></li>
+                    </ul>
+                </div>
+            </td>
+            <td class="col-md-2">
+                <input class="form-control" data-bind="textInput: recipient" type="text" placeholder="Recipient (e.g. phone number)" >
+            </td>
+            <td class="col-md-8">
+                <input class="form-control" data-bind="textInput: format" type="text" placeholder="Message" >
+            </td>
+        </tr>
+    </script>
+</head>
+<body>
+    <div class="header" data-bind="template: { name: 'alert-header-template' }"></div>
+    <div class="main" data-bind="template: { name: activeTemplate }"></div>
+    <div class="footer">
+        <h4 class="pull-left">REST Data Provider</h4>
+        <h4 class="pull-right">API Version <span data-bind="text: version"></span></h4>
+    </div>
+</body>
+</html>
