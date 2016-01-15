@@ -98,8 +98,12 @@ h4 {
     text-shadow: 0 0 1.2em #FF0000;
 }
 
-.dropdown-medium {
-    width: 200px;
+td .dropdown {
+    width: 100%;
+}
+td .dropdown button,
+td .dropdown ul {
+    width: 100%;
 }
 
 .btn {

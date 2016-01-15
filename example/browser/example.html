@@ -125,7 +125,7 @@
                 that.conditions([]);
                 that.publishers([]);
             };
-            that.saveAlert = function() {
+            that.createAlert = function() {
                 that.processing(true);
 
                 var alert = {
@@ -136,6 +136,13 @@
                             alert_publisher_type_id: publisher.publisherType().alert_publisher_type_id,
                             recipient: publisher.recipient(),
                             format: publisher.format()
+                        };
+                    }),
+                    conditions: _.map(that.conditions(), function(condition) {
+                        return {
+                            alert_condition_operator_id: condition.operator().alert_condition_operator_id,
+                            target_identifier: condition.targetIdentifier(),
+                            triggerValue: condition.triggerValue()
                         };
                     })
                 };
@@ -148,6 +155,7 @@
                         that.processing(false);
                     });
             };
+
             that.addCondition = function(conditionToAdd) {
                 that.conditions.push(new AlertConditionModel(that.ready, conditionToAdd || null));
             };
@@ -182,6 +190,59 @@
                 });
             }
         };
+        var AlertConditionModel = function(ready, condition) {
+            var that = this;
+
+            that.target = ko.observable(null);
+            that.operator = ko.observable(null);
+            that.targetIdentifier = ko.observable();
+            that.triggerValue = ko.observable();
+            that.ready = ready;
+
+            that.targets = ko.computed(function() {
+                var targets = _.uniq(
+                    _.map(conditionOperators(), function(conditionOperator) {
+                        return {
+                            alert_condition_target_id: conditionOperator.alert_condition_target_id,
+                            object_description: conditionOperator.object_description,
+                            identifier_description: conditionOperator.identifier_description
+                        };
+                    }), 'alert_condition_target_id'
+                );
+
+                that.target(_.first(targets));
+
+                return targets;
+            });
+            that.operators = ko.computed(function() {
+                var target = that.target();
+
+                var operators;
+
+                if (target) {
+                    operators = _.filter(conditionOperators(), function(candidate) {
+                        return target.alert_condition_target_id === candidate.alert_condition_target_id;
+                    });
+
+                    that.operator(_.first(operators));
+                } else {
+                    operators = [ ];
+                }
+
+                return operators;
+            });
+
+            that.selectTarget = function(target) {
+                that.target(target);
+            };
+            that.selectOperator = function(opertator) {
+                that.operator(opertator);
+            };
+
+            if (_.isObject(condition)) {
+                that.value = condition
+            }
+        };
         var AlertPublisherModel = function(ready, publisher) {
             var that = this;
 
@@ -204,14 +265,6 @@
                 that.recipient(publisher.recipient);
                 that.format(publisher.format);
             }
-        };
-        var AlertConditionModel = function(ready, condition) {
-            var that = this;
-
-            that.conditionOperators = conditionOperators;
-            that.conditionOperator = ko.observable(_.first(conditionOperators));
-
-            that.ready = ready;
         };
 
         $(document).ready(function() {
@@ -287,16 +340,18 @@
                 <div class="panel-heading">
                     <h3 class="panel-title">General</h3>
                 </div>
-                <div class="panel-body">
-                    <form class="form-horizontal small">
-                        <div class="form-group">
-                            <label class="col-sm-1 control-label">Name</label>
-                            <div class="col-sm-6">
-                                <input class="form-control" data-bind="textInput: name, enable: ready" type="text" placeholder="Alert Name" >
-                            </div>
-                        </div>
-                    </form>
-                </div>
+                <table class="alert-create table">
+                    <tbody>
+                        <tr>
+                            <td class="col-md-1">
+                                <label class="col-sm-1 control-label">Name</label>
+                            </td>
+                            <td class="col-md-8">
+                                <input class="form-control" data-bind="textInput: name, enable: ready" type="text" placeholder="Alert Name">
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
             </div>
             <div class="panel panel-info">
                 <div class="panel-heading">
@@ -314,32 +369,66 @@
                     <tbody class="table" data-bind="template: { name: 'alert-create-publisher-template', foreach: publishers }"></tbody>
                 </table>
             </div>
-            <button class="btn btn-primary btn-default" data-bind="click: saveAlert, enable: canSave">Save</button>
+            <button class="btn btn-primary btn-default" data-bind="click: createAlert, enable: canSave">Save</button>
             <button class="btn btn-primary btn-default" data-bind="click: clearAlert, visible: complete">New</button>
         </div>
     </script>
-    <script type="text/html" id="alert-create-condition-template">
 
+
+
+    <script type="text/html" id="alert-create-condition-template">
+        <tr>
+            <td class="col-md-1">
+                <span class="text-button text-button-black glyphicon glyphicon-minus entry-item-remove-button" data-bind="click: function() { $parent.removeCondition($data); }, visible: ready"></span>
+            </td>
+            <td class="col-md-2">
+                <div class="dropdown">
+                    <button class="btn btn-default dropdown-toggle" data-bind="enable: ready" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+                        <span data-bind="text: target().object_description"></span>
+                    </button>
+                    <ul class="dropdown-menu" data-bind="foreach: targets">
+                        <li class="center"><a href="#" data-bind="text: object_description, click: function() { $parent.selectTarget($data); }"></a></li>
+                    </ul>
+                </div>
+            </td>
+            <td class="col-md-2">
+                <input class="form-control" data-bind="textInput: targetIdentifier, attr: { placeholder: target().identifier_description }, enable: ready" type="text" >
+            </td>
+            <td class="col-md-2">
+                <div class="dropdown" data-bind="visible: function() { target() !== null; }">
+                    <button class="btn btn-default dropdown-toggle" data-bind="enable: ready" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+                        <span data-bind="text: operator().description"></span>
+                    </button>
+                    <ul class="dropdown-menu" data-bind="foreach: operators">
+                        <li class="center"><a href="#" data-bind="text: description, click: function() { $parent.selectOperator($data); }"></a></li>
+                    </ul>
+                </div>
+            </td>
+            <td class="col-md-2">
+                <input class="form-control" data-bind="textInput: triggerValue, enable: ready" type="text" placeholder="value">
+            </td>
+        </tr>
     </script>
+
     <script type="text/html" id="alert-create-publisher-template">
         <tr>
             <td class="col-md-1">
                 <span class="text-button text-button-black glyphicon glyphicon-minus entry-item-remove-button" data-bind="click: function() { $parent.removePublisher($data); }, visible: ready"></span>
             </td>
             <td class="col-md-2">
-                <div class="dropdown dropdown-medium">
-                    <button class="btn btn-default dropdown-toggle dropdown-medium" data-bind="enable: ready" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+                <div class="dropdown">
+                    <button class="btn btn-default dropdown-toggle" data-bind="enable: ready" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
                         <span data-bind="text: publisherType().transport"></span>
                     </button>
                     <ul class="dropdown-menu" data-bind="foreach: publisherTypes">
-                        <li class="center dropdown-medium"><a href="#" data-bind="text: transport, click: function() { $parent.selectPublisherType($data); }"></a></li>
+                        <li class="center"><a href="#" data-bind="text: transport, click: function() { $parent.selectPublisherType($data); }"></a></li>
                     </ul>
                 </div>
             </td>
             <td class="col-md-2">
                 <input class="form-control" data-bind="textInput: recipient, enable: ready" type="text" placeholder="Recipient (e.g. phone number)" >
             </td>
-            <td class="col-md-8">
+            <td class="col-md-4">
                 <input class="form-control" data-bind="textInput: format, enable: ready" type="text" placeholder="Message (to include with alert)" >
             </td>
         </tr>
