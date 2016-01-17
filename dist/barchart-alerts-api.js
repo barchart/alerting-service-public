@@ -128,7 +128,7 @@ module.exports = function() {
 
 			this._super();
 
-			this._restProvider = new RestProvider(baseUrl || 'alerts-management-dev.elasticbeanstalk.com', port || 80, secure || false);
+			this._restProvider = new RestProvider(baseUrl || 'alerts.barchart.com', port || 80, secure || false);
 
 			this._createEndpoint = new RestEndpoint(RestAction.Create, [ 'alerts' ]);
 			this._retireveEndpoint = new RestEndpoint(RestAction.Retrieve, [ 'alerts', 'alert_id' ]);
