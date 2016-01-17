@@ -3,100 +3,216 @@ var _ = require('lodash');
 var Class = require('class.extend');
 
 var assert = require('./../common/lang/assert');
-var RestAction = require('./../network/rest/RestAction');
-var RestEndpoint = require('./../network/rest/RestEndpoint');
-var RestProvider = require('./../network/rest/RestProvider');
 
 module.exports = function() {
     'use strict';
 
     var AlertManager = Class.extend({
-        init: function(baseUrl, port) {
-            assert.argumentIsOptional(baseUrl, 'baseUrl', String);
-            assert.argumentIsOptional(port, 'port', Number);
-
-            this._restProvider = new RestProvider(baseUrl || 'http://alert-manager.barchart.com', port || 80);
-
-            this._createEndpoint = new RestEndpoint(RestAction.Create, [ 'alerts' ]);
-            this._retireveEndpoint = new RestEndpoint(RestAction.Retrieve, [ 'alerts', 'id' ]);
-            this._updateEndpoint = new RestEndpoint(RestAction.Update, [ 'alerts', 'id' ]);
-            this._deleteEndpoint = new RestEndpoint(RestAction.Delete, [ 'alerts', 'id' ]);
-            this._queryEndpoint = new RestEndpoint(RestAction.Query, [ 'alerts' ]);
+        init: function() {
         },
 
-        createAlert: function(name, userId) {
-            assert.argumentIsRequired(name, 'name', String);
-            assert.argumentIsRequired(userId, 'userId', String);
+        createAlert: function(alert) {
+			assert.argumentIsRequired(alert, 'alert', Object);
+			assert.argumentIsOptional(alert.alert_id, 'alert.alert_id', String);
+            assert.argumentIsRequired(alert.name, 'alert.name', String);
+            assert.argumentIsRequired(alert.user_id, 'alert.user_id', String);
 
-            var data = {
-                name: name,
-                user_id: user
-            };
-
-            return this._restProvider.call(this._createEndpoint, data);
+            return this._createAlert(alert);
         },
+
+		_createAlert: function(alert) {
+			return null;
+		},
 
         retrieveAlert: function(alert) {
-            return this._restProvider.call(this._retireveEndpoint, getAlertPayload(alert));
+			assert.argumentIsRequired(alert, 'alert', Object);
+			assert.argumentIsRequired(alert.alert_id, 'alert.alert_id', String);
+
+			return this._retrieveAlert(alert);
         },
+
+		_retrieveAlert: function(alert) {
+			return null;
+		},
+
+		retrieveAlerts: function(user) {
+			assert.argumentIsRequired(user, user, Object);
+			assert.argumentIsRequired(user.user_id, 'user.user_id', String);
+
+			return this._retrieveAlerts(user);
+		},
+
+		_retrieveAlerts: function(user) {
+			return null;
+		},
 
         disableAlert: function(alert) {
-            var data = getAlertPayload(alert);
+			var clone = _.clone(alert);
 
-            data.enabled = false;
+			clone.alert_state = 'Inactive';
 
-            return this._restProvider.call(this._updateEndpoint, data);
+			return this._disableAlert(clone);
         },
+
+		_disableAlert: function(alert) {
+			return;
+		},
 
         resetAlert: function(alert) {
-            var data = getAlertPayload(alert);
+			var clone = _.clone(alert);
 
-            data.enabled = true;
+			clone.alert_state = 'Starting';
 
-            return this._restProvider.call(this._updateEndpoint, data);
+			return this._resetAlert(clone);
         },
+
+		_resetAlert: function(alert) {
+			return;
+		},
 
         deleteAlert: function(alert) {
-            return this._restProvider.call(this._deleteEndpoint, getAlertPayload(alert));
+			assert.argumentIsRequired(alert, 'alert', Object);
+			assert.argumentIsOptional(alert.alert_id, 'alert.alert_id', String);
+
+            return this._deleteAlert(alert);
         },
 
-        queryAlerts: function(userId, parameters) {
-            assert.argumentIsRequired(userId, 'userId', String);
-            assert.argumentIsOptional(parameters, 'parameters', Object);
+		_deleteAlert: function(alert) {
+			return null;
+		},
 
-            return this._restProvider.call(this._deleteEndpoint, _.merge(parameters || { }, { userId: userId }));
-        }
+		getConditionOperators: function() {
+			return this._getConditionOperators();
+		},
+
+		_getConditionOperators: function() {
+			return null;
+		},
+
+		getPublisherTypes: function() {
+			return this._getPublisherTypes();
+		},
+
+		_getPublisherTypes: function() {
+			return null;
+		},
+
+		getServerVersion: function() {
+			return this._getServerVersion();
+		},
+
+		_getServerVersion: function() {
+			return null;
+		}
     });
-
-    function getAlertPayload(data) {
-        var alert;
-        
-        if (_.isString(data)) {
-            alert = {
-                id: data
-            };
-        } else if (_.isObject(data) && _.isString(data.id)) {
-            alert = _.clone(data, true);
-        } else {
-            throw new Error('The "alert" argument is invalid. It must either be a string or an alert object.');
-        }
-        
-        return alert;
-    }
 
     return AlertManager;
 }();
-},{"./../common/lang/assert":4,"./../network/rest/RestAction":7,"./../network/rest/RestEndpoint":8,"./../network/rest/RestProvider":10,"class.extend":11,"lodash":12}],2:[function(require,module,exports){
+},{"./../common/lang/assert":6,"class.extend":13,"lodash":14}],2:[function(require,module,exports){
+var _ = require('lodash');
+
+var assert = require('./../common/lang/assert');
 var AlertManager = require('./AlertManager');
+var RestAction = require('./../network/rest/RestAction');
+var RestEndpoint = require('./../network/rest/RestEndpoint');
+var RestProvider = require('./../network/rest/RestProvider');
+
+module.exports = function() {
+	'use strict';
+
+	var RestAlertManager = AlertManager.extend({
+		init: function(baseUrl, port, secure) {
+			assert.argumentIsOptional(baseUrl, 'baseUrl', String);
+			assert.argumentIsOptional(port, 'port', Number);
+			assert.argumentIsOptional(secure, 'secure', Boolean);
+
+			this._super();
+
+			this._restProvider = new RestProvider(baseUrl || 'alerts.barchart.com', port || 80, secure || false);
+
+			this._createEndpoint = new RestEndpoint(RestAction.Create, [ 'alerts' ]);
+			this._retireveEndpoint = new RestEndpoint(RestAction.Retrieve, [ 'alerts', 'alert_id' ]);
+			this._queryEndpoint = new RestEndpoint(RestAction.Retrieve, [ 'alerts', 'users', 'user_id' ]);
+			this._updateEndpoint = new RestEndpoint(RestAction.Update, [ 'alerts', 'alert_id' ]);
+			this._deleteEndpoint = new RestEndpoint(RestAction.Delete, [ 'alerts', 'alert_id' ]);
+
+			this._retrieveConditionOperators = new RestEndpoint(RestAction.Retrieve, [ 'alert', 'operators' ]);
+			this._retrievePublisherTypes = new RestEndpoint(RestAction.Retrieve, [ 'alert', 'publishers' ]);
+
+			this._versionEndpoint = new RestEndpoint(RestAction.Retrieve, [ 'server', 'version' ]);
+		},
+
+		_createAlert: function(alert) {
+			return this._restProvider.call(this._createEndpoint, alert);
+		},
+
+		_retrieveAlert: function(alert) {
+			return this._restProvider.call(this._retireveEndpoint, alert);
+		},
+
+		_retrieveAlerts: function(user) {
+			return this._restProvider.call(this._queryEndpoint, user);
+		},
+
+		_disableAlert: function(alert) {
+			return this._restProvider.call(this._updateEndpoint, alert);
+		},
+
+		_resetAlert: function(alert) {
+			return this._restProvider.call(this._updateEndpoint, alert);
+		},
+
+		_deleteAlert: function(alert) {
+			return this._restProvider.call(this._deleteEndpoint, alert);
+		},
+
+		_getConditionOperators: function() {
+			return this._restProvider.call(this._retrieveConditionOperators, { });
+		},
+
+		_getPublisherTypes: function() {
+			return this._restProvider.call(this._retrievePublisherTypes, { });
+		},
+
+		_getServerVersion: function() {
+			return this._restProvider.call(this._versionEndpoint, { });
+		}
+	});
+
+	return RestAlertManager;
+}();
+},{"./../common/lang/assert":6,"./../network/rest/RestAction":9,"./../network/rest/RestEndpoint":10,"./../network/rest/RestProvider":12,"./AlertManager":1,"lodash":14}],3:[function(require,module,exports){
+var _ = require('lodash');
+
+var assert = require('./../common/lang/assert');
+var AlertManager = require('./AlertManager');
+
+module.exports = function() {
+	'use strict';
+
+	var SocketIOAlertManager = AlertManager.extend({
+		init: function() {
+
+		}
+	});
+
+	return SocketIOAlertManager;
+}();
+},{"./../common/lang/assert":6,"./AlertManager":1,"lodash":14}],4:[function(require,module,exports){
+var AlertManager = require('./AlertManager');
+var RestAlertManager = require('./RestAlertManager');
+var SocketIOAlertManager = require('./SocketIOAlertManager');
 
 module.exports = function() {
     'use strict';
 
     return {
-        AlertManager: AlertManager
+        AlertManager: AlertManager,
+		RestAlertManager: RestAlertManager,
+		SocketIOAlertManager: SocketIOAlertManager
     };
 }();
-},{"./AlertManager":1}],3:[function(require,module,exports){
+},{"./AlertManager":1,"./RestAlertManager":2,"./SocketIOAlertManager":3}],5:[function(require,module,exports){
 module.exports = function() {
     'use strict';
 
@@ -118,7 +234,7 @@ module.exports = function() {
 
     return provider;
 }();
-},{}],4:[function(require,module,exports){
+},{}],6:[function(require,module,exports){
 var _ = require('lodash');
 
 module.exports = function() {
@@ -202,7 +318,7 @@ module.exports = function() {
 
     return assert;
 }();
-},{"lodash":12}],5:[function(require,module,exports){
+},{"lodash":14}],7:[function(require,module,exports){
 var _ = require('lodash');
 
 var assert = require('./assert');
@@ -282,7 +398,7 @@ module.exports = function() {
 
     return attributes;
 }();
-},{"./assert":4,"lodash":12}],6:[function(require,module,exports){
+},{"./assert":6,"lodash":14}],8:[function(require,module,exports){
 var alerts = require('./alerts/index');
 
 module.exports = function() {
@@ -290,7 +406,7 @@ module.exports = function() {
 
     return alerts;
 }();
-},{"./alerts/index":2}],7:[function(require,module,exports){
+},{"./alerts/index":4}],9:[function(require,module,exports){
 var Class = require('class.extend');
 
 var assert = require('./../../common/lang/assert');
@@ -347,7 +463,7 @@ module.exports = function() {
 
     return RestAction;
 }();
-},{"./../../common/lang/assert":4,"class.extend":11}],8:[function(require,module,exports){
+},{"./../../common/lang/assert":6,"class.extend":13}],10:[function(require,module,exports){
 var _ = require('lodash');
 var Class = require('class.extend');
 
@@ -364,7 +480,6 @@ module.exports = function() {
             assert.argumentIsArray(pathProperties, 'pathProperties', String);
             assert.argumentIsOptional(payloadProperty, 'payloadProperty', String);
 
-            this._name = name;
             this._action = action;
 
             this._pathProperties = pathProperties;
@@ -375,8 +490,10 @@ module.exports = function() {
             return this._action;
         },
 
-        getUrl: function(data, baseUrl) {
+        getUrl: function(data, baseUrl, port, secure) {
             assert.argumentIsOptional(baseUrl, 'baseUrl', String);
+            assert.argumentIsOptional(port, 'port', Number);
+            assert.argumentIsOptional(secure, 'secure', Boolean);
 
             var path = _.map(this._pathProperties, function(pathProperty) {
                 var pathItem;
@@ -395,7 +512,22 @@ module.exports = function() {
             }
 
             if (baseUrl.length !== 0) {
-                path.unshift('http://' + baseUrl + ':3000');
+                var url;
+
+                if (secure) {
+                    url = 'https://';
+                } else {
+                    url = 'http://';
+                }
+
+                url = url + baseUrl;
+
+                if (_.isNumber(port) && port !== 80) {
+                    url = url + ':' + port;
+                }
+
+
+                path.unshift(url);
             }
 
             return path.join('/');
@@ -420,7 +552,7 @@ module.exports = function() {
 
     return RestEndpoint;
 }();
-},{"./../../common/lang/assert":4,"./../../common/lang/attributes":5,"./RestAction":7,"class.extend":11,"lodash":12}],9:[function(require,module,exports){
+},{"./../../common/lang/assert":6,"./../../common/lang/attributes":7,"./RestAction":9,"class.extend":13,"lodash":14}],11:[function(require,module,exports){
 var Class = require('class.extend');
 var when = require('when');
 
@@ -434,15 +566,17 @@ module.exports = function() {
         init: function(baseUrl, port, secure) {
             assert.argumentIsRequired(baseUrl, 'baseUrl', String);
             assert.argumentIsRequired(port, 'port', Number);
+            assert.argumentIsRequired(secure, 'secure', Boolean);
 
             this._baseUrl = baseUrl;
             this._port = port;
+            this._secure = secure;
         },
 
         call: function(endpoint, data) {
             assert.argumentIsRequired(endpoint, endpoint, RestEndpoint, 'RestEndpoint');
 
-            return when(this._call(endpoint.getAction(), endpoint.getUrl(data, this._baseUrl, this._port), this._port, endpoint.getPayload(data)));
+            return when(this._call(endpoint.getAction(), endpoint.getUrl(data, this._baseUrl, this._port, this._secure), this._port, endpoint.getPayload(data)));
         },
 
         _call: function(action, url, port, payload) {
@@ -452,7 +586,7 @@ module.exports = function() {
 
     return RestProviderBase;
 }();
-},{"./../../common/lang/assert":4,"./RestEndpoint":8,"class.extend":11,"when":31}],10:[function(require,module,exports){
+},{"./../../common/lang/assert":6,"./RestEndpoint":10,"class.extend":13,"when":33}],12:[function(require,module,exports){
 var _ = require('lodash');
 var Class = require('class.extend');
 var when = require('when');
@@ -475,13 +609,17 @@ module.exports = function() {
                     method: action.getHttpVerb(),
                     url: url,
                     error: function (xhr, status, error) {
-                        console.log('fail');
+						var data = {
+							error: error
+						};
 
-                        rejectCallback(error);
+						if (_.isObject(xhr) && _.isObject(xhr.responseJSON) && _.isString(xhr.responseJSON.message)) {
+							data.message = xhr.responseJSON.message;
+						}
+
+                        rejectCallback(data);
                     },
                     success: function (data, status, xhr) {
-                        console.log('success');
-
                         resolveCallback(data);
                     }
                 };
@@ -497,7 +635,7 @@ module.exports = function() {
 
     return RestProvider;
 }();
-},{"./../../../common/jQuery/jQueryProvider":3,"./../RestProviderBase":9,"class.extend":11,"lodash":12,"when":31}],11:[function(require,module,exports){
+},{"./../../../common/jQuery/jQueryProvider":5,"./../RestProviderBase":11,"class.extend":13,"lodash":14,"when":33}],13:[function(require,module,exports){
 (function(){
   var initializing = false, fnTest = /xyz/.test(function(){xyz;}) ? /\b_super\b/ : /.*/;
 
@@ -569,7 +707,7 @@ module.exports = function() {
   module.exports = Class;
 })();
 
-},{}],12:[function(require,module,exports){
+},{}],14:[function(require,module,exports){
 (function (global){
 /**
  * @license
@@ -12924,7 +13062,7 @@ module.exports = function() {
 }.call(this));
 
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{}],13:[function(require,module,exports){
+},{}],15:[function(require,module,exports){
 // shim for using process in browser
 
 var process = module.exports = {};
@@ -13017,7 +13155,7 @@ process.chdir = function (dir) {
 };
 process.umask = function() { return 0; };
 
-},{}],14:[function(require,module,exports){
+},{}],16:[function(require,module,exports){
 /** @license MIT License (c) copyright 2010-2014 original author or authors */
 /** @author Brian Cavalier */
 /** @author John Hann */
@@ -13036,7 +13174,7 @@ define(function (require) {
 });
 })(typeof define === 'function' && define.amd ? define : function (factory) { module.exports = factory(require); });
 
-},{"./Scheduler":15,"./env":27,"./makePromise":29}],15:[function(require,module,exports){
+},{"./Scheduler":17,"./env":29,"./makePromise":31}],17:[function(require,module,exports){
 /** @license MIT License (c) copyright 2010-2014 original author or authors */
 /** @author Brian Cavalier */
 /** @author John Hann */
@@ -13118,7 +13256,7 @@ define(function() {
 });
 }(typeof define === 'function' && define.amd ? define : function(factory) { module.exports = factory(); }));
 
-},{}],16:[function(require,module,exports){
+},{}],18:[function(require,module,exports){
 /** @license MIT License (c) copyright 2010-2014 original author or authors */
 /** @author Brian Cavalier */
 /** @author John Hann */
@@ -13146,7 +13284,7 @@ define(function() {
 	return TimeoutError;
 });
 }(typeof define === 'function' && define.amd ? define : function(factory) { module.exports = factory(); }));
-},{}],17:[function(require,module,exports){
+},{}],19:[function(require,module,exports){
 /** @license MIT License (c) copyright 2010-2014 original author or authors */
 /** @author Brian Cavalier */
 /** @author John Hann */
@@ -13203,7 +13341,7 @@ define(function() {
 
 
 
-},{}],18:[function(require,module,exports){
+},{}],20:[function(require,module,exports){
 /** @license MIT License (c) copyright 2010-2014 original author or authors */
 /** @author Brian Cavalier */
 /** @author John Hann */
@@ -13494,7 +13632,7 @@ define(function(require) {
 });
 }(typeof define === 'function' && define.amd ? define : function(factory) { module.exports = factory(require); }));
 
-},{"../apply":17,"../state":30}],19:[function(require,module,exports){
+},{"../apply":19,"../state":32}],21:[function(require,module,exports){
 /** @license MIT License (c) copyright 2010-2014 original author or authors */
 /** @author Brian Cavalier */
 /** @author John Hann */
@@ -13656,7 +13794,7 @@ define(function() {
 });
 }(typeof define === 'function' && define.amd ? define : function(factory) { module.exports = factory(); }));
 
-},{}],20:[function(require,module,exports){
+},{}],22:[function(require,module,exports){
 /** @license MIT License (c) copyright 2010-2014 original author or authors */
 /** @author Brian Cavalier */
 /** @author John Hann */
@@ -13685,7 +13823,7 @@ define(function() {
 });
 }(typeof define === 'function' && define.amd ? define : function(factory) { module.exports = factory(); }));
 
-},{}],21:[function(require,module,exports){
+},{}],23:[function(require,module,exports){
 /** @license MIT License (c) copyright 2010-2014 original author or authors */
 /** @author Brian Cavalier */
 /** @author John Hann */
@@ -13707,7 +13845,7 @@ define(function(require) {
 });
 }(typeof define === 'function' && define.amd ? define : function(factory) { module.exports = factory(require); }));
 
-},{"../state":30}],22:[function(require,module,exports){
+},{"../state":32}],24:[function(require,module,exports){
 /** @license MIT License (c) copyright 2010-2014 original author or authors */
 /** @author Brian Cavalier */
 /** @author John Hann */
@@ -13774,7 +13912,7 @@ define(function() {
 });
 }(typeof define === 'function' && define.amd ? define : function(factory) { module.exports = factory(); }));
 
-},{}],23:[function(require,module,exports){
+},{}],25:[function(require,module,exports){
 /** @license MIT License (c) copyright 2010-2014 original author or authors */
 /** @author Brian Cavalier */
 /** @author John Hann */
@@ -13800,7 +13938,7 @@ define(function() {
 });
 }(typeof define === 'function' && define.amd ? define : function(factory) { module.exports = factory(); }));
 
-},{}],24:[function(require,module,exports){
+},{}],26:[function(require,module,exports){
 /** @license MIT License (c) copyright 2010-2014 original author or authors */
 /** @author Brian Cavalier */
 /** @author John Hann */
@@ -13880,7 +14018,7 @@ define(function(require) {
 });
 }(typeof define === 'function' && define.amd ? define : function(factory) { module.exports = factory(require); }));
 
-},{"../TimeoutError":16,"../env":27}],25:[function(require,module,exports){
+},{"../TimeoutError":18,"../env":29}],27:[function(require,module,exports){
 /** @license MIT License (c) copyright 2010-2014 original author or authors */
 /** @author Brian Cavalier */
 /** @author John Hann */
@@ -13968,7 +14106,7 @@ define(function(require) {
 });
 }(typeof define === 'function' && define.amd ? define : function(factory) { module.exports = factory(require); }));
 
-},{"../env":27,"../format":28}],26:[function(require,module,exports){
+},{"../env":29,"../format":30}],28:[function(require,module,exports){
 /** @license MIT License (c) copyright 2010-2014 original author or authors */
 /** @author Brian Cavalier */
 /** @author John Hann */
@@ -14008,7 +14146,7 @@ define(function() {
 }(typeof define === 'function' && define.amd ? define : function(factory) { module.exports = factory(); }));
 
 
-},{}],27:[function(require,module,exports){
+},{}],29:[function(require,module,exports){
 (function (process){
 /** @license MIT License (c) copyright 2010-2014 original author or authors */
 /** @author Brian Cavalier */
@@ -14085,7 +14223,7 @@ define(function(require) {
 }(typeof define === 'function' && define.amd ? define : function(factory) { module.exports = factory(require); }));
 
 }).call(this,require('_process'))
-},{"_process":13}],28:[function(require,module,exports){
+},{"_process":15}],30:[function(require,module,exports){
 /** @license MIT License (c) copyright 2010-2014 original author or authors */
 /** @author Brian Cavalier */
 /** @author John Hann */
@@ -14143,7 +14281,7 @@ define(function() {
 });
 }(typeof define === 'function' && define.amd ? define : function(factory) { module.exports = factory(); }));
 
-},{}],29:[function(require,module,exports){
+},{}],31:[function(require,module,exports){
 (function (process){
 /** @license MIT License (c) copyright 2010-2014 original author or authors */
 /** @author Brian Cavalier */
@@ -15074,7 +15212,7 @@ define(function() {
 }(typeof define === 'function' && define.amd ? define : function(factory) { module.exports = factory(); }));
 
 }).call(this,require('_process'))
-},{"_process":13}],30:[function(require,module,exports){
+},{"_process":15}],32:[function(require,module,exports){
 /** @license MIT License (c) copyright 2010-2014 original author or authors */
 /** @author Brian Cavalier */
 /** @author John Hann */
@@ -15111,7 +15249,7 @@ define(function() {
 });
 }(typeof define === 'function' && define.amd ? define : function(factory) { module.exports = factory(); }));
 
-},{}],31:[function(require,module,exports){
+},{}],33:[function(require,module,exports){
 /** @license MIT License (c) copyright 2010-2014 original author or authors */
 
 /**
@@ -15341,5 +15479,5 @@ define(function (require) {
 });
 })(typeof define === 'function' && define.amd ? define : function (factory) { module.exports = factory(require); });
 
-},{"./lib/Promise":14,"./lib/TimeoutError":16,"./lib/apply":17,"./lib/decorators/array":18,"./lib/decorators/flow":19,"./lib/decorators/fold":20,"./lib/decorators/inspect":21,"./lib/decorators/iterate":22,"./lib/decorators/progress":23,"./lib/decorators/timed":24,"./lib/decorators/unhandledRejection":25,"./lib/decorators/with":26}]},{},[6])(6)
+},{"./lib/Promise":16,"./lib/TimeoutError":18,"./lib/apply":19,"./lib/decorators/array":20,"./lib/decorators/flow":21,"./lib/decorators/fold":22,"./lib/decorators/inspect":23,"./lib/decorators/iterate":24,"./lib/decorators/progress":25,"./lib/decorators/timed":26,"./lib/decorators/unhandledRejection":27,"./lib/decorators/with":28}]},{},[8])(8)
 });
