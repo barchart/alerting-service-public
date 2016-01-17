@@ -23,7 +23,7 @@
         var conditionOperators = ko.observable();
         var publisherTypes = ko.observable();
 
-        var alertManager = new Barchart.Alerts.RestAlertManager();
+        var alertManager = new Barchart.Alerts.RestAlertManager('alerts-management-stage.elasticbeanstalk.com');
 
         function PageModel() {
             var that = this;
