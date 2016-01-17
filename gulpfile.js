@@ -75,6 +75,8 @@ gulp.task('build-browser', function() {
         .pipe(gulp.dest('dist/'));
 });
 
+gulp.task('build', [ 'build-browser' ]);
+
 gulp.task('build-browser-tests', function () {
     return browserify({ entries: glob.sync('test/specs/**/*.js') }).bundle()
         .pipe(source('barchart-alerts-api-tests-' + getVersionForComponent() + '.js'))
@@ -106,6 +108,8 @@ gulp.task('execute-tests', function (callback) {
             callback(error);
         });
 });
+
+gulp.task('test', [ 'execute-tests' ]);
 
 gulp.task('release', function (callback) {
     runSequence(
