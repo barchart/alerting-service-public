@@ -1,6 +1,7 @@
 {
   "name": "alerts-management-client",
   "version": "0.0.2",
+  "homepage": "https://github.com/barchart/alerts-client-js",
   "description": "Javascript library for managing Barchart alerts",
   "main": "dist/barchart-alerts-management-0.0.js",
   "dependencies": {
@@ -21,8 +22,8 @@
   "authors": [
     "Barchart"
   ],
-  "license": "UNLICENSED",
-  "private": true,
+  "license": "MIT",
+  "private": false,
   "ignore": [
     "**/.*",
     "node_modules",
