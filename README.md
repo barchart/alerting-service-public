@@ -47,6 +47,7 @@ Management system. So, instead of invoking these transports directly, and worryi
 details of the protocol, the consumers can make single-line method calls to perform asynchronous 
 operations (e.g. create alert, delete alert, etc).
 
+
 ###Browser Dependencies
 
 When using this library in a brower, jQuery must be loaded.
@@ -335,3 +336,9 @@ JSON-in:
 JSON-out:
 
 	An array of items, same as "createAlert" JSON-out sample.
+
+##Unit testing
+
+Gulp and Jasmine are used. Execute unit tests, as follows:
+
+	gulp test
