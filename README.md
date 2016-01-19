@@ -65,8 +65,8 @@ Clone the git repository and open the HTML page in a browser. The consumer
 code is contained within a script block of the HTML.
 
 
-###Initialization
-
+###Initialization (Using REST)
+ 
 In the browser, an object has been added to the global namespace. Connect as follows:
 
 
@@ -78,6 +78,34 @@ constructor:
 
 
 	var alertManager = new Barchart.Alerts.RestAlertManager('alerts-management-stage.elasticbeanstalk.com', 80);
+
+
+Then, call the connect method before using any operations:
+
+	alertManager.connect()
+		.then(function() {
+			// ready
+		});
+		
+		
+###Initialization (Using Socket.IO)
+ 
+To use a Socket.IO transport, change the constructor to:
+
+	var alertManager = new Barchart.Alerts.SocketIOAlertManager();
+	
+Specify the URL and port as follows:
+
+
+	var alertManager = new Barchart.Alerts.SocketIOAlertManager('alerts-management-stage.elasticbeanstalk.com', 80);
+	
+
+And, finally, call the connect method before invoking any other operations:
+	
+	alertManager.connect()
+		.then(function() {
+			// ready
+		});
 
 
 ###Data

@@ -26,6 +26,9 @@
         var alertManager = new Barchart.Alerts.RestAlertManager('alerts-management-stage.elasticbeanstalk.com');
         //var alertManager = new Barchart.Alerts.RestAlertManager('localhost', 3000);
 
+        //var alertManager = new Barchart.Alerts.SocketIOAlertManager('alerts-management-stage.elasticbeanstalk.com');
+        //var alertManager = new Barchart.Alerts.SocketIOAlertManager('localhost', 3000);
+
         function PageModel() {
             var that = this;
 
@@ -110,7 +113,7 @@
                     });
             };
         }
-        var AlertEntryModel = function(alert) {
+        function AlertEntryModel(alert) {
             var that = this;
 
             that.alert = ko.observable(alert || null);
@@ -194,7 +197,7 @@
                 });
             }
         };
-        var AlertConditionModel = function(ready, condition) {
+        function AlertConditionModel(ready, condition) {
             var that = this;
 
             that.target = ko.observable(null);
@@ -258,7 +261,7 @@
                 }));
             }
         };
-        var AlertPublisherModel = function(ready, publisher) {
+        function AlertPublisherModel(ready, publisher) {
             var that = this;
 
             that.publisherTypes = publisherTypes;
@@ -283,24 +286,27 @@
         };
 
         $(document).ready(function() {
-            var pageModel = new PageModel();
+            alertManager.connect()
+                .then(function() {
+                    var pageModel = new PageModel();
 
-            alertManager.getServerVersion()
-                .then(function(version) {
-                    pageModel.version(version.semver);
+                    alertManager.getServerVersion()
+                            .then(function(version) {
+                                pageModel.version(version.semver);
+                            });
+
+                     alertManager.getConditionOperators()
+                         .then(function(co) {
+                            conditionOperators(co);
+                         });
+
+                     alertManager.getPublisherTypes()
+                         .then(function(pt) {
+                            publisherTypes(pt);
+                         });
+
+                    ko.applyBindings(pageModel, $('body')[0]);
                 });
-
-            alertManager.getConditionOperators()
-                .then(function(co) {
-                    conditionOperators(co);
-                });
-
-            alertManager.getPublisherTypes()
-                .then(function(pt) {
-                    publisherTypes(pt);
-                });
-
-            ko.applyBindings(pageModel, $('body')[0]);
         });
     </script>
 
