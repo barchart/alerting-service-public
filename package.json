@@ -52,6 +52,6 @@
   "browser": {
     "./lib/network/rest/RestProvider.js": "./lib/network/rest/browser/RestProvider.js"
   },
-  "license": "UNLICENSED",
-  "private": true
+  "license": "MIT",
+  "private": false
 }
