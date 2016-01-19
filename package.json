@@ -7,7 +7,7 @@
     "email": "bryan.ingle@barchart.com",
     "url": "http://www.barchart.com"
   },
-  "main": "./lib/index.js",
+  "main": "./dist/barchart-alerts-api-0.0.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "build": "browserify ./lib/index.js -s Barchart.Alerts -o dist/barchart-alerts-api.js",
