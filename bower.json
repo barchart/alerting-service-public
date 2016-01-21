@@ -1,6 +1,6 @@
 {
   "name": "alerts-management-client",
-  "version": "0.0.10",
+  "version": "0.0.11",
   "homepage": "https://github.com/barchart/alerts-client-js",
   "description": "Javascript library for managing Barchart alerts",
   "main": "dist/barchart-alerts-api-0.0-min.js",
