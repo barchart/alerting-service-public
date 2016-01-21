@@ -28,6 +28,7 @@ module.exports = function() {
 			assert.argumentIsOptional(alert.alert_id, 'alert.alert_id', String);
             assert.argumentIsRequired(alert.name, 'alert.name', String);
             assert.argumentIsRequired(alert.user_id, 'alert.user_id', String);
+			assert.argumentIsRequired(alert.automatic_reset, 'alert.automatic_reset', Boolean);
 
             return this._createAlert(alert);
         },
