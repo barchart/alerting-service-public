@@ -23,8 +23,8 @@
         var conditionOperators = ko.observable();
         var publisherTypes = ko.observable();
 
-        var alertManager = new Barchart.Alerts.RestAlertManager('alerts-management-stage.elasticbeanstalk.com');
-        //var alertManager = new Barchart.Alerts.RestAlertManager('localhost', 3000);
+        //var alertManager = new Barchart.Alerts.RestAlertManager('alerts-management-stage.elasticbeanstalk.com');
+        var alertManager = new Barchart.Alerts.RestAlertManager('localhost', 3000);
 
         //var alertManager = new Barchart.Alerts.SocketIOAlertManager('alerts-management-stage.elasticbeanstalk.com');
         //var alertManager = new Barchart.Alerts.SocketIOAlertManager('localhost', 3000);
@@ -38,6 +38,17 @@
             that.alerts = ko.observableArray([ ]);
             that.activeTemplate = ko.observable('alert-grid-template');
 
+            var getModel = function(alert) {
+                return _.find(that.alerts(), function(model) {
+                    return model.alert().alert_id === alert.alert_id;
+                });
+            };
+            var sortModels = function() {
+                that.alerts.sort(function(a, b) {
+                    return a.alert().name.localeCompare(b.alert().name);
+                });
+            };
+
             that.changeToGrid = function() {
                 that.alerts([ ]);
 
@@ -45,13 +56,11 @@
 
                 alertManager.retrieveAlerts({ user_id: userId })
                     .then(function(alerts) {
-                        alerts.sort(function(a, b) {
-                            return a.name.localeCompare(b.name);
-                        });
-
                         _.forEach(alerts, function(alert) {
                             that.alerts.push(new AlertDisplayModel(alert));
                         });
+
+                        sortModels();
                     });
             };
             that.changeToCreate = function() {
@@ -64,13 +73,30 @@
 
                 that.activeTemplate('alert-entry-template');
             };
-            that.deleteAlert = function(alertToDelete) {
-                alertToDelete.processing(true);
+            that.deleteAlert = function(alertDisplayModel) {
+                alertDisplayModel.processing(true);
 
-                alertManager.deleteAlert(alertToDelete.alert())
+                alertManager.deleteAlert(alertDisplayModel.alert())
                     .then(function() {
-                        that.alerts.remove(alertToDelete);
+                        that.alerts.remove(alertDisplayModel);
                     });
+            };
+
+            that.handleAlertChange = function(changedAlert) {
+                var existingModel = getModel(changedAlert);
+
+                if (existingModel) {
+                    existingModel.alert(changedAlert);
+                } else {
+                    that.alerts.push(new AlertDisplayModel(changedAlert));
+
+                    sortModels();
+                }
+            };
+            that.handleAlertDelete = function(deletedAlert) {
+                var modelToRemove = getModel(deletedAlert);
+
+                that.alerts.remove(modelToRemove);
             };
 
             that.changeToGrid();
@@ -290,10 +316,19 @@
                 .then(function() {
                     var pageModel = new PageModel();
 
+                    alertManager.subscribeAlerts({ user_id: userId },
+                        function(changedAlert) {
+                            pageModel.handleAlertChange(changedAlert);
+                        },
+                        function(deletedAlert) {
+                            pageModel.handleAlertDelete(deletedAlert);
+                        }
+                    );
+
                     alertManager.getServerVersion()
-                            .then(function(version) {
-                                pageModel.version(version.semver);
-                            });
+                        .then(function(version) {
+                            pageModel.version(version.semver);
+                        });
 
                      alertManager.getConditionOperators()
                          .then(function(co) {
