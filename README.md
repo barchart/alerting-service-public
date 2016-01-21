@@ -221,6 +221,7 @@ JSON-in:
 	{
 	  "user_id":"barchart-test-user",
 	  "name":"TSLA above 225",
+	  "automatic_reset": true,
 	  "conditions":[
 		{
 	      "alert_condition_operator_id": 1,
@@ -252,6 +253,7 @@ JSON-out:
 	  "alert_id": "59ddfd0b-89db-4886-85c3-eb8e7a289390",
 	  "user_id": "barchart-test-user",
 	  "name": "TSLA above 225",
+	  "automatic_reset": true,
 	  "create_date": "1453219187105",
 	  "alert_state": "Inactive",
 	  "conditions":[
