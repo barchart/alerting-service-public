@@ -144,6 +144,7 @@
 
             that.alert = ko.observable(alert || null);
             that.name = ko.observable();
+            that.automaticReset = ko.observable(false);
             that.createDate = ko.observable();
             that.conditions = ko.observableArray([]);
             that.publishers = ko.observableArray([]);
@@ -163,6 +164,7 @@
                 var alert = {
                     name: that.name(),
                     user_id: userId,
+                    automatic_reset: that.automaticReset(),
                     publishers: _.map(that.publishers(), function(publisher) {
                         return {
                             alert_publisher_type_id: publisher.publisherType().alert_publisher_type_id,
@@ -213,6 +215,7 @@
 
             if (_.isObject(alert)) {
                 that.name(alert.name);
+                that.automaticReset(_.isBoolean(alert.automatic_reset) && alert.automatic_reset);
                 that.createDate(new Date(parseInt(alert.create_date)));
 
                 _.forEach(alert.conditions, function(condition) {
@@ -400,18 +403,23 @@
                     <tbody>
                         <tr>
                             <td class="col-md-1">
-                                <label class="col-sm-1 control-label">Name</label>
+                                <label class="control-label col-md-1">Name</label>
                             </td>
-                            <td class="col-md-8">
+                            <td class="col-md-5">
                                 <input class="form-control" data-bind="textInput: name, enable: ready" type="text" placeholder="Alert Name">
                             </td>
+                            <td class="col-md-2">
+                                <label class="control-label">Automatic Reset</label>
+                            </td>
+                            <td class="col-md-1">
+                                <input type="checkbox" data-bind="checked: automaticReset">
+                            </td>
                         </tr>
-
                         <tr data-bind="visible: createDate">
                             <td class="col-md-1">
-                                <label class="col-sm-1 control-label">Created</label>
+                                <label class="control-label">Created</label>
                             </td>
-                            <td class="col-md-8" data-bind="text: createDate"></td>
+                            <td class="col-md-8" colspan="3" data-bind="text: createDate"></td>
                         </tr>
                     </tbody>
                 </table>
