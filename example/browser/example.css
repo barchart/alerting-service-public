@@ -71,10 +71,6 @@ h4 {
     margin-left: 10px;
 }
 
-.table.alert-create td {
-    line-height: 34px;
-}
-
 .alert-state-buttons {
     margin-right: 10px;
 }
@@ -96,6 +92,25 @@ h4 {
 }
 .text-button.text-button-black:hover {
     text-shadow: 0 0 1.2em #FF0000;
+}
+
+.table.alert-create tbody {
+    border-top-width: 1px !important;
+}
+.table.alert-create td {
+    line-height: 34px;
+}
+
+tr.condition td {
+    padding-bottom: 2px !important;
+}
+tr.component td {
+    border-top: none !important;
+    padding-top: 2px !important;
+    padding-bottom: 2px !important;
+}
+tr.component:last-child td {
+    padding-bottom: 8px !important;
 }
 
 td .dropdown {

@@ -18,16 +18,21 @@
     <script type="text/javascript">
         'use strict';
 
+        var system = 'barchart.com';
         var userId = 'barchart-test-user';
 
-        var conditionOperators = ko.observable();
-        var publisherTypes = ko.observable();
-
-        var alertManager = new Barchart.Alerts.RestAlertManager('alerts-management-stage.elasticbeanstalk.com');
+        //var alertManager = new Barchart.Alerts.RestAlertManager('alerts-management-stage.elasticbeanstalk.com');
         //var alertManager = new Barchart.Alerts.RestAlertManager('localhost', 3000);
 
         //var alertManager = new Barchart.Alerts.SocketIOAlertManager('alerts-management-stage.elasticbeanstalk.com');
-        //var alertManager = new Barchart.Alerts.SocketIOAlertManager('localhost', 3000);
+        var alertManager = new Barchart.Alerts.SocketIOAlertManager('localhost', 3000);
+
+        var utilities = Barchart.Alerts.AlertManager;
+
+        var targets = ko.observable();
+        var properties = ko.observable();
+        var operators = ko.observable();
+        var publisherTypes = ko.observable();
 
         function PageModel() {
             var that = this;
@@ -55,7 +60,7 @@
 
                 that.activeTemplate('alert-grid-template');
 
-                alertManager.retrieveAlerts({ user_id: userId })
+                alertManager.retrieveAlerts({ user_id: userId, alert_system: system })
                     .then(function(alerts) {
                         _.forEach(alerts, function(alert) {
                             that.alerts.push(new AlertDisplayModel(alert));
@@ -114,7 +119,7 @@
                 return alert.alert_state === 'Inactive' || alert.alert_state === 'Triggered';
             });
             that.start = function() {
-                alertManager.resetAlert(that.alert())
+                alertManager.enableAlert(that.alert())
                     .then(function(updatedAlert) {
                         that.alert(updatedAlert);
                     });
@@ -131,7 +136,7 @@
                     });
             };
             that.canRefresh = ko.computed(function() {
-                return !that.canStart() && ! that.canPause();
+                return !that.canStart() && !that.canPause();
             });
             that.refresh = function() {
                 alertManager.retrieveAlert(that.alert())
@@ -144,9 +149,9 @@
             var that = this;
 
             that.alert = ko.observable(alert || null);
-            that.name = ko.observable();
+            that.name = ko.observable(null);
             that.automaticReset = ko.observable(false);
-            that.createDate = ko.observable();
+            that.createDate = ko.observable(null);
             that.conditions = ko.observableArray([]);
             that.publishers = ko.observableArray([]);
             that.processing = ko.observable(false);
@@ -166,26 +171,36 @@
                 var alert = {
                     name: that.name(),
                     user_id: userId,
+                    alert_system: system,
                     automatic_reset: that.automaticReset(),
-                    publishers: _.map(that.publishers(), function(publisher) {
-                        return {
-                            alert_publisher_type_id: publisher.publisherType().alert_publisher_type_id,
-                            recipient: publisher.recipient(),
-                            format: publisher.format()
-                        };
-                    }),
                     conditions: _.map(that.conditions(), function(condition) {
                         return {
-                            alert_condition_operator_id: condition.operator().alert_condition_operator_id,
-                            target_identifier: condition.targetIdentifier(),
-                            trigger_value: condition.triggerValue()
+                            property: {
+                                property_id: condition.property().property_id,
+                                target: {
+                                    identifier: condition.targetIdentifier()
+                                }
+                            },
+                            operator: {
+                                operator_id: condition.operator().operator_id,
+                                operand: condition.operand()
+                            }
+                        };
+                    }),
+                    publishers: _.map(that.publishers(), function(publisher) {
+                        return {
+                            type: {
+                                publisher_type_id: publisher.publisherType().publisher_type_id
+                            },
+                            recipient: publisher.recipient(),
+                            format: publisher.format()
                         };
                     })
                 };
 
                 alertManager.createAlert(alert)
-                    .then(function(alert) {
-                        that.alert(alert);
+                    .then(function(created) {
+                        that.alert(created);
                     })
                     .finally(function() {
                         that.processing(false);
@@ -217,6 +232,7 @@
 
             if (_.isObject(alert)) {
                 that.name(alert.name);
+
                 that.automaticReset(_.isBoolean(alert.automatic_reset) && alert.automatic_reset);
                 that.createDate(new Date(parseInt(alert.create_date)));
 
@@ -227,71 +243,158 @@
                     that.addPublisher(publisher);
                 });
             }
-        };
+        }
         function AlertConditionModel(ready, condition) {
             var that = this;
 
             that.target = ko.observable(null);
+            that.targetIdentifier = ko.observable(null);
+
+            that.properties = ko.observableArray([]);
+            that.property = ko.observable(null);
+
             that.operator = ko.observable(null);
-            that.targetIdentifier = ko.observable();
-            that.triggerValue = ko.observable();
+            that.operand = ko.observable(null);
+
             that.ready = ready;
 
             that.targets = ko.computed(function() {
-                var targets = _.uniqBy(
-                    _.map(conditionOperators(), function(conditionOperator) {
-                        return {
-                            alert_condition_target_id: conditionOperator.alert_condition_target_id,
-                            object_description: conditionOperator.object_description,
-                            identifier_description: conditionOperator.identifier_description
-                        };
-                    }), 'alert_condition_target_id'
-                );
-
-                that.target(_.first(targets));
-
-                return targets;
+                return targets();
             });
             that.operators = ko.computed(function() {
-                var target = that.target();
+                var p = that.property();
+                var o = operators() || [ ];
 
-                var operators;
+                var returnRef;
 
-                if (target) {
-                    operators = _.filter(conditionOperators(), function(candidate) {
-                        return target.alert_condition_target_id === candidate.alert_condition_target_id;
-                    });
-
-                    that.operator(_.first(operators));
+                if (p) {
+                    returnRef = utilities.getOperatorsForProperty(o, p);
                 } else {
-                    operators = [ ];
+                    returnRef = [ ];
                 }
 
-                return operators;
+                that.operator(_.first(returnRef) || null);
+
+                return returnRef;
+            });
+            that.propertyTree = ko.computed(function() {
+                var target = that.target();
+
+                var targetProperties;
+
+                if (target) {
+                    targetProperties = utilities.getPropertiesForTarget(properties(), that.target());
+                } else {
+                    targetProperties = [ ];
+                }
+
+                return utilities.getPropertyTree(targetProperties);
             });
 
             that.selectTarget = function(target) {
                 that.target(target);
+
+                that.properties([]);
+                that.properties.push(new AlertConditionTreeModel(that, that.propertyTree(), 'Category', 0));
+
+                that.property(null);
+            };
+            that.selectPropertyTree = function(tree, index) {
+                if (tree.items) {
+                    var next = index + 1;
+
+                    that.properties.splice(next);
+                    that.properties.push(new AlertConditionTreeModel(that, tree.items, 'Property', next));
+
+                    that.property(null);
+                    that.operand(null);
+                } else {
+                    that.property(tree.item);
+                    that.operand(_.first(that.operator().operand_options) || null);
+                }
             };
             that.selectOperator = function(opertator) {
                 that.operator(opertator);
             };
+            that.selectOperand = function(operand) {
+                that.operand(operand);
+            };
 
             if (_.isObject(condition)) {
-                that.targetIdentifier(condition.target_identifier);
-                that.triggerValue(condition.trigger_value);
+                that.target(_.find(targets(), function(target) {
+                    return target.target_id === condition.property.target.target_id;
+                }));
+                that.property(_.find(properties(), function(property) {
+                    return property.property_id === condition.property.property_id;
+                }));
+                that.operator(_.find(operators(), function(operator) {
+                    return operator.operator_id === condition.operator.operator_id;
+                }));
 
-                var c = _.find(conditionOperators(), function(candidate) {
-                    return condition.alert_condition_operator_id === candidate.alert_condition_operator_id;
-                });
-                that.target(_.find(that.targets(), function(candidate) {
-                    return candidate.alert_condition_target_id === c.alert_condition_target_id;
-                }));
-                that.operator(_.find(that.operators(), function(candidate) {
-                    return candidate.alert_condition_operator_id === c.alert_condition_operator_id;
-                }));
+                that.targetIdentifier(condition.property.target.identifier);
+                that.operand(condition.operator.operand);
+
+                var getNode = function(items, description) {
+                    return _.find(items, function(item) {
+                        return item.description === description;
+                    });
+                };
+
+                var node = getNode(that.propertyTree(), condition.property.group);
+                var description = condition.property.description;
+
+                for (var i = 0; i < description.length; i++) {
+                    var n = getNode(node.items, description[i]);
+
+                    that.properties.push(new AlertConditionTreeModel(that, node.items, 'Property', i, n));
+
+                    node = n;
+                }
+            } else {
+                that.selectTarget(_.first(that.targets()));
             }
-        };
+        }
+        function AlertConditionTreeModel(parent, tree, description, index, node) {
+            var that = this;
+
+            that.parent = parent;
+
+            that.tree = ko.observable(tree);
+            that.node = ko.observable(node || null);
+
+            that.description = ko.computed(function() {
+                var property = that.node();
+
+                var returnRef;
+
+                if (property) {
+                    returnRef = property.description;
+                } else {
+                    returnRef = 'Select ' + description;
+                }
+
+                return returnRef;
+            });
+
+            that.selectTree = function(node) {
+                that.node(node);
+
+                that.parent.selectPropertyTree(node, index);
+            };
+
+            that.showOperator = ko.computed(function() {
+                var node = that.node();
+                var property = that.parent.property();
+                var operator = that.parent.operator();
+
+                return _.isObject(node) && _.isObject(node.item) && node.item === property && _.isObject(operator);
+            });
+            that.showOptions = ko.computed(function() {
+                var operator = that.parent.operator();
+
+                return _.isObject(operator) && _.isArray(operator.operand_options) && operator.operand_options.length > 0;
+            });
+        }
         function AlertPublisherModel(ready, publisher) {
             var that = this;
 
@@ -308,20 +411,20 @@
 
             if (_.isObject(publisher)) {
                 that.publisherType(_.find(publisherTypes(), function(candidate) {
-                    return candidate.alert_publisher_type_id === publisher.alert_publisher_type_id;
+                    return candidate.publisher_type_id === publisher.type.publisher_type_id;
                 }));
 
                 that.recipient(publisher.recipient);
                 that.format(publisher.format);
             }
-        };
+        }
 
         $(document).ready(function() {
             alertManager.connect()
                 .then(function() {
                     var pageModel = new PageModel();
 
-                    alertManager.subscribeAlerts({ user_id: userId },
+                    alertManager.subscribeAlerts({ user_id: userId, alert_system: system },
                         function(changedAlert) {
                             pageModel.handleAlertChange(changedAlert);
                         },
@@ -335,15 +438,25 @@
                             pageModel.version(version.semver);
                         });
 
-                     alertManager.getConditionOperators()
-                         .then(function(co) {
-                            conditionOperators(co);
-                         });
+                    alertManager.getTargets()
+                        .then(function(t) {
+                            targets(t);
+                        });
 
-                     alertManager.getPublisherTypes()
-                         .then(function(pt) {
+                    alertManager.getProperties()
+                        .then(function(p) {
+                            properties(p);
+                        });
+
+                    alertManager.getOperators()
+                        .then(function(o) {
+                            operators(o);
+                        });
+
+                    alertManager.getPublisherTypes()
+                        .then(function(pt) {
                             publisherTypes(pt);
-                         });
+                        });
 
                     ko.applyBindings(pageModel, $('body')[0]);
                 });
@@ -413,15 +526,15 @@
                             <td class="col-md-2">
                                 <label class="control-label">Automatic Reset</label>
                             </td>
-                            <td class="col-md-1">
-                                <input type="checkbox" data-bind="checked: automaticReset">
+                            <td class="col-md-2">
+                                <input type="checkbox" data-bind="checked: automaticReset, enable: ready">
                             </td>
                         </tr>
                         <tr data-bind="visible: createDate">
                             <td class="col-md-1">
                                 <label class="control-label">Created</label>
                             </td>
-                            <td class="col-md-8" colspan="3" data-bind="text: createDate"></td>
+                            <td class="col-md-9" colspan="3" data-bind="text: createDate"></td>
                         </tr>
                     </tbody>
                 </table>
@@ -431,7 +544,9 @@
                     <h3 class="panel-title"><span class="text-button entry-item-add-button glyphicon glyphicon-plus" data-bind="click: function() { addCondition(null); }, visible: ready"></span> Conditions</h3>
                 </div>
                 <table class="alert-create table">
-                    <tbody data-bind="template: { name: 'alert-create-condition-template', foreach: conditions }"></tbody>
+                    <!-- ko foreach: conditions -->
+                    <tbody data-bind="template: { name: 'alert-create-condition-template' }"></tbody>
+                    <!-- /ko -->
                 </table>
             </div>
             <div class="panel panel-info">
@@ -447,37 +562,76 @@
         </div>
     </script>
     <script type="text/html" id="alert-create-condition-template">
-        <tr>
+        <tr class="condition">
             <td class="col-md-1">
                 <span class="text-button text-button-black glyphicon glyphicon-minus entry-item-remove-button" data-bind="click: function() { $parent.removeCondition($data); }, visible: ready"></span>
             </td>
             <td class="col-md-2">
                 <div class="dropdown">
                     <button class="btn btn-default dropdown-toggle" data-bind="enable: ready" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
-                        <span data-bind="text: target().object_description"></span>
+                        <span data-bind="text: target().description"></span>
                     </button>
                     <ul class="dropdown-menu" data-bind="foreach: targets">
-                        <li class="center"><a href="#" data-bind="text: object_description, click: function() { $parent.selectTarget($data); }"></a></li>
+                        <li class="center"><a href="#" data-bind="text: description, click: function() { $parent.selectTarget($data); }"></a></li>
                     </ul>
                 </div>
             </td>
-            <td class="col-md-2">
+            <td class="col-md-3">
                 <input class="form-control" data-bind="textInput: targetIdentifier, attr: { placeholder: target().identifier_description }, enable: ready" type="text" >
             </td>
-            <td class="col-md-2">
-                <div class="dropdown" data-bind="visible: function() { target() !== null; }">
-                    <button class="btn btn-default dropdown-toggle" data-bind="enable: ready" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
-                        <span data-bind="text: operator().description"></span>
-                    </button>
-                    <ul class="dropdown-menu" data-bind="foreach: operators">
-                        <li class="center"><a href="#" data-bind="text: description, click: function() { $parent.selectOperator($data); }"></a></li>
-                    </ul>
-                </div>
-            </td>
-            <td class="col-md-2">
-                <input class="form-control" data-bind="textInput: triggerValue, enable: ready" type="text" placeholder="value">
+            <td class="col-md-4" colspan="2">
             </td>
         </tr>
+        <!-- ko foreach: properties -->
+        <tr class="component" data-bind="template: { name: 'alert-create-condition-property-template' }"></tr>
+        <!-- /ko -->
+    </script>
+    <script type="text/html" id="alert-create-condition-property-template">
+        <td class="col-md-1"></td>
+        <td class="col-md-2"></td>
+        <td class="col-md-3">
+            <div class="dropdown">
+                <button class="btn btn-default dropdown-toggle" type="button" data-bind="enable: parent.ready" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+                    <span data-bind="text: description"></span>
+                </button>
+                <ul class="dropdown-menu" data-bind="foreach: tree">
+                    <li class="center"><a href="#" data-bind="text: description, click: function() { $parent.selectTree($data); }"></a></li>
+                </ul>
+            </div>
+        </td>
+        <!-- ko if: showOperator -->
+        <td class="col-md-2">
+            <div class="dropdown">
+                <button class="btn btn-default dropdown-toggle" type="button" data-bind="enable: parent.ready" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+                    <span data-bind="text: parent.operator().display.short"></span>
+                </button>
+                <ul class="dropdown-menu" data-bind="foreach: parent.operators">
+                    <li class="center"><a href="#" data-bind="text: display.short, click: function() { $parent.parent.selectOperator($data); }"></a></li>
+                </ul>
+            </div>
+        </td>
+        <!-- ko if: showOptions -->
+        <td class="col-md-2">
+            <div class="dropdown">
+                <button class="btn btn-default dropdown-toggle" type="button" data-bind="enable: parent.ready" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+                    <span data-bind="text: parent.operand()"></span>
+                </button>
+                <ul class="dropdown-menu" data-bind="foreach: parent.operator().operand_options">
+                    <li class="center"><a href="#" data-bind="text: $data, click: function() { $parent.parent.selectOperand($data); }"></a></li>
+                </ul>
+            </div>
+        </td>
+        <!-- /ko -->
+        <!-- ko ifnot: showOptions -->
+        <td class="col-md-2">
+            <input class="form-control" data-bind="textInput: parent.operand, enable: parent.ready" type="text" placeholder="value">
+        </td>
+        <!-- /ko -->
+        <!-- /ko -->
+        <!-- ko ifnot: showOperator -->
+        <td class="col-md-4" colspan="2">
+        </td>
+        <!-- /ko -->
     </script>
     <script type="text/html" id="alert-create-publisher-template">
         <tr>
@@ -494,7 +648,7 @@
                     </ul>
                 </div>
             </td>
-            <td class="col-md-2">
+            <td class="col-md-3">
                 <input class="form-control" data-bind="textInput: recipient, enable: ready" type="text" placeholder="Recipient (e.g. phone number)" >
             </td>
             <td class="col-md-4">
