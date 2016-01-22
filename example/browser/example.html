@@ -17,14 +17,14 @@
 
     <script type="text/javascript">
         'use strict';
-        
+
         var userId = 'barchart-test-user';
 
         var conditionOperators = ko.observable();
         var publisherTypes = ko.observable();
 
-        //var alertManager = new Barchart.Alerts.RestAlertManager('alerts-management-stage.elasticbeanstalk.com');
-        var alertManager = new Barchart.Alerts.RestAlertManager('localhost', 3000);
+        var alertManager = new Barchart.Alerts.RestAlertManager('alerts-management-stage.elasticbeanstalk.com');
+        //var alertManager = new Barchart.Alerts.RestAlertManager('localhost', 3000);
 
         //var alertManager = new Barchart.Alerts.SocketIOAlertManager('alerts-management-stage.elasticbeanstalk.com');
         //var alertManager = new Barchart.Alerts.SocketIOAlertManager('localhost', 3000);
@@ -37,6 +37,7 @@
             that.alert = ko.observable();
             that.alerts = ko.observableArray([ ]);
             that.activeTemplate = ko.observable('alert-grid-template');
+            that.providerDescription = ko.observable(alertManager.toString());
 
             var getModel = function(alert) {
                 return _.find(that.alerts(), function(model) {
@@ -506,7 +507,7 @@
     <div class="header" data-bind="template: { name: 'alert-header-template' }"></div>
     <div class="main" data-bind="template: { name: activeTemplate }"></div>
     <div class="footer">
-        <h4 class="pull-left">REST Data Provider</h4>
+        <h4 class="pull-left" data-bind="text: providerDescription"></h4>
         <h4 class="pull-right">API Version <span data-bind="text: version"></span></h4>
     </div>
 </body>

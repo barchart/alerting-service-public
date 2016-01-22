@@ -48,11 +48,6 @@ details of the protocol, the consumers can make single-line method calls to perf
 operations (e.g. create alert, delete alert, etc).
 
 
-###Browser Dependencies
-
-When using this library in a brower, jQuery must be loaded.
-
-
 ###Example
 
 An working example browser implementation can be found in the git repository at:
