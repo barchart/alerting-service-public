@@ -351,14 +351,14 @@ JSON-in:
 	    "automatic_reset": false,
 	    "conditions": [ {
 	        "property": {
-	            "property_id":1,
+	            "property_id": 1,
 	            "target":{
 	                "identifier": "AAPL"
                 }
             },
             "operator":{
                 "operator_id": 3,
-                "operand":"99"
+                "operand": "99"
             }
         } ],
         "publishers":[ {
@@ -449,7 +449,7 @@ JSON-in:
   	
 JSON-out:
 
-	An array of "Alert" objects belonging to the specified user.
+	An array of "lert" objects belonging to the specified user.
 
 
 ##Unit Testing
