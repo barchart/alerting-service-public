@@ -281,12 +281,23 @@ JSON-out:
 	  "semver": "0.0.1"
 	}
 
-###getConditionOperators
+###getTargets
 
-Returns a list of all the conditions that are currently supported by
-the alert management system. Each alert has at least one condition.
-When creating an alert, the "alert_condition_operator_id" must
-be referenced (see "createAlert" example below).
+Returns an array of the supported "Target" objects.
+
+JSON-in:
+
+	{
+	}
+
+JSON-out:
+
+	An array of "Target" objects
+
+
+###getProperties
+
+Returns an array of supported "Property" objects.
 
 JSON-in:
 
@@ -295,21 +306,32 @@ JSON-in:
 	
 JSON-out:
 
-	An array of "condition" objects
+	An array of "property" objects
 
 
-###getPublisherTypes
+###getOperators
 
-Returns a list of all the publishing mechanisms that are currently 
-supported by the alert management system. Each alert bas at least
-one publisher. When creating an alert, the "alert_condition_operator_id" must
-be referenced (see "createAlert" example below).
+Returns an array of supported "Operator" objects.
 
 JSON-in:
 
 	{
 	}
-	
+
+JSON-out:
+
+	An array of "Operator" objects
+
+
+###getPublisherTypes
+
+Returns an array of supported "PublisherType" objects.
+
+JSON-in:
+
+	{
+	}
+
 JSON-out:
 
 	An array of "PublisherType" objects
@@ -318,7 +340,7 @@ JSON-out:
 ###createAlert
 
 The following JSON object can be used to create an alert. The input is a
-simplified version of the "alert" object.
+simplified version of the "Alert" object.
 
 JSON-in:
 
@@ -350,12 +372,12 @@ JSON-in:
 
 JSON-out:
 	
-	An "alert" object.
+	An "Alert" object.
 
 
 ###retrieveAlert
 
-Gets a single alert object, using its identifier:
+Gets a single "Alert" object, using its identifier:
 
 JSON-in:
 
@@ -365,12 +387,12 @@ JSON-in:
   	
 JSON-out:
 
-	An "alert" object.
+	An "Alert" object.
 	
 
 ###deleteAlert
 
-Deletes a single alert, using its identifier:
+Deletes a single "Alert" object, using its identifier:
 
 JSON-in:
 
@@ -380,13 +402,13 @@ JSON-in:
   	
 JSON-out:
 
-	The "alert" object that was deleted.
+	The "Alert" object that was deleted.
 
 
 ###enableAlert
 
-Causes an alert to begin testing for matched conditions. Notifications
-will be sent as soon as the alert conditions are matched.
+Causes an "Alert" object to begin testing for matched conditions.
+Notifications will be sent as soon as the alert conditions are matched.
 
 JSON-in:
 
@@ -396,12 +418,12 @@ JSON-in:
   	
 JSON-out:
 
-	The "alert" object that was enabled.
+	The "Alert" object that was enabled.
 
 	
 ###disableAlert
 
-Stops an alert from processing. No notifications will be sent.
+Stops an "Alert" object from processing. No notifications will be sent.
 
 JSON-in:
 
@@ -411,12 +433,12 @@ JSON-in:
   	
 JSON-out:
 
-	The "alert" object that was disabled.
+	The "Alert" object that was disabled.
 
 
 ###retrieveAlerts
 
-Retrieves all the alerts for a user account:
+Retrieves all the "Alert" objects for a user account:
 
 JSON-in:
 
@@ -427,7 +449,7 @@ JSON-in:
   	
 JSON-out:
 
-	An array of "alert" objects belonging to the specified user.
+	An array of "Alert" objects belonging to the specified user.
 
 
 ##Unit Testing
