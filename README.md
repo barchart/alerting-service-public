@@ -42,7 +42,7 @@ The git repository is publically-accessible here:
 ##Usage
 
 The Barchart Alert Management system exposes both REST and socket.io[http://socket.io] endpoints. 
-However, this library is essentially a convience-wrapper interacting with the Barchart Alert 
+However, this library is a convience-wrapper fro interacting with the Barchart Alert
 Management system. So, instead of invoking these transports directly, and worrying about the 
 details of the protocol, the consumers can make single-line method calls to perform asynchronous 
 operations (e.g. create alert, delete alert, etc).
@@ -103,14 +103,8 @@ And, finally, call the connect method before invoking any other operations:
 		});
 
 
-###Data
-
-The library uses a JSON-in, JSON-out architecture. All data exchanged is in JSON format. 
-Requests must supply JSON data. Responses are composed of JSON data.
-
-
 ###Asynchronous Operations
- 
+
 All operations are asynchronous. The result of any method call will be an A+ style promise. Here
 is an example:
 
@@ -123,9 +117,154 @@ is an example:
 			console.log('A problem occurred.');
 		});
 
-	
-##AlertManager Operations
+##Data
 
+The library uses a JSON-in, JSON-out architecture. All data exchanged is in JSON format. 
+Requests must supply JSON data. Responses are composed of JSON data.
+
+The following data structures are important:
+
+###Target
+
+A "target" refers to a type of object that can be observed.
+
+    {
+        "target_id": 1,
+        "description": "equity",
+        "identifier_description": "symbol"
+    }
+
+
+###Property
+
+A "property" refers to an attribute of a target. The value of
+a "property" can be checked using an "operator" object.
+
+    {
+        "property_id": 18,
+        "description": [
+            "Average Volume",
+            "200 Day"
+        ],
+        "group": "Technical",
+        "target": {
+            "target_id": 1,
+            "description": "equity",
+            "identifier_description": "symbol"
+        },
+        "valid_operators": [
+            2,
+            3
+        ]
+    }
+
+
+###Operator
+
+A comparison operation that can be applied to the "property" value
+of a "target" object.
+
+    {
+        "operator_id": 4,
+        "operator_name": "is-indicator",
+        "display": {
+            "short": "=",
+            "long": "is"
+        },
+        "operand_type": "string",
+        "operand_options": [
+            "Buy",
+            "Sell",
+            "Hold"
+        ]
+    }
+
+The operator.operand_options lists the possible values which can be used
+as an "operand" when using the operator. If operator.operand_options has
+no items, then there no restriction is placed upon an "operand" value.
+
+
+###Condition
+
+A "condition" is the comparison between a "property" value using an "operator" object.
+The "target" of the "property" must include an "identifier" and the "operator" must
+include an "operand" value. Alerts can have multiple conditions.
+
+    {
+        "condition_id": "0ce4e213-8fbf-442a-a3f5-2356a5eca09f",
+        "property": {
+            "property_id": 10,
+            "description": [
+                "Moving Average",
+                "50 Day"
+            ],
+            "group": "Technical",
+            "target": {
+                    "target_id": 1,
+                    "description": "equity",
+                    "identifier_description": "symbol",
+                    "identifier": "TSLA"
+                }
+        },
+        "operator": {
+            "operator_id": 2,
+            "operator_name": "greater-than",
+            "display": {
+                "short": ">",
+                "long": "greater than"
+            },
+            "operand_type": "number",
+            "operand": "200"
+        }
+    }
+
+
+###PublisherType
+
+A "publisher type" defines a mechanism for notifying users.
+
+    {
+        "publisher_type_id": 1,
+        "transport": "sms",
+        "provider": "twilio"
+    }
+
+
+###Publisher
+
+A "publisher" defines the rules for notification of an end user. An
+alert can have multiple publishers.
+
+    {
+        "publisher_id": "9c864a19-ce77-4a87-8cd6-e0810ecb120e",
+        "recipient": "123-456-7890",
+        "format": "It is a good time to buy Telsa stock.",
+        "type": {
+            "publisher_type_id": 1,
+            "transport": "sms",
+            "provider": "twilio"
+        }
+    }
+
+
+###Alert
+
+An "alert" consists of one or more "condition" objects and one or more
+"publisher" objects.
+
+    {
+        "alert_id": "39b633bf-8993-491d-b544-bdc9deed60be",
+        "alert_state": "Inactive",
+        "alert_system": "barchart.com",
+        "user_id": "barchart-test-user",
+        "name": "Buy TSLA",
+        "automatic_reset": true,
+        "create_date": "1453673000873",
+        "conditions": [ ],
+        "publishers": [ ]
+    }
+
+##AlertManager Operations
 
 ###getServerVersion
 
@@ -156,26 +295,7 @@ JSON-in:
 	
 JSON-out:
 
-	[
-	  {
-	    "alert_condition_operator_id": 1,
-	    "description": "price above",
-	    "trigger_value_required": true,
-	    "trigger_value_type": "number",
-	    "alert_condition_target_id": 1,
-	    "object_description": "equity",
-	    "identifier_description": "symbol"
-	  },
-	  {
-	    "alert_condition_operator_id": 2,
-	    "description": "price below", 
-	    "trigger_value_required": true,
-	    "trigger_value_type": "number",
-	    "alert_condition_target_id": 1,
-	    "object_description": "equity",
-	    "identifier_description": "symbol"
-	  }
-	]
+	An array of "condition" objects
 
 
 ###getPublisherTypes
@@ -192,101 +312,45 @@ JSON-in:
 	
 JSON-out:
 
-	[
-	  {
-	    "alert_publisher_type_id": 1,
-	    "transport": "sms",
-	    "provider": "twillio"
-	  },
-	  { 
-	    "alert_publisher_type_id": 2,
-	    "transport": "email",
-	    "provider": "ses"
-	  }
-	]
+	An array of "PublisherType" objects
 	
 	
 ###createAlert
 
-The following JSON object can be used to create an alert (with one trigger
-condition and two publishers).
+The following JSON object can be used to create an alert. The input is a
+simplified version of the "alert" object.
 
 JSON-in:
 
 	{
-	  "user_id":"barchart-test-user",
-	  "name":"TSLA above 225",
-	  "automatic_reset": true,
-	  "conditions":[
-		{
-	      "alert_condition_operator_id": 1,
-		  "target_identifier": "TSLA",
-		  "trigger_value": "225"
-		}
-	  ],
-	  "publishers":[
-		{
-		  "alert_publisher_type_id": 2,
-		  "recipient":"bryan.ingle@barchart.com",
-		  "format":"The price of TSLA is above $225."
-		},
-		{
-		  "alert_publisher_type_id":1,
-		  "recipient":"123-456-7890",
-		  "format":"The price of TSLA is above $225."
-		}
-	  ]
-	}
-
-
-Upon successful creation of the alert, the server will respond with something like the
-following. Identifiers (UUID) are assigned and additional fields are added.
+	    "name": "My Test Alert",
+	    "user_id": "barchart-test-user",
+	    "alert_system": "barchart.com",
+	    "automatic_reset": false,
+	    "conditions": [ {
+	        "property": {
+	            "property_id":1,
+	            "target":{
+	                "identifier": "AAPL"
+                }
+            },
+            "operator":{
+                "operator_id": 3,
+                "operand":"99"
+            }
+        } ],
+        "publishers":[ {
+            "type": {
+                "publisher_type_id": 1
+            },
+            "recipient": "123-456-7890",
+            "format": "Apple stock is falling"
+        } ]
+    }
 
 JSON-out:
 	
-	{
-	  "alert_id": "59ddfd0b-89db-4886-85c3-eb8e7a289390",
-	  "user_id": "barchart-test-user",
-	  "name": "TSLA above 225",
-	  "automatic_reset": true,
-	  "create_date": "1453219187105",
-	  "alert_state": "Inactive",
-	  "conditions":[
-		{
-		  "alert_id": "59ddfd0b-89db-4886-85c3-eb8e7a289390",
-		  "alert_condition_id": "e3db4fb7-3fec-45eb-a4b4-b07c97954afc",
-		  "target_identifier": "TSLA",
-		  "trigger_value": "225",
-		  "alert_condition_operator_id": 1,
-		  "description": "price above",
-		  "trigger_value_required": true,
-		  "trigger_value_type": "number",
-		  "alert_condition_target_id": 1,
-		  "object_description": "equity",
-		  "identifier_description": "symbol"
-		}
-	  ],
-	  "publishers":[
-		{
-		  "alert_id": "59ddfd0b-89db-4886-85c3-eb8e7a289390",
-		  "alert_publisher_id": "54a4ec80-b39e-487c-a83c-7fadab047d8f",
-		  "alert_publisher_type_id": 2,
-		  "recipient": "bryan.ingle@barchart.com",
-		  "format": "The price of TSLA is above $225.",
-	      "transport": "email",
-	      "provider": "ses"
-		},
-		{
-		  "alert_id": "59ddfd0b-89db-4886-85c3-eb8e7a289390",
-		  "alert_publisher_id": "ee2dfe1d-a7a0-43e4-9ac5-8b696481f595",
-		  "alert_publisher_type_id": 1,
-		  "recipient": "123-456-7890",
-		  "format": "The price of TSLA is above $225.",
-		  "transport": "sms",
-		  "provider": "twillio"
-		}
-	  ]
-	}
+	An "alert" object.
 
 
 ###retrieveAlert
@@ -296,12 +360,12 @@ Gets a single alert object, using its identifier:
 JSON-in:
 
 	{
-	  "alert_id": "59ddfd0b-89db-4886-85c3-eb8e7a289390"
+	    "alert_id": "59ddfd0b-89db-4886-85c3-eb8e7a289390"
 	}
   	
 JSON-out:
 
-	same as "createAlert" JSON-out sample.
+	An "alert" object.
 	
 
 ###deleteAlert
@@ -311,15 +375,15 @@ Deletes a single alert, using its identifier:
 JSON-in:
 
 	{
-	  "alert_id": "59ddfd0b-89db-4886-85c3-eb8e7a289390"
+	    "alert_id": "59ddfd0b-89db-4886-85c3-eb8e7a289390"
 	}
   	
 JSON-out:
 
-	same as "createAlert" JSON-out sample.
+	The "alert" object that was deleted.
 
 
-###resetAlert
+###enableAlert
 
 Causes an alert to begin testing for matched conditions. Notifications
 will be sent as soon as the alert conditions are matched.
@@ -327,12 +391,13 @@ will be sent as soon as the alert conditions are matched.
 JSON-in:
 
 	{
-	  "alert_id": "59ddfd0b-89db-4886-85c3-eb8e7a289390"
+	    "alert_id": "59ddfd0b-89db-4886-85c3-eb8e7a289390"
 	}
   	
 JSON-out:
 
-	same as "createAlert" JSON-out sample.
+	The "alert" object that was enabled.
+
 	
 ###disableAlert
 
@@ -341,12 +406,13 @@ Stops an alert from processing. No notifications will be sent.
 JSON-in:
 
 	{
-	  "alert_id": "59ddfd0b-89db-4886-85c3-eb8e7a289390"
+	    "alert_id": "59ddfd0b-89db-4886-85c3-eb8e7a289390"
 	}
   	
 JSON-out:
 
-	same as "createAlert" JSON-out sample.
+	The "alert" object that was disabled.
+
 
 ###retrieveAlerts
 
@@ -355,14 +421,16 @@ Retrieves all the alerts for a user account:
 JSON-in:
 
 	{
-	  "user_id": "barchart-test-user"
+	    "user_id": "barchart-test-user",
+	    "alert_system": "barchart.com"
 	}
   	
 JSON-out:
 
-	An array of items, same as "createAlert" JSON-out sample.
+	An array of "alert" objects belonging to the specified user.
 
-##Unit testing
+
+##Unit Testing
 
 Gulp and Jasmine are used. Execute unit tests, as follows:
 
