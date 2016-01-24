@@ -21,11 +21,11 @@
         var system = 'barchart.com';
         var userId = 'barchart-test-user';
 
-        //var alertManager = new Barchart.Alerts.RestAlertManager('alerts-management-stage.elasticbeanstalk.com');
-        //var alertManager = new Barchart.Alerts.RestAlertManager('localhost', 3000);
+        var alertManager = new Barchart.Alerts.RestAlertManager('alerts-management-stage.elasticbeanstalk.com');
 
+        //var alertManager = new Barchart.Alerts.RestAlertManager('localhost', 3000);
         //var alertManager = new Barchart.Alerts.SocketIOAlertManager('alerts-management-stage.elasticbeanstalk.com');
-        var alertManager = new Barchart.Alerts.SocketIOAlertManager('localhost', 3000);
+        //var alertManager = new Barchart.Alerts.SocketIOAlertManager('localhost', 3000);
 
         var utilities = Barchart.Alerts.AlertManager;
 
