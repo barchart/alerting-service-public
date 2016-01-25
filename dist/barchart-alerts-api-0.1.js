@@ -389,7 +389,7 @@ module.exports = function() {
 
 	return RestAlertManager;
 }();
-},{"./../common/lang/assert":6,"./../network/rest/RestAction":10,"./../network/rest/RestEndpoint":11,"./../network/rest/RestProvider":13,"./AlertManager":1,"lodash":63,"when":100}],3:[function(require,module,exports){
+},{"./../common/lang/assert":6,"./../network/rest/RestAction":10,"./../network/rest/RestEndpoint":11,"./../network/rest/RestProvider":13,"./AlertManager":1,"lodash":63,"when":101}],3:[function(require,module,exports){
 var _ = require('lodash');
 var io = require('socket.io-client');
 var uuid = require('uuid');
@@ -596,7 +596,7 @@ module.exports = function() {
 
 	return SocketIOAlertManager;
 }();
-},{"./../common/lang/assert":6,"./AlertManager":1,"lodash":63,"socket.io-client":70,"uuid":82,"when":100}],4:[function(require,module,exports){
+},{"./../common/lang/assert":6,"./AlertManager":1,"lodash":63,"socket.io-client":69,"uuid":83,"when":101}],4:[function(require,module,exports){
 var AlertManager = require('./AlertManager');
 var RestAlertManager = require('./RestAlertManager');
 var SocketIOAlertManager = require('./SocketIOAlertManager');
@@ -1102,7 +1102,7 @@ module.exports = function() {
 
     return RestProviderBase;
 }();
-},{"./../../common/lang/assert":6,"./RestEndpoint":11,"class.extend":36,"when":100}],13:[function(require,module,exports){
+},{"./../../common/lang/assert":6,"./RestEndpoint":11,"class.extend":36,"when":101}],13:[function(require,module,exports){
 var axios = require('axios');
 var when = require('when');
 
@@ -1154,7 +1154,7 @@ module.exports = function() {
 
 	return AxiosRestProvider;
 }();
-},{"./../RestProviderBase":12,"axios":16,"when":100}],14:[function(require,module,exports){
+},{"./../RestProviderBase":12,"axios":16,"when":101}],14:[function(require,module,exports){
 module.exports = after
 
 function after(count, callback, err_cb) {
@@ -1269,15 +1269,28 @@ module.exports = function xhrAdapter(resolve, reject, config) {
         responseHeaders,
         config.transformResponse
       ),
-      status: request.status,
-      statusText: request.statusText,
+      // IE sends 1223 instead of 204 (https://github.com/mzabriskie/axios/issues/201)
+      status: request.status === 1223 ? 204 : request.status,
+      statusText: request.status === 1223 ? 'No Content' : request.statusText,
       headers: responseHeaders,
       config: config
     };
+
     // Resolve or reject the Promise based on the status
-    ((request.status >= 200 && request.status < 300) || (!('status' in request) && request.responseText) ?
+    ((response.status >= 200 && response.status < 300) ||
+     (!('status' in request) && response.responseText) ?
       resolve :
       reject)(response);
+
+    // Clean up request
+    request = null;
+  };
+
+  // Handle low level network errors
+  request.onerror = function handleError() {
+    // Real errors are hidden from us by the browser
+    // onerror should only fire if it's a network error
+    reject(new Error('Network Error'));
 
     // Clean up request
     request = null;
@@ -1550,7 +1563,7 @@ module.exports = function dispatchRequest(config) {
 
 
 }).call(this,require('_process'))
-},{"../adapters/http":17,"../adapters/xhr":17,"_process":69}],21:[function(require,module,exports){
+},{"../adapters/http":17,"../adapters/xhr":17,"_process":68}],21:[function(require,module,exports){
 'use strict';
 
 var utils = require('./utils');
@@ -2700,148 +2713,9 @@ module.exports = function(a, b){
 };
 },{}],40:[function(require,module,exports){
 
-/**
- * Expose `debug()` as the module.
- */
-
-module.exports = debug;
-
-/**
- * Create a debugger with the given `name`.
- *
- * @param {String} name
- * @return {Type}
- * @api public
- */
-
-function debug(name) {
-  if (!debug.enabled(name)) return function(){};
-
-  return function(fmt){
-    fmt = coerce(fmt);
-
-    var curr = new Date;
-    var ms = curr - (debug[name] || curr);
-    debug[name] = curr;
-
-    fmt = name
-      + ' '
-      + fmt
-      + ' +' + debug.humanize(ms);
-
-    // This hackery is required for IE8
-    // where `console.log` doesn't have 'apply'
-    window.console
-      && console.log
-      && Function.prototype.apply.call(console.log, console, arguments);
-  }
-}
-
-/**
- * The currently active debug mode names.
- */
-
-debug.names = [];
-debug.skips = [];
-
-/**
- * Enables a debug mode by name. This can include modes
- * separated by a colon and wildcards.
- *
- * @param {String} name
- * @api public
- */
-
-debug.enable = function(name) {
-  try {
-    localStorage.debug = name;
-  } catch(e){}
-
-  var split = (name || '').split(/[\s,]+/)
-    , len = split.length;
-
-  for (var i = 0; i < len; i++) {
-    name = split[i].replace('*', '.*?');
-    if (name[0] === '-') {
-      debug.skips.push(new RegExp('^' + name.substr(1) + '$'));
-    }
-    else {
-      debug.names.push(new RegExp('^' + name + '$'));
-    }
-  }
-};
-
-/**
- * Disable debug output.
- *
- * @api public
- */
-
-debug.disable = function(){
-  debug.enable('');
-};
-
-/**
- * Humanize the given `ms`.
- *
- * @param {Number} m
- * @return {String}
- * @api private
- */
-
-debug.humanize = function(ms) {
-  var sec = 1000
-    , min = 60 * 1000
-    , hour = 60 * min;
-
-  if (ms >= hour) return (ms / hour).toFixed(1) + 'h';
-  if (ms >= min) return (ms / min).toFixed(1) + 'm';
-  if (ms >= sec) return (ms / sec | 0) + 's';
-  return ms + 'ms';
-};
-
-/**
- * Returns true if the given mode name is enabled, false otherwise.
- *
- * @param {String} name
- * @return {Boolean}
- * @api public
- */
-
-debug.enabled = function(name) {
-  for (var i = 0, len = debug.skips.length; i < len; i++) {
-    if (debug.skips[i].test(name)) {
-      return false;
-    }
-  }
-  for (var i = 0, len = debug.names.length; i < len; i++) {
-    if (debug.names[i].test(name)) {
-      return true;
-    }
-  }
-  return false;
-};
-
-/**
- * Coerce `val`.
- */
-
-function coerce(val) {
-  if (val instanceof Error) return val.stack || val.message;
-  return val;
-}
-
-// persist
-
-try {
-  if (window.localStorage) debug.enable(localStorage.debug);
-} catch(e){}
-
-},{}],41:[function(require,module,exports){
-
 module.exports =  require('./lib/');
 
-},{"./lib/":42}],42:[function(require,module,exports){
+},{"./lib/":41}],41:[function(require,module,exports){
 
 module.exports = require('./socket');
 
@@ -2853,7 +2727,7 @@ module.exports = require('./socket');
  */
 module.exports.parser = require('engine.io-parser');
 
-},{"./socket":43,"engine.io-parser":54}],43:[function(require,module,exports){
+},{"./socket":42,"engine.io-parser":54}],42:[function(require,module,exports){
 (function (global){
 /**
  * Module dependencies.
@@ -3562,7 +3436,7 @@ Socket.prototype.filterUpgrades = function (upgrades) {
 };
 
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{"./transport":44,"./transports":45,"component-emitter":38,"debug":51,"engine.io-parser":54,"indexof":60,"parsejson":66,"parseqs":67,"parseuri":53}],44:[function(require,module,exports){
+},{"./transport":43,"./transports":44,"component-emitter":38,"debug":50,"engine.io-parser":54,"indexof":60,"parsejson":65,"parseqs":66,"parseuri":53}],43:[function(require,module,exports){
 /**
  * Module dependencies.
  */
@@ -3723,7 +3597,7 @@ Transport.prototype.onClose = function () {
   this.emit('close');
 };
 
-},{"component-emitter":38,"engine.io-parser":54}],45:[function(require,module,exports){
+},{"component-emitter":38,"engine.io-parser":54}],44:[function(require,module,exports){
 (function (global){
 /**
  * Module dependencies
@@ -3780,7 +3654,7 @@ function polling(opts){
 }
 
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{"./polling-jsonp":46,"./polling-xhr":47,"./websocket":49,"xmlhttprequest":50}],46:[function(require,module,exports){
+},{"./polling-jsonp":45,"./polling-xhr":46,"./websocket":48,"xmlhttprequest":49}],45:[function(require,module,exports){
 (function (global){
 
 /**
@@ -4017,7 +3891,7 @@ JSONPPolling.prototype.doWrite = function (data, fn) {
 };
 
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{"./polling":48,"component-inherit":39}],47:[function(require,module,exports){
+},{"./polling":47,"component-inherit":39}],46:[function(require,module,exports){
 (function (global){
 /**
  * Module requirements.
@@ -4405,7 +4279,7 @@ function unloadHandler() {
 }
 
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{"./polling":48,"component-emitter":38,"component-inherit":39,"debug":51,"xmlhttprequest":50}],48:[function(require,module,exports){
+},{"./polling":47,"component-emitter":38,"component-inherit":39,"debug":50,"xmlhttprequest":49}],47:[function(require,module,exports){
 /**
  * Module dependencies.
  */
@@ -4652,7 +4526,7 @@ Polling.prototype.uri = function(){
   return schema + '://' + this.hostname + port + this.path + query;
 };
 
-},{"../transport":44,"component-inherit":39,"debug":51,"engine.io-parser":54,"parseqs":67,"xmlhttprequest":50}],49:[function(require,module,exports){
+},{"../transport":43,"component-inherit":39,"debug":50,"engine.io-parser":54,"parseqs":66,"xmlhttprequest":49}],48:[function(require,module,exports){
 /**
  * Module dependencies.
  */
@@ -4892,7 +4766,7 @@ WS.prototype.check = function(){
   return !!WebSocket && !('__initialize' in WebSocket && this.name === WS.prototype.name);
 };
 
-},{"../transport":44,"component-inherit":39,"debug":51,"engine.io-parser":54,"parseqs":67,"ws":101}],50:[function(require,module,exports){
+},{"../transport":43,"component-inherit":39,"debug":50,"engine.io-parser":54,"parseqs":66,"ws":102}],49:[function(require,module,exports){
 // browser shim for xmlhttprequest module
 var hasCORS = require('has-cors');
 
@@ -4930,7 +4804,7 @@ module.exports = function(opts) {
   }
 }
 
-},{"has-cors":59}],51:[function(require,module,exports){
+},{"has-cors":59}],50:[function(require,module,exports){
 
 /**
  * This is the web browser implementation of `debug()`.
@@ -5079,7 +4953,7 @@ function load() {
 
 exports.enable(load());
 
-},{"./debug":52}],52:[function(require,module,exports){
+},{"./debug":51}],51:[function(require,module,exports){
 
 /**
  * This is the common logic for both the Node.js and web browser
@@ -5278,7 +5152,120 @@ function coerce(val) {
   return val;
 }
 
-},{"ms":64}],53:[function(require,module,exports){
+},{"ms":52}],52:[function(require,module,exports){
+/**
+ * Helpers.
+ */
+
+var s = 1000;
+var m = s * 60;
+var h = m * 60;
+var d = h * 24;
+var y = d * 365.25;
+
+/**
+ * Parse or format the given `val`.
+ *
+ * Options:
+ *
+ *  - `long` verbose formatting [false]
+ *
+ * @param {String|Number} val
+ * @param {Object} options
+ * @return {String|Number}
+ * @api public
+ */
+
+module.exports = function(val, options){
+  options = options || {};
+  if ('string' == typeof val) return parse(val);
+  return options.long
+    ? long(val)
+    : short(val);
+};
+
+/**
+ * Parse the given `str` and return milliseconds.
+ *
+ * @param {String} str
+ * @return {Number}
+ * @api private
+ */
+
+function parse(str) {
+  var match = /^((?:\d+)?\.?\d+) *(ms|seconds?|s|minutes?|m|hours?|h|days?|d|years?|y)?$/i.exec(str);
+  if (!match) return;
+  var n = parseFloat(match[1]);
+  var type = (match[2] || 'ms').toLowerCase();
+  switch (type) {
+    case 'years':
+    case 'year':
+    case 'y':
+      return n * y;
+    case 'days':
+    case 'day':
+    case 'd':
+      return n * d;
+    case 'hours':
+    case 'hour':
+    case 'h':
+      return n * h;
+    case 'minutes':
+    case 'minute':
+    case 'm':
+      return n * m;
+    case 'seconds':
+    case 'second':
+    case 's':
+      return n * s;
+    case 'ms':
+      return n;
+  }
+}
+
+/**
+ * Short format for `ms`.
+ *
+ * @param {Number} ms
+ * @return {String}
+ * @api private
+ */
+
+function short(ms) {
+  if (ms >= d) return Math.round(ms / d) + 'd';
+  if (ms >= h) return Math.round(ms / h) + 'h';
+  if (ms >= m) return Math.round(ms / m) + 'm';
+  if (ms >= s) return Math.round(ms / s) + 's';
+  return ms + 'ms';
+}
+
+/**
+ * Long format for `ms`.
+ *
+ * @param {Number} ms
+ * @return {String}
+ * @api private
+ */
+
+function long(ms) {
+  return plural(ms, d, 'day')
+    || plural(ms, h, 'hour')
+    || plural(ms, m, 'minute')
+    || plural(ms, s, 'second')
+    || ms + ' ms';
+}
+
+/**
+ * Pluralization helper.
+ */
+
+function plural(ms, n, name) {
+  if (ms < n) return;
+  if (ms < n * 1.5) return Math.floor(ms / n) + ' ' + name;
+  return Math.ceil(ms / n) + ' ' + name + 's';
+}
+
+},{}],53:[function(require,module,exports){
 /**
  * Parses an URI
  *
@@ -5917,7 +5904,7 @@ exports.decodePayloadAsBinary = function (data, binaryType, callback) {
 };
 
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{"./keys":55,"after":14,"arraybuffer.slice":15,"base64-arraybuffer":34,"blob":35,"has-binary":56,"utf8":80}],55:[function(require,module,exports){
+},{"./keys":55,"after":14,"arraybuffer.slice":15,"base64-arraybuffer":34,"blob":35,"has-binary":56,"utf8":81}],55:[function(require,module,exports){
 
 /**
  * Gets the keys for an object.
@@ -19332,119 +19319,6 @@ module.exports = Array.isArray || function (arr) {
 
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
 },{}],64:[function(require,module,exports){
-/**
- * Helpers.
- */
-
-var s = 1000;
-var m = s * 60;
-var h = m * 60;
-var d = h * 24;
-var y = d * 365.25;
-
-/**
- * Parse or format the given `val`.
- *
- * Options:
- *
- *  - `long` verbose formatting [false]
- *
- * @param {String|Number} val
- * @param {Object} options
- * @return {String|Number}
- * @api public
- */
-
-module.exports = function(val, options){
-  options = options || {};
-  if ('string' == typeof val) return parse(val);
-  return options.long
-    ? long(val)
-    : short(val);
-};
-
-/**
- * Parse the given `str` and return milliseconds.
- *
- * @param {String} str
- * @return {Number}
- * @api private
- */
-
-function parse(str) {
-  var match = /^((?:\d+)?\.?\d+) *(ms|seconds?|s|minutes?|m|hours?|h|days?|d|years?|y)?$/i.exec(str);
-  if (!match) return;
-  var n = parseFloat(match[1]);
-  var type = (match[2] || 'ms').toLowerCase();
-  switch (type) {
-    case 'years':
-    case 'year':
-    case 'y':
-      return n * y;
-    case 'days':
-    case 'day':
-    case 'd':
-      return n * d;
-    case 'hours':
-    case 'hour':
-    case 'h':
-      return n * h;
-    case 'minutes':
-    case 'minute':
-    case 'm':
-      return n * m;
-    case 'seconds':
-    case 'second':
-    case 's':
-      return n * s;
-    case 'ms':
-      return n;
-  }
-}
-
-/**
- * Short format for `ms`.
- *
- * @param {Number} ms
- * @return {String}
- * @api private
- */
-
-function short(ms) {
-  if (ms >= d) return Math.round(ms / d) + 'd';
-  if (ms >= h) return Math.round(ms / h) + 'h';
-  if (ms >= m) return Math.round(ms / m) + 'm';
-  if (ms >= s) return Math.round(ms / s) + 's';
-  return ms + 'ms';
-}
-
-/**
- * Long format for `ms`.
- *
- * @param {Number} ms
- * @return {String}
- * @api private
- */
-
-function long(ms) {
-  return plural(ms, d, 'day')
-    || plural(ms, h, 'hour')
-    || plural(ms, m, 'minute')
-    || plural(ms, s, 'second')
-    || ms + ' ms';
-}
-
-/**
- * Pluralization helper.
- */
-
-function plural(ms, n, name) {
-  if (ms < n) return;
-  if (ms < n * 1.5) return Math.floor(ms / n) + ' ' + name;
-  return Math.ceil(ms / n) + ' ' + name + 's';
-}
-
-},{}],65:[function(require,module,exports){
 
 /**
  * HOP ref.
@@ -19529,7 +19403,7 @@ exports.length = function(obj){
 exports.isEmpty = function(obj){
   return 0 == exports.length(obj);
 };
-},{}],66:[function(require,module,exports){
+},{}],65:[function(require,module,exports){
 (function (global){
 /**
  * JSON parse.
@@ -19564,7 +19438,7 @@ module.exports = function parsejson(data) {
   }
 };
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{}],67:[function(require,module,exports){
+},{}],66:[function(require,module,exports){
 /**
  * Compiles a querystring
  * Returns string representation of the object
@@ -19603,7 +19477,7 @@ exports.decode = function(qs){
   return qry;
 };
 
-},{}],68:[function(require,module,exports){
+},{}],67:[function(require,module,exports){
 /**
  * Parses an URI
  *
@@ -19630,7 +19504,7 @@ module.exports = function parseuri(str) {
   return uri;
 };
 
-},{}],69:[function(require,module,exports){
+},{}],68:[function(require,module,exports){
 // shim for using process in browser
 
 var process = module.exports = {};
@@ -19723,11 +19597,11 @@ process.chdir = function (dir) {
 };
 process.umask = function() { return 0; };
 
-},{}],70:[function(require,module,exports){
+},{}],69:[function(require,module,exports){
 
 module.exports = require('./lib/');
 
-},{"./lib/":71}],71:[function(require,module,exports){
+},{"./lib/":70}],70:[function(require,module,exports){
 
 /**
  * Module dependencies.
@@ -19816,7 +19690,7 @@ exports.connect = lookup;
 exports.Manager = require('./manager');
 exports.Socket = require('./socket');
 
-},{"./manager":72,"./socket":74,"./url":75,"debug":40,"socket.io-parser":77}],72:[function(require,module,exports){
+},{"./manager":71,"./socket":73,"./url":74,"debug":75,"socket.io-parser":77}],71:[function(require,module,exports){
 
 /**
  * Module dependencies.
@@ -20321,7 +20195,7 @@ Manager.prototype.onreconnect = function(){
   this.emitAll('reconnect', attempt);
 };
 
-},{"./on":73,"./socket":74,"./url":75,"backo2":33,"component-bind":37,"component-emitter":38,"debug":40,"engine.io-client":41,"indexof":60,"object-component":65,"socket.io-parser":77}],73:[function(require,module,exports){
+},{"./on":72,"./socket":73,"./url":74,"backo2":33,"component-bind":37,"component-emitter":38,"debug":75,"engine.io-client":40,"indexof":60,"object-component":64,"socket.io-parser":77}],72:[function(require,module,exports){
 
 /**
  * Module exports.
@@ -20347,7 +20221,7 @@ function on(obj, ev, fn) {
   };
 }
 
-},{}],74:[function(require,module,exports){
+},{}],73:[function(require,module,exports){
 
 /**
  * Module dependencies.
@@ -20734,7 +20608,7 @@ Socket.prototype.disconnect = function(){
   return this;
 };
 
-},{"./on":73,"component-bind":37,"component-emitter":38,"debug":40,"has-binary":58,"socket.io-parser":77,"to-array":79}],75:[function(require,module,exports){
+},{"./on":72,"component-bind":37,"component-emitter":38,"debug":75,"has-binary":58,"socket.io-parser":77,"to-array":80}],74:[function(require,module,exports){
 (function (global){
 
 /**
@@ -20811,7 +20685,146 @@ function url(uri, loc){
 }
 
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{"debug":40,"parseuri":68}],76:[function(require,module,exports){
+},{"debug":75,"parseuri":67}],75:[function(require,module,exports){
+
+/**
+ * Expose `debug()` as the module.
+ */
+
+module.exports = debug;
+
+/**
+ * Create a debugger with the given `name`.
+ *
+ * @param {String} name
+ * @return {Type}
+ * @api public
+ */
+
+function debug(name) {
+  if (!debug.enabled(name)) return function(){};
+
+  return function(fmt){
+    fmt = coerce(fmt);
+
+    var curr = new Date;
+    var ms = curr - (debug[name] || curr);
+    debug[name] = curr;
+
+    fmt = name
+      + ' '
+      + fmt
+      + ' +' + debug.humanize(ms);
+
+    // This hackery is required for IE8
+    // where `console.log` doesn't have 'apply'
+    window.console
+      && console.log
+      && Function.prototype.apply.call(console.log, console, arguments);
+  }
+}
+
+/**
+ * The currently active debug mode names.
+ */
+
+debug.names = [];
+debug.skips = [];
+
+/**
+ * Enables a debug mode by name. This can include modes
+ * separated by a colon and wildcards.
+ *
+ * @param {String} name
+ * @api public
+ */
+
+debug.enable = function(name) {
+  try {
+    localStorage.debug = name;
+  } catch(e){}
+
+  var split = (name || '').split(/[\s,]+/)
+    , len = split.length;
+
+  for (var i = 0; i < len; i++) {
+    name = split[i].replace('*', '.*?');
+    if (name[0] === '-') {
+      debug.skips.push(new RegExp('^' + name.substr(1) + '$'));
+    }
+    else {
+      debug.names.push(new RegExp('^' + name + '$'));
+    }
+  }
+};
+
+/**
+ * Disable debug output.
+ *
+ * @api public
+ */
+
+debug.disable = function(){
+  debug.enable('');
+};
+
+/**
+ * Humanize the given `ms`.
+ *
+ * @param {Number} m
+ * @return {String}
+ * @api private
+ */
+
+debug.humanize = function(ms) {
+  var sec = 1000
+    , min = 60 * 1000
+    , hour = 60 * min;
+
+  if (ms >= hour) return (ms / hour).toFixed(1) + 'h';
+  if (ms >= min) return (ms / min).toFixed(1) + 'm';
+  if (ms >= sec) return (ms / sec | 0) + 's';
+  return ms + 'ms';
+};
+
+/**
+ * Returns true if the given mode name is enabled, false otherwise.
+ *
+ * @param {String} name
+ * @return {Boolean}
+ * @api public
+ */
+
+debug.enabled = function(name) {
+  for (var i = 0, len = debug.skips.length; i < len; i++) {
+    if (debug.skips[i].test(name)) {
+      return false;
+    }
+  }
+  for (var i = 0, len = debug.names.length; i < len; i++) {
+    if (debug.names[i].test(name)) {
+      return true;
+    }
+  }
+  return false;
+};
+
+/**
+ * Coerce `val`.
+ */
+
+function coerce(val) {
+  if (val instanceof Error) return val.stack || val.message;
+  return val;
+}
+
+// persist
+
+try {
+  if (window.localStorage) debug.enable(localStorage.debug);
+} catch(e){}
+
+},{}],76:[function(require,module,exports){
 (function (global){
 /*global Blob,File*/
 
@@ -21358,7 +21371,7 @@ function error(data){
   };
 }
 
-},{"./binary":76,"./is-buffer":78,"component-emitter":38,"debug":40,"isarray":61,"json3":62}],78:[function(require,module,exports){
+},{"./binary":76,"./is-buffer":78,"component-emitter":38,"debug":79,"isarray":61,"json3":62}],78:[function(require,module,exports){
 (function (global){
 
 module.exports = isBuf;
@@ -21376,6 +21389,8 @@ function isBuf(obj) {
 
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
 },{}],79:[function(require,module,exports){
+arguments[4][75][0].apply(exports,arguments)
+},{"dup":75}],80:[function(require,module,exports){
 module.exports = toArray
 
 function toArray(list, index) {
@@ -21390,7 +21405,7 @@ function toArray(list, index) {
     return array
 }
 
-},{}],80:[function(require,module,exports){
+},{}],81:[function(require,module,exports){
 (function (global){
 /*! http://mths.be/utf8js v2.0.0 by @mathias */
 ;(function(root) {
@@ -21633,7 +21648,7 @@ function toArray(list, index) {
 }(this));
 
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{}],81:[function(require,module,exports){
+},{}],82:[function(require,module,exports){
 (function (global){
 
 var rng;
@@ -21668,7 +21683,7 @@ module.exports = rng;
 
 
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{}],82:[function(require,module,exports){
+},{}],83:[function(require,module,exports){
 //     uuid.js
 //
 //     Copyright (c) 2010-2012 Robert Kieffer
@@ -21853,7 +21868,7 @@ uuid.unparse = unparse;
 
 module.exports = uuid;
 
-},{"./rng":81}],83:[function(require,module,exports){
+},{"./rng":82}],84:[function(require,module,exports){
 /** @license MIT License (c) copyright 2010-2014 original author or authors */
 /** @author Brian Cavalier */
 /** @author John Hann */
@@ -21872,7 +21887,7 @@ define(function (require) {
 });
 })(typeof define === 'function' && define.amd ? define : function (factory) { module.exports = factory(require); });
 
-},{"./Scheduler":84,"./env":96,"./makePromise":98}],84:[function(require,module,exports){
+},{"./Scheduler":85,"./env":97,"./makePromise":99}],85:[function(require,module,exports){
 /** @license MIT License (c) copyright 2010-2014 original author or authors */
 /** @author Brian Cavalier */
 /** @author John Hann */
@@ -21954,7 +21969,7 @@ define(function() {
 });
 }(typeof define === 'function' && define.amd ? define : function(factory) { module.exports = factory(); }));
 
-},{}],85:[function(require,module,exports){
+},{}],86:[function(require,module,exports){
 /** @license MIT License (c) copyright 2010-2014 original author or authors */
 /** @author Brian Cavalier */
 /** @author John Hann */
@@ -21982,7 +21997,7 @@ define(function() {
 	return TimeoutError;
 });
 }(typeof define === 'function' && define.amd ? define : function(factory) { module.exports = factory(); }));
-},{}],86:[function(require,module,exports){
+},{}],87:[function(require,module,exports){
 /** @license MIT License (c) copyright 2010-2014 original author or authors */
 /** @author Brian Cavalier */
 /** @author John Hann */
@@ -22039,7 +22054,7 @@ define(function() {
 
 
 
-},{}],87:[function(require,module,exports){
+},{}],88:[function(require,module,exports){
 /** @license MIT License (c) copyright 2010-2014 original author or authors */
 /** @author Brian Cavalier */
 /** @author John Hann */
@@ -22330,7 +22345,7 @@ define(function(require) {
 });
 }(typeof define === 'function' && define.amd ? define : function(factory) { module.exports = factory(require); }));
 
-},{"../apply":86,"../state":99}],88:[function(require,module,exports){
+},{"../apply":87,"../state":100}],89:[function(require,module,exports){
 /** @license MIT License (c) copyright 2010-2014 original author or authors */
 /** @author Brian Cavalier */
 /** @author John Hann */
@@ -22492,7 +22507,7 @@ define(function() {
 });
 }(typeof define === 'function' && define.amd ? define : function(factory) { module.exports = factory(); }));
 
-},{}],89:[function(require,module,exports){
+},{}],90:[function(require,module,exports){
 /** @license MIT License (c) copyright 2010-2014 original author or authors */
 /** @author Brian Cavalier */
 /** @author John Hann */
@@ -22521,7 +22536,7 @@ define(function() {
 });
 }(typeof define === 'function' && define.amd ? define : function(factory) { module.exports = factory(); }));
 
-},{}],90:[function(require,module,exports){
+},{}],91:[function(require,module,exports){
 /** @license MIT License (c) copyright 2010-2014 original author or authors */
 /** @author Brian Cavalier */
 /** @author John Hann */
@@ -22543,7 +22558,7 @@ define(function(require) {
 });
 }(typeof define === 'function' && define.amd ? define : function(factory) { module.exports = factory(require); }));
 
-},{"../state":99}],91:[function(require,module,exports){
+},{"../state":100}],92:[function(require,module,exports){
 /** @license MIT License (c) copyright 2010-2014 original author or authors */
 /** @author Brian Cavalier */
 /** @author John Hann */
@@ -22610,7 +22625,7 @@ define(function() {
 });
 }(typeof define === 'function' && define.amd ? define : function(factory) { module.exports = factory(); }));
 
-},{}],92:[function(require,module,exports){
+},{}],93:[function(require,module,exports){
 /** @license MIT License (c) copyright 2010-2014 original author or authors */
 /** @author Brian Cavalier */
 /** @author John Hann */
@@ -22636,7 +22651,7 @@ define(function() {
 });
 }(typeof define === 'function' && define.amd ? define : function(factory) { module.exports = factory(); }));
 
-},{}],93:[function(require,module,exports){
+},{}],94:[function(require,module,exports){
 /** @license MIT License (c) copyright 2010-2014 original author or authors */
 /** @author Brian Cavalier */
 /** @author John Hann */
@@ -22716,7 +22731,7 @@ define(function(require) {
 });
 }(typeof define === 'function' && define.amd ? define : function(factory) { module.exports = factory(require); }));
 
-},{"../TimeoutError":85,"../env":96}],94:[function(require,module,exports){
+},{"../TimeoutError":86,"../env":97}],95:[function(require,module,exports){
 /** @license MIT License (c) copyright 2010-2014 original author or authors */
 /** @author Brian Cavalier */
 /** @author John Hann */
@@ -22804,7 +22819,7 @@ define(function(require) {
 });
 }(typeof define === 'function' && define.amd ? define : function(factory) { module.exports = factory(require); }));
 
-},{"../env":96,"../format":97}],95:[function(require,module,exports){
+},{"../env":97,"../format":98}],96:[function(require,module,exports){
 /** @license MIT License (c) copyright 2010-2014 original author or authors */
 /** @author Brian Cavalier */
 /** @author John Hann */
@@ -22844,7 +22859,7 @@ define(function() {
 }(typeof define === 'function' && define.amd ? define : function(factory) { module.exports = factory(); }));
 
 
-},{}],96:[function(require,module,exports){
+},{}],97:[function(require,module,exports){
 (function (process){
 /** @license MIT License (c) copyright 2010-2014 original author or authors */
 /** @author Brian Cavalier */
@@ -22921,7 +22936,7 @@ define(function(require) {
 }(typeof define === 'function' && define.amd ? define : function(factory) { module.exports = factory(require); }));
 
 }).call(this,require('_process'))
-},{"_process":69}],97:[function(require,module,exports){
+},{"_process":68}],98:[function(require,module,exports){
 /** @license MIT License (c) copyright 2010-2014 original author or authors */
 /** @author Brian Cavalier */
 /** @author John Hann */
@@ -22979,7 +22994,7 @@ define(function() {
 });
 }(typeof define === 'function' && define.amd ? define : function(factory) { module.exports = factory(); }));
 
-},{}],98:[function(require,module,exports){
+},{}],99:[function(require,module,exports){
 (function (process){
 /** @license MIT License (c) copyright 2010-2014 original author or authors */
 /** @author Brian Cavalier */
@@ -23910,7 +23925,7 @@ define(function() {
 }(typeof define === 'function' && define.amd ? define : function(factory) { module.exports = factory(); }));
 
 }).call(this,require('_process'))
-},{"_process":69}],99:[function(require,module,exports){
+},{"_process":68}],100:[function(require,module,exports){
 /** @license MIT License (c) copyright 2010-2014 original author or authors */
 /** @author Brian Cavalier */
 /** @author John Hann */
@@ -23947,7 +23962,7 @@ define(function() {
 });
 }(typeof define === 'function' && define.amd ? define : function(factory) { module.exports = factory(); }));
 
-},{}],100:[function(require,module,exports){
+},{}],101:[function(require,module,exports){
 /** @license MIT License (c) copyright 2010-2014 original author or authors */
 
 /**
@@ -24177,7 +24192,7 @@ define(function (require) {
 });
 })(typeof define === 'function' && define.amd ? define : function (factory) { module.exports = factory(require); });
 
-},{"./lib/Promise":83,"./lib/TimeoutError":85,"./lib/apply":86,"./lib/decorators/array":87,"./lib/decorators/flow":88,"./lib/decorators/fold":89,"./lib/decorators/inspect":90,"./lib/decorators/iterate":91,"./lib/decorators/progress":92,"./lib/decorators/timed":93,"./lib/decorators/unhandledRejection":94,"./lib/decorators/with":95}],101:[function(require,module,exports){
+},{"./lib/Promise":84,"./lib/TimeoutError":86,"./lib/apply":87,"./lib/decorators/array":88,"./lib/decorators/flow":89,"./lib/decorators/fold":90,"./lib/decorators/inspect":91,"./lib/decorators/iterate":92,"./lib/decorators/progress":93,"./lib/decorators/timed":94,"./lib/decorators/unhandledRejection":95,"./lib/decorators/with":96}],102:[function(require,module,exports){
 
 /**
  * Module dependencies.
