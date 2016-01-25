@@ -3,7 +3,7 @@
   "version": "0.1.2",
   "homepage": "https://github.com/barchart/alerts-client-js",
   "description": "Javascript library for managing Barchart alerts",
-  "main": "dist/barchart-alerts-api-0.0-min.js",
+  "main": "dist/barchart-alerts-api-0.1-min.js",
   "dependencies": {},
   "keywords": [
     "Barchart",
