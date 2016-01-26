@@ -104,7 +104,8 @@ h4 {
 tr.condition td {
     padding-bottom: 2px !important;
 }
-tr.component td {
+tr.component td,
+tr.qualifier td {
     border-top: none !important;
     padding-top: 2px !important;
     padding-bottom: 2px !important;

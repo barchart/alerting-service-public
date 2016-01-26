@@ -62,6 +62,8 @@
 
                 alertManager.retrieveAlerts({ user_id: userId, alert_system: system })
                     .then(function(alerts) {
+                        that.alerts([ ]);
+
                         _.forEach(alerts, function(alert) {
                             that.alerts.push(new AlertDisplayModel(alert));
                         });
@@ -174,7 +176,7 @@
                     alert_system: system,
                     automatic_reset: that.automaticReset(),
                     conditions: _.map(that.conditions(), function(condition) {
-                        return {
+                        var conditionData = {
                             property: {
                                 property_id: condition.property().property_id,
                                 target: {
@@ -186,6 +188,16 @@
                                 operand: condition.operand()
                             }
                         };
+
+                        var qualifiers = condition.qualifiers();
+
+                        if (qualifiers.length > 0) {
+                            conditionData.property.target.qualifiers = _.map(qualifiers, function(qualifier) {
+                                 return qualifier.qualifierValue();
+                            });
+                        }
+
+                        return conditionData;
                     }),
                     publishers: _.map(that.publishers(), function(publisher) {
                         return {
@@ -277,6 +289,29 @@
 
                 return returnRef;
             });
+            that.qualifiers = ko.computed(function() {
+                var target = that.target();
+
+                var returnRef;
+
+                if (target) {
+                    return _.map(target.qualifier_descriptions || [], function (description, index) {
+                        var value;
+
+                        if (_.isObject(condition) && _.isArray(condition.property.target.qualifiers)) {
+                            value = condition.property.target.qualifiers[index];
+                        } else {
+                            value = null;
+                        }
+
+                        return new AlertTargetQualifierModel(ready, description, value);
+                    });
+                } else {
+                    returnRef = [ ];
+                }
+
+                return returnRef;
+            });
             that.propertyTree = ko.computed(function() {
                 var target = that.target();
 
@@ -353,6 +388,14 @@
             } else {
                 that.selectTarget(_.first(that.targets()));
             }
+        }
+        function AlertTargetQualifierModel(ready, description, value) {
+            var that = this;
+            
+            that.ready = ready;
+
+            that.qualifierDescription = ko.observable(description);
+            that.qualifierValue = ko.observable(value || null);
         }
         function AlertConditionTreeModel(parent, tree, description, index, node) {
             var that = this;
@@ -582,9 +625,21 @@
             <td class="col-md-4" colspan="2">
             </td>
         </tr>
+        <!-- ko foreach: qualifiers -->
+        <tr class="qualifier" data-bind="template: { name: 'alert-create-condition-qualifier-template' }"></tr>
+        <!-- /ko -->
         <!-- ko foreach: properties -->
         <tr class="component" data-bind="template: { name: 'alert-create-condition-property-template' }"></tr>
         <!-- /ko -->
+    </script>
+    <script type="text/html" id="alert-create-condition-qualifier-template">
+        <td class="col-md-1"></td>
+        <td class="col-md-2"></td>
+        <td class="col-md-3">
+            <input class="form-control" data-bind="textInput: qualifierValue, enable: ready, attr: { placeholder: qualifierDescription }" type="text">
+        </td>
+        <td class="col-md-4" colspan="2">
+        </td>
     </script>
     <script type="text/html" id="alert-create-condition-property-template">
         <td class="col-md-1"></td>
