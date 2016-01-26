@@ -75,12 +75,25 @@ module.exports = function() {
 		retrieveAlerts: function(query) {
 			assert.argumentIsRequired(query, query, Object);
 			assert.argumentIsRequired(query.user_id, 'query.user_id', String);
-			assert.argumentIsRequired(query.alert_system, 'query.alert_system', String);
 
-			return this._retrieveAlerts(query);
+			var returnRef = this._retrieveAlerts(query);
+
+			if (_.isObject(query.filter) && _.isObject(query.filter.target) && _.isString(query.filter.target.identifier)) {
+				var identifier = query.filter.target.identifier;
+
+				returnRef = returnRef.then(function(alerts) {
+					return _.filter(alerts, function(alert) {
+						return _.some(alert.conditions, function(condition) {
+							return condition.property.target.identifier === identifier;
+						});
+					});
+				});
+			}
+
+			return returnRef;
 		},
 
-		_retrieveAlerts: function(user) {
+		_retrieveAlerts: function(query) {
 			return null;
 		},
 
@@ -266,7 +279,7 @@ module.exports = function() {
 						return item.description[descriptionIndex];
 					});
 
-					transform(children, descriptionIndex + 1)
+					transform(children, descriptionIndex + 1);
 
 					replacement.items = _.values(children);
 				}
