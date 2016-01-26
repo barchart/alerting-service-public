@@ -204,7 +204,7 @@ include an "operand" value. Alerts can have multiple conditions.
                     "description": "equity",
                     "identifier_description": "symbol",
                     "identifier": "TSLA"
-                }
+            }
         },
         "operator": {
             "operator_id": 2,
@@ -440,17 +440,28 @@ JSON-out:
 
 Retrieves all the "Alert" objects for a user account:
 
-JSON-in:
+JSON-in (example 1, required properties):
 
 	{
 	    "user_id": "barchart-test-user",
-	    "alert_system": "barchart.com"
+	    "alert_system": "barchart.com",
 	}
   	
+JSON-in (example 2, optional filter, restricting results to alerts that refer to AAPL):
+
+	{
+		"user_id": "barchart-test-user",
+		"alert_system": "barchart.com",
+		"filter": {
+			"target": {
+				identifier: "AAPL"
+			}
+		}
+	}
+ 	
 JSON-out:
 
-	An array of "lert" objects belonging to the specified user.
-
+	An array of "Alert" objects belonging to the specified user.
 
 ##Unit Testing
 
