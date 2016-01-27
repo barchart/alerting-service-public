@@ -272,6 +272,15 @@ An "alert" consists of one or more "condition" objects and one or more
         "conditions": [ ],
         "publishers": [ ]
     }
+    
+####Alert States
+
+* Inactive - The alert is not processing. It will not begin processing until started (see alertManager.enableAlert).
+* Starting - The alert is attempting to transition to the "Active" state. If the transition succeeds, the state will become "Active;" otherwise the state will revert to "Inactive." 
+* Active - The alert is processing; however, its conditions have not yet been met. The alert will stay in the "Active" state until the user stops it (see alertManager.disableAlert) or until the conditions are met.
+* Stopping - The user has requested that alert processing stop. Once this operation is complete, the alert will return to the "Inactive" state.
+* Triggered - The alert's conditions have been met. The alert can be manually restarted (see alertManager.enableAlert).
+
 
 ##AlertManager Operations
 
