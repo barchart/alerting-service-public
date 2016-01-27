@@ -138,7 +138,7 @@ A "target" refers to a type of object that can be observed.
 ###Property
 
 A "property" refers to an attribute of a target. The value of
-a "property" can be checked using an "operator" object.
+a "property" can be checked using an "operator" object. 
 
     {
         "property_id": 18,
@@ -157,6 +157,15 @@ a "property" can be checked using an "operator" object.
             3
         ]
     }
+
+The "valid_operators" array references the "operator" objects
+that can be used in conjunction with this "property" to
+create a "condition." So, refer to the example above. This
+"property" describes the 200-day average volume for an equity. 
+The  "valid_operators" array tells us that operators 2 and 3 
+(greater-than and less-than) can be used to build an 
+alert "condition" however it would not be valid to pair any
+other operators with this "property."
 
 
 ###Operator
