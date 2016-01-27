@@ -328,7 +328,7 @@ module.exports = function() {
 
 			this._super();
 
-			this._restProvider = new RestProvider(baseUrl || 'alerts.barchart.com', port || 80, secure || false);
+			this._restProvider = new RestProvider(baseUrl || 'alerts-management-prod.barchart.com', port || 80, getIsSecure(secure));
 
 			this._createEndpoint = new RestEndpoint(RestAction.Create, [ 'alerts' ]);
 			this._retireveEndpoint = new RestEndpoint(RestAction.Retrieve, [ 'alerts', 'alert_id' ]);
@@ -399,6 +399,28 @@ module.exports = function() {
 			return '[REST Alert Manager]';
 		}
 	});
+
+	function getIsSecure(secure) {
+		var returnVal;
+
+		if (_.isBoolean(secure)) {
+			returnVal = secure;
+		} else {
+			var protocol;
+
+			if (_.isObject(window) && _.isObject(window.location) && _.isString(window.location.protocol)) {
+				protocol = window.location.protocol;
+			} else if (_.isObject(document) && _.isObject(document.location) && _.isString(document.location.protocol)) {
+				protocol = document.location.protocol
+			} else {
+				protocol = '';
+			}
+
+			returnVal = _.startsWith(protocol, 'https');
+		}
+
+		return returnVal;
+	}
 
 	return RestAlertManager;
 }();
