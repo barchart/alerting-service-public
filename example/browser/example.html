@@ -115,31 +115,50 @@
             that.alert = ko.observable(alert);
             that.processing = ko.observable(false);
 
+
+
+            that.lastTriggerDateDisplay = ko.computed(function() {
+                var alert = that.alert();
+
+                var returnRef;
+
+                if (alert.last_trigger_date) {
+                    var lastTriggerDate = new Date(parseInt(alert.last_trigger_date));
+
+                    returnRef = lastTriggerDate.toString();
+                } else {
+                    returnRef = 'never';
+                }
+
+                return returnRef;
+            });
+
             that.canStart = ko.computed(function() {
                 var alert = that.alert();
 
                 return alert.alert_state === 'Inactive' || alert.alert_state === 'Triggered';
             });
+            that.canPause = ko.computed(function() {
+                var alert = that.alert();
+
+                return alert.alert_state === 'Active';
+            });
+            that.canRefresh = ko.computed(function() {
+                return !that.canStart() && !that.canPause();
+            });
+
             that.start = function() {
                 alertManager.enableAlert(that.alert())
                     .then(function(updatedAlert) {
                         that.alert(updatedAlert);
                     });
             };
-            that.canPause = ko.computed(function() {
-                var alert = that.alert();
-
-                return alert.alert_state === 'Active';
-            });
             that.pause = function() {
                 alertManager.disableAlert(that.alert())
                     .then(function(updatedAlert) {
                         that.alert(updatedAlert);
                     });
             };
-            that.canRefresh = ko.computed(function() {
-                return !that.canStart() && !that.canPause();
-            });
             that.refresh = function() {
                 alertManager.retrieveAlert(that.alert())
                     .then(function(refreshedAlert) {
@@ -521,10 +540,11 @@
             <thead>
                 <th class="center col-md-1"></th>
                 <th class="left col-md-3">ID</th>
-                <th class="left col-md-3">Name</th>
+                <th class="left col-md-2">Name</th>
                 <th class="center col-md-2">State</th>
-                <th class="center col-md-2">Conditions</th>
-                <th class="center col-md-2">Publishers</th>
+                <th class="center col-md-1">Conditions</th>
+                <th class="center col-md-1">Publishers</th>
+                <th class="center col-md-2">Last Triggered</th>
             </thead>
             <tbody data-bind="template: { name: 'alert-grid-item-template', foreach: alerts }"></tbody>
         </table>
@@ -536,7 +556,7 @@
                 <span class="text-button text-button-black glyphicon glyphicon-remove" data-bind="click: function() { $parent.deleteAlert($data); }, visible: !processing()"></span>
             </td>
             <td class="left col-md-3" data-bind="text: alert().alert_id"></td>
-            <td class="left col-md-3" data-bind="text: alert().name"></td>
+            <td class="left col-md-2" data-bind="text: alert().name"></td>
             <td class="center col-md-2">
                 <div>
                 <span class="alert-state-buttons">
@@ -547,8 +567,9 @@
                 <span data-bind="text: alert().alert_state"></span>
                 </div>
             </td>
-            <td class="center col-md-2" data-bind="text: alert().conditions.length"></td>
-            <td class="center col-md-2" data-bind="text: alert().publishers.length"></td>
+            <td class="center col-md-1" data-bind="text: alert().conditions.length"></td>
+            <td class="center col-md-1" data-bind="text: alert().publishers.length"></td>
+            <td class="center col-md-2" data-bind="text: lastTriggerDateDisplay"></td>
         </tr>
     </script>
     <script type="text/html" id="alert-entry-template">

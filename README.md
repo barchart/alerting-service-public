@@ -269,10 +269,14 @@ An "alert" consists of one or more "condition" objects and one or more
         "name": "Buy TSLA",
         "automatic_reset": true,
         "create_date": "1453673000873",
+        "last_trigger_date": "145367399999",
         "conditions": [ ],
         "publishers": [ ]
     }
     
+If the alert has never been triggered, the "last_trigger_date" property will be omitted.
+
+ 
 ####Alert States
 
 * **Inactive** - The alert is not processing. It will not begin processing until started (see alertManager.enableAlert).
