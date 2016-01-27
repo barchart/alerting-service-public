@@ -444,7 +444,7 @@ module.exports = function() {
 
 			var portToUse;
 
-			if (_.isNumber(portToUse)) {
+			if (_.isNumber(port)) {
 				portToUse = port;
 			} else {
 				if (secureToUse) {
