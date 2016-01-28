@@ -604,18 +604,18 @@ module.exports = function() {
 					});
 			};
 
-			var repeat = function() {
-				that._parent._scheduler.backoff(poll, 5000, 'alert poll', 7)
+			var repeat = function(delay) {
+				that._parent._scheduler.backoff(poll, delay, 'alert poll', 7)
 					.then(function() {
 						if (that.getIsDisposed()) {
 							return;
 						}
 
-						repeat();
+						repeat(5000);
 					});
 			};
 
-			repeat();
+			repeat(0);
 		}
 	});
 
