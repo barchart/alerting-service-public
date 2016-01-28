@@ -514,8 +514,6 @@ module.exports = function() {
 				throw new Error('A subscriber already exists');
 			}
 
-			console.log('hi');
-
 			subscriber = new AlertSubscriber(that, query);
 			subscriber.start();
 

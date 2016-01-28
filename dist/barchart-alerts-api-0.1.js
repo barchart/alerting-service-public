@@ -514,8 +514,6 @@ module.exports = function() {
 				throw new Error('A subscriber already exists');
 			}
 
-			console.log('hi');
-
 			subscriber = new AlertSubscriber(that, query);
 			subscriber.start();
 
@@ -608,8 +606,6 @@ module.exports = function() {
 		},
 
 		processAlerts: function(alerts) {
-			console.log('testing');
-
 			var that = this;
 
 			var currentAlerts = _.indexBy(alerts, function(alert) {
