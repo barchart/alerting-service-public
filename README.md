@@ -303,6 +303,7 @@ JSON-out:
 	  "semver": "0.0.1"
 	}
 
+
 ###getTargets
 
 Returns an array of the supported "Target" objects.
@@ -357,7 +358,7 @@ JSON-in:
 JSON-out:
 
 	An array of "PublisherType" objects
-	
+
 	
 ###createAlert
 
@@ -410,21 +411,19 @@ JSON-in:
 JSON-out:
 
 	An "Alert" object.
-	
 
-###deleteAlert
 
-Deletes a single "Alert" object, using its identifier:
+###editAlert
+
+A composite operation that deletes an existing alert and then recreates it.
 
 JSON-in:
 
-	{
-	    "alert_id": "59ddfd0b-89db-4886-85c3-eb8e7a289390"
-	}
-  	
+	An "Alert" object.
+
 JSON-out:
 
-	The "Alert" object that was deleted.
+	An "Alert" object.
 
 
 ###enableAlert
@@ -442,7 +441,7 @@ JSON-out:
 
 	The "Alert" object that was enabled.
 
-	
+
 ###disableAlert
 
 Stops an "Alert" object from processing. No notifications will be sent.
@@ -456,6 +455,21 @@ JSON-in:
 JSON-out:
 
 	The "Alert" object that was disabled.
+
+
+###deleteAlert
+
+Deletes a single "Alert" object, using its identifier:
+
+JSON-in:
+
+	{
+	    "alert_id": "59ddfd0b-89db-4886-85c3-eb8e7a289390"
+	}
+
+JSON-out:
+
+	The "Alert" object that was deleted.
 
 
 ###retrieveAlerts
@@ -484,6 +498,7 @@ JSON-in (example 2, optional filter, restricting results to alerts that refer to
 JSON-out:
 
 	An array of "Alert" objects belonging to the specified user.
+
 
 ##Unit Testing
 
