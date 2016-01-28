@@ -13,8 +13,7 @@ module.exports = function() {
         init: function() {
 			this._super();
 
-			this._alertChangeMap = { };
-			this._alertDeleteMap = { };
+			this._alertSubscriptionMap = { };
         },
 
 		connect: function() {
@@ -196,29 +195,35 @@ module.exports = function() {
 			var userId = query.user_id;
 			var alertSystem = query.alert_system;
 
-			if (!_.has(this._alertChangeMap, userId)) {
-				this._alertChangeMap[userId] = { };
+			if (!_.has(this._alertSubscriptionMap, userId)) {
+				this._alertSubscriptionMap[userId] = { };
 			}
 
-			if (!_.has(this._alertChangeMap[userId], alertSystem)) {
-				this._alertChangeMap[userId][alertSystem] = new Event(this);
+			if (!_.has(this._alertSubscriptionMap[userId], alertSystem)) {
+				this._alertSubscriptionMap[userId][alertSystem] = {
+					changeEvent: new Event(this),
+					deleteEvent: new Event(this),
+					subscribers: 0
+				};
 			}
 
-			if (!_.has(this._alertDeleteMap, userId)) {
-				this._alertDeleteMap[userId] = new Event(this);
+			var subscriptionData = this._alertSubscriptionMap[userId][alertSystem];
+
+			if (subscriptionData.subscribers === 0) {
+				subscriptionData.implementationBinding = this._onSubscribeAlerts(query);
 			}
 
-			if (!_.has(this._alertDeleteMap[userId], alertSystem)) {
-				this._alertDeleteMap[userId][alertSystem] = new Event(this);
-			}
+			subscriptionData.subscribers = subscriptionData.subscribers + 1;
 
-			var implementationBinding = this._onSubscribeAlerts(query);
-
-			var changeRegistration = this._alertChangeMap[userId][alertSystem].register(changeCallback);
-			var deleteRegistration = this._alertDeleteMap[userId][alertSystem].register(deleteCallback);
+			var changeRegistration = subscriptionData.changeEvent.register(changeCallback);
+			var deleteRegistration = subscriptionData.deleteEvent.register(deleteCallback);
 
 			return Disposable.fromAction(function() {
-				implementationBinding.dispose();
+				subscriptionData.subscribers = subscriptionData.subscribers - 1;
+
+				if (subscriptionData.subscribers === 0) {
+					subscriptionData.implementationBinding.dispose();
+				}
 
 				changeRegistration.dispose();
 				deleteRegistration.dispose();
@@ -451,7 +456,7 @@ module.exports = function() {
 
 			this._scheduler = new Scheduler();
 
-			this._subscribers = [ ];
+			this._subscribers = { };
 		},
 
 		_connect: function() {
@@ -479,7 +484,22 @@ module.exports = function() {
 		},
 
 		_retrieveAlerts: function(query) {
-			return this._restProvider.call(this._queryEndpoint, query);
+			var that = this;
+
+			return that._restProvider.call(that._queryEndpoint, query)
+				.then(function(alerts) {
+					var subscriber = getSubscriber(that._subscribers, query);
+
+					if (subscriber) {
+						var clones = _.map(alerts, function(alert) {
+							return _.clone(alert, true);
+						});
+
+						subscriber.processAlerts(clones);
+					}
+
+					return alerts;
+				})
 		},
 
 		_onSubscribeAlerts: function(query) {
@@ -488,21 +508,24 @@ module.exports = function() {
 			var userId = query.user_id;
 			var systemId = query.alert_system;
 
-			var subscription = _.find(that._subscribers, function(candidate) {
-				var candidateQuery = candidate.getQuery();
+			var subscriber = getSubscriber(that._subscribers, query);
 
-				return candidateQuery.user_id === query.user_id && candidateQuery.alert_system === query.alert_system;
-			});
-
-			if (!subscription) {
-				subscription = new AlertSubscriber(that, query);
-
-				subscription.start();
-
-				that._subscribers.push(subscription);
+			if (subscriber !== null) {
+				throw new Error('A subscriber already exists');
 			}
 
-			return subscription;
+			console.log('hi');
+
+			subscriber = new AlertSubscriber(that, query);
+			subscriber.start();
+
+			putSubscriber(that._subscribers, subscriber);
+
+			return new Disposable.fromAction(function() {
+				delete that._subscribers[userId][systemId];
+
+				subscriber.dispose();
+			});
 		},
 
 		_getTargets: function() {
@@ -538,6 +561,36 @@ module.exports = function() {
 		}
 	});
 
+	function getSubscriber(subscribers, query) {
+		var userId = query.user_id;
+		var systemId = query.alert_system;
+
+		var returnRef;
+
+		if (_.has(subscribers, userId) && _.has(subscribers[userId], systemId)) {
+			returnRef = subscribers[userId][systemId];
+		} else {
+			returnRef = null;
+		}
+
+		return returnRef;
+	}
+
+	function putSubscriber(subscribers, subscriber) {
+		var query = subscriber.getQuery();
+
+		var userId = query.user_id;
+		var systemId = query.alert_system;
+
+		var returnRef;
+
+		if (!_.has(subscribers, userId)) {
+			subscribers[userId] = { };
+		}
+
+		subscribers[userId][systemId] = subscriber;
+	}
+
 	var AlertSubscriber = Disposable.extend({
 		init: function(parent, query) {
 			this._super();
@@ -554,6 +607,42 @@ module.exports = function() {
 			return this._query;
 		},
 
+		processAlerts: function(alerts) {
+			console.log('testing');
+
+			var that = this;
+
+			var currentAlerts = _.indexBy(alerts, function(alert) {
+				return alert.alert_id;
+			});
+
+			var mutatedAlerts = _.filter(alerts, function(alert) {
+				var alertId = alert.alert_id;
+
+				return !_.has(that._alerts, alertId) || !_.isEqual(alert, that._alerts[alertId]);
+			});
+
+			var deletedAlerts = _.filter(_.values(that._alerts), function(existing) {
+				return !_.has(currentAlerts, existing.alert_id);
+			});
+
+			_.forEach(mutatedAlerts, function(alert) {
+				that._alerts[alert.alert_id] = alert;
+			});
+
+			_.forEach(deletedAlerts, function(alert) {
+				delete that._alerts[alert.alert_id];
+			});
+
+			_.forEach(mutatedAlerts, function(alert) {
+				that._parent._onAlertMutated(alert);
+			});
+
+			_.forEach(deletedAlerts, function(alert) {
+				that._parent._onAlertDeleted(alert);
+			});
+		},
+
 		start: function() {
 			if (this._started) {
 				throw new Error('The alert subscriber has already been started.');
@@ -566,40 +655,6 @@ module.exports = function() {
 			var poll = function() {
 				return that._parent._retrieveAlerts(that._query)
 					.then(function(alerts) {
-						if (that.getIsDisposed()) {
-							return true;
-						}
-
-						var currentAlerts = _.indexBy(alerts, function(alert) {
-							return alert.alert_id;
-						});
-
-						var mutatedAlerts = _.filter(alerts, function(alert) {
-							var alertId = alert.alert_id;
-
-							return !_.has(that._alerts, alertId) || !_.isEqual(alert, that._alerts[alertId]);
-						});
-
-						var deletedAlerts = _.filter(_.values(that._alerts), function(existing) {
-							return !_.has(currentAlerts, existing.alert_id);
-						});
-
-						_.forEach(mutatedAlerts, function(alert) {
-							that._alerts[alert.alert_id] = alert;
-						});
-
-						_.forEach(deletedAlerts, function(alert) {
-							delete that._alerts[alert.alert_id];
-						});
-
-						_.forEach(mutatedAlerts, function(alert) {
-							that._parent._onAlertMutated(alert);
-						});
-
-						_.forEach(deletedAlerts, function(alert) {
-							that._parent._onAlertDeleted(alert);
-						});
-
 						return true;
 					});
 			};

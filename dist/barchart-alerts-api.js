@@ -239,10 +239,10 @@ module.exports = function() {
 				return;
 			}
 
-			var event = getMutationEvents(this._alertSubscriptionMap, alert);
+			var event = getMutationEvent(this._alertChangeMap, alert);
 
 			if (event) {
-				event.changeEvent.fire(_.clone(alert, true));
+				event.fire(_.clone(alert, true));
 			}
 		},
 
@@ -251,10 +251,10 @@ module.exports = function() {
 				return;
 			}
 
-			var event = getMutationEvents(this._alertSubscriptionMap, alert);
+			var event = getMutationEvent(this._alertDeleteMap, alert);
 
 			if (event) {
-				event.deleteEvent.fire(alert);
+				event.fire(alert);
 			}
 		},
 
@@ -323,7 +323,7 @@ module.exports = function() {
 		}
     });
 
-	function getMutationEvents(map, alert) {
+	function getMutationEvent(map, alert) {
 		var returnRef = null;
 
 		var userId = alert.user_id;
@@ -514,6 +514,8 @@ module.exports = function() {
 				throw new Error('A subscriber already exists');
 			}
 
+			console.log('hi');
+
 			subscriber = new AlertSubscriber(that, query);
 			subscriber.start();
 
@@ -606,9 +608,7 @@ module.exports = function() {
 		},
 
 		processAlerts: function(alerts) {
-			if (this.getIsDisposed()) {
-				return;
-			}
+			console.log('testing');
 
 			var that = this;
 
