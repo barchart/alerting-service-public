@@ -608,8 +608,6 @@ module.exports = function() {
 		},
 
 		processAlerts: function(alerts) {
-			console.log('testing');
-
 			var that = this;
 
 			var currentAlerts = _.indexBy(alerts, function(alert) {
