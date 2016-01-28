@@ -234,10 +234,10 @@ module.exports = function() {
 				return;
 			}
 
-			var event = getMutationEvent(this._alertChangeMap, _.clone(alert, true));
+			var event = getMutationEvent(this._alertChangeMap, alert);
 
 			if (event) {
-				event.fire(alert);
+				event.fire(_.clone(alert, true));
 			}
 		},
 
