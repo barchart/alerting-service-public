@@ -239,10 +239,10 @@ module.exports = function() {
 				return;
 			}
 
-			var event = getMutationEvent(this._alertChangeMap, alert);
+			var data = getMutationEvent(this._alertSubscriptionMap, alert);
 
-			if (event) {
-				event.fire(_.clone(alert, true));
+			if (data) {
+				data.changeEvent.fire(_.clone(alert, true));
 			}
 		},
 
@@ -251,10 +251,10 @@ module.exports = function() {
 				return;
 			}
 
-			var event = getMutationEvent(this._alertDeleteMap, alert);
+			var data = getMutationEvent(this._alertSubscriptionMap, alert);
 
-			if (event) {
-				event.fire(alert);
+			if (data) {
+				data.deleteEvent.fire(alert);
 			}
 		},
 
