@@ -24,7 +24,6 @@
     "JavaScript"
   ],
   "dependencies": {
-    "axios": "^0.9.0",
     "class.extend": "^0.9.1",
     "lodash": "^3.10.1",
     "socket.io-client": "1.3.5",
@@ -53,7 +52,7 @@
     "watchify": "~3.4.0"
   },
   "browser": {
-    "./lib/network/rest/RestProvider.js": "./lib/network/rest/browser/AxiosRestProvider.js"
+    "./lib/network/rest/RestProvider.js": "./lib/network/rest/browser/XhrRestProvider.js"
   },
   "license": "MIT",
   "private": false
