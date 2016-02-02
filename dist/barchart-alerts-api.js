@@ -7,14 +7,14 @@ var Disposable = require('./../common/lang/Disposable');
 var Event = require('./../common/messaging/Event');
 
 module.exports = function() {
-    'use strict';
+	'use strict';
 
-    var AlertManager = Disposable.extend({
-        init: function() {
+	var AlertManager = Disposable.extend({
+		init: function() {
 			this._super();
 
-			this._alertSubscriptionMap = { };
-        },
+			this._alertSubscriptionMap = {};
+		},
 
 		connect: function() {
 			var that = this;
@@ -28,11 +28,12 @@ module.exports = function() {
 			return null;
 		},
 
-        createAlert: function(alert) {
+		createAlert: function(alert) {
 			assert.argumentIsRequired(alert, 'alert', Object);
 			assert.argumentIsOptional(alert.alert_id, 'alert.alert_id', String);
-            assert.argumentIsRequired(alert.name, 'alert.name', String);
-            assert.argumentIsRequired(alert.user_id, 'alert.user_id', String);
+			assert.argumentIsRequired(alert.name, 'alert.name', String);
+			assert.argumentIsOptional(alert.notes, 'alert.notes', String);
+			assert.argumentIsRequired(alert.user_id, 'alert.user_id', String);
 			assert.argumentIsRequired(alert.alert_system, 'alert.alert_system', String);
 			assert.argumentIsRequired(alert.automatic_reset, 'alert.automatic_reset', Boolean);
 			assert.argumentIsArray(alert.conditions, 'alert.conditions', Object, 'Object');
@@ -61,10 +62,10 @@ module.exports = function() {
 
 			var that = this;
 
-            return when.try(function() {
+			return when.try(function() {
 				return that._createAlert(alert);
 			});
-        },
+		},
 
 		_createAlert: function(alert) {
 			return null;
@@ -148,7 +149,7 @@ module.exports = function() {
 			var that = this;
 
 			return when.try(function() {
-				return that._deleteAlert({ alert_id: alert.alert_id });
+				return that._deleteAlert({alert_id: alert.alert_id});
 			});
 		},
 
@@ -168,9 +169,9 @@ module.exports = function() {
 				if (_.isObject(query.filter) && _.isObject(query.filter.target) && _.isString(query.filter.target.identifier)) {
 					var identifier = query.filter.target.identifier;
 
-					returnRef = returnRef.then(function (alerts) {
-						return _.filter(alerts, function (alert) {
-							return _.some(alert.conditions, function (condition) {
+					returnRef = returnRef.then(function(alerts) {
+						return _.filter(alerts, function(alert) {
+							return _.some(alert.conditions, function(condition) {
 								return condition.property.target.identifier === identifier;
 							});
 						});
@@ -196,7 +197,7 @@ module.exports = function() {
 			var alertSystem = query.alert_system;
 
 			if (!_.has(this._alertSubscriptionMap, userId)) {
-				this._alertSubscriptionMap[userId] = { };
+				this._alertSubscriptionMap[userId] = {};
 			}
 
 			if (!_.has(this._alertSubscriptionMap[userId], alertSystem)) {
@@ -321,7 +322,7 @@ module.exports = function() {
 		toString: function() {
 			return '[AlertManager]';
 		}
-    });
+	});
 
 	function getMutationEvent(map, alert) {
 		var returnRef = null;
@@ -400,7 +401,7 @@ module.exports = function() {
 		});
 	};
 
-    return AlertManager;
+	return AlertManager;
 }();
 },{"./../common/lang/Disposable":5,"./../common/lang/assert":6,"./../common/messaging/Event":9,"lodash":50,"when":90}],2:[function(require,module,exports){
 var _ = require('lodash');
@@ -499,7 +500,7 @@ module.exports = function() {
 					}
 
 					return alerts;
-				})
+				});
 		},
 
 		_onSubscribeAlerts: function(query) {
@@ -715,7 +716,7 @@ module.exports = function() {
 			this._socket = null;
 			this._connectionState = ConnectionState.Disconnected;
 
-			this._requestMap =  { };
+			this._requestMap = {};
 		},
 
 		_connect: function() {
@@ -736,7 +737,7 @@ module.exports = function() {
 					that._socket = io.connect(protocol + that._host + ':' + that._port);
 
 					that._socket.on('connect', function() {
-						that._requestMap =  { };
+						that._requestMap = {};
 
 						changeConnectionState.call(that, ConnectionState.Connected);
 
@@ -795,23 +796,23 @@ module.exports = function() {
 		},
 
 		_getTargets: function() {
-			return sendRequestToServer.call(this, 'alert/targets/retrieve', { });
+			return sendRequestToServer.call(this, 'alert/targets/retrieve', {});
 		},
 
 		_getProperties: function() {
-			return sendRequestToServer.call(this, 'alert/targets/properties/retrieve', { });
+			return sendRequestToServer.call(this, 'alert/targets/properties/retrieve', {});
 		},
 
 		_getOperators: function() {
-			return sendRequestToServer.call(this, 'alert/operators/retrieve', { });
+			return sendRequestToServer.call(this, 'alert/operators/retrieve', {});
 		},
 
 		_getPublisherTypes: function() {
-			return sendRequestToServer.call(this, 'alert/publishers/retrieve', { });
+			return sendRequestToServer.call(this, 'alert/publishers/retrieve', {});
 		},
 
 		_getServerVersion: function() {
-			return sendRequestToServer.call(this, 'server/version', { });
+			return sendRequestToServer.call(this, 'server/version', {});
 		},
 
 		toString: function() {
@@ -830,7 +831,7 @@ module.exports = function() {
 
 			that._requestMap[requestId] = deferred;
 
-			that._socket.emit('request/' + channel, { requestId: requestId, request: payload });
+			that._socket.emit('request/' + channel, {requestId: requestId, request: payload});
 
 			requestPromise = deferred.promise;
 		} else {
@@ -901,13 +902,13 @@ var RestAlertManager = require('./RestAlertManager');
 var SocketIOAlertManager = require('./SocketIOAlertManager');
 
 module.exports = function() {
-    'use strict';
+	'use strict';
 
-    return {
-        AlertManager: AlertManager,
+	return {
+		AlertManager: AlertManager,
 		RestAlertManager: RestAlertManager,
 		SocketIOAlertManager: SocketIOAlertManager
-    };
+	};
 }();
 },{"./AlertManager":1,"./RestAlertManager":2,"./SocketIOAlertManager":3}],5:[function(require,module,exports){
 var Class = require('class.extend');
@@ -972,85 +973,85 @@ module.exports = function() {
 var _ = require('lodash');
 
 module.exports = function() {
-    'use strict';
+	'use strict';
 
-    var assert = {
-        argumentIsRequired: function(variable, variableName, type, typeDescription) {
-            checkArgumentType(variable, variableName, type, typeDescription);
-        },
+	var assert = {
+		argumentIsRequired: function(variable, variableName, type, typeDescription) {
+			checkArgumentType(variable, variableName, type, typeDescription);
+		},
 
-        argumentIsOptional: function(variable, variableName, type, typeDescription) {
-            if (_.isNull(variable) || _.isUndefined(variable)) {
-                return;
-            }
+		argumentIsOptional: function(variable, variableName, type, typeDescription) {
+			if (_.isNull(variable) || _.isUndefined(variable)) {
+				return;
+			}
 
-            checkArgumentType(variable, variableName, type, typeDescription);
-        },
+			checkArgumentType(variable, variableName, type, typeDescription);
+		},
 
-        argumentIsArray: function(variable, variableName, itemType, itemTypeDescription) {
-            assert.argumentIsRequired(variable, variableName, Array);
+		argumentIsArray: function(variable, variableName, itemType, itemTypeDescription) {
+			assert.argumentIsRequired(variable, variableName, Array);
 
-            for (var i = 0; i < variable.length; i++) {
-                checkArgumentType(variable[i], variableName, itemType, itemTypeDescription, i);
-            }
-        },
+			for (var i = 0; i < variable.length; i++) {
+				checkArgumentType(variable[i], variableName, itemType, itemTypeDescription, i);
+			}
+		},
 
-        areEqual: function(a, b, descriptionA, descriptionB) {
-            if (a !== b) {
-                throw new Error('The objects must be equal ([' + (descriptionA || a.toString()) + ' and ' + (descriptionB || n.toString()));
-            }
-        },
+		areEqual: function(a, b, descriptionA, descriptionB) {
+			if (a !== b) {
+				throw new Error('The objects must be equal ([' + (descriptionA || a.toString()) + ' and ' + (descriptionB || n.toString()));
+			}
+		},
 
-        areNotEqual: function(a, b, descriptionA, descriptionB) {
-            if (a === b) {
-                throw new Error('The objects cannot be equal ([' + (descriptionA || a.toString()) + ' and ' + (descriptionB || n.toString()));
-            }
-        }
-    };
+		areNotEqual: function(a, b, descriptionA, descriptionB) {
+			if (a === b) {
+				throw new Error('The objects cannot be equal ([' + (descriptionA || a.toString()) + ' and ' + (descriptionB || n.toString()));
+			}
+		}
+	};
 
-    function checkArgumentType(variable, variableName, type, typeDescription, index) {
-        if (type === String) {
-            if (!_.isString(variable)) {
-                throwInvalidTypeError(variableName, 'string', index);
-            }
-        } else if (type === Number) {
-            if (!_.isNumber(variable)) {
-                throwInvalidTypeError(variableName, 'number', index);
-            }
-        } else if (type === Function) {
-            if (!_.isFunction(variable)) {
-                throwInvalidTypeError(variableName, 'function', index);
-            }
-        } else if (type === Boolean) {
-            if (!_.isBoolean(variable)) {
-                throwInvalidTypeError(variableName, 'boolean', index);
-            }
-        } else if (type === Date) {
-            if (!_.isDate(variable)) {
-                throwInvalidTypeError(variableName, 'date', index);
-            }
-        } else if (type === Array) {
-            if (!_.isArray(variable)) {
-                throwInvalidTypeError(variableName, 'array', index);
-            }
-        } else if (!(variable instanceof (type || Object))) {
-            throwInvalidTypeError(variableName, typeDescription, index);
-        }
-    }
+	function checkArgumentType(variable, variableName, type, typeDescription, index) {
+		if (type === String) {
+			if (!_.isString(variable)) {
+				throwInvalidTypeError(variableName, 'string', index);
+			}
+		} else if (type === Number) {
+			if (!_.isNumber(variable)) {
+				throwInvalidTypeError(variableName, 'number', index);
+			}
+		} else if (type === Function) {
+			if (!_.isFunction(variable)) {
+				throwInvalidTypeError(variableName, 'function', index);
+			}
+		} else if (type === Boolean) {
+			if (!_.isBoolean(variable)) {
+				throwInvalidTypeError(variableName, 'boolean', index);
+			}
+		} else if (type === Date) {
+			if (!_.isDate(variable)) {
+				throwInvalidTypeError(variableName, 'date', index);
+			}
+		} else if (type === Array) {
+			if (!_.isArray(variable)) {
+				throwInvalidTypeError(variableName, 'array', index);
+			}
+		} else if (!(variable instanceof (type || Object))) {
+			throwInvalidTypeError(variableName, typeDescription, index);
+		}
+	}
 
-    function throwInvalidTypeError(variableName, typeDescription, index) {
-        var message;
+	function throwInvalidTypeError(variableName, typeDescription, index) {
+		var message;
 
-        if (_.isNumber(index)) {
-            message = 'The argument [' + (variableName || 'unspecified') + '], at index [' + index.toString() + '] must be a ' + (typeDescription || 'unknown');
-        } else {
-            message = 'The argument [' + (variableName || 'unspecified') + '] must be a ' + (typeDescription || 'Object');
-        }
+		if (_.isNumber(index)) {
+			message = 'The argument [' + (variableName || 'unspecified') + '], at index [' + index.toString() + '] must be a ' + (typeDescription || 'unknown');
+		} else {
+			message = 'The argument [' + (variableName || 'unspecified') + '] must be a ' + (typeDescription || 'Object');
+		}
 
-        throw new Error(message);
-    }
+		throw new Error(message);
+	}
 
-    return assert;
+	return assert;
 }();
 },{"lodash":50}],7:[function(require,module,exports){
 var _ = require('lodash');
@@ -1058,79 +1059,79 @@ var _ = require('lodash');
 var assert = require('./assert');
 
 module.exports = function() {
-    'use strict';
+	'use strict';
 
-    var attributes = {
-        has: function(target, propertyNames) {
-            assert.argumentIsRequired(target, 'target', Object);
-            assert.argumentIsRequired(propertyNames, 'propertyNames', String);
+	var attributes = {
+		has: function(target, propertyNames) {
+			assert.argumentIsRequired(target, 'target', Object);
+			assert.argumentIsRequired(propertyNames, 'propertyNames', String);
 
-            var propertyNameArray = getPropertyNameArray(propertyNames);
-            var propertyTarget = getPropertyTarget(target, propertyNameArray, false);
+			var propertyNameArray = getPropertyNameArray(propertyNames);
+			var propertyTarget = getPropertyTarget(target, propertyNameArray, false);
 
-            return propertyTarget !== null && _.has(propertyTarget, _.last(propertyNameArray));
-        },
+			return propertyTarget !== null && _.has(propertyTarget, _.last(propertyNameArray));
+		},
 
-        read: function(target, propertyNames) {
-            assert.argumentIsRequired(target, 'target', Object);
-            assert.argumentIsRequired(propertyNames, 'propertyNames', String);
+		read: function(target, propertyNames) {
+			assert.argumentIsRequired(target, 'target', Object);
+			assert.argumentIsRequired(propertyNames, 'propertyNames', String);
 
-            var propertyNameArray = getPropertyNameArray(propertyNames);
-            var propertyTarget = getPropertyTarget(target, propertyNameArray, false);
+			var propertyNameArray = getPropertyNameArray(propertyNames);
+			var propertyTarget = getPropertyTarget(target, propertyNameArray, false);
 
-            var returnRef;
+			var returnRef;
 
-            if (propertyTarget) {
-                var propertyName = _.last(propertyNameArray);
+			if (propertyTarget) {
+				var propertyName = _.last(propertyNameArray);
 
-                returnRef = propertyTarget[propertyName];
-            } else {
-                returnRef = undefined;
-            }
+				returnRef = propertyTarget[propertyName];
+			} else {
+				returnRef = undefined;
+			}
 
-            return returnRef;
-        },
+			return returnRef;
+		},
 
-        write: function(target, propertyNames, value) {
-            assert.argumentIsRequired(target, 'target', Object);
-            assert.argumentIsRequired(propertyNames, 'propertyNames', String);
+		write: function(target, propertyNames, value) {
+			assert.argumentIsRequired(target, 'target', Object);
+			assert.argumentIsRequired(propertyNames, 'propertyNames', String);
 
-            var propertyNameArray = getPropertyNameArray(propertyNames);
-            var propertyTarget = getPropertyTarget(target, propertyNameArray, true);
+			var propertyNameArray = getPropertyNameArray(propertyNames);
+			var propertyTarget = getPropertyTarget(target, propertyNameArray, true);
 
-            var propertyName = _.last(propertyNameArray);
+			var propertyName = _.last(propertyNameArray);
 
-            propertyTarget[propertyName] = value;
-        }
-    };
+			propertyTarget[propertyName] = value;
+		}
+	};
 
-    function getPropertyNameArray(propertyNames) {
-        return propertyNames.split('.');
-    }
+	function getPropertyNameArray(propertyNames) {
+		return propertyNames.split('.');
+	}
 
-    function getPropertyTarget(target, propertyNameArray, create) {
-        var returnRef;
+	function getPropertyTarget(target, propertyNameArray, create) {
+		var returnRef;
 
-        var propertyTarget = target;
+		var propertyTarget = target;
 
-        for (var i = 0; i < (propertyNameArray.length - 1); i++) {
-            var propertyName = propertyNameArray[i];
+		for (var i = 0; i < (propertyNameArray.length - 1); i++) {
+			var propertyName = propertyNameArray[i];
 
-            if (_.has(propertyTarget, propertyName)) {
-                propertyTarget = propertyTarget[propertyName];
-            } else if (create) {
-                propertyTarget = propertyTarget[propertyName] = { };
-            } else {
-                propertyTarget = null;
+			if (_.has(propertyTarget, propertyName)) {
+				propertyTarget = propertyTarget[propertyName];
+			} else if (create) {
+				propertyTarget = propertyTarget[propertyName] = {};
+			} else {
+				propertyTarget = null;
 
-                break;
-            }
-        }
+				break;
+			}
+		}
 
-        return propertyTarget;
-    }
+		return propertyTarget;
+	}
 
-    return attributes;
+	return attributes;
 }();
 },{"./assert":6,"lodash":50}],8:[function(require,module,exports){
 var _ = require('lodash');
@@ -1152,7 +1153,7 @@ module.exports = function() {
 				if (_.isObject(window) && _.isObject(window.location) && _.isString(window.location.protocol)) {
 					protocol = window.location.protocol;
 				} else if (_.isObject(document) && _.isObject(document.location) && _.isString(document.location.protocol)) {
-					protocol = document.location.protocol
+					protocol = document.location.protocol;
 				} else {
 					protocol = '';
 				}
@@ -1173,79 +1174,79 @@ var assert = require('./../lang/assert');
 var Disposable = require('./../lang/Disposable');
 
 module.exports = function() {
-    'use strict';
+	'use strict';
 
-    var Event = Disposable.extend({
-        init: function(sender) {
-            this._sender = sender || null;
+	var Event = Disposable.extend({
+		init: function(sender) {
+			this._sender = sender || null;
 
-            this._observers = [ ];
-        },
+			this._observers = [];
+		},
 
-        register: function(handler) {
-            assert.argumentIsRequired(handler, 'handler', Function);
+		register: function(handler) {
+			assert.argumentIsRequired(handler, 'handler', Function);
 
-            if (this.getIsDisposed()) {
-                throw new Error('The event has been disposed.');
-            }
+			if (this.getIsDisposed()) {
+				throw new Error('The event has been disposed.');
+			}
 
-            var that = this;
+			var that = this;
 
-            addRegistration.call(that, handler);
+			addRegistration.call(that, handler);
 
-            return Disposable.fromAction(function() {
-                if (that._disposed) {
-                    return;
-                }
+			return Disposable.fromAction(function() {
+				if (that._disposed) {
+					return;
+				}
 
-                removeRegistration.call(that, handler);
-            });
-        },
+				removeRegistration.call(that, handler);
+			});
+		},
 
-        fire: function(data) {
-            if (this.getIsDisposed()) {
-                throw new Error('The event has been disposed.');
-            }
+		fire: function(data) {
+			if (this.getIsDisposed()) {
+				throw new Error('The event has been disposed.');
+			}
 
-            var observers = this._observers;
+			var observers = this._observers;
 
-            for (var i = 0; i < observers.length; i++) {
-                var observer = observers[i];
+			for (var i = 0; i < observers.length; i++) {
+				var observer = observers[i];
 
-                observer(data, this._sender);
-            }
-        },
+				observer(data, this._sender);
+			}
+		},
 
-        _onDispose: function() {
-            this._observers = null;
-        }
-    });
+		_onDispose: function() {
+			this._observers = null;
+		}
+	});
 
-    function addRegistration(handler) {
-        var copiedObservers = this._observers.slice();
+	function addRegistration(handler) {
+		var copiedObservers = this._observers.slice();
 
-        copiedObservers.push(handler);
+		copiedObservers.push(handler);
 
-        this._observers = copiedObservers;
-    }
+		this._observers = copiedObservers;
+	}
 
-    function removeRegistration(handler) {
-        for (var i = 0; i < this._observers.length; i++) {
-            var candidate = this._observers[i];
+	function removeRegistration(handler) {
+		for (var i = 0; i < this._observers.length; i++) {
+			var candidate = this._observers[i];
 
-            if (candidate === handler) {
-                var copiedObservers = this._observers.slice();
+			if (candidate === handler) {
+				var copiedObservers = this._observers.slice();
 
-                copiedObservers.splice(i, 1);
+				copiedObservers.splice(i, 1);
 
-                this._observers = copiedObservers;
+				this._observers = copiedObservers;
 
-                break;
-            }
-        }
-    }
+				break;
+			}
+		}
+	}
 
-    return Event;
+	return Event;
 }();
 },{"./../lang/Disposable":5,"./../lang/assert":6,"lodash":50}],10:[function(require,module,exports){
 var _ = require('lodash');
@@ -1255,156 +1256,156 @@ var assert = require('./../lang/assert');
 var Disposable = require('./../lang/Disposable');
 
 module.exports = function() {
-    'use strict';
+	'use strict';
 
-    var Scheduler = Disposable.extend({
-        init: function() {
-            this._super();
+	var Scheduler = Disposable.extend({
+		init: function() {
+			this._super();
 
-            this._timeoutBindings = { };
-            this._intervalBindings = { };
-        },
+			this._timeoutBindings = {};
+			this._intervalBindings = {};
+		},
 
-        schedule: function(actionToSchedule, millisecondDelay, actionDescription) {
-            assert.argumentIsRequired(actionToSchedule, 'actionToSchedule', Function);
-            assert.argumentIsRequired(millisecondDelay, 'millisecondDelay', Number);
-            assert.argumentIsOptional(actionDescription, 'actionDescription', String);
+		schedule: function(actionToSchedule, millisecondDelay, actionDescription) {
+			assert.argumentIsRequired(actionToSchedule, 'actionToSchedule', Function);
+			assert.argumentIsRequired(millisecondDelay, 'millisecondDelay', Number);
+			assert.argumentIsOptional(actionDescription, 'actionDescription', String);
 
-            if (this.getIsDisposed()) {
-                throw new Error('The Scheduler has been disposed.');
-            }
+			if (this.getIsDisposed()) {
+				throw new Error('The Scheduler has been disposed.');
+			}
 
-            var that = this;
+			var that = this;
 
-            var token = null;
+			var token = null;
 
-            var defer = when.defer();
+			var defer = when.defer();
 
-            var wrappedAction = function() {
-                try {
-                    delete that._timeoutBindings[token];
+			var wrappedAction = function() {
+				try {
+					delete that._timeoutBindings[token];
 
-                    defer.resolve(actionToSchedule());
-                } catch (e) {
-                    logger.error('A scheduled action (' + (actionDescription || 'with no description') + ') threw an unhandled error', e);
+					defer.resolve(actionToSchedule());
+				} catch (e) {
+					logger.error('A scheduled action (' + (actionDescription || 'with no description') + ') threw an unhandled error', e);
 
-                    defer.reject(e);
-                }
-            };
+					defer.reject(e);
+				}
+			};
 
-            token = setTimeout(wrappedAction, millisecondDelay);
+			token = setTimeout(wrappedAction, millisecondDelay);
 
-            var timeoutBinding = Disposable.fromAction(function() {
-                clearTimeout(token);
+			var timeoutBinding = Disposable.fromAction(function() {
+				clearTimeout(token);
 
-                delete that._timeoutBindings[token];
-            });
+				delete that._timeoutBindings[token];
+			});
 
-            that._timeoutBindings[token] = timeoutBinding;
+			that._timeoutBindings[token] = timeoutBinding;
 
-            return defer.promise;
-        },
+			return defer.promise;
+		},
 
-        repeat: function(actionToRepeat, millisecondInterval, actionDescription) {
-            assert.argumentIsRequired(actionToRepeat, 'actionToRepeat', Function);
-            assert.argumentIsRequired(millisecondInterval, 'millisecondInterval', Number);
-            assert.argumentIsOptional(actionDescription, 'actionDescription', String);
+		repeat: function(actionToRepeat, millisecondInterval, actionDescription) {
+			assert.argumentIsRequired(actionToRepeat, 'actionToRepeat', Function);
+			assert.argumentIsRequired(millisecondInterval, 'millisecondInterval', Number);
+			assert.argumentIsOptional(actionDescription, 'actionDescription', String);
 
-            if (this.getIsDisposed()) {
-                throw new Error('The Scheduler has been disposed.');
-            }
+			if (this.getIsDisposed()) {
+				throw new Error('The Scheduler has been disposed.');
+			}
 
-            var that = this;
+			var that = this;
 
-            var token = null;
+			var token = null;
 
-            var wrappedAction = function() {
-                try {
-                    actionToRepeat();
-                } catch (e) {
-                    logger.error('A repeating action (' + (actionDescription || 'with no description') + ') threw an unhandled error', e);
-                }
-            };
+			var wrappedAction = function() {
+				try {
+					actionToRepeat();
+				} catch (e) {
+					logger.error('A repeating action (' + (actionDescription || 'with no description') + ') threw an unhandled error', e);
+				}
+			};
 
-            token = setInterval(wrappedAction, millisecondInterval);
+			token = setInterval(wrappedAction, millisecondInterval);
 
-            var intervalBinding = Disposable.fromAction(function() {
-                clearInterval(token);
+			var intervalBinding = Disposable.fromAction(function() {
+				clearInterval(token);
 
-                delete that._intervalBindings[token];
-            });
+				delete that._intervalBindings[token];
+			});
 
-            that._intervalBindings[token] = intervalBinding;
+			that._intervalBindings[token] = intervalBinding;
 
-            return intervalBinding;
-        },
+			return intervalBinding;
+		},
 
-        backoff: function(actionToBackoff, millisecondDelay, actionDescription, maximumAttempts) {
-            assert.argumentIsRequired(actionToBackoff, 'actionToBackoff', Function);
-            assert.argumentIsOptional(millisecondDelay, 'millisecondDelay', Number);
-            assert.argumentIsOptional(actionDescription, 'actionDescription', String);
-            assert.argumentIsOptional(maximumAttempts, 'maximumAttempts', Number);
+		backoff: function(actionToBackoff, millisecondDelay, actionDescription, maximumAttempts) {
+			assert.argumentIsRequired(actionToBackoff, 'actionToBackoff', Function);
+			assert.argumentIsOptional(millisecondDelay, 'millisecondDelay', Number);
+			assert.argumentIsOptional(actionDescription, 'actionDescription', String);
+			assert.argumentIsOptional(maximumAttempts, 'maximumAttempts', Number);
 
-            if (this.getIsDisposed()) {
-                throw new Error('The Scheduler has been disposed.');
-            }
+			if (this.getIsDisposed()) {
+				throw new Error('The Scheduler has been disposed.');
+			}
 
-            var that = this;
+			var that = this;
 
-            var scheduleBackoff = function(failureCount) {
-                if (maximumAttempts > 0 && failureCount > maximumAttempts) {
-                    logger.warn('A backoff action (' + (actionDescription || 'with no description') + ') has been permanently aborted');
+			var scheduleBackoff = function(failureCount) {
+				if (maximumAttempts > 0 && failureCount > maximumAttempts) {
+					logger.warn('A backoff action (' + (actionDescription || 'with no description') + ') has been permanently aborted');
 
-                    return when.reject();
-                }
+					return when.reject();
+				}
 
-                var backoffDelay;
+				var backoffDelay;
 
-                if (failureCount === 0) {
-                    backoffDelay = millisecondDelay;
-                } else {
-                    backoffDelay = (millisecondDelay || 1000) * Math.pow(2, failureCount);
-                }
+				if (failureCount === 0) {
+					backoffDelay = millisecondDelay;
+				} else {
+					backoffDelay = (millisecondDelay || 1000) * Math.pow(2, failureCount);
+				}
 
-                if (failureCount > 0) {
-                    logger.warn('An backoff action (' + (actionDescription || 'with no description') + ') will be retried in ' + backoffDelay + ' milliseconds');
-                }
+				if (failureCount > 0) {
+					logger.warn('An backoff action (' + (actionDescription || 'with no description') + ') will be retried in ' + backoffDelay + ' milliseconds');
+				}
 
-                return that.schedule(actionToBackoff, backoffDelay, (actionDescription || 'unspecified') + ', attempt ' + (failureCount + 1))
-                    .then(function(result) {
-                        if (result) {
-                            return when(result);
-                        } else {
-                            return scheduleBackoff(++failureCount);
-                        }
-                    })
-                    .catch(function(e) {
+				return that.schedule(actionToBackoff, backoffDelay, (actionDescription || 'unspecified') + ', attempt ' + (failureCount + 1))
+					.then(function(result) {
+						if (result) {
+							return when(result);
+						} else {
+							return scheduleBackoff(++failureCount);
+						}
+					})
+					.catch(function(e) {
 						logger.error('A scheduled action (' + (actionDescription || 'with no description') + ') threw an unhandled error', e);
 
-                        return scheduleBackoff(++failureCount);
-                    });
-            };
+						return scheduleBackoff(++failureCount);
+					});
+			};
 
-            return scheduleBackoff(0);
-        },
+			return scheduleBackoff(0);
+		},
 
-        _onDispose: function() {
-            _.forEach(_.values(this._timeoutBindings), function(timeoutBinding) {
-                timeoutBinding.dispose();
-            });
+		_onDispose: function() {
+			_.forEach(_.values(this._timeoutBindings), function(timeoutBinding) {
+				timeoutBinding.dispose();
+			});
 
-            _.forEach(_.values(this._intervalBindings), function(intervalBinding) {
-                intervalBinding.dispose();
-            });
+			_.forEach(_.values(this._intervalBindings), function(intervalBinding) {
+				intervalBinding.dispose();
+			});
 
-            this._timeoutBindings = null;
-            this._intervalBindings = null;
-        },
+			this._timeoutBindings = null;
+			this._intervalBindings = null;
+		},
 
-        toString: function() {
-            return '[Scheduler]';
-        }
-    });
+		toString: function() {
+			return '[Scheduler]';
+		}
+	});
 
 	var logger = {
 		warn: function(message) {
@@ -1416,15 +1417,15 @@ module.exports = function() {
 		}
 	};
 
-    return Scheduler;
+	return Scheduler;
 }();
 },{"./../lang/Disposable":5,"./../lang/assert":6,"lodash":50,"when":90}],11:[function(require,module,exports){
 var alerts = require('./alerts/index');
 
 module.exports = function() {
-    'use strict';
+	'use strict';
 
-    return alerts;
+	return alerts;
 }();
 },{"./alerts/index":4}],12:[function(require,module,exports){
 var Class = require('class.extend');
@@ -1432,56 +1433,56 @@ var Class = require('class.extend');
 var assert = require('./../../common/lang/assert');
 
 module.exports = function() {
-    'use strict';
+	'use strict';
 
-    var RestAction = Class.extend({
-        init: function(action, httpVerb, requiresQuery, requiresPayload) {
-            assert.argumentIsRequired(action, 'action', String);
-            assert.argumentIsRequired(httpVerb, 'httpVerb', String);
-            assert.argumentIsRequired(requiresQuery, 'requiresQuery', Boolean);
-            assert.argumentIsRequired(requiresPayload, 'requiresPayload', Boolean);
+	var RestAction = Class.extend({
+		init: function(action, httpVerb, requiresQuery, requiresPayload) {
+			assert.argumentIsRequired(action, 'action', String);
+			assert.argumentIsRequired(httpVerb, 'httpVerb', String);
+			assert.argumentIsRequired(requiresQuery, 'requiresQuery', Boolean);
+			assert.argumentIsRequired(requiresPayload, 'requiresPayload', Boolean);
 
-            this._action = action;
-            
-            this._httpVerb = httpVerb;
-            this._requiresQuery = requiresQuery;
-            this._requiresPayload = requiresPayload;
-        },
+			this._action = action;
 
-        getAction: function() {
-            return this._action;
-        },
-        
-        getHttpVerb: function() {
-            return this._httpVerb;
-        },
+			this._httpVerb = httpVerb;
+			this._requiresQuery = requiresQuery;
+			this._requiresPayload = requiresPayload;
+		},
 
-        getQueryIsRequired: function() {
-            return this._requiresQuery;
-        },
+		getAction: function() {
+			return this._action;
+		},
 
-        getPayloadIsRequired: function() {
-            return this._requiresPayload;
-        },
+		getHttpVerb: function() {
+			return this._httpVerb;
+		},
 
-        toString: function() {
-            return '[RestAction (action=' + this._action + ')]';
-        }
-    });
+		getQueryIsRequired: function() {
+			return this._requiresQuery;
+		},
 
-    function addAction(restAction) {
-        var action = restAction.getAction();
+		getPayloadIsRequired: function() {
+			return this._requiresPayload;
+		},
 
-        RestAction[action] = restAction;
-    }
+		toString: function() {
+			return '[RestAction (action=' + this._action + ')]';
+		}
+	});
 
-    addAction(new RestAction('Create', 'POST', false, true));
-    addAction(new RestAction('Update', 'PUT', true, true));
-    addAction(new RestAction('Retrieve', 'GET', true, false));
-    addAction(new RestAction('Delete', 'DELETE', true, false));
-    addAction(new RestAction('Query', 'GET', false, false));
+	function addAction(restAction) {
+		var action = restAction.getAction();
 
-    return RestAction;
+		RestAction[action] = restAction;
+	}
+
+	addAction(new RestAction('Create', 'POST', false, true));
+	addAction(new RestAction('Update', 'PUT', true, true));
+	addAction(new RestAction('Retrieve', 'GET', true, false));
+	addAction(new RestAction('Delete', 'DELETE', true, false));
+	addAction(new RestAction('Query', 'GET', false, false));
+
+	return RestAction;
 }();
 },{"./../../common/lang/assert":6,"class.extend":21}],13:[function(require,module,exports){
 var _ = require('lodash');
@@ -1492,85 +1493,85 @@ var attributes = require('./../../common/lang/attributes');
 var RestAction = require('./RestAction');
 
 module.exports = function() {
-    'use strict';
+	'use strict';
 
-    var RestEndpoint = Class.extend({
-        init: function(action, pathProperties, payloadProperty) {
-            assert.argumentIsRequired(action, 'action', RestAction, 'RestAction');
-            assert.argumentIsArray(pathProperties, 'pathProperties', String);
-            assert.argumentIsOptional(payloadProperty, 'payloadProperty', String);
+	var RestEndpoint = Class.extend({
+		init: function(action, pathProperties, payloadProperty) {
+			assert.argumentIsRequired(action, 'action', RestAction, 'RestAction');
+			assert.argumentIsArray(pathProperties, 'pathProperties', String);
+			assert.argumentIsOptional(payloadProperty, 'payloadProperty', String);
 
-            this._action = action;
+			this._action = action;
 
-            this._pathProperties = pathProperties;
-            this._payloadProperty = payloadProperty || null;
-        },
+			this._pathProperties = pathProperties;
+			this._payloadProperty = payloadProperty || null;
+		},
 
-        getAction: function() {
-            return this._action;
-        },
+		getAction: function() {
+			return this._action;
+		},
 
-        getUrl: function(data, baseUrl, port, secure) {
-            assert.argumentIsOptional(baseUrl, 'baseUrl', String);
-            assert.argumentIsOptional(port, 'port', Number);
-            assert.argumentIsOptional(secure, 'secure', Boolean);
+		getUrl: function(data, baseUrl, port, secure) {
+			assert.argumentIsOptional(baseUrl, 'baseUrl', String);
+			assert.argumentIsOptional(port, 'port', Number);
+			assert.argumentIsOptional(secure, 'secure', Boolean);
 
-            var path = _.map(this._pathProperties, function(pathProperty) {
-                var pathItem;
+			var path = _.map(this._pathProperties, function(pathProperty) {
+				var pathItem;
 
-                if (attributes.has(data, pathProperty)) {
-                    pathItem = attributes.read(data, pathProperty);
-                } else {
-                    pathItem = pathProperty;
-                }
+				if (attributes.has(data, pathProperty)) {
+					pathItem = attributes.read(data, pathProperty);
+				} else {
+					pathItem = pathProperty;
+				}
 
-                return pathItem;
-            });
+				return pathItem;
+			});
 
-            if (this.getAction().getQueryIsRequired() && path.length === 0) {
-                throw new Error('Unable to generate REST query path.');
-            }
+			if (this.getAction().getQueryIsRequired() && path.length === 0) {
+				throw new Error('Unable to generate REST query path.');
+			}
 
-            if (baseUrl.length !== 0) {
-                var url;
+			if (baseUrl.length !== 0) {
+				var url;
 
-                if (secure) {
-                    url = 'https://';
-                } else {
-                    url = 'http://';
-                }
+				if (secure) {
+					url = 'https://';
+				} else {
+					url = 'http://';
+				}
 
-                url = url + baseUrl;
+				url = url + baseUrl;
 
-                if (_.isNumber(port) && port !== 80) {
-                    url = url + ':' + port;
-                }
+				if (_.isNumber(port) && port !== 80) {
+					url = url + ':' + port;
+				}
 
 
-                path.unshift(url);
-            }
+				path.unshift(url);
+			}
 
-            return path.join('/');
-        },
+			return path.join('/');
+		},
 
-        getPayload: function(data) {
-            var returnRef;
+		getPayload: function(data) {
+			var returnRef;
 
-            if (this._payloadProperty !== null) {
-                returnRef = attributes.read(data, this._payloadProperty);
-            } else {
-                returnRef = data;
-            }
+			if (this._payloadProperty !== null) {
+				returnRef = attributes.read(data, this._payloadProperty);
+			} else {
+				returnRef = data;
+			}
 
-            if (this.getAction().getPayloadIsRequired() && !_.isObject(returnRef)) {
-                throw new Error('Unable to generate REST payload.');
-            }
+			if (this.getAction().getPayloadIsRequired() && !_.isObject(returnRef)) {
+				throw new Error('Unable to generate REST payload.');
+			}
 
-            return returnRef;
-        }
-    });
+			return returnRef;
+		}
+	});
 
-    return RestEndpoint;
+	return RestEndpoint;
 }();
 },{"./../../common/lang/assert":6,"./../../common/lang/attributes":7,"./RestAction":12,"class.extend":21,"lodash":50}],14:[function(require,module,exports){
 var Class = require('class.extend');
@@ -1580,31 +1581,31 @@ var assert = require('./../../common/lang/assert');
 var RestEndpoint = require('./RestEndpoint');
 
 module.exports = function() {
-    'use strict';
+	'use strict';
 
-    var RestProviderBase = Class.extend({
-        init: function(baseUrl, port, secure) {
-            assert.argumentIsRequired(baseUrl, 'baseUrl', String);
-            assert.argumentIsRequired(port, 'port', Number);
-            assert.argumentIsRequired(secure, 'secure', Boolean);
+	var RestProviderBase = Class.extend({
+		init: function(baseUrl, port, secure) {
+			assert.argumentIsRequired(baseUrl, 'baseUrl', String);
+			assert.argumentIsRequired(port, 'port', Number);
+			assert.argumentIsRequired(secure, 'secure', Boolean);
 
-            this._baseUrl = baseUrl;
-            this._port = port;
-            this._secure = secure;
-        },
+			this._baseUrl = baseUrl;
+			this._port = port;
+			this._secure = secure;
+		},
 
-        call: function(endpoint, data) {
-            assert.argumentIsRequired(endpoint, endpoint, RestEndpoint, 'RestEndpoint');
+		call: function(endpoint, data) {
+			assert.argumentIsRequired(endpoint, endpoint, RestEndpoint, 'RestEndpoint');
 
-            return when(this._call(endpoint.getAction(), endpoint.getUrl(data, this._baseUrl, this._port, this._secure), this._port, endpoint.getPayload(data)));
-        },
+			return when(this._call(endpoint.getAction(), endpoint.getUrl(data, this._baseUrl, this._port, this._secure), this._port, endpoint.getPayload(data)));
+		},
 
-        _call: function(action, url, port, payload) {
-            return true;
-        }
-    });
+		_call: function(action, url, port, payload) {
+			return true;
+		}
+	});
 
-    return RestProviderBase;
+	return RestProviderBase;
 }();
 },{"./../../common/lang/assert":6,"./RestEndpoint":13,"class.extend":21,"when":90}],15:[function(require,module,exports){
 var xhr = require('xhr');
@@ -1630,7 +1631,7 @@ module.exports = function() {
 					json: payload
 				};
 
-				xhr(options, function (error, response, body) {
+				xhr(options, function(error, response, body) {
 					if (error) {
 						rejectCallback(error);
 					} else if (response.statusCode !== 200) {
