@@ -32,7 +32,7 @@ module.exports = function() {
 			assert.argumentIsRequired(alert, 'alert', Object);
 			assert.argumentIsOptional(alert.alert_id, 'alert.alert_id', String);
 			assert.argumentIsRequired(alert.name, 'alert.name', String);
-			assert.argumentIsOptional(alert.notes, 'alert.notes', String);
+			assert.argumentIsOptional(alert.notes, 'alert.notes', Object);
 			assert.argumentIsRequired(alert.user_id, 'alert.user_id', String);
 			assert.argumentIsRequired(alert.alert_system, 'alert.alert_system', String);
 			assert.argumentIsRequired(alert.automatic_reset, 'alert.automatic_reset', Boolean);
