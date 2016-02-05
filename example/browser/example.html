@@ -222,6 +222,7 @@
                             type: {
                                 publisher_type_id: publisher.publisherType().publisher_type_id
                             },
+							use_default_recipient: publisher.useDefaultRecipient(),
                             recipient: publisher.recipient(),
                             format: publisher.format()
                         };
@@ -409,7 +410,7 @@
         }
         function AlertTargetQualifierModel(ready, description, value) {
             var that = this;
-            
+
             that.ready = ready;
 
             that.qualifierDescription = ko.observable(description);
@@ -461,6 +462,7 @@
 
             that.publisherTypes = publisherTypes;
             that.publisherType = ko.observable(_.first(that.publisherTypes()));
+            that.useDefaultRecipient = ko.observable(false);
             that.recipient = ko.observable();
             that.format = ko.observable();
 
@@ -470,11 +472,33 @@
                 that.publisherType(publisherType);
             };
 
+            that.toggleDefaultRecipient = function() {
+				if (!ready() || !_.isString(that.publisherType().default_recipient)) {
+					return;
+				}
+
+                that.useDefaultRecipient(!that.useDefaultRecipient());
+
+                if (that.useDefaultRecipient()) {
+                    that.recipient(that.publisherType().default_recipient);
+                } else {
+                    that.recipient('');
+                }
+            };
+
+            that.recipientReady = ko.computed(function() {
+                var ready = that.ready();
+                var useDefaultRecipient = that.useDefaultRecipient();
+
+                return ready && !useDefaultRecipient;
+            });
+
             if (_.isObject(publisher)) {
                 that.publisherType(_.find(publisherTypes(), function(candidate) {
                     return candidate.publisher_type_id === publisher.type.publisher_type_id;
                 }));
 
+                that.useDefaultRecipient(publisher.use_default_recipient);
                 that.recipient(publisher.recipient);
                 that.format(publisher.format);
             }
@@ -514,10 +538,17 @@
                             operators(o);
                         });
 
-                    alertManager.getPublisherTypes()
+                    alertManager.getPublisherTypeDefaults({ user_id: userId, alert_system: system })
                         .then(function(pt) {
                             publisherTypes(pt);
                         });
+
+					/*
+					alertManager.assignPublisherTypeDefault({"publisher_type_id":1,"user_id":"barchart-test-user","alert_system":"barchart.com","default_recipient":"123-456-7890"})
+						.then(function(pt) {
+							console.log(pt);
+						});
+					 */
 
                     ko.applyBindings(pageModel, $('body')[0]);
                 });
@@ -640,7 +671,7 @@
                 </div>
             </td>
             <td class="col-md-3">
-                <input class="form-control" data-bind="textInput: targetIdentifier, attr: { placeholder: target().identifier_description }, enable: ready" type="text" >
+                <input class="form-control" data-bind="textInput: targetIdentifier, attr: { placeholder: target().identifier_description }, enable: ready" type="text">
             </td>
             <td class="col-md-4" colspan="2">
             </td>
@@ -724,10 +755,22 @@
                 </div>
             </td>
             <td class="col-md-3">
-                <input class="form-control" data-bind="textInput: recipient, enable: ready" type="text" placeholder="Recipient (e.g. phone number)" >
+                <div class="input-group">
+                    <div class="input-group-addon">
+                        <div class="text-button" data-bind="click: toggleDefaultRecipient, enable: ready">
+                            <!-- ko if: useDefaultRecipient -->
+                            <span>Default</span>
+                            <!-- /ko -->
+                            <!-- ko ifnot: useDefaultRecipient -->
+                            <span>Custom</span>
+                            <!-- /ko -->
+                        </div>
+                    </div>
+                    <input class="form-control" data-bind="textInput: recipient, enable: recipientReady" type="text" placeholder="Recipient (e.g. phone number)">
+                </div>
             </td>
             <td class="col-md-4">
-                <input class="form-control" data-bind="textInput: format, enable: ready" type="text" placeholder="Message (to include with alert)" >
+                <input class="form-control" data-bind="textInput: format, enable: ready" type="text" placeholder="Message (to include with alert)">
             </td>
         </tr>
     </script>

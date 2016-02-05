@@ -4,7 +4,7 @@
 
 The Barchart Alert system provides notifications (e.g. SMS messages, emails, etc) to
 Barchart users when user-defined events occur. These events are typically based on
-market date (e.g. when a stock trades in excess of a given price). 
+market date (e.g. when a stock trades in excess of a given price).
 
 This library allows a user to create, delete, and otherwise manage their alerts.
 
@@ -21,7 +21,7 @@ To import the library as a dependency to your application using npm, use the fol
 
 
 	npm install alerts-management-client -S
-	
+
 
 ###bower
 
@@ -29,7 +29,7 @@ To import the library as a dependency to your application using bower, use the f
 
 
 	bower install alerts-management-client -S
-	
+
 
 ###git
 
@@ -41,10 +41,10 @@ The git repository is publically-accessible here:
 
 ##Usage
 
-The Barchart Alert Management system exposes both REST and socket.io[http://socket.io] endpoints. 
+The Barchart Alert Management system exposes both REST and socket.io[http://socket.io] endpoints.
 However, this library is a convience-wrapper fro interacting with the Barchart Alert
-Management system. So, instead of invoking these transports directly, and worrying about the 
-details of the protocol, the consumers can make single-line method calls to perform asynchronous 
+Management system. So, instead of invoking these transports directly, and worrying about the
+details of the protocol, the consumers can make single-line method calls to perform asynchronous
 operations (e.g. create alert, delete alert, etc).
 
 
@@ -54,21 +54,21 @@ An working example browser implementation can be found in the git repository at:
 
 
 	/example/browser/example.html
-	
+
 
 Clone the git repository and open the HTML page in a browser. The consumer
 code is contained within a script block of the HTML.
 
 
 ###Initialization (Using REST)
- 
+
 In the browser, an object has been added to the global namespace. Connect as follows:
 
 
 	var alertManager = new Barchart.Alerts.RestAlertManager();
 
 
-Alternately, the URL and port of the alert management system can be passed to the 
+Alternately, the URL and port of the alert management system can be passed to the
 constructor:
 
 
@@ -81,22 +81,22 @@ Then, call the connect method before using any operations:
 		.then(function() {
 			// ready
 		});
-		
-		
+
+
 ###Initialization (Using Socket.IO)
- 
+
 To use a Socket.IO transport, change the constructor to:
 
 	var alertManager = new Barchart.Alerts.SocketIOAlertManager();
-	
+
 Specify the URL and port as follows:
 
 
 	var alertManager = new Barchart.Alerts.SocketIOAlertManager('alerts-management-stage.elasticbeanstalk.com', 80);
-	
+
 
 And, finally, call the connect method before invoking any other operations:
-	
+
 	alertManager.connect()
 		.then(function() {
 			// ready
@@ -119,7 +119,7 @@ is an example:
 
 ##Data
 
-The library uses a JSON-in, JSON-out architecture. All data exchanged is in JSON format. 
+The library uses a JSON-in, JSON-out architecture. All data exchanged is in JSON format.
 Requests must supply JSON data. Responses are composed of JSON data.
 
 The following data structures are important:
@@ -138,7 +138,7 @@ A "target" refers to a type of object that can be observed.
 ###Property
 
 A "property" refers to an attribute of a target. The value of
-a "property" can be checked using an "operator" object. 
+a "property" can be checked using an "operator" object.
 
     {
         "property_id": 18,
@@ -161,9 +161,9 @@ a "property" can be checked using an "operator" object.
 The "valid_operators" array references the "operator" objects
 that can be used in conjunction with this "property" to
 create a "condition." So, refer to the example above. This
-"property" describes the 200-day average volume for an equity. 
-The  "valid_operators" array tells us that operators 2 and 3 
-(greater-than and less-than) can be used to build an 
+"property" describes the 200-day average volume for an equity.
+The  "valid_operators" array tells us that operators 2 and 3
+(greater-than and less-than) can be used to build an
 alert "condition" however it would not be valid to pair any
 other operators with this "property."
 
@@ -239,6 +239,20 @@ A "publisher type" defines a mechanism for notifying users.
     }
 
 
+###PublisherTypeDefault
+
+A "publisher type" that includes the default recipient for a user.
+
+    {
+        "publisher_type_id": 1,
+        "transport": "sms",
+        "provider": "twilio",
+		"alert_system": "barchart.com",
+		"user_id": "barchart-test-user",
+		"default_recipient": "123-456-7890"
+    }
+
+
 ###Publisher
 
 A "publisher" defines the rules for notification of an end user. An
@@ -273,14 +287,14 @@ An "alert" consists of one or more "condition" objects and one or more
         "conditions": [ ],
         "publishers": [ ]
     }
-    
+
 If the alert has never been triggered, the "last_trigger_date" property will be omitted.
 
- 
+
 ####Alert States
 
 * **Inactive** - The alert is not processing. It will not begin processing until started (see alertManager.enableAlert).
-* **Starting** - The alert is attempting to transition to the "Active" state. If the transition succeeds, the state will become "Active;" otherwise the state will revert to "Inactive." 
+* **Starting** - The alert is attempting to transition to the "Active" state. If the transition succeeds, the state will become "Active;" otherwise the state will revert to "Inactive."
 * **Active** - The alert is processing; however, its conditions have not yet been met. The alert will stay in the "Active" state until the user stops it (see alertManager.disableAlert) or until the conditions are met.
 * **Stopping** - The user has requested that alert processing stop. Once this operation is complete, the alert will return to the "Inactive" state.
 * **Triggered** - The alert's conditions have been met. The alert can be manually restarted (see alertManager.enableAlert).
@@ -296,7 +310,7 @@ JSON-in:
 
 	{
 	}
-	
+
 JSON-out:
 
 	{
@@ -326,7 +340,7 @@ JSON-in:
 
 	{
 	}
-	
+
 JSON-out:
 
 	An array of "property" objects
@@ -359,7 +373,41 @@ JSON-out:
 
 	An array of "PublisherType" objects
 
-	
+
+###getPublisherTypeDefaults
+
+Returns an array of "PublisherTypeDefault" objects.
+
+JSON-in:
+
+	{
+	    "user_id": "barchart-test-user",
+	    "alert_system": "barchart.com",
+	}
+
+JSON-out:
+
+	An array of "PublisherTypeDefault" objects
+
+
+###assignPublisherTypeDefault
+
+Returns an array of "PublisherTypeDefault" objects.
+
+JSON-in:
+
+	{
+		"publisher_type_id": 1,
+		"user_id": "barchart-test-user",
+		"alert_system": "barchart.com",
+		"default_recipient": "248-953-9701"
+	}
+
+JSON-out:
+
+	An "PublisherTypeDefault" object.
+
+
 ###createAlert
 
 The following JSON object can be used to create an alert. The input is a
@@ -388,13 +436,20 @@ JSON-in:
             "type": {
                 "publisher_type_id": 1
             },
+            "use_default_recipient": false,
             "recipient": "123-456-7890",
             "format": "Apple stock is falling"
-        } ]
+        }, {
+		   "type": {
+			   "publisher_type_id": 1
+		   },
+		   "use_default_recipient": true,
+		   "format": "Apple stock is falling"
+	   } ]
     }
 
 JSON-out:
-	
+
 	An "Alert" object.
 
 
@@ -407,7 +462,7 @@ JSON-in:
 	{
 	    "alert_id": "59ddfd0b-89db-4886-85c3-eb8e7a289390"
 	}
-  	
+
 JSON-out:
 
 	An "Alert" object.
@@ -436,7 +491,7 @@ JSON-in:
 	{
 	    "alert_id": "59ddfd0b-89db-4886-85c3-eb8e7a289390"
 	}
-  	
+
 JSON-out:
 
 	The "Alert" object that was enabled.
@@ -451,7 +506,7 @@ JSON-in:
 	{
 	    "alert_id": "59ddfd0b-89db-4886-85c3-eb8e7a289390"
 	}
-  	
+
 JSON-out:
 
 	The "Alert" object that was disabled.
@@ -482,7 +537,7 @@ JSON-in (example 1, required properties):
 	    "user_id": "barchart-test-user",
 	    "alert_system": "barchart.com",
 	}
-  	
+
 JSON-in (example 2, optional filter, restricting results to alerts that refer to AAPL):
 
 	{
@@ -494,7 +549,7 @@ JSON-in (example 2, optional filter, restricting results to alerts that refer to
 			}
 		}
 	}
- 	
+
 JSON-out:
 
 	An array of "Alert" objects belonging to the specified user.
