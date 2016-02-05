@@ -113,7 +113,7 @@ is an example:
 		.then(function(version) {
 			console.log(version.semver);
 		})
-		.catch(functoin(error) {
+		.catch(function(error) {
 			console.log('A problem occurred.');
 		});
 
@@ -260,6 +260,7 @@ alert can have multiple publishers.
 
     {
         "publisher_id": "9c864a19-ce77-4a87-8cd6-e0810ecb120e",
+        "use_default_recipient" false,
         "recipient": "123-456-7890",
         "format": "It is a good time to buy Telsa stock.",
         "type": {
@@ -382,7 +383,7 @@ JSON-in:
 
 	{
 	    "user_id": "barchart-test-user",
-	    "alert_system": "barchart.com",
+	    "alert_system": "barchart.com"
 	}
 
 JSON-out:
@@ -392,7 +393,7 @@ JSON-out:
 
 ###assignPublisherTypeDefault
 
-Returns an array of "PublisherTypeDefault" objects.
+Updates a PublisherTypeDefault for a specific user.
 
 JSON-in:
 
@@ -400,7 +401,7 @@ JSON-in:
 		"publisher_type_id": 1,
 		"user_id": "barchart-test-user",
 		"alert_system": "barchart.com",
-		"default_recipient": "248-953-9701"
+		"default_recipient": "123-456-7890"
 	}
 
 JSON-out:
@@ -535,7 +536,7 @@ JSON-in (example 1, required properties):
 
 	{
 	    "user_id": "barchart-test-user",
-	    "alert_system": "barchart.com",
+	    "alert_system": "barchart.com"
 	}
 
 JSON-in (example 2, optional filter, restricting results to alerts that refer to AAPL):

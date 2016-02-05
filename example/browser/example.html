@@ -23,8 +23,8 @@
 
         //var alertManager = new Barchart.Alerts.RestAlertManager();
 
-        var alertManager = new Barchart.Alerts.RestAlertManager('alerts-management-stage.barchart.com');
-        //var alertManager = new Barchart.Alerts.RestAlertManager('localhost', 3000);
+        //var alertManager = new Barchart.Alerts.RestAlertManager('alerts-management-stage.barchart.com');
+        var alertManager = new Barchart.Alerts.RestAlertManager('localhost', 3000);
         //var alertManager = new Barchart.Alerts.SocketIOAlertManager('alerts-management-stage.barchart.com');
         //var alertManager = new Barchart.Alerts.SocketIOAlertManager('localhost', 3000);
 
@@ -42,6 +42,7 @@
 
             that.alert = ko.observable();
             that.alerts = ko.observableArray([ ]);
+            that.preferences = ko.observable();
             that.activeTemplate = ko.observable('alert-grid-template');
             that.providerDescription = ko.observable(alertManager.toString());
 
@@ -81,6 +82,11 @@
                 that.alert = new AlertEntryModel(alertEntryModel.alert());
 
                 that.activeTemplate('alert-entry-template');
+            };
+            that.changeToPreferences = function() {
+                that.preferences = new AlertPublisherTypeDefaultsModel(publisherTypes());
+
+                that.activeTemplate('alert-preferences-template');
             };
             that.deleteAlert = function(alertDisplayModel) {
                 alertDisplayModel.processing(true);
@@ -503,6 +509,73 @@
                 that.format(publisher.format);
             }
         }
+        function AlertPublisherTypeDefaultsModel(publisherTypeDefaults) {
+            var that = this;
+
+            that.processing = ko.observable(false);
+
+            that.ready = ko.computed(function() {
+                return !that.processing();
+            });
+
+            that.publisherTypeDefaults = ko.observable(_.map(publisherTypeDefaults, function(publisherTypeDefault) {
+               return new  AlertPublisherTypeDefaultModel(publisherTypeDefault, that.ready);
+            }));
+
+            that.savePreferences = function() {
+                var defaultPublisherTypes = that.publisherTypeDefaults();
+                var publishersToSave = defaultPublisherTypes.length;
+
+                var checkComplete = function() {
+                    publishersToSave = publishersToSave - 1;
+
+                    if (publishersToSave === 0) {
+                        that.processing(false);
+                    }
+                };
+
+                if (publishersToSave.length !== 0) {
+                    that.processing(true);
+
+                    _.forEach(defaultPublisherTypes, function(defaultPublisherType) {
+                        if (_.isString(defaultPublisherType.defaultRecipient())) {
+                            alertManager.assignPublisherTypeDefault({
+                                publisher_type_id: defaultPublisherType.publisherTypeId(),
+                                alert_system: system,
+                                user_id: userId,
+                                default_recipient: defaultPublisherType.defaultRecipient(),
+                                allow_window_timezone: defaultPublisherType.allowTimezone() || null,
+                                allow_window_start: defaultPublisherType.allowStartTime() || null,
+                                allow_window_end: defaultPublisherType.allowEndTime() || null
+                            }).then(function(ignored) {
+                                checkComplete();
+                            });
+                        } else {
+                            checkComplete();
+                        }
+                    });
+                }
+            };
+        }
+        function AlertPublisherTypeDefaultModel(publisherTypeDefault, ready) {
+            var that = this;
+
+            that.ready = ready;
+
+            that.timezones = ko.observable(Barchart.Alerts.timezone.getTimezones());
+
+            that.publisherTypeId = ko.observable(publisherTypeDefault.publisher_type_id)
+            that.transport = ko.observable(publisherTypeDefault.transport);
+            that.provider = ko.observable(publisherTypeDefault.provider);
+            that.defaultRecipient = ko.observable(publisherTypeDefault.default_recipient);
+            that.allowTimezone = ko.observable(publisherTypeDefault.allow_window_timezone || Barchart.Alerts.timezone.guessTimezone());
+            that.allowStartTime = ko.observable(publisherTypeDefault.allow_window_start);
+            that.allowEndTime = ko.observable(publisherTypeDefault.allow_window_end);
+
+            that.selectTimezone = function(timezone) {
+                that.allowTimezone(timezone);
+            }
+        }
 
         $(document).ready(function() {
             alertManager.connect()
@@ -562,9 +635,11 @@
             <div class="header-action-buttons pull-right">
                 <span class="text-button glyphicon glyphicon-th-list" data-bind="click: changeToGrid"></span>
                 <span class="text-button glyphicon glyphicon-plus" data-bind="click: changeToCreate"></span>
+                <span class="text-button glyphicon glyphicon-user" data-bind="click: changeToPreferences"></span>
             </div>
         </div>
     </script>
+
     <script type="text/html" id="alert-grid-template">
         <table class="table table-striped small">
             <thead>
@@ -579,6 +654,7 @@
             <tbody data-bind="template: { name: 'alert-grid-item-template', foreach: alerts }"></tbody>
         </table>
     </script>
+
     <script type="text/html" id="alert-grid-item-template">
         <tr>
             <td class="center col-md-1 alert-action-buttons">
@@ -602,6 +678,7 @@
             <td class="center col-md-2" data-bind="text: lastTriggerDateDisplay"></td>
         </tr>
     </script>
+
     <script type="text/html" id="alert-entry-template">
         <div data-bind="with: alert">
             <div class="panel panel-info">
@@ -655,6 +732,7 @@
             <button class="btn btn-primary btn-default" data-bind="click: clearAlert, visible: complete">New</button>
         </div>
     </script>
+
     <script type="text/html" id="alert-create-condition-template">
         <tr class="condition">
             <td class="col-md-1">
@@ -683,6 +761,7 @@
         <tr class="component" data-bind="template: { name: 'alert-create-condition-property-template' }"></tr>
         <!-- /ko -->
     </script>
+
     <script type="text/html" id="alert-create-condition-qualifier-template">
         <td class="col-md-1"></td>
         <td class="col-md-2"></td>
@@ -692,6 +771,7 @@
         <td class="col-md-4" colspan="2">
         </td>
     </script>
+
     <script type="text/html" id="alert-create-condition-property-template">
         <td class="col-md-1"></td>
         <td class="col-md-2"></td>
@@ -739,6 +819,7 @@
         </td>
         <!-- /ko -->
     </script>
+
     <script type="text/html" id="alert-create-publisher-template">
         <tr>
             <td class="col-md-1">
@@ -771,6 +852,50 @@
             </td>
             <td class="col-md-4">
                 <input class="form-control" data-bind="textInput: format, enable: ready" type="text" placeholder="Message (to include with alert)">
+            </td>
+        </tr>
+    </script>
+
+    <script type="text/html" id="alert-preferences-template">
+        <div data-bind="with: preferences">
+            <table class="table table-striped small">
+                <thead>
+                    <th class="left col-md-1">Transport</th>
+                    <th class="center col-md-2">Default Recipient</th>
+                    <th class="center col-md-2">Timezone</th>
+                    <th class="center col-md-2">Start Time</th>
+                    <th class="center col-md-2">End Time</th>
+                </thead>
+                <tbody data-bind="template: { name: 'alert-preference-template', foreach: publisherTypeDefaults }"></tbody>
+            </table>
+
+            <button class="btn btn-primary btn-default" data-bind="click: savePreferences, enable: ready">Save</button>
+        </div>
+    </script>
+    
+    <script type="text/html" id="alert-preference-template">
+        <tr>
+            <td class="left col-md-1">
+                <span><span data-bind="text: transport"></span> (<span data-bind="text: provider"></span>)</span>
+            </td>
+            <td class="left col-md-2">
+                <input class="form-control" data-bind="textInput: defaultRecipient, enable: ready" type="text" placeholder="Recipient (e.g. phone number)">
+            </td>
+            <td class="left col-md-2">
+                <div class="dropdown">
+                    <button class="btn btn-default dropdown-toggle" data-bind="enable: ready" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+                        <span data-bind="text: allowTimezone"></span>
+                    </button>
+                    <ul class="dropdown-menu" data-bind="foreach: timezones">
+                        <li class="center"><a href="#" data-bind="text: $data, click: function() { $parent.selectTimezone($data); }"></a></li>
+                    </ul>
+                </div>
+            </td>
+            <td class="left col-md-2">
+                <input class="form-control" data-bind="textInput: allowStartTime, enable: ready" type="text" placeholder="HH:MM">
+            </td>
+            <td class="left col-md-2">
+                <input class="form-control" data-bind="textInput: allowEndTime, enable: ready" type="text" placeholder="HH:MM">
             </td>
         </tr>
     </script>
