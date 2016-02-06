@@ -401,13 +401,38 @@ JSON-in:
 		"publisher_type_id": 1,
 		"user_id": "barchart-test-user",
 		"alert_system": "barchart.com",
-		"default_recipient": "123-456-7890"
+		"default_recipient": "123-456-7890",
+		"active_alert_types": [
+			"price",
+			"news"
+		],
+		"allow_window_start": "06:00",
+		"allow_window_end": "20:30",
+		"allow_window_timezone": "America/Chicago"
 	}
 
 JSON-out:
 
 	An "PublisherTypeDefault" object.
 
+Field details:
+
+* active_alert_types - An array of strings. If the alert's type matches
+a value contained within this array, then alert will be published using
+the publisher type.
+* allow_window_start - When an alert is triggered, if the current time
+is after the "allow_window_start" time and before the "allow_window_end"
+time, then the publisher will be used. Otherwise the triggered alert
+will not be published (using this publisher type). No restriction exists
+if the value of this property is null.
+* allow_window_end - When an alert is triggered, if the current time
+is after the "allow_window_start" time and before the "allow_window_end"
+time, then the publisher will be used. Otherwise the triggered alert
+will not be published (using this publisher type). No restriction exists
+if the value of this property is null.
+* allow_window_timezone - The timezones that qualify the "allow_window_start"
+and "allow_window_end" times. Use the Barchart.Alerts.timezone.getTimezones
+function to get a list of valid timezone strings.
 
 ###createAlert
 
@@ -554,6 +579,19 @@ JSON-in (example 2, optional filter, restricting results to alerts that refer to
 JSON-out:
 
 	An array of "Alert" objects belonging to the specified user.
+
+
+##Utility Functions
+
+###Barchart.Alerts.timezone.getTimezones
+
+Returns an array of strings describe valid timezones.
+
+
+###Barchart.Alerts.timezone.guessTimezone
+
+Returns a string that represents a guess of the user's current
+timezone. A null value is returned if a guess cannot be made.
 
 
 ##Unit Testing
