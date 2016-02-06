@@ -530,7 +530,12 @@
                     publishersToSave = publishersToSave - 1;
 
                     if (publishersToSave === 0) {
-                        that.processing(false);
+						alertManager.getPublisherTypeDefaults({ user_id: userId, alert_system: system })
+							.then(function(pt) {
+								publisherTypes(pt);
+
+								that.processing(false);
+							});
                     }
                 };
 
@@ -547,7 +552,7 @@
                                 allow_window_timezone: defaultPublisherType.allowTimezone() || null,
                                 allow_window_start: defaultPublisherType.allowStartTime() || null,
                                 allow_window_end: defaultPublisherType.allowEndTime() || null
-                            }).then(function(ignored) {
+                            }).then(function(savedPublisherTypeDefault) {
                                 checkComplete();
                             });
                         } else {
@@ -872,7 +877,7 @@
             <button class="btn btn-primary btn-default" data-bind="click: savePreferences, enable: ready">Save</button>
         </div>
     </script>
-    
+
     <script type="text/html" id="alert-preference-template">
         <tr>
             <td class="left col-md-1">
