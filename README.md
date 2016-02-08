@@ -42,7 +42,7 @@ The git repository is publically-accessible here:
 ##Usage
 
 The Barchart Alert Management system exposes both REST and socket.io[http://socket.io] endpoints.
-However, this library is a convience-wrapper fro interacting with the Barchart Alert
+However, this library is a convenience-wrapper for interacting with the Barchart Alert
 Management system. So, instead of invoking these transports directly, and worrying about the
 details of the protocol, the consumers can make single-line method calls to perform asynchronous
 operations (e.g. create alert, delete alert, etc).
