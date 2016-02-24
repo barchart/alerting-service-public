@@ -249,7 +249,11 @@ A "publisher type" that includes the default recipient for a user.
         "provider": "twilio",
 		"alert_system": "barchart.com",
 		"user_id": "barchart-test-user",
-		"default_recipient": "123-456-7890"
+		"default_recipient": "123-456-7890",
+		"active_alert_types": [
+			"price",
+			"news"
+		]
     }
 
 
@@ -281,7 +285,9 @@ An "alert" consists of one or more "condition" objects and one or more
         "alert_state": "Inactive",
         "alert_system": "barchart.com",
         "user_id": "barchart-test-user",
+        "alert_type": "price",
         "name": "Buy TSLA",
+        "user_notes": "Time to buy Tesla Motors stock",
         "automatic_reset": true,
         "create_date": "1453673000873",
         "last_trigger_date": "145367399999",
@@ -289,8 +295,8 @@ An "alert" consists of one or more "condition" objects and one or more
         "publishers": [ ]
     }
 
-If the alert has never been triggered, the "last_trigger_date" property will be omitted.
-
+* If the alert has never been triggered, the "last_trigger_date" property will be omitted.
+* The "alert_type" is an optional field that is used to classify the alert. It is used to decide "default" publishing rules (if no publishers have been specified). This happens by matching the "active_alert_type" property of a PublisherTypeDefault object.
 
 ####Alert States
 
@@ -392,7 +398,7 @@ JSON-out:
 
 
 ###assignPublisherTypeDefault
-
+alertType
 Updates a PublisherTypeDefault for a specific user.
 
 JSON-in:
@@ -419,7 +425,7 @@ Field details:
 
 * active_alert_types - An array of strings. If the alert's type matches
 a value contained within this array, then alert will be published using
-the publisher type.
+the publisher type. Currently valid strings are: ("news" and "price").
 * allow_window_start - When an alert is triggered, if the current time
 is after the "allow_window_start" time and before the "allow_window_end"
 time, then the publisher will be used. Otherwise the triggered alert
@@ -446,6 +452,8 @@ JSON-in:
 	    "user_id": "barchart-test-user",
 	    "alert_system": "barchart.com",
 	    "automatic_reset": false,
+	    "alert_type": "price",
+	    "user_notes": "This alert was created for fun and profit."
 	    "conditions": [ {
 	        "property": {
 	            "property_id": 1,

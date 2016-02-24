@@ -23,8 +23,8 @@
 
         //var alertManager = new Barchart.Alerts.RestAlertManager();
 
-        var alertManager = new Barchart.Alerts.RestAlertManager('alerts-management-stage.barchart.com');
-        //var alertManager = new Barchart.Alerts.RestAlertManager('localhost', 3000);
+        //var alertManager = new Barchart.Alerts.RestAlertManager('alerts-management-stage.barchart.com');
+        var alertManager = new Barchart.Alerts.RestAlertManager('localhost', 3000);
         //var alertManager = new Barchart.Alerts.SocketIOAlertManager('alerts-management-stage.barchart.com');
         //var alertManager = new Barchart.Alerts.SocketIOAlertManager('localhost', 3000);
 
@@ -175,13 +175,17 @@
             var that = this;
 
             that.alert = ko.observable(alert || null);
+            that.alertType = ko.observable('none');
             that.name = ko.observable(null);
+            that.userNotes = ko.observable(null);
             that.automaticReset = ko.observable(false);
             that.createDate = ko.observable(null);
             that.conditions = ko.observableArray([]);
             that.publishers = ko.observableArray([]);
             that.processing = ko.observable(false);
             that.complete = ko.observable(false);
+
+            that.alertTypes = ko.observable([ 'none', 'news', 'price' ]);
 
             that.clearAlert = function() {
                 that.alert(null);
@@ -194,8 +198,16 @@
             that.createAlert = function() {
                 that.processing(true);
 
+                var alertType = that.alertType();
+
+                if (alertType === 'none') {
+                    alertType = null;
+                }
+
                 var alert = {
                     name: that.name(),
+                    alert_type: alertType,
+                    user_notes: that.userNotes() || null,
                     user_id: userId,
                     alert_system: system,
                     automatic_reset: that.automaticReset(),
@@ -244,6 +256,9 @@
                     });
             };
 
+            that.selectAlertType = function(alertType) {
+                that.alertType(alertType);
+            };
             that.addCondition = function(conditionToAdd) {
                 that.conditions.push(new AlertConditionModel(that.ready, conditionToAdd || null));
             };
@@ -269,6 +284,12 @@
 
             if (_.isObject(alert)) {
                 that.name(alert.name);
+
+                if (_.isString(alert.user_notes)) {
+                    that.userNotes(alert.user_notes);
+                }
+
+                that.alertType = (alert.alert_type || 'none');
 
                 that.automaticReset(_.isBoolean(alert.automatic_reset) && alert.automatic_reset);
                 that.createDate(new Date(parseInt(alert.create_date)));
@@ -519,7 +540,7 @@
             });
 
             that.publisherTypeDefaults = ko.observable(_.map(publisherTypeDefaults, function(publisherTypeDefault) {
-               return new  AlertPublisherTypeDefaultModel(publisherTypeDefault, that.ready);
+               return new AlertPublisherTypeDefaultModel(publisherTypeDefault, that.ready);
             }));
 
             that.savePreferences = function() {
@@ -544,6 +565,16 @@
 
                     _.forEach(defaultPublisherTypes, function(defaultPublisherType) {
                         if (_.isString(defaultPublisherType.defaultRecipient())) {
+                            var activeAlertTypes = [ ];
+
+                            if (defaultPublisherType.priceActive()) {
+                                activeAlertTypes.push('price');
+                            }
+
+                            if (defaultPublisherType.newsActive()) {
+                                activeAlertTypes.push('news');
+                            }
+
                             alertManager.assignPublisherTypeDefault({
                                 publisher_type_id: defaultPublisherType.publisherTypeId(),
                                 alert_system: system,
@@ -551,7 +582,8 @@
                                 default_recipient: defaultPublisherType.defaultRecipient(),
                                 allow_window_timezone: defaultPublisherType.allowTimezone() || null,
                                 allow_window_start: defaultPublisherType.allowStartTime() || null,
-                                allow_window_end: defaultPublisherType.allowEndTime() || null
+                                allow_window_end: defaultPublisherType.allowEndTime() || null,
+                                active_alert_types: activeAlertTypes
                             }).then(function(savedPublisherTypeDefault) {
                                 checkComplete();
                             });
@@ -576,6 +608,8 @@
             that.allowTimezone = ko.observable(publisherTypeDefault.allow_window_timezone || Barchart.Alerts.timezone.guessTimezone());
             that.allowStartTime = ko.observable(publisherTypeDefault.allow_window_start);
             that.allowEndTime = ko.observable(publisherTypeDefault.allow_window_end);
+            that.priceActive = ko.observable(_.includes(publisherTypeDefault.active_alert_types, 'price'));
+            that.newsActive = ko.observable(_.includes(publisherTypeDefault.active_alert_types, 'news'));
 
             that.selectTimezone = function(timezone) {
                 that.allowTimezone(timezone);
@@ -706,9 +740,30 @@
                                 <input type="checkbox" data-bind="checked: automaticReset, enable: ready">
                             </td>
                         </tr>
+                        <tr>
+                            <td class="col-md-1">
+                                <label class="control-label col-md-1">Notes</label>
+                            </td>
+                            <td class="col-md-5">
+                                <input class="form-control" data-bind="textInput: userNotes, enable: ready" type="text" placeholder="User Notes">
+                            </td>
+                            <td class="col-md-2">
+                                <label class="control-label">Classification</label>
+                            </td>
+                            <td class="col-md-2">
+                                <div class="dropdown">
+                                    <button class="btn btn-default dropdown-toggle" data-bind="enable: ready" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+                                        <span data-bind="text: alertType"></span>
+                                    </button>
+                                    <ul class="dropdown-menu" data-bind="foreach: alertTypes">
+                                        <li class="center"><a href="#" data-bind="text: $data, click: function() { $parent.selectAlertType($data); }"></a></li>
+                                    </ul>
+                                </div>
+                            </td>
+                        </tr>
                         <tr data-bind="visible: createDate">
                             <td class="col-md-1">
-                                <label class="control-label">Created</label>
+                                <label class="control-label col-md-1">Created</label>
                             </td>
                             <td class="col-md-9" colspan="3" data-bind="text: createDate"></td>
                         </tr>
@@ -870,6 +925,8 @@
                     <th class="center col-md-2">Timezone</th>
                     <th class="center col-md-2">Start Time</th>
                     <th class="center col-md-2">End Time</th>
+                    <th class="center col-md-1">Price Alerts</th>
+                    <th class="center col-md-1">News Alerts</th>
                 </thead>
                 <tbody data-bind="template: { name: 'alert-preference-template', foreach: publisherTypeDefaults }"></tbody>
             </table>
@@ -901,6 +958,12 @@
             </td>
             <td class="left col-md-2">
                 <input class="form-control" data-bind="textInput: allowEndTime, enable: ready" type="text" placeholder="HH:MM">
+            </td>
+            <td class="center col-md-1">
+                <input type="checkbox" data-bind="checked: priceActive, enable: ready">
+            </td>
+            <td class="center col-md-1">
+                <input type="checkbox" data-bind="checked: newsActive, enable: ready">
             </td>
         </tr>
     </script>
