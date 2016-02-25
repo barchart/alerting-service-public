@@ -398,7 +398,7 @@ JSON-out:
 
 
 ###assignPublisherTypeDefault
-alertType
+
 Updates a PublisherTypeDefault for a specific user.
 
 JSON-in:
