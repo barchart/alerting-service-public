@@ -33,7 +33,7 @@ To import the library as a dependency to your application using bower, use the f
 
 ###git
 
-The git repository is publically-accessible here:
+The git repository is publicly-accessible here:
 
 
 	https://github.com/barchart/alerts-client-js
