@@ -174,6 +174,7 @@ module.exports = function() {
 
 		retrieveAlerts: function(query) {
 			assert.argumentIsRequired(query, query, Object);
+			assert.argumentIsRequired(query.alert_system, 'query.alert_system', String);
 			assert.argumentIsRequired(query.user_id, 'query.user_id', String);
 
 			var that = this;
@@ -181,16 +182,52 @@ module.exports = function() {
 			return when.try(function() {
 				var returnRef = that._retrieveAlerts(query);
 
-				if (_.isObject(query.filter) && _.isObject(query.filter.target) && _.isString(query.filter.target.identifier)) {
-					var identifier = query.filter.target.identifier;
+				if (_.isObject(query.filter)) {
+					if (_.isString(query.filter.alert_type)) {
+						var alertType = query.filter.alert_type;
 
-					returnRef = returnRef.then(function(alerts) {
-						return _.filter(alerts, function(alert) {
-							return _.some(alert.conditions, function(condition) {
-								return condition.property.target.identifier === identifier;
+						returnRef = returnRef.then(function(alerts) {
+							return _.filter(alerts, function(alert) {
+								return alert.alert_type === alertType;
 							});
 						});
-					});
+					}
+
+					if (_.isString(query.filter.symbol)) {
+						var symbol = query.filter.symbol;
+
+						returnRef = returnRef.then(function(alerts) {
+							return _.filter(alerts, function(alert) {
+								return _.some(alert.conditions, function(condition) {
+									return (condition.property.target.type === 'symbol' && condition.property.target.identifier === symbol) || (condition.property.type === 'symbol' && condition.operator.operand === symbol);
+								});
+							});
+						});
+					}
+
+					if (_.isObject(query.filter.target) && _.isString(query.filter.target.identifier)) {
+						var identifier = query.filter.target.identifier;
+
+						returnRef = returnRef.then(function(alerts) {
+							return _.filter(alerts, function(alert) {
+								return _.some(alert.conditions, function(condition) {
+									return condition.property.target.identifier === identifier;
+								});
+							});
+						});
+					}
+
+					if (_.isObject(query.filter.condition) && (_.isString(query.filter.condition.operand) || _.isNumber(query.filter.condition.operand))) {
+						var operand = query.filter.condition.operand;
+
+						returnRef = returnRef.then(function(alerts) {
+							return _.filter(alerts, function(alert) {
+								return _.some(alert.conditions, function(condition) {
+									return condition.operator.operand === operand.toString();
+								});
+							});
+						});
+					}
 				}
 
 				return returnRef;
@@ -501,7 +538,7 @@ module.exports = function() {
 			this._restProvider = new RestProvider(baseUrl || 'alerts-management-prod.barchart.com', portToUse, secureToUse);
 
 			this._createEndpoint = new RestEndpoint(RestAction.Create, [ 'alerts' ]);
-			this._retireveEndpoint = new RestEndpoint(RestAction.Retrieve, [ 'alerts', 'alert_id' ]);
+			this._retrieveEndpoint = new RestEndpoint(RestAction.Retrieve, [ 'alerts', 'alert_id' ]);
 			this._queryEndpoint = new RestEndpoint(RestAction.Retrieve, [ 'alerts', 'users', 'alert_system', 'user_id' ]);
 			this._updateEndpoint = new RestEndpoint(RestAction.Update, [ 'alerts', 'alert_id' ]);
 			this._deleteEndpoint = new RestEndpoint(RestAction.Delete, [ 'alerts', 'alert_id' ]);
@@ -528,7 +565,7 @@ module.exports = function() {
 		},
 
 		_retrieveAlert: function(alert) {
-			return this._restProvider.call(this._retireveEndpoint, alert);
+			return this._restProvider.call(this._retrieveEndpoint, alert);
 		},
 
 		_enableAlert: function(alert) {
