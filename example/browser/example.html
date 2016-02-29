@@ -655,12 +655,25 @@
                             publisherTypes(pt);
                         });
 
-					/*
-					alertManager.assignPublisherTypeDefault({"publisher_type_id":1,"user_id":"barchart-test-user","alert_system":"barchart.com","default_recipient":"123-456-7890"})
-						.then(function(pt) {
-							console.log(pt);
-						});
-					 */
+                    /*
+                    var filter = {
+                        symbol: 'TSLA',
+                        alert_type: 'news',
+                        condition: {
+                            operand: 'TSLA'
+                        },
+                        target: {
+                            identifier: 'TSLA'
+                        }
+                    };
+
+                    alertManager.retrieveAlerts({ user_id: userId, alert_system: system, filter: filter})
+                        .then(function(filteredAlerts) {
+                            debugger;
+
+                            console.log(filteredAlerts);
+                        });
+                    */
 
                     ko.applyBindings(pageModel, $('body')[0]);
                 });

@@ -131,6 +131,7 @@ A "target" refers to a type of object that can be observed.
     {
         "target_id": 1,
         "description": "equity",
+        "identifier_type": "symbol",
         "identifier_description": "symbol"
     }
 
@@ -440,6 +441,7 @@ if the value of this property is null.
 and "allow_window_end" times. Use the Barchart.Alerts.timezone.getTimezones
 function to get a list of valid timezone strings.
 
+
 ###createAlert
 
 The following JSON object can be used to create an alert. The input is a
@@ -572,14 +574,46 @@ JSON-in (example 1, required properties):
 	    "alert_system": "barchart.com"
 	}
 
-JSON-in (example 2, optional filter, restricting results to alerts that refer to AAPL):
+JSON-in (example 2, optional filter, only "price" alerts):
+
+	{
+		"user_id": "barchart-test-user",
+		"alert_system": "barchart.com",
+		"filter": {
+			"alert_type": "price"
+		}
+	}
+	
+JSON-in (example 3, optional filter, only alerts refer to AAPL):
+
+	{
+		"user_id": "barchart-test-user",
+		"alert_system": "barchart.com",
+		"filter": {
+			"symbol": "AAPL"
+		}
+	}
+	
+JSON-in (example 4, optional filter, only alerts where the target is AAPL):
 
 	{
 		"user_id": "barchart-test-user",
 		"alert_system": "barchart.com",
 		"filter": {
 			"target": {
-				identifier: "AAPL"
+				"identifier": "AAPL"
+			}
+		}
+	}
+	
+JSON-in (example 5, optional filter, only alerts where a condition refers to AAPL):
+
+	{
+		"user_id": "barchart-test-user",
+		"alert_system": "barchart.com",
+		"filter": {
+			"condition": {
+				"operand": "AAPL"
 			}
 		}
 	}
