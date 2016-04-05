@@ -287,28 +287,56 @@ An "alert" consists of one or more "condition" objects and one or more
         "alert_system": "barchart.com",
         "user_id": "barchart-test-user",
         "alert_type": "price",
+        "alert_behavior": "Terminate",
         "name": "Buy TSLA",
         "user_notes": "Time to buy Tesla Motors stock",
         "automatic_reset": true,
         "create_date": "1453673000873",
         "last_trigger_date": "145367399999",
         "conditions": [ ],
-        "publishers": [ ]
+        "publishers": [ ],
+        "schedules": [ ]
     }
 
 * If the alert has never been triggered, the "last_trigger_date" property will be omitted.
 * The "alert_type" is an optional field that is used to classify the alert. It is used to decide "default" publishing rules (if no publishers have been specified). This happens by matching the "active_alert_type" property of a PublisherTypeDefault object.
+* The "alert_behavior" is an optional field that is used to control what happens after an alert's conditions are met. See the description of "Alert Behaviors" below.
+
+
+###Alert Reset Schedule
+
+If an alert is configured to use the "Schedule" behavior, this object
+defines a time for the alert to resume processing.
+
+    {
+        "alert_id": "39b633bf-8993-491d-b544-bdc9deed60be",
+        "schedule_id": "14179194-f00a-4372-9fe7-32d5e300e574",
+        "time": "14:30"
+        "day": "Wednesday"
+        "timezone": "America/Chicago"
+    }
+
+* The "timezone" property refers to a timezone name according to the Moment.js[http://momentjs.com/timezone/docs/#/data-loading/getting-zone-names/]. If omitted, this property will default to "America/Chicago"
+
 
 ####Alert States
 
 * **Inactive** - The alert is not processing. It will not begin processing until started (see alertManager.enableAlert).
 * **Starting** - The alert is attempting to transition to the "Active" state. If the transition succeeds, the state will become "Active;" otherwise the state will revert to "Inactive."
 * **Active** - The alert is processing; however, its conditions have not yet been met. The alert will stay in the "Active" state until the user stops it (see alertManager.disableAlert) or until the conditions are met.
+* **Scheduled** - The alert is waiting until a scheduled time to resume processing (only applies to alert's using the "Schedule" behavior).
 * **Stopping** - The user has requested that alert processing stop. Once this operation is complete, the alert will return to the "Inactive" state.
 * **Triggered** - The alert's conditions have been met. The alert can be manually restarted (see alertManager.enableAlert).
 
 
+####Alert Behaviors
+
+* **Terminate** - Once an alert's conditions have been met, the alert will be published, the state will become "Triggered," and processing stops. This is the default behavior.
+* **Schedule** - Once an alert's conditions have been met, the alert will be published and processing stops. However, processing will resume according to the alert's reset schedule. During the time an alert is waiting to reset, it remains in the "Active" state.
+
+
 ##AlertManager Operations
+
 
 ###getServerVersion
 
@@ -447,10 +475,10 @@ function to get a list of valid timezone strings.
 The following JSON object can be used to create an alert. The input is a
 simplified version of the "Alert" object.
 
-JSON-in:
+JSON-in (example 1, required properties):
 
 	{
-	    "name": "My Test Alert",
+	    "name": "My First Alert",
 	    "user_id": "barchart-test-user",
 	    "alert_system": "barchart.com",
 	    "automatic_reset": false,
@@ -475,7 +503,7 @@ JSON-in:
             "use_default_recipient": false,
             "recipient": "123-456-7890",
             "format": "Apple stock is falling"
-        }, {
+        	}, {
 		   "type": {
 			   "publisher_type_id": 1
 		   },
@@ -484,6 +512,53 @@ JSON-in:
 	   } ]
     }
 
+JSON-in (example 1, with reset schedule, Monday-Friday at 5:30 PM):
+
+	{
+	    "name": "My Scheduled Alert",
+	    "user_id": "barchart-test-user",
+	    "alert_system": "barchart.com",
+	    "automatic_reset": false,
+	    "alert_type": "price",
+	    "alert_behavior": "schedule",
+	    "user_notes": "This alert was created for repeated fun and profit."
+	    "conditions": [ {
+	        "property": {
+	            "property_id": 1,
+	            "target":{
+	                "identifier": "AAPL"
+                }
+            },
+            "operator":{
+                "operator_id": 3,
+                "operand": "99"
+            }
+        } ],
+		"schedules": [ 
+			{
+				"time": "17:30",
+				"day": "Monday",
+				"timezone": "America/Chicago"
+			}, {
+				"time": "17:30",
+				"day": "Tuesday",
+				"timezone": "America/Chicago"
+			}, {
+				"time": "17:30",
+				"day": "Wednesday",
+				"timezone": "America/Chicago"
+			}, {
+				"time": "17:30",
+				"day": "Thursday",
+				"timezone": "America/Chicago"
+			},  {
+				"time": "17:30",
+				"day": "Friday",
+				"timezone": "America/Chicago"
+			} 
+		]
+    }
+    
 JSON-out:
 
 	An "Alert" object.

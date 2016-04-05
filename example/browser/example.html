@@ -23,8 +23,8 @@
 
         //var alertManager = new Barchart.Alerts.RestAlertManager();
 
-        var alertManager = new Barchart.Alerts.RestAlertManager('alerts-management-stage.barchart.com');
-        //var alertManager = new Barchart.Alerts.RestAlertManager('localhost', 3000);
+        //var alertManager = new Barchart.Alerts.RestAlertManager('alerts-management-stage.barchart.com');
+        var alertManager = new Barchart.Alerts.RestAlertManager('localhost', 3000);
         //var alertManager = new Barchart.Alerts.SocketIOAlertManager('alerts-management-stage.barchart.com');
         //var alertManager = new Barchart.Alerts.SocketIOAlertManager('localhost', 3000);
 
@@ -176,24 +176,37 @@
 
             that.alert = ko.observable(alert || null);
             that.alertType = ko.observable('none');
+            that.alertBehavior = ko.observable('terminate');
             that.name = ko.observable(null);
             that.userNotes = ko.observable(null);
-            that.automaticReset = ko.observable(false);
             that.createDate = ko.observable(null);
             that.conditions = ko.observableArray([]);
             that.publishers = ko.observableArray([]);
+            that.schedules = ko.observableArray([]);
             that.processing = ko.observable(false);
-            that.complete = ko.observable(false);
 
+            that.alertBehaviors = ko.observable([ 'terminate', 'schedule', 'automatic' ]);
             that.alertTypes = ko.observable([ 'none', 'news', 'price' ]);
+
+            that.automaticReset = ko.computed(function() {
+                return that.alertBehavior() === 'automatic';
+            });
+
+            that.showSchedules = ko.computed(function() {
+                return that.alertBehavior() === 'schedule';
+            });
 
             that.clearAlert = function() {
                 that.alert(null);
+                that.alertType('none');
+                that.alertBehavior('terminate');
                 that.name(null);
-                that.automaticReset(false);
+                that.userNotes(null);
                 that.createDate(null);
                 that.conditions([]);
                 that.publishers([]);
+                that.schedules([]);
+                that.processing(false);
             };
             that.createAlert = function() {
                 that.processing(true);
@@ -204,9 +217,30 @@
                     alertType = null;
                 }
 
+                var alertBehavior = that.alertBehavior();
+
+                if (alertBehavior === 'automatic') {
+                    alertBehavior = 'terminate';
+                }
+
+                var schedules;
+
+                if (alertBehavior === 'schedule') {
+                    schedules = _.map(that.schedules(), function(schedule) {
+                        return {
+                            time: schedule.time(),
+                            day: schedule.day(),
+                            timezone: schedule.timezone()
+                        };
+                    });
+                } else {
+                    schedules = [ ];
+                }
+
                 var alert = {
                     name: that.name(),
                     alert_type: alertType,
+                    alert_behavior: alertBehavior,
                     user_notes: that.userNotes() || null,
                     user_id: userId,
                     alert_system: system,
@@ -252,8 +286,11 @@
                             recipient: publisher.recipient(),
                             format: publisher.format()
                         };
-                    })
+                    }),
+                    schedules: schedules
                 };
+
+                debugger;
 
                 alertManager.createAlert(alert)
                     .then(function(created) {
@@ -267,6 +304,9 @@
             that.selectAlertType = function(alertType) {
                 that.alertType(alertType);
             };
+            that.selectAlertBehavior = function(alertBehavior) {
+                that.alertBehavior(alertBehavior);
+            };
             that.addCondition = function(conditionToAdd) {
                 that.conditions.push(new AlertConditionModel(that.ready, conditionToAdd || null));
             };
@@ -278,6 +318,12 @@
             };
             that.removePublisher = function(publisherToRemove) {
                 that.publishers.remove(publisherToRemove);
+            };
+            that.addSchedule = function(scheduleToAdd) {
+                that.schedules.push(new AlertScheduleModel(that.ready, scheduleToAdd || null));
+            };
+            that.removeSchedule = function(scheduleToRemove) {
+                that.schedules.remove(scheduleToRemove);
             };
 
             that.complete = ko.computed(function() {
@@ -293,13 +339,20 @@
             if (_.isObject(alert)) {
                 that.name(alert.name);
 
+                var alertBehavior = alert.alert_behavior || terminate;
+
+                if (alertBehavior === 'terminate' && alert.automatic_reset) {
+                    alertBehavior = 'automatic';
+                }
+
+                that.alertBehavior(alertBehavior);
+
                 if (_.isString(alert.user_notes)) {
                     that.userNotes(alert.user_notes);
                 }
 
                 that.alertType(alert.alert_type || 'none');
 
-                that.automaticReset(_.isBoolean(alert.automatic_reset) && alert.automatic_reset);
                 that.createDate(new Date(parseInt(alert.create_date)));
 
                 _.forEach(alert.conditions, function(condition) {
@@ -308,6 +361,35 @@
                 _.forEach(alert.publishers, function(publisher) {
                     that.addPublisher(publisher);
                 });
+                _.forEach(alert.schedules, function(schedule) {
+                    that.addSchedule(schedule);
+                });
+            }
+        }
+        function AlertScheduleModel(ready, schedule) {
+            var that = this;
+
+            that.time = ko.observable(null);
+
+            that.day = ko.observable('Monday');
+            that.days = ko.observable(['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday']);
+
+            that.timezones = ko.observable(Barchart.Alerts.timezone.getTimezones());
+            that.timezone = ko.observable(Barchart.Alerts.timezone.guessTimezone());
+
+            that.selectDay = function(day) {
+                that.day(day);
+            };
+            that.selectTimezone = function(timezone) {
+                that.timezone(timezone);
+            };
+
+            that.ready = ready;
+
+            if (_.isObject(schedule)) {
+                that.time(schedule.time);
+                that.day(schedule.day);
+                that.timezone(schedule.timezone);
             }
         }
         function AlertConditionModel(ready, condition) {
@@ -389,6 +471,8 @@
                 that.properties.push(new AlertConditionTreeModel(that, that.propertyTree(), 'Category', 0));
 
                 that.property(null);
+                that.operator(null);
+                that.operandQualifiers(null);
             };
             that.selectPropertyTree = function(tree, index) {
                 if (tree.items) {
@@ -399,6 +483,8 @@
 
                     that.property(null);
                     that.operand(null);
+
+                    that.operandQualifiers(null);
                 } else {
                     that.property(tree.item);
                     that.operand(_.first(that.operator().operand_options) || null);
@@ -644,7 +730,7 @@
 
             that.selectTimezone = function(timezone) {
                 that.allowTimezone(timezone);
-            }
+            };
         }
 
         $(document).ready(function() {
@@ -776,10 +862,17 @@
                                 <input class="form-control" data-bind="textInput: name, enable: ready" type="text" placeholder="Alert Name">
                             </td>
                             <td class="col-md-2">
-                                <label class="control-label">Automatic Reset</label>
+                                <label class="control-label">Trigger Behavior</label>
                             </td>
                             <td class="col-md-2">
-                                <input type="checkbox" data-bind="checked: automaticReset, enable: ready">
+                                <div class="dropdown">
+                                    <button class="btn btn-default dropdown-toggle" data-bind="enable: ready" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+                                        <span data-bind="text: alertBehavior"></span>
+                                    </button>
+                                    <ul class="dropdown-menu" data-bind="foreach: alertBehaviors">
+                                        <li class="center"><a href="#" data-bind="text: $data, click: function() { $parent.selectAlertBehavior($data); }"></a></li>
+                                    </ul>
+                                </div>
                             </td>
                         </tr>
                         <tr>
@@ -830,9 +923,52 @@
                     <tbody class="table" data-bind="template: { name: 'alert-create-publisher-template', foreach: publishers }"></tbody>
                 </table>
             </div>
+            <!-- ko if: showSchedules -->
+            <div class="panel panel-info">
+                <div class="panel-heading">
+                    <h3 class="panel-title"><span class="text-button entry-item-add-button glyphicon glyphicon-plus" data-bind="click: function() { addSchedule(null); }, visible: ready"></span> Schedules</h3>
+                </div>
+                <table class="alert-create table">
+                    <!-- ko foreach: schedules -->
+                    <tbody data-bind="template: { name: 'alert-create-schedule-template' }"></tbody>
+                    <!-- /ko -->
+                </table>
+            </div>
+            <!-- /ko -->
             <button class="btn btn-primary btn-default" data-bind="click: createAlert, enable: canSave">Save</button>
             <button class="btn btn-primary btn-default" data-bind="click: clearAlert, visible: complete">New</button>
         </div>
+    </script>
+
+    <script type="text/html" id="alert-create-schedule-template">
+        <tr>
+            <td class="col-md-1">
+                <span class="text-button text-button-black glyphicon glyphicon-minus entry-item-remove-button" data-bind="click: function() { $parent.removeSchedule($data); }, visible: ready"></span>
+            </td>
+            <td class="col-md-2">
+                <input class="form-control" data-bind="textInput: time, enable: ready" type="text" placeholder="HH:MM">
+            </td>
+            <td class="col-md-3">
+                <div class="dropdown">
+                    <button class="btn btn-default dropdown-toggle" data-bind="enable: ready" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+                        <span data-bind="text: day"></span>
+                    </button>
+                    <ul class="dropdown-menu" data-bind="foreach: days">
+                        <li class="center"><a href="#" data-bind="text: $data, click: function() { $parent.selectDay($data); }"></a></li>
+                    </ul>
+                </div>
+            </td>
+            <td class="col-md-4" colspan="2">
+                <div class="dropdown">
+                    <button class="btn btn-default dropdown-toggle" data-bind="enable: ready" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+                        <span data-bind="text: timezone"></span>
+                    </button>
+                    <ul class="dropdown-menu" data-bind="foreach: timezones">
+                        <li class="center"><a href="#" data-bind="text: $data, click: function() { $parent.selectTimezone($data); }"></a></li>
+                    </ul>
+                </div>
+            </td>
+        </tr>
     </script>
 
     <script type="text/html" id="alert-create-condition-template">
