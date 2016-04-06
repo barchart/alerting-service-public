@@ -176,6 +176,7 @@ of a "target" object.
 
     {
         "operator_id": 4,
+        "operator_type": "binary",
         "operator_name": "is-indicator",
         "display": {
             "short": "=",
@@ -218,6 +219,7 @@ include an "operand" value. Alerts can have multiple conditions.
         },
         "operator": {
             "operator_id": 2,
+            "operator_type": "binary",
             "operator_name": "greater-than",
             "display": {
                 "short": ">",
@@ -319,6 +321,9 @@ defines a time for the alert to resume processing.
 * The "timezone" property refers to a timezone name according to the Moment.js[http://momentjs.com/timezone/docs/#/data-loading/getting-zone-names/]. If omitted, this property will default to "America/Chicago"
 
 
+##Data (Enumerations)
+
+
 ####Alert States
 
 * **Inactive** - The alert is not processing. It will not begin processing until started (see alertManager.enableAlert).
@@ -333,6 +338,12 @@ defines a time for the alert to resume processing.
 
 * **Terminate** - Once an alert's conditions have been met, the alert will be published, the state will become "Triggered," and processing stops. This is the default behavior.
 * **Schedule** - Once an alert's conditions have been met, the alert will be published and processing stops. However, processing will resume according to the alert's reset schedule. During the time an alert is waiting to reset, it remains in the "Active" state.
+
+
+#### Operator Types
+
+* **Unary** - A unary operator does not require an "operand" value.
+* **Binary** - A binary operator requires an "operand" value.
 
 
 ##AlertManager Operations

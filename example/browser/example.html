@@ -583,7 +583,7 @@
                 var property = that.parent.property();
                 var operator = that.parent.operator();
 
-                return _.isObject(node) && _.isObject(node.item) && node.item === property && _.isObject(operator);
+                return _.isObject(node) && _.isObject(node.item) && node.item === property && _.isObject(operator) && operator.operator_type === 'binary';
             });
             that.showOptions = ko.computed(function() {
                 var operator = that.parent.operator();
