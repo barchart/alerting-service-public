@@ -50,7 +50,7 @@ module.exports = function() {
 				assert.argumentIsRequired(condition.property.target.identifier, 'alert.conditions[' + i + '].property.target.identifier', String);
 				assert.argumentIsRequired(condition.operator, 'alert.conditions[' + i + '].operator', Object);
 				assert.argumentIsRequired(condition.operator.operator_id, 'alert.conditions[' + i + '].operator_id', Number);
-				assert.argumentIsRequired(condition.operator.operand, 'alert.conditions[' + i + '].operand', String);
+				assert.argumentIsOptional(condition.operator.operand, 'alert.conditions[' + i + '].operand', String);
 				assert.argumentIsOptional(condition.operator.operand_qualifiers, 'alert.conditions[' + i + '].operator.operand_qualifiers', Object);
 
 				var operandQualifiers = condition.operator.operand_qualifiers;
