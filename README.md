@@ -253,11 +253,14 @@ A "publisher type" that includes the default recipient for a user.
 		"alert_system": "barchart.com",
 		"user_id": "barchart-test-user",
 		"default_recipient": "123-456-7890",
+		"default_recipient_hmac": "94b6239ae1d309a46163bb1e2f64213170ef201fb3f99ed1908caee899a34d2b"
 		"active_alert_types": [
 			"price",
 			"news"
 		]
     }
+    
+Presence of the "default_recipient_hmac" field indicates that the recipient has been "verified."
 
 
 ###Publisher
@@ -448,6 +451,7 @@ JSON-in:
 		"user_id": "barchart-test-user",
 		"alert_system": "barchart.com",
 		"default_recipient": "123-456-7890",
+		"default_recipient_hmac": "94b6239ae1d309a46163bb1e2f64213170ef201fb3f99ed1908caee899a34d2b"
 		"active_alert_types": [
 			"price",
 			"news"
@@ -479,6 +483,8 @@ if the value of this property is null.
 * allow_window_timezone - The timezones that qualify the "allow_window_start"
 and "allow_window_end" times. Use the Barchart.Alerts.timezone.getTimezones
 function to get a list of valid timezone strings.
+* default_recipient_hmac is optional. If you have "verified" the recipient
+please include the HMAC; otherwise, omit this property;
 
 
 ###createAlert
