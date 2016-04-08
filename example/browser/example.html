@@ -690,7 +690,7 @@
                                 activeAlertTypes.push('news');
                             }
 
-                            alertManager.assignPublisherTypeDefault({
+                            var ptd = {
                                 publisher_type_id: defaultPublisherType.publisherTypeId(),
                                 alert_system: system,
                                 user_id: userId,
@@ -699,9 +699,18 @@
                                 allow_window_start: defaultPublisherType.allowStartTime() || null,
                                 allow_window_end: defaultPublisherType.allowEndTime() || null,
                                 active_alert_types: activeAlertTypes
-                            }).then(function(savedPublisherTypeDefault) {
-                                checkComplete();
-                            });
+                            };
+
+                            var hmac = defaultPublisherType.defaultRecipientHmac();
+
+                            if (_.isString(hmac) && hmac.length > 0) {
+                                ptd.default_recipient_hmac = hmac;
+                            }
+
+                            alertManager.assignPublisherTypeDefault(ptd)
+                                .then(function(savedPublisherTypeDefault) {
+                                    checkComplete();
+                                });
                         } else {
                             checkComplete();
                         }
@@ -720,6 +729,7 @@
             that.transport = ko.observable(publisherTypeDefault.transport);
             that.provider = ko.observable(publisherTypeDefault.provider);
             that.defaultRecipient = ko.observable(publisherTypeDefault.default_recipient);
+            that.defaultRecipientHmac = ko.observable(publisherTypeDefault.default_recipient_hmac);
             that.allowTimezone = ko.observable(publisherTypeDefault.allow_window_timezone || Barchart.Alerts.timezone.guessTimezone());
             that.allowStartTime = ko.observable(publisherTypeDefault.allow_window_start);
             that.allowEndTime = ko.observable(publisherTypeDefault.allow_window_end);
@@ -1111,9 +1121,10 @@
                 <thead>
                     <th class="left col-md-1">Transport</th>
                     <th class="center col-md-2">Default Recipient</th>
+                    <th class="center col-md-2">Default Recipient HMAC</th>
                     <th class="center col-md-2">Timezone</th>
-                    <th class="center col-md-2">Start Time</th>
-                    <th class="center col-md-2">End Time</th>
+                    <th class="center col-md-1">Start Time</th>
+                    <th class="center col-md-1">End Time</th>
                     <th class="center col-md-1">Price Alerts</th>
                     <th class="center col-md-1">News Alerts</th>
                 </thead>
@@ -1133,6 +1144,9 @@
                 <input class="form-control" data-bind="textInput: defaultRecipient, enable: ready" type="text" placeholder="Recipient (e.g. phone number)">
             </td>
             <td class="left col-md-2">
+                <input class="form-control" data-bind="textInput: defaultRecipientHmac, enable: ready" type="text" placeholder="HMAC">
+            </td>
+            <td class="left col-md-2">
                 <div class="dropdown">
                     <button class="btn btn-default dropdown-toggle" data-bind="enable: ready" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
                         <span data-bind="text: allowTimezone"></span>
@@ -1142,10 +1156,10 @@
                     </ul>
                 </div>
             </td>
-            <td class="left col-md-2">
+            <td class="left col-md-1">
                 <input class="form-control" data-bind="textInput: allowStartTime, enable: ready" type="text" placeholder="HH:MM">
             </td>
-            <td class="left col-md-2">
+            <td class="left col-md-1">
                 <input class="form-control" data-bind="textInput: allowEndTime, enable: ready" type="text" placeholder="HH:MM">
             </td>
             <td class="center col-md-1">
