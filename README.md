@@ -709,6 +709,19 @@ JSON-out:
 	An array of "Alert" objects belonging to the specified user.
 
 
+###subscribeAlerts(query, changeCallback, deleteCallback)
+
+Provides notification, via callbacks, when an alert has been created or 
+deleted for a specific user.
+
+JSON-in (the "query" parameter):
+
+	{
+        "alert_system": "barchart.com",
+        "user_id": "barchart-test-user"
+	}
+
+
 ##Utility Functions
 
 ###Barchart.Alerts.timezone.getTimezones
