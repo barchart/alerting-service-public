@@ -50,7 +50,13 @@ module.exports = function() {
 				assert.argumentIsRequired(condition.property.target.identifier, 'alert.conditions[' + i + '].property.target.identifier', String);
 				assert.argumentIsRequired(condition.operator, 'alert.conditions[' + i + '].operator', Object);
 				assert.argumentIsRequired(condition.operator.operator_id, 'alert.conditions[' + i + '].operator_id', Number);
-				assert.argumentIsOptional(condition.operator.operand, 'alert.conditions[' + i + '].operand', String);
+
+				if (_.isArray(condition.operator.operand)) {
+					assert.argumentIsArray(condition.operator.operand, 'alert.conditions[' + i + '].operand', String);
+				} else {
+					assert.argumentIsOptional(condition.operator.operand, 'alert.conditions[' + i + '].operand', String);
+				}
+
 				assert.argumentIsOptional(condition.operator.operand_qualifiers, 'alert.conditions[' + i + '].operator.operand_qualifiers', Object);
 
 				var operandQualifiers = condition.operator.operand_qualifiers;
@@ -64,7 +70,7 @@ module.exports = function() {
 				}
 			}
 
-			for (var k = 0; j < alert.publishers.length; k++) {
+			for (var k = 0; k < alert.publishers.length; k++) {
 				var publisher = alert.publishers[k];
 
 				assert.argumentIsRequired(publisher.type, 'alert.publishers[' + k + '].type', Object);
