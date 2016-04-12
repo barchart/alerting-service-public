@@ -23,8 +23,8 @@
 
         //var alertManager = new Barchart.Alerts.RestAlertManager();
 
-        //var alertManager = new Barchart.Alerts.RestAlertManager('alerts-management-stage.barchart.com');
-        var alertManager = new Barchart.Alerts.RestAlertManager('localhost', 3000);
+        var alertManager = new Barchart.Alerts.RestAlertManager('alerts-management-stage.barchart.com');
+        //var alertManager = new Barchart.Alerts.RestAlertManager('localhost', 3000);
         //var alertManager = new Barchart.Alerts.SocketIOAlertManager('alerts-management-stage.barchart.com');
         //var alertManager = new Barchart.Alerts.SocketIOAlertManager('localhost', 3000);
 
@@ -219,6 +219,10 @@
 
                 var alertBehavior = that.alertBehavior();
 
+                if (alertType === 'news' && alertBehavior === 'automatic') {
+                    alertBehavior = null;
+                }
+
                 if (alertBehavior === 'automatic') {
                     alertBehavior = 'terminate';
                 }
@@ -240,7 +244,6 @@
                 var alert = {
                     name: that.name(),
                     alert_type: alertType,
-                    alert_behavior: alertBehavior,
                     user_notes: that.userNotes() || null,
                     user_id: userId,
                     alert_system: system,
@@ -298,6 +301,10 @@
                     }),
                     schedules: schedules
                 };
+
+                if (alertBehavior !== null) {
+                    alert.alert_behavior = alertBehavior;
+                }
 
                 alertManager.createAlert(alert)
                     .then(function(created) {
