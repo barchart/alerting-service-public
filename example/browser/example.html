@@ -23,8 +23,8 @@
 
         //var alertManager = new Barchart.Alerts.RestAlertManager();
 
-        var alertManager = new Barchart.Alerts.RestAlertManager('alerts-management-stage.barchart.com');
-        //var alertManager = new Barchart.Alerts.RestAlertManager('localhost', 3000);
+        //var alertManager = new Barchart.Alerts.RestAlertManager('alerts-management-stage.barchart.com');
+        var alertManager = new Barchart.Alerts.RestAlertManager('localhost', 3000);
         //var alertManager = new Barchart.Alerts.SocketIOAlertManager('alerts-management-stage.barchart.com');
         //var alertManager = new Barchart.Alerts.SocketIOAlertManager('localhost', 3000);
 
@@ -246,6 +246,15 @@
                     alert_system: system,
                     automatic_reset: that.automaticReset(),
                     conditions: _.map(that.conditions(), function(condition) {
+                        var operator = condition.operator();
+                        var operand = condition.operand();
+
+                        if (operator.operand_type === 'Array' && _.isString(operand)) {
+                            operand = _.map(operand.split(','), function(item) {
+                                return _.trim(item);
+                            });
+                        }
+
                         var conditionData = {
                             property: {
                                 property_id: condition.property().property_id,
@@ -255,7 +264,7 @@
                             },
                             operator: {
                                 operator_id: condition.operator().operator_id,
-                                operand: condition.operand()
+                                operand: operand
                             }
                         };
 
@@ -511,7 +520,14 @@
                 }));
 
                 that.targetIdentifier(condition.property.target.identifier);
-                that.operand(condition.operator.operand);
+
+                var operand = condition.operator.operand;
+
+                if (_.isArray(operand)) {
+                    operand = operand.join(',');
+                }
+
+                that.operand(operand);
 
                 var getNode = function(items, description) {
                     return _.find(items, function(item) {
