@@ -148,6 +148,7 @@ a "property" can be checked using an "operator" object.
             "200 Day"
         ],
         "group": "Technical",
+        "category": [ "Liquidity" ],
         "target": {
             "target_id": 1,
             "description": "equity",
