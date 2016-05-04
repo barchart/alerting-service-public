@@ -543,10 +543,10 @@
                 };
 
                 var node = getNode(that.propertyTree(), condition.property.group);
-                var description = condition.property.description;
+                var descriptionPath = ([ ]).concat(condition.property.category || [ ]).concat(condition.property.description);
 
-                for (var i = 0; i < description.length; i++) {
-                    var n = getNode(node.items, description[i]);
+                for (var i = 0; i < descriptionPath.length; i++) {
+                    var n = getNode(node.items, descriptionPath[i]);
 
                     that.properties.push(new AlertConditionTreeModel(that, node.items, 'Property', i, n));
 
