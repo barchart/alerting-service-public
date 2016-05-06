@@ -279,14 +279,6 @@
                             });
                         }
 
-                        var operandQualifiers = condition.operandQualifiers();
-
-                        if (operandQualifiers.length > 0) {
-                            conditionData.operator.operand_qualifiers = _.map(operandQualifiers, function(operandQualifier) {
-                                return operandQualifier.value();
-                            });
-                        }
-
                         return conditionData;
                     }),
                     publishers: _.map(that.publishers(), function(publisher) {
@@ -418,8 +410,6 @@
             that.operator = ko.observable(null);
             that.operand = ko.observable(null);
 
-            that.operandQualifiers = ko.observableArray([]);
-
             that.ready = ready;
 
             that.targets = ko.computed(function() {
@@ -486,7 +476,6 @@
 
                 that.property(null);
                 that.operator(null);
-                that.operandQualifiers(null);
             };
             that.selectPropertyTree = function(tree, index) {
                 if (tree.items) {
@@ -497,15 +486,9 @@
 
                     that.property(null);
                     that.operand(null);
-
-                    that.operandQualifiers(null);
                 } else {
                     that.property(tree.item);
                     that.operand(_.first(that.operator().operand_options) || null);
-
-                    that.operandQualifiers(_.map(that.operator().operand_qualifier_descriptions, function(description) {
-                        return new AlertConditionOperandQualifierModel(that.ready, description);
-                    }));
                 }
             };
             that.selectOperator = function(opertator) {
@@ -551,15 +534,6 @@
                     that.properties.push(new AlertConditionTreeModel(that, node.items, 'Property', i, n));
 
                     node = n;
-                }
-
-                var operandQualifiersDescriptions = condition.operator.operand_qualifier_descriptions;
-                var operandQualifierValues = condition.operator.operand_qualifiers;
-
-                if (operandQualifiersDescriptions && operandQualifierValues) {
-                    for (var j = 0; j < operandQualifiersDescriptions.length; j++) {
-                        that.operandQualifiers.push(new AlertConditionOperandQualifierModel(that.ready, operandQualifiersDescriptions[j], operandQualifierValues[j]))
-                    }
                 }
             } else {
                 that.selectTarget(_.first(that.targets()));
@@ -613,14 +587,6 @@
 
                 return _.isObject(operator) && _.isArray(operator.operand_options) && operator.operand_options.length > 0;
             });
-        }
-        function AlertConditionOperandQualifierModel(ready, description, value) {
-            var that = this;
-
-            that.ready = ready;
-
-            that.description = ko.observable(description);
-            that.value = ko.observable(value);
         }
         function AlertPublisherModel(ready, publisher) {
             var that = this;
@@ -1029,9 +995,6 @@
         <!-- ko foreach: properties -->
         <tr class="component" data-bind="template: { name: 'alert-create-condition-property-template' }"></tr>
         <!-- /ko -->
-        <!-- ko foreach: operandQualifiers -->
-        <tr class="component" data-bind="template: { name: 'alert-create-condition-operand-qualifier-template' }"></tr>
-        <!-- /ko -->
     </script>
 
     <script type="text/html" id="alert-create-condition-qualifier-template">
@@ -1090,16 +1053,6 @@
         <td class="col-md-4" colspan="2">
         </td>
         <!-- /ko -->
-    </script>
-
-    <script type="text/html" id="alert-create-condition-operand-qualifier-template">
-        <td class="col-md-1"></td>
-        <td class="col-md-2"></td>
-        <td class="col-md-3"> </td>
-        <td class="col-md-2"></td>
-        <td class="col-md-2">
-            <input class="form-control" data-bind="textInput: value, enable: ready, attr: { placeholder: description }" type="text" placeholder="description">
-        </td>
     </script>
 
     <script type="text/html" id="alert-create-publisher-template">
