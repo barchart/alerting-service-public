@@ -493,6 +493,7 @@
             };
             that.selectOperator = function(opertator) {
                 that.operator(opertator);
+                that.operand(_.first(that.operator().operand_options) || null);
             };
             that.selectOperand = function(operand) {
                 that.operand(operand);
@@ -768,24 +769,6 @@
                         .then(function(pt) {
                             publisherTypes(pt);
                         });
-
-                    /*
-                    var filter = {
-                        symbol: 'TSLA',
-                        alert_type: 'news',
-                        condition: {
-                            operand: 'TSLA'
-                        },
-                        target: {
-                            identifier: 'TSLA'
-                        }
-                    };
-
-                    alertManager.retrieveAlerts({ user_id: userId, alert_system: system, filter: filter})
-                        .then(function(filteredAlerts) {
-                            console.log(filteredAlerts);
-                        });
-                    */
 
                     ko.applyBindings(pageModel, $('body')[0]);
                 });

@@ -188,7 +188,8 @@ of a "target" object.
             "Buy",
             "Sell",
             "Hold"
-        ]
+        ],
+        "operand_literal": true
     }
 
 The operator.operand_options lists the possible values which can be used
