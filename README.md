@@ -143,6 +143,7 @@ a "property" can be checked using an "operator" object.
 
     {
         "property_id": 18,
+        "type": "number",
         "description": [
             "Average Volume",
             "200 Day"
@@ -160,7 +161,7 @@ a "property" can be checked using an "operator" object.
         ]
     }
 
-The "valid_operators" array references the "operator" objects
+* The "valid_operators" array references the "operator" objects
 that can be used in conjunction with this "property" to
 create a "condition." So, refer to the example above. This
 "property" describes the 200-day average volume for an equity.
@@ -168,6 +169,10 @@ The  "valid_operators" array tells us that operators 2 and 3
 (greater-than and less-than) can be used to build an
 alert "condition" however it would not be valid to pair any
 other operators with this "property."
+
+* The "type" property indicates if the value of the property
+is expected to be a string, a number, a number (percent), or
+even a complex object.
 
 
 ###Operator

@@ -23,8 +23,8 @@
 
         //var alertManager = new Barchart.Alerts.RestAlertManager();
 
-        var alertManager = new Barchart.Alerts.RestAlertManager('alerts-management-stage.barchart.com');
-        //var alertManager = new Barchart.Alerts.RestAlertManager('localhost', 3000);
+        //var alertManager = new Barchart.Alerts.RestAlertManager('alerts-management-stage.barchart.com');
+        var alertManager = new Barchart.Alerts.RestAlertManager('localhost', 3000);
         //var alertManager = new Barchart.Alerts.SocketIOAlertManager('alerts-management-stage.barchart.com');
         //var alertManager = new Barchart.Alerts.SocketIOAlertManager('localhost', 3000);
 
@@ -249,6 +249,7 @@
                     alert_system: system,
                     automatic_reset: that.automaticReset(),
                     conditions: _.map(that.conditions(), function(condition) {
+                        var property = condition.property();
                         var operator = condition.operator();
                         var operand = condition.operand();
 
@@ -258,15 +259,20 @@
                             });
                         }
 
+                        if (property.type === 'percent') {
+                            operand = parseFloat(operand) / 100;
+                            operand = operand.toString();
+                        }
+
                         var conditionData = {
                             property: {
-                                property_id: condition.property().property_id,
+                                property_id: property.property_id,
                                 target: {
                                     identifier: condition.targetIdentifier()
                                 }
                             },
                             operator: {
-                                operator_id: condition.operator().operator_id,
+                                operator_id: operator.operator_id,
                                 operand: operand
                             }
                         };
@@ -518,6 +524,12 @@
                     operand = operand.join(',');
                 }
 
+                var p = that.property();
+
+                if (p && p.type === 'percent') {
+                    operand = parseFloat(operand) * 100;
+                }
+
                 that.operand(operand);
 
                 var getNode = function(items, description) {
@@ -578,6 +590,7 @@
 
             that.showOperator = ko.computed(function() {
                 var node = that.node();
+
                 var property = that.parent.property();
                 var operator = that.parent.operator();
 
@@ -587,6 +600,11 @@
                 var operator = that.parent.operator();
 
                 return _.isObject(operator) && _.isArray(operator.operand_options) && operator.operand_options.length > 0;
+            });
+            that.showPercent = ko.computed(function() {
+                var property = that.parent.property();
+
+                return property !== null && property.type === 'percent';
             });
         }
         function AlertPublisherModel(ready, publisher) {
@@ -1028,7 +1046,10 @@
         <!-- /ko -->
         <!-- ko ifnot: showOptions -->
         <td class="col-md-2">
-            <input class="form-control" data-bind="textInput: parent.operand, enable: parent.ready" type="text" placeholder="value">
+            <input class="form-control pull-left" data-bind="css: { percent: showPercent }, textInput: parent.operand, enable: parent.ready" type="text" placeholder="value">
+            <!-- ko if: showPercent -->
+            <div class="pull-right">%</div>
+            <!-- /ko -->
         </td>
         <!-- /ko -->
         <!-- /ko -->

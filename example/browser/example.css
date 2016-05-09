@@ -141,3 +141,7 @@ td .dropdown ul {
     background-image: linear-gradient(to bottom,#29506D 0,#29506D 100%);
     background-repeat: repeat-x;
 }
+
+input.percent.form-control {
+    width: 90%;
+}
