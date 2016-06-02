@@ -141,7 +141,7 @@
             that.canStart = ko.computed(function() {
                 var alert = that.alert();
 
-                return alert.alert_state === 'Inactive' || alert.alert_state === 'Triggered';
+                return alert.alert_state === 'Inactive' || alert.alert_state === 'Triggered' || alert.alert_state === 'Orphaned';
             });
             that.canPause = ko.computed(function() {
                 var alert = that.alert();
