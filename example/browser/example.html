@@ -37,6 +37,7 @@
         var properties = ko.observable();
         var operators = ko.observable();
         var publisherTypes = ko.observable();
+        var marketDataConfiguration = ko.observable();
 
         function PageModel() {
             var that = this;
@@ -45,7 +46,8 @@
 
             that.alert = ko.observable();
             that.alerts = ko.observableArray([ ]);
-            that.preferences = ko.observable();
+            that.publisherSettings = ko.observable();
+            that.marketDataSettings = ko.observable();
             that.activeTemplate = ko.observable('alert-grid-template');
             that.providerDescription = ko.observable(alertManager.toString());
 
@@ -87,7 +89,8 @@
                 that.activeTemplate('alert-entry-template');
             };
             that.changeToPreferences = function() {
-                that.preferences = new AlertPublisherTypeDefaultsModel(publisherTypes());
+                that.publisherSettings = new AlertPublisherTypeDefaultsModel(publisherTypes());
+                that.marketDataSettings = new MarketDataConfigurationModel(marketDataConfiguration());
 
                 that.activeTemplate('alert-preferences-template');
             };
@@ -751,6 +754,34 @@
                 that.allowTimezone(timezone);
             };
         }
+        function MarketDataConfigurationModel(mdc) {
+            var that = this;
+
+            that.processing = ko.observable(false);
+
+            that.ready = ko.computed(function() {
+                return !that.processing();
+            });
+
+            that.userId = ko.observable(userId);
+            that.systemId = ko.observable(system);
+            that.marketDataId = ko.observable(null);
+
+            that.savePreferences = function() {
+                that.processing(true);
+
+                alertManager.assignMarketDataConfiguration({ user_id: userId, alert_system: system, market_data_id: that.marketDataId() })
+                    .then(function(mdc) {
+                        marketDataConfiguration(mdc);
+
+                        that.processing(false);
+                    });
+            };
+
+            if (mdc && mdc.market_data_id) {
+                that.marketDataId(mdc.market_data_id);
+            }
+        }
 
         $(document).ready(function() {
             alertManager.connect()
@@ -789,6 +820,11 @@
                     alertManager.getPublisherTypeDefaults({ user_id: userId, alert_system: system })
                         .then(function(pt) {
                             publisherTypes(pt);
+                        });
+
+                    alertManager.getMarketDataConfiguration({ user_id: userId, alert_system: system })
+                        .then(function(mdc) {
+                            marketDataConfiguration(mdc);
                         });
 
                     ko.applyBindings(pageModel, $('body')[0]);
@@ -1099,26 +1135,77 @@
     </script>
 
     <script type="text/html" id="alert-preferences-template">
-        <div data-bind="with: preferences">
-            <table class="table table-striped small">
-                <thead>
-                    <th class="left col-md-1">Transport</th>
-                    <th class="center col-md-2">Default Recipient</th>
-                    <th class="center col-md-2">Default Recipient HMAC</th>
-                    <th class="center col-md-2">Timezone</th>
-                    <th class="center col-md-1">Start Time</th>
-                    <th class="center col-md-1">End Time</th>
-                    <th class="center col-md-1">Price Alerts</th>
-                    <th class="center col-md-1">News Alerts</th>
-                </thead>
-                <tbody data-bind="template: { name: 'alert-preference-template', foreach: publisherTypeDefaults }"></tbody>
-            </table>
+        <div data-bind="with: marketDataSettings" style="margin-bottom: 20px;">
+            <div class="panel panel-info">
+                <div class="panel-heading">
+                    <h3 class="panel-title">Market Data Settings</h3>
+                </div>
 
-            <button class="btn btn-primary btn-default" data-bind="click: savePreferences, enable: ready">Save</button>
+                <table class="market-data-settings table">
+                    <tbody>
+                    <tr>
+                        <td class="col-md-2">
+                            <label class="control-label">System</label>
+                        </td>
+                        <td class="col-md-4">
+                            <input class="form-control" data-bind="textInput: system, enable: false" type="text" placeholder="System Name">
+                        </td>
+                        <td class="col-md-2">
+                            <label class="control-label">User ID</label>
+                        </td>
+                        <td class="col-md-4">
+                            <input class="form-control" data-bind="textInput: userId, enable: false" type="text" placeholder="User ID">
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="col-md-2">
+                            <label class="control-label">Market Data ID</label>
+                        </td>
+                        <td class="col-md-4">
+                            <input class="form-control" data-bind="textInput: marketDataId, enable: ready" type="text" placeholder="Market Data ID">
+                        </td>
+                        <td class="col-md-2">
+                        </td>
+                        <td class="col-md-4">
+                        </td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <div>
+                <button class="btn btn-primary btn-default" data-bind="click: savePreferences, enable: ready">Save</button>
+            </div>
+        </div>
+
+        <div data-bind="with: publisherSettings">
+            <div class="panel panel-info">
+                <div class="panel-heading">
+                    <h3 class="panel-title">Publisher Settings</h3>
+                </div>
+
+                <table class="table table-striped small" style="margin-bottom: 5px;">
+                    <thead>
+                        <th class="left col-md-1">Transport</th>
+                        <th class="center col-md-2">Default Recipient</th>
+                        <th class="center col-md-2">Default Recipient HMAC</th>
+                        <th class="center col-md-2">Timezone</th>
+                        <th class="center col-md-1">Start Time</th>
+                        <th class="center col-md-1">End Time</th>
+                        <th class="center col-md-1">Price Alerts</th>
+                        <th class="center col-md-1">News Alerts</th>
+                    </thead>
+                    <tbody data-bind="template: { name: 'publisher-type-preference-template', foreach: publisherTypeDefaults }"></tbody>
+                </table>
+            </div>
+
+            <div>
+                <button class="btn btn-primary btn-default" data-bind="click: savePreferences, enable: ready">Save</button>
+            </div>
         </div>
     </script>
 
-    <script type="text/html" id="alert-preference-template">
+    <script type="text/html" id="publisher-type-preference-template">
         <tr>
             <td class="left col-md-1">
                 <span><span data-bind="text: transport"></span> (<span data-bind="text: provider"></span>)</span>
