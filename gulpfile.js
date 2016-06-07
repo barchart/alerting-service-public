@@ -9,6 +9,7 @@ var glob = require('glob');
 var jasmine = require('gulp-jasmine');
 var jshint = require('gulp-jshint');
 var rename = require('gulp-rename');
+var replace = require('gulp-replace');
 var runSequence = require('run-sequence');
 var source = require('vinyl-source-stream');
 var uglify = require('gulp-uglify');
@@ -38,6 +39,14 @@ gulp.task('bump-version', function () {
     return gulp.src([ './package.json', './bower.json' ])
         .pipe(bump({ type: 'patch' }).on('error', util.log))
         .pipe(gulp.dest('./'));
+});
+
+gulp.task('embed-version', function () {
+    var version = getVersionFromPackage();
+
+    return gulp.src(['./lib/alerts/index.js'])
+        .pipe(replace(/(version:\s*')([0-9]+\.[0-9]+\.[0-9]+)(')/g, '$1' + version + '$3'))
+        .pipe(gulp.dest('./lib/alerts/'));
 });
 
 gulp.task('commit-changes', function () {
@@ -114,11 +123,12 @@ gulp.task('test', [ 'execute-tests' ]);
 gulp.task('release', function (callback) {
     runSequence(
         'ensure-clean-working-directory',
+        'bump-version',
+        'embed-version',
         'build',
         'build-browser-tests',
         'execute-browser-tests',
         'execute-node-tests',
-        'bump-version',
         'commit-changes',
         'push-changes',
         'create-tag',

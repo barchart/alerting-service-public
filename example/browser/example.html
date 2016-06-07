@@ -18,13 +18,16 @@
     <script type="text/javascript">
         'use strict';
 
+        //var system = 'grains.com';
+        //var userId = '108265';
+
         var system = 'barchart.com';
         var userId = 'barchart-test-user';
 
         //var alertManager = new Barchart.Alerts.RestAlertManager();
 
-        var alertManager = new Barchart.Alerts.RestAlertManager('alerts-management-stage.barchart.com');
-        //var alertManager = new Barchart.Alerts.RestAlertManager('localhost', 3000);
+        //var alertManager = new Barchart.Alerts.RestAlertManager('alerts-management-stage.barchart.com');
+        var alertManager = new Barchart.Alerts.RestAlertManager('localhost', 3000);
         //var alertManager = new Barchart.Alerts.SocketIOAlertManager('alerts-management-stage.barchart.com');
         //var alertManager = new Barchart.Alerts.SocketIOAlertManager('localhost', 3000);
 
@@ -38,7 +41,7 @@
         function PageModel() {
             var that = this;
 
-            that.version = ko.observable();
+            that.version = ko.observable({ });
 
             that.alert = ko.observable();
             that.alerts = ko.observableArray([ ]);
@@ -765,7 +768,7 @@
 
                     alertManager.getServerVersion()
                         .then(function(version) {
-                            pageModel.version(version.semver);
+                            pageModel.version({ api: version.semver, client: Barchart.Alerts.version });
                         });
 
                     alertManager.getTargets()
@@ -1156,7 +1159,7 @@
     <div class="main" data-bind="template: { name: activeTemplate }"></div>
     <div class="footer">
         <h4 class="pull-left" data-bind="text: providerDescription"></h4>
-        <h4 class="pull-right">API Version <span data-bind="text: version"></span></h4>
+        <h4 class="pull-right">API Version <span data-bind="text: version().api"></span>, Client Version: <span data-bind="text: version().client"></span></h4>
     </div>
 </body>
 </html>
