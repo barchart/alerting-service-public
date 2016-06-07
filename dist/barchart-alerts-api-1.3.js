@@ -1072,7 +1072,7 @@ module.exports = function() {
 		RestAlertManager: RestAlertManager,
 		SocketIOAlertManager: SocketIOAlertManager,
 		timezone: timezone,
-		version: '1.3.12'
+		version: '1.3.13'
 	};
 }();
 },{"./../common/lang/timezone":9,"./AlertManager":1,"./RestAlertManager":2,"./SocketIOAlertManager":3}],5:[function(require,module,exports){
