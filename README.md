@@ -331,6 +331,20 @@ defines a time for the alert to resume processing.
 * The "timezone" property refers to a timezone name according to the Moment.js[http://momentjs.com/timezone/docs/#/data-loading/getting-zone-names/]. If omitted, this property will default to "America/Chicago"
 
 
+###Market Data Configuration
+
+Many alert conditions depend on market data feeds. This data structure
+defines the parameters for the market data feed which will be used
+to evaluate conditions (for a given user).
+
+    {
+        "configuration_id": "71193b92-fe99-4ab7-a83a-92465bec88e2",
+		"alert_system": "barchart.com",
+		"user_id": "barchart-test-user",
+        "market_data_id": "my-fancy-market-data-user-id"
+    }
+
+
 ##Data (Enumerations)
 
 
@@ -492,6 +506,39 @@ and "allow_window_end" times. Use the Barchart.Alerts.timezone.getTimezones
 function to get a list of valid timezone strings.
 * default_recipient_hmac is optional. If you have "verified" the recipient
 please include the HMAC; otherwise, omit this property;
+
+
+###getMarketDataConfiguration
+
+Returns a "MarketDataConfiguration" object, for the specified user.
+
+JSON-in:
+
+	{
+	    "user_id": "barchart-test-user",
+	    "alert_system": "barchart.com"
+	}
+
+JSON-out:
+
+	A "MarketDataConfiguration" object.
+
+
+###assignMarketDataConfiguration
+
+Updates the MarketDataConfiguration for a specific user.
+
+JSON-in:
+
+	{
+		"user_id": "barchart-test-user",
+		"alert_system": "barchart.com",
+        "market_data_id": "my-fancy-market-data-user-id"
+	}
+
+JSON-out:
+
+	A "MarketDataConfiguration" object.
 
 
 ###createAlert
