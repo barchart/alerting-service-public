@@ -24,12 +24,12 @@
         var system = 'barchart.com';
         var userId = 'barchart-test-user';
 
-        //var alertManager = new Barchart.Alerts.RestAlertManager();
+        //var alertManager = new Barchart.Alerts.AlertManager();
 
-        var alertManager = new Barchart.Alerts.RestAlertManager('alerts-management-stage.barchart.com');
-        //var alertManager = new Barchart.Alerts.RestAlertManager('localhost', 3000);
-        //var alertManager = new Barchart.Alerts.SocketIOAlertManager('alerts-management-stage.barchart.com');
-        //var alertManager = new Barchart.Alerts.SocketIOAlertManager('localhost', 3000);
+        var alertManager = new Barchart.Alerts.AlertManager('alerts-management-stage.barchart.com', 80, 'rest');
+        //var alertManager = new Barchart.Alerts.AlertManager('localhost', 3000, 'rest');
+        //var alertManager = new Barchart.Alerts.AlertManager('alerts-management-stage.barchart.com');
+        //var alertManager = new Barchart.Alerts.AlertManager('localhost', 3000);
 
         var utilities = Barchart.Alerts.AlertManager;
 
