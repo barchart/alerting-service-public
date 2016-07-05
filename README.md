@@ -65,14 +65,14 @@ code is contained within a script block of the HTML.
 In the browser, an object has been added to the global namespace. Connect as follows:
 
 
-	var alertManager = new Barchart.Alerts.RestAlertManager();
+	var alertManager = new Barchart.Alerts.AlertManager();
 
 
-Alternately, the URL and port of the alert management system can be passed to the
+Alternately, the URL and port of the alert management host/port can be passed to the
 constructor:
 
 
-	var alertManager = new Barchart.Alerts.RestAlertManager('alerts-management-stage.elasticbeanstalk.com', 80);
+	var alertManager = new Barchart.Alerts.AlertManager('alerts-management-stage.barchart.com', 80);
 
 
 Then, call the connect method before using any operations:
@@ -83,16 +83,12 @@ Then, call the connect method before using any operations:
 		});
 
 
-###Initialization (Using Socket.IO)
+###Initialization (Using REST)
 
-To use a Socket.IO transport, change the constructor to:
-
-	var alertManager = new Barchart.Alerts.SocketIOAlertManager();
-
-Specify the URL and port as follows:
+To use a simple REST transport (instead of socket.io transport), change the constructor to:
 
 
-	var alertManager = new Barchart.Alerts.SocketIOAlertManager('alerts-management-stage.elasticbeanstalk.com', 80);
+	var alertManager = new Barchart.Alerts.AlertManager('alerts-management-stage.barchart.com', 80, 'rest');
 
 
 And, finally, call the connect method before invoking any other operations:
