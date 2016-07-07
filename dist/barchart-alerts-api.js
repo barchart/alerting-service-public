@@ -1339,7 +1339,7 @@ module.exports = function () {
 	return {
 		AlertManager: AlertManager,
 		timezone: timezone,
-		version: '1.4.3'
+		version: '1.4.4'
 	};
 }();
 
@@ -1349,7 +1349,7 @@ module.exports = function () {
 var assert = require('./../../common/lang/assert');
 
 var condition = require('./condition');
-var publisher = require('./condition');
+var publisher = require('./publisher');
 
 module.exports = function () {
 	'use strict';
@@ -1406,7 +1406,7 @@ module.exports = function () {
 	return validator;
 }();
 
-},{"./../../common/lang/assert":12,"./condition":7}],7:[function(require,module,exports){
+},{"./../../common/lang/assert":12,"./condition":7,"./publisher":8}],7:[function(require,module,exports){
 'use strict';
 
 var assert = require('./../../common/lang/assert');
