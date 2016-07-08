@@ -36,6 +36,8 @@ module.exports = function () {
 			assert.argumentIsOptional(secure, 'secure', Boolean);
 
 			_this._host = host || 'alerts-management-prod.barchart.com';
+			_this._mode = mode || 'socket.io';
+
 			_this._secure = connection.getIsSecure(secure);
 
 			var portToUse = void 0;
@@ -52,17 +54,10 @@ module.exports = function () {
 
 			_this._port = portToUse;
 
+			_this._adapter = null;
+			_this._adapterConnectPromise = null;
+
 			_this._alertSubscriptionMap = {};
-
-			var adapter = void 0;
-
-			if (mode === 'rest') {
-				adapter = new RestAlertAdapter(_this._host, _this._port, _this._secure, onAlertMutated.bind(_this), onAlertDeleted.bind(_this));
-			} else {
-				adapter = new SocketAlertAdapter(_this._host, _this._port, _this._secure, onAlertMutated.bind(_this), onAlertDeleted.bind(_this));
-			}
-
-			_this._adapter = adapter;
 			return _this;
 		}
 
@@ -72,7 +67,36 @@ module.exports = function () {
 				var _this2 = this;
 
 				return Promise.resolve().then(function () {
-					return _this2._adapter.connect();
+					checkDispose(_this2, 'connect');
+				}).then(function () {
+					if (_this2._adapterConnectPromise === null) {
+						_this2._adapterConnectPromise = Promise.resolve().then(function () {
+							var mode = _this2._mode.toLowerCase();
+
+							var adapter = void 0;
+
+							if (mode === 'rest') {
+								adapter = new RestAlertAdapter(_this2._host, _this2._port, _this2._secure, onAlertMutated.bind(_this2), onAlertDeleted.bind(_this2));
+							} else if (mode === 'socket.io') {
+								adapter = new SocketAlertAdapter(_this2._host, _this2._port, _this2._secure, onAlertMutated.bind(_this2), onAlertDeleted.bind(_this2));
+							} else {
+								throw new Error('Unable to connect, using unsupported mode (' + mode + ')');
+							}
+
+							return adapter.connect();
+						}).then(function (adapter) {
+							_this2._adapter = adapter;
+							_this2._adapterConnectPromise = Promise.resolve(_this2._adapter);
+
+							return _this2._adapter;
+						}).catch(function (e) {
+							_this2.dispose();
+
+							throw e;
+						});
+					}
+
+					return _this2._adapterConnectPromise;
 				});
 			}
 		}, {
@@ -80,9 +104,11 @@ module.exports = function () {
 			value: function createAlert(alert) {
 				var _this3 = this;
 
-				validate.alert.forCreate(alert);
-
 				return Promise.resolve().then(function () {
+					checkStatus(_this3, 'create alert');
+
+					validate.alert.forCreate(alert);
+				}).then(function () {
 					return _this3._adapter.createAlert(alert);
 				});
 			}
@@ -91,9 +117,11 @@ module.exports = function () {
 			value: function retrieveAlert(alert) {
 				var _this4 = this;
 
-				validate.alert.forQuery(alert);
-
 				return Promise.resolve().then(function () {
+					checkStatus(_this4, 'retrieve alert');
+
+					validate.alert.forQuery(alert);
+				}).then(function () {
 					return _this4._adapter.retrieveAlert(alert);
 				});
 			}
@@ -102,9 +130,11 @@ module.exports = function () {
 			value: function editAlert(alert) {
 				var _this5 = this;
 
-				validate.alert.forEdit(alert);
-
 				return Promise.resolve().then(function () {
+					checkStatus(_this5, 'edit alert');
+
+					validate.alert.forEdit(alert);
+				}).then(function () {
 					return _this5._adapter.deleteAlert(alert);
 				}).then(function () {
 					return _this5._adapter.createAlert(alert);
@@ -115,14 +145,16 @@ module.exports = function () {
 			value: function enableAlert(alert) {
 				var _this6 = this;
 
-				validate.alert.forQuery(alert);
-
-				var clone = Object.assign(alert);
-				clone.alert_state = 'Starting';
-
-				onAlertMutated.call(this, clone);
-
 				return Promise.resolve().then(function () {
+					checkStatus(_this6, 'enable alert');
+
+					validate.alert.forQuery(alert);
+				}).then(function () {
+					var clone = Object.assign(alert);
+					clone.alert_state = 'Starting';
+
+					onAlertMutated.call(_this6, clone);
+
 					return _this6._adapter.updateAlert({ alert_id: alert.alert_id, alert_state: 'Starting' });
 				});
 			}
@@ -131,14 +163,16 @@ module.exports = function () {
 			value: function disableAlert(alert) {
 				var _this7 = this;
 
-				validate.alert.forQuery(alert);
-
-				var clone = Object.assign(alert);
-				clone.alert_state = 'Stopping';
-
-				onAlertMutated.call(this, clone);
-
 				return Promise.resolve().then(function () {
+					checkStatus(_this7, 'disable alert');
+
+					validate.alert.forQuery(alert);
+				}).then(function () {
+					var clone = Object.assign(alert);
+					clone.alert_state = 'Stopping';
+
+					onAlertMutated.call(_this7, clone);
+
 					return _this7._adapter.updateAlert({ alert_id: alert.alert_id, alert_state: 'Stopping' });
 				});
 			}
@@ -147,9 +181,11 @@ module.exports = function () {
 			value: function deleteAlert(alert) {
 				var _this8 = this;
 
-				validate.alert.forQuery(alert);
-
 				return Promise.resolve().then(function () {
+					checkStatus(_this8, 'delete alert');
+
+					validate.alert.forQuery(alert);
+				}).then(function () {
 					return _this8._adapter.deleteAlert({ alert_id: alert.alert_id });
 				});
 			}
@@ -158,9 +194,11 @@ module.exports = function () {
 			value: function retrieveAlerts(query) {
 				var _this9 = this;
 
-				validate.alert.forUser(query);
-
 				return Promise.resolve().then(function () {
+					checkStatus(_this9, 'retrieve alerts');
+
+					validate.alert.forUser(query);
+				}).then(function () {
 					return _this9._adapter.retrieveAlerts(query);
 				}).then(function (results) {
 					if (query.filter && query.filter.alert_type) {
@@ -205,6 +243,8 @@ module.exports = function () {
 		}, {
 			key: 'subscribeAlerts',
 			value: function subscribeAlerts(query, changeCallback, deleteCallback) {
+				checkStatus(this, 'subscribe alerts');
+
 				validate.alert.forUser(query);
 
 				assert.argumentIsRequired(changeCallback, 'changeCallback', Function);
@@ -253,6 +293,8 @@ module.exports = function () {
 				var _this10 = this;
 
 				return Promise.resolve().then(function () {
+					checkStatus(_this10, 'get targets');
+				}).then(function () {
 					return _this10._adapter.getTargets();
 				});
 			}
@@ -262,6 +304,8 @@ module.exports = function () {
 				var _this11 = this;
 
 				return Promise.resolve().then(function () {
+					checkStatus(_this11, 'get properties');
+				}).then(function () {
 					return _this11._adapter.getProperties();
 				});
 			}
@@ -271,6 +315,8 @@ module.exports = function () {
 				var _this12 = this;
 
 				return Promise.resolve().then(function () {
+					checkStatus(_this12, 'get operators');
+				}).then(function () {
 					return _this12._adapter.getOperators();
 				});
 			}
@@ -280,6 +326,8 @@ module.exports = function () {
 				var _this13 = this;
 
 				return Promise.resolve().then(function () {
+					checkStatus(_this13, 'get publisher types');
+				}).then(function () {
 					return _this13._adapter.getPublisherTypes();
 				});
 			}
@@ -288,9 +336,11 @@ module.exports = function () {
 			value: function getPublisherTypeDefaults(query) {
 				var _this14 = this;
 
-				validate.publisherTypeDefault.forUser(query);
-
 				return Promise.resolve().then(function () {
+					checkStatus(_this14, 'get publisher type defaults');
+
+					validate.publisherTypeDefault.forUser(query);
+				}).then(function () {
 					return _this14._adapter.getPublisherTypeDefaults(query);
 				});
 			}
@@ -299,9 +349,11 @@ module.exports = function () {
 			value: function assignPublisherTypeDefault(publisherTypeDefault) {
 				var _this15 = this;
 
-				validate.publisherTypeDefault.forCreate(publisherTypeDefault);
-
 				return Promise.resolve().then(function () {
+					checkStatus(_this15, 'assign publisher type default');
+
+					validate.publisherTypeDefault.forCreate(publisherTypeDefault);
+				}).then(function () {
 					return _this15._adapter.assignPublisherTypeDefault(publisherTypeDefault);
 				});
 			}
@@ -311,6 +363,8 @@ module.exports = function () {
 				var _this16 = this;
 
 				return Promise.resolve().then(function () {
+					checkStatus(_this16, 'get market data configuration');
+				}).then(function () {
 					return _this16._adapter.getMarketDataConfiguration(query);
 				});
 			}
@@ -320,6 +374,8 @@ module.exports = function () {
 				var _this17 = this;
 
 				return Promise.resolve().then(function () {
+					checkStatus(_this17, 'assign market data configuration');
+				}).then(function () {
 					return _this17._adapter.assignMarketDataConfiguration(marketDataConfiguration);
 				});
 			}
@@ -329,6 +385,8 @@ module.exports = function () {
 				var _this18 = this;
 
 				return Promise.resolve().then(function () {
+					checkStatus(_this18, 'get server version');
+				}).then(function () {
 					return _this18._adapter.getServerVersion();
 				});
 			}
@@ -362,6 +420,20 @@ module.exports = function () {
 		}
 
 		return returnRef;
+	}
+
+	function checkDispose(manager, operation) {
+		if (manager.getIsDisposed()) {
+			throw new Error('Unable to perform ' + operation + ', the alert manager has been disposed');
+		}
+	}
+
+	function checkStatus(manager, operation) {
+		checkDispose(manager, operation);
+
+		if (manager._adapter === null) {
+			throw new Error('Unable to perform ' + operation + ', the alert manager has not connected to the server');
+		}
 	}
 
 	function onAlertMutated(alert) {
@@ -495,7 +567,7 @@ module.exports = function () {
 		_createClass(AlertAdapterBase, [{
 			key: 'connect',
 			value: function connect() {
-				return null;
+				return Promise.reject();
 			}
 		}, {
 			key: 'createAlert',
@@ -646,7 +718,7 @@ module.exports = function () {
 		_createClass(RestAlertAdapter, [{
 			key: 'connect',
 			value: function connect() {
-				return true;
+				return this;
 			}
 		}, {
 			key: 'createAlert',
@@ -755,10 +827,8 @@ module.exports = function () {
 		}, {
 			key: '_onDispose',
 			value: function _onDispose() {
-				var _this4 = this;
-
-				Object.keys(this._subscribers).forEach(function (key) {
-					_this4._subscribers[key].dispose();
+				getSubscribers(this._subscribers).forEach(function (subscriber) {
+					subscriber.dispose();
 				});
 
 				this._subscribers = null;
@@ -815,21 +885,31 @@ module.exports = function () {
 		delete subscribers[userId][systemId];
 	}
 
+	function getSubscribers(subscribers) {
+		return Object.keys(subscribers).reduce(function (array, userId) {
+			var systems = subscribers[userId];
+
+			return array.concat(Object.keys(systems).map(function (systemId) {
+				return systems[systemId];
+			}));
+		}, []);
+	}
+
 	var AlertSubscriber = function (_Disposable) {
 		_inherits(AlertSubscriber, _Disposable);
 
 		function AlertSubscriber(parent, query) {
 			_classCallCheck(this, AlertSubscriber);
 
-			var _this5 = _possibleConstructorReturn(this, Object.getPrototypeOf(AlertSubscriber).call(this));
+			var _this4 = _possibleConstructorReturn(this, Object.getPrototypeOf(AlertSubscriber).call(this));
 
-			_this5._parent = parent;
+			_this4._parent = parent;
 
-			_this5._query = query;
-			_this5._alerts = {};
+			_this4._query = query;
+			_this4._alerts = {};
 
-			_this5._started = false;
-			return _this5;
+			_this4._started = false;
+			return _this4;
 		}
 
 		_createClass(AlertSubscriber, [{
@@ -840,7 +920,7 @@ module.exports = function () {
 		}, {
 			key: 'processAlerts',
 			value: function processAlerts(alerts) {
-				var _this6 = this;
+				var _this5 = this;
 
 				var currentAlerts = indexBy(alerts, function (alert) {
 					return alert.alert_id;
@@ -851,8 +931,8 @@ module.exports = function () {
 
 					var alertId = alert.alert_id;
 
-					if (_this6._alerts.hasOwnProperty(alertId)) {
-						var existing = _this6._alerts[alertId];
+					if (_this5._alerts.hasOwnProperty(alertId)) {
+						var existing = _this5._alerts[alertId];
 
 						returnVal = existing.alert_state !== alert.alert_state || existing.last_trigger_date !== alert.last_trigger_date;
 					}
@@ -863,29 +943,29 @@ module.exports = function () {
 				var deletedAlerts = Object.keys(this._alerts).filter(function (alertId) {
 					return !currentAlerts.hasOwnProperty(alertId);
 				}).map(function (alertId) {
-					return _this6._alerts[alertId];
+					return _this5._alerts[alertId];
 				});
 
 				mutatedAlerts.forEach(function (alert) {
-					_this6._alerts[alert.alert_id] = alert;
+					_this5._alerts[alert.alert_id] = alert;
 				});
 
 				deletedAlerts.forEach(function (alert) {
-					delete _this6._alerts[alert.alert_id];
+					delete _this5._alerts[alert.alert_id];
 				});
 
 				mutatedAlerts.forEach(function (alert) {
-					_this6._parent._onAlertMutated(alert);
+					_this5._parent._onAlertMutated(alert);
 				});
 
 				deletedAlerts.forEach(function (alert) {
-					_this6._parent._onAlertDeleted(alert);
+					_this5._parent._onAlertDeleted(alert);
 				});
 			}
 		}, {
 			key: 'start',
 			value: function start() {
-				var _this7 = this;
+				var _this6 = this;
 
 				if (this._started) {
 					throw new Error('The alert subscriber has already been started.');
@@ -894,14 +974,14 @@ module.exports = function () {
 				this._started = true;
 
 				var poll = function poll() {
-					return _this7._parent.retrieveAlerts(_this7._query).then(function (alerts) {
+					return _this6._parent.retrieveAlerts(_this6._query).then(function (alerts) {
 						return true;
 					});
 				};
 
 				var repeat = function repeat(delay) {
-					_this7._parent._scheduler.backoff(poll, delay, 'alert poll', 7).then(function () {
-						if (_this7.getIsDisposed()) {
+					_this6._parent._scheduler.backoff(poll, delay, 'alert poll', 7).then(function () {
+						if (_this6.getIsDisposed()) {
 							return;
 						}
 
@@ -996,7 +1076,7 @@ module.exports = function () {
 
 							changeConnectionState.call(_this2, ConnectionState.Connected);
 
-							resolveCallback(true);
+							resolveCallback(_this2);
 						});
 
 						_this2._socket.on('reconnecting', function () {
@@ -1015,12 +1095,12 @@ module.exports = function () {
 							var requestId = data.requestId;
 
 							if (requestId) {
-								var _resolveCallback = _this2._requestMap[requestId];
+								var requestCallback = _this2._requestMap[requestId];
 
-								if (_resolveCallback) {
+								if (requestCallback) {
 									delete _this2._requestMap[requestId];
 
-									_resolveCallback(data.response);
+									requestCallback(data.response);
 								}
 							}
 						});
@@ -1126,6 +1206,14 @@ module.exports = function () {
 			key: 'getServerVersion',
 			value: function getServerVersion() {
 				return sendRequestToServer.call(this, 'server/version', {});
+			}
+		}, {
+			key: '_onDispose',
+			value: function _onDispose() {
+				if (this._socket) {
+					this._socket.disconnect();
+					this._socket = null;
+				}
 			}
 		}, {
 			key: 'toString',
@@ -1339,7 +1427,7 @@ module.exports = function () {
 	return {
 		AlertManager: AlertManager,
 		timezone: timezone,
-		version: '1.4.4'
+		version: '1.4.5'
 	};
 }();
 
