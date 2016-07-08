@@ -5,6 +5,18 @@ h4 {
     margin: 0px;
 }
 
+.container-center-outer  {
+    height: 100%;
+    width: 100%;
+
+    display: table;
+}
+.container-center-inner {
+    display: table-cell;
+    text-align: center;
+    vertical-align: middle;
+}
+
 .center {
     text-align: center;
 }

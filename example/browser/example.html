@@ -28,7 +28,7 @@
 
         //var alertManager = new Barchart.Alerts.AlertManager('alerts-management-stage.barchart.com', 80, 'rest');
         //var alertManager = new Barchart.Alerts.AlertManager('localhost', 3000, 'rest');
-        var alertManager = new Barchart.Alerts.AlertManager('alerts-management-stage.barchart.com');
+        var alertManager = new Barchart.Alerts.AlertManager('alerts-management-prod.barchart.com');
         //var alertManager = new Barchart.Alerts.AlertManager('localhost', 3000);
 
         var utilities = Barchart.Alerts.AlertManager;
@@ -43,6 +43,7 @@
             var that = this;
 
             that.version = ko.observable({ });
+            that.connected = ko.observable(true);
 
             that.alert = ko.observable();
             that.alerts = ko.observableArray([ ]);
@@ -62,7 +63,21 @@
                 });
             };
 
+            that.disconnect = function() {
+                if (that.connected()) {
+                    that.activeTemplate('alert-disconnected');
+
+                    that.connected(false);
+                    that.alerts([ ]);
+
+                    alertManager.dispose();
+                }
+            };
             that.changeToGrid = function() {
+                if (!that.connected()) {
+                    return;
+                }
+
                 that.alerts([ ]);
 
                 that.activeTemplate('alert-grid-template');
@@ -79,16 +94,28 @@
                     });
             };
             that.changeToCreate = function() {
+                if (!that.connected()) {
+                    return;
+                }
+
                 that.alert = new AlertEntryModel();
 
                 that.activeTemplate('alert-entry-template');
             };
             that.changeToView = function(alertEntryModel) {
+                if (!that.connected()) {
+                    return;
+                }
+
                 that.alert = new AlertEntryModel(alertEntryModel.alert());
 
                 that.activeTemplate('alert-entry-template');
             };
             that.changeToPreferences = function() {
+                if (!that.connected()) {
+                    return;
+                }
+
                 that.publisherSettings = new AlertPublisherTypeDefaultsModel(publisherTypes());
                 that.marketDataSettings = new MarketDataConfigurationModel(marketDataConfiguration());
 
@@ -841,6 +868,16 @@
                 <span class="text-button glyphicon glyphicon-th-list" data-bind="click: changeToGrid"></span>
                 <span class="text-button glyphicon glyphicon-plus" data-bind="click: changeToCreate"></span>
                 <span class="text-button glyphicon glyphicon-user" data-bind="click: changeToPreferences"></span>
+                <span class="text-button glyphicon glyphicon-remove" data-bind="click: disconnect"></span>
+            </div>
+        </div>
+    </script>
+
+    <script type="text/html" id="alert-disconnected">
+        <div class="container-center-outer">
+            <div class="container-center-inner">
+                <h2 class="center">Disconnected</h2>
+                <h5 class="center">Reload page to create new AlertManager</h5>
             </div>
         </div>
     </script>

@@ -98,6 +98,18 @@ And, finally, call the connect method before invoking any other operations:
 			// ready
 		});
 
+###Disposal
+
+Once you have finished using the AlertManager, please call the "dispose" function, as follows:
+
+
+    alertManager.dispose()
+
+
+This will release connections to the server. After dispose has been called, you will
+need to create a new instance of the AlertManager, if you futher interactions are
+necessary.
+
 
 ###Asynchronous Operations
 
