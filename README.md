@@ -156,6 +156,10 @@ a "property" can be checked using an "operator" object.
             "Average Volume",
             "200 Day"
         ],
+        "descriptionShort": [
+            "Average Volume",
+            "200 Day"
+        ],
         "group": "Technical",
         "category": [ "Liquidity" ],
         "target": {
@@ -221,6 +225,10 @@ include an "operand" value. Alerts can have multiple conditions.
         "property": {
             "property_id": 10,
             "description": [
+                "Moving Average",
+                "50 Day"
+            ],
+            "descriptionShort": [
                 "Moving Average",
                 "50 Day"
             ],
