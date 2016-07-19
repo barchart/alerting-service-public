@@ -1464,7 +1464,7 @@ module.exports = function () {
 	return {
 		AlertManager: AlertManager,
 		timezone: timezone,
-		version: '1.4.8'
+		version: '1.4.9'
 	};
 }();
 
@@ -1639,10 +1639,12 @@ module.exports = function () {
 			}
 
 			if (ptd.active_alert_types === undefined || ptd.active_alert_types === null) {
-				ptd.active_alert_types = [];
+				delete ptd.active_alert_types;
 			}
 
-			assert.argumentIsArray(ptd.active_alert_types, d + '.active_alert_types', String);
+			if (ptd.active_alert_types) {
+				assert.argumentIsArray(ptd.active_alert_types, d + '.active_alert_types', String);
+			}
 		},
 
 		forUser: function forUser(publisherTypeDefault, description) {
