@@ -76,7 +76,6 @@ gulp.task('create-tag', function (cb) {
 
 gulp.task('build-browser', function() {
     return browserify('./lib/index.js', { standalone: 'Barchart.Alerts' })
-        .transform('babelify', {presets: ['es2015']})
         .bundle()
         .pipe(source('barchart-alerts-api.js'))
         .pipe(buffer())
@@ -92,7 +91,6 @@ gulp.task('build', [ 'build-browser' ]);
 
 gulp.task('build-browser-tests', function () {
     return browserify({ entries: glob.sync('test/specs/**/*.js') })
-        .transform('babelify', {presets: ['es2015']})
         .bundle()
         .pipe(source('barchart-alerts-api-tests.js'))
         .pipe(buffer())

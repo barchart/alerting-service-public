@@ -23,10 +23,9 @@
     "JavaScript"
   ],
   "dependencies": {
-    "moment-timezone": "^0.5.0",
+    "common": "git+ssh://github.com/barchart/barchart-common-js.git#bryan/es6-upgrade",
     "socket.io-client": "1.3.5",
-    "uuid": "~2.0.1",
-    "xhr": "^2.2.0"
+    "uuid": "~2.0.1"
   },
   "devDependencies": {
     "babel-plugin-external-helpers-2": "^6.3.13",
@@ -55,8 +54,20 @@
     "watchify": "~3.4.0"
   },
   "browser": {
-    "./lib/common/lang/connection.js": "./lib/common/lang/browser/connection.js",
-    "./lib/network/rest/RestProvider.js": "./lib/network/rest/browser/XhrRestProvider.js"
+    "common/lang/connection": "common/lang/browser/connection",
+    "common/network/rest/RestProvider": "common/network/rest/browser/XhrRestProvider"
+  },
+  "browserify": {
+    "transform": [
+      [
+        "babelify",
+        {
+          "presets": [
+            "es2015"
+          ]
+        }
+      ]
+    ]
   },
   "license": "MIT",
   "private": false
