@@ -36,6 +36,7 @@
         var targets = ko.observable();
         var properties = ko.observable();
         var operators = ko.observable();
+        var modifiers = ko.observable();
         var publisherTypes = ko.observable();
         var marketDataConfiguration = ko.observable();
 
@@ -310,6 +311,27 @@
                             }
                         };
 
+                        var modifiers = _.filter(condition.modifiers(), function(modifier) {
+                            return modifier.modifier() !== null;
+                        });
+
+                        if (_.isArray(modifiers) && modifiers.length > 0) {
+                            conditionData.operator.modifiers = _.map(modifiers, function(modifier) {
+                                var value = modifier.value();
+                                var m = modifier.modifier();
+
+                                if (m.type === 'percent') {
+                                    value = parseFloat(value) / 100;
+                                    value = value.toString();
+                                }
+
+                                return {
+                                    modifier_id: m.modifier_id,
+                                    value: value
+                                };
+                            });
+                        }
+
                         var qualifiers = condition.qualifiers();
 
                         if (qualifiers.length > 0) {
@@ -450,6 +472,8 @@
             that.operator = ko.observable(null);
             that.operand = ko.observable(null);
 
+            that.modifiers = ko.observableArray([]);
+
             that.ready = ready;
 
             that.targets = ko.computed(function() {
@@ -531,9 +555,29 @@
                     that.operand(_.first(that.operator().operand_options) || null);
                 }
             };
-            that.selectOperator = function(opertator) {
-                that.operator(opertator);
+            that.selectOperator = function(operator) {
+                that.operator(operator);
                 that.operand(_.first(that.operator().operand_options) || null);
+
+                that.modifiers([]);
+
+                if (!operator.modifiers.length !== 0) {
+                    var all = modifiers();
+
+                    var eligible;
+
+                    if (all.length > 0 && operator.modifiers.length > 0) {
+                        eligible = _.filter(all, function(x) {
+                            return _.some(operator.modifiers, function(e) {
+                                return x.modifier_id === e;
+                            });
+                        });
+                    } else {
+                        eligible = [ ];
+                    }
+
+                    that.modifiers.push(new AlertConditionModifierModel(that, eligible));
+                }
             };
             that.selectOperand = function(operand) {
                 that.operand(operand);
@@ -566,6 +610,10 @@
 
                 that.operand(operand);
 
+                _.forEach(condition.operator.modifiers || [ ], function(modifier) {
+                    that.modifiers.push(new AlertConditionModifierModel(that, [ modifier ], modifier));
+                });
+
                 var getNode = function(items, description) {
                     return _.find(items, function(item) {
                         return item.description === description;
@@ -584,6 +632,58 @@
                 }
             } else {
                 that.selectTarget(_.first(that.targets()));
+            }
+        }
+        function AlertConditionModifierModel(parent, eligible, m) {
+            var that = this;
+
+            that.parent = parent;
+
+            that.modifiers = ko.observable(eligible);
+            that.modifier = ko.observable(null);
+            that.value = ko.observable(null);
+
+            if (eligible.length > 0) {
+                that.modifier(eligible[0]);
+            }
+
+            that.selectModifier = function(modifier) {
+                that.modifier(modifier);
+            };
+
+            that.modifierDisplay = ko.computed(function() {
+                var modifier = that.modifier();
+
+                var returnRef;
+
+                if (modifier) {
+                    returnRef = modifier.display;
+                } else {
+                    returnRef = '--none--';
+                }
+
+                return returnRef;
+            });
+            that.showValue = ko.computed(function() {
+                var modifier = that.modifier();
+
+                return modifier !== null;
+            });
+            that.showPercent = ko.computed(function() {
+                var modifier = that.modifier();
+
+                return modifier !== null && modifier.type === 'percent';
+            });
+
+            if (_.isObject(m) && m.value) {
+                var v = m.value;
+
+                if (m.type === 'percent') {
+                    v = parseFloat(v) * 100;
+                }
+
+                that.modifier(m);
+                that.value(v);
             }
         }
         function AlertTargetQualifierModel(ready, description, value) {
@@ -634,6 +734,14 @@
                 var operator = that.parent.operator();
 
                 return _.isObject(operator) && _.isArray(operator.operand_options) && operator.operand_options.length > 0;
+            });
+            that.showModifiers = ko.computed(function() {
+                var node = that.node();
+
+                var property = that.parent.property();
+                var operator = that.parent.operator();
+
+                return _.isObject(node) && _.isObject(node.item) && node.item === property && _.isObject(operator) && operator.modifiers.length > 0;
             });
             that.showPercent = ko.computed(function() {
                 var property = that.parent.property();
@@ -843,6 +951,11 @@
                     alertManager.getOperators()
                         .then(function(o) {
                             operators(o);
+                        });
+
+                    alertManager.getModifiers()
+                        .then(function(m) {
+                            modifiers(m);
                         });
 
                     alertManager.getPublisherTypeDefaults({ user_id: userId, alert_system: system })
@@ -1072,6 +1185,11 @@
         <!-- /ko -->
         <!-- ko foreach: properties -->
         <tr class="component" data-bind="template: { name: 'alert-create-condition-property-template' }"></tr>
+        <!-- ko if: showModifiers -->
+        <!-- ko foreach: parent.modifiers -->
+        <tr class="component" data-bind="template: { name: 'alert-create-condition-modifier-template' }"></tr>
+        <!-- /ko -->
+        <!-- /ko -->
         <!-- /ko -->
     </script>
 
@@ -1134,6 +1252,30 @@
         <td class="col-md-4" colspan="2">
         </td>
         <!-- /ko -->
+    </script>
+
+    <script type="text/html" id="alert-create-condition-modifier-template">
+        <td class="col-md-1"></td>
+        <td class="col-md-2"></td>
+        <td class="col-md-3"></td>
+        <td class="col-md-2">
+            <div class="dropdown">
+                <button class="btn btn-default dropdown-toggle" type="button" data-bind="enable: parent.ready" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+                    <span data-bind="text: modifierDisplay"></span>
+                </button>
+                <ul class="dropdown-menu" data-bind="foreach: modifiers">
+                    <li class="center"><a href="#" data-bind="text: display, click: function() { $parent.selectModifier($data); }"></a></li>
+                </ul>
+            </div>
+        </td>
+        <td class="col-md-2">
+            <!-- ko if: showValue -->
+            <input class="form-control pull-left" data-bind="css: { percent: showPercent }, textInput: value, enable: parent.ready" type="text" placeholder="value">
+            <!-- ko if: showPercent -->
+            <div class="pull-right">%</div>
+            <!-- /ko -->
+            <!-- /ko -->
+        </td>
     </script>
 
     <script type="text/html" id="alert-create-publisher-template">
