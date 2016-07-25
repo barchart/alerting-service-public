@@ -321,73 +321,84 @@ module.exports = function () {
 				});
 			}
 		}, {
-			key: 'getPublisherTypes',
-			value: function getPublisherTypes() {
+			key: 'getModifiers',
+			value: function getModifiers() {
 				var _this13 = this;
 
 				return Promise.resolve().then(function () {
-					checkStatus(_this13, 'get publisher types');
+					checkStatus(_this13, 'get modifiers');
 				}).then(function () {
-					return _this13._adapter.getPublisherTypes();
+					return _this13._adapter.getModifiers();
+				});
+			}
+		}, {
+			key: 'getPublisherTypes',
+			value: function getPublisherTypes() {
+				var _this14 = this;
+
+				return Promise.resolve().then(function () {
+					checkStatus(_this14, 'get publisher types');
+				}).then(function () {
+					return _this14._adapter.getPublisherTypes();
 				});
 			}
 		}, {
 			key: 'getPublisherTypeDefaults',
 			value: function getPublisherTypeDefaults(query) {
-				var _this14 = this;
+				var _this15 = this;
 
 				return Promise.resolve().then(function () {
-					checkStatus(_this14, 'get publisher type defaults');
+					checkStatus(_this15, 'get publisher type defaults');
 
 					validate.publisherTypeDefault.forUser(query);
 				}).then(function () {
-					return _this14._adapter.getPublisherTypeDefaults(query);
+					return _this15._adapter.getPublisherTypeDefaults(query);
 				});
 			}
 		}, {
 			key: 'assignPublisherTypeDefault',
 			value: function assignPublisherTypeDefault(publisherTypeDefault) {
-				var _this15 = this;
+				var _this16 = this;
 
 				return Promise.resolve().then(function () {
-					checkStatus(_this15, 'assign publisher type default');
+					checkStatus(_this16, 'assign publisher type default');
 
 					validate.publisherTypeDefault.forCreate(publisherTypeDefault);
 				}).then(function () {
-					return _this15._adapter.assignPublisherTypeDefault(publisherTypeDefault);
+					return _this16._adapter.assignPublisherTypeDefault(publisherTypeDefault);
 				});
 			}
 		}, {
 			key: 'getMarketDataConfiguration',
 			value: function getMarketDataConfiguration(query) {
-				var _this16 = this;
+				var _this17 = this;
 
 				return Promise.resolve().then(function () {
-					checkStatus(_this16, 'get market data configuration');
+					checkStatus(_this17, 'get market data configuration');
 				}).then(function () {
-					return _this16._adapter.getMarketDataConfiguration(query);
+					return _this17._adapter.getMarketDataConfiguration(query);
 				});
 			}
 		}, {
 			key: 'assignMarketDataConfiguration',
 			value: function assignMarketDataConfiguration(marketDataConfiguration) {
-				var _this17 = this;
+				var _this18 = this;
 
 				return Promise.resolve().then(function () {
-					checkStatus(_this17, 'assign market data configuration');
+					checkStatus(_this18, 'assign market data configuration');
 				}).then(function () {
-					return _this17._adapter.assignMarketDataConfiguration(marketDataConfiguration);
+					return _this18._adapter.assignMarketDataConfiguration(marketDataConfiguration);
 				});
 			}
 		}, {
 			key: 'getServerVersion',
 			value: function getServerVersion() {
-				var _this18 = this;
+				var _this19 = this;
 
 				return Promise.resolve().then(function () {
-					checkStatus(_this18, 'get server version');
+					checkStatus(_this19, 'get server version');
 				}).then(function () {
-					return _this18._adapter.getServerVersion();
+					return _this19._adapter.getServerVersion();
 				});
 			}
 		}, {
@@ -652,6 +663,11 @@ module.exports = function () {
 				return null;
 			}
 		}, {
+			key: 'getModifiers',
+			value: function getModifiers() {
+				return null;
+			}
+		}, {
 			key: 'getPublisherTypes',
 			value: function getPublisherTypes() {
 				return null;
@@ -739,6 +755,7 @@ module.exports = function () {
 			_this._retrieveTargetsEndpoint = new RestEndpoint(RestAction.Retrieve, ['alert', 'targets']);
 			_this._retrievePropertiesEndpoint = new RestEndpoint(RestAction.Retrieve, ['alert', 'targets', 'properties']);
 			_this._retrieveOperatorsEndpoint = new RestEndpoint(RestAction.Retrieve, ['alert', 'operators']);
+			_this._retrieveModifiersEndpoint = new RestEndpoint(RestAction.Retrieve, ['alert', 'modifiers']);
 			_this._retrievePublisherTypesEndpoint = new RestEndpoint(RestAction.Retrieve, ['alert', 'publishers']);
 			_this._retrievePublisherTypeDefaultsEndpoint = new RestEndpoint(RestAction.Retrieve, ['alert', 'publishers', 'default', 'alert_system', 'user_id']);
 			_this._assignPublisherTypeDefaultEndpoint = new RestEndpoint(RestAction.Update, ['alert', 'publishers', 'default', 'alert_system', 'user_id', 'publisher_type_id']);
@@ -830,6 +847,11 @@ module.exports = function () {
 			key: 'getOperators',
 			value: function getOperators() {
 				return this._restProvider.call(this._retrieveOperatorsEndpoint, {});
+			}
+		}, {
+			key: 'getModifiers',
+			value: function getModifiers() {
+				return this._restProvider.call(this._retrieveModifiersEndpoint, {});
 			}
 		}, {
 			key: 'getPublisherTypes',
@@ -1275,6 +1297,11 @@ module.exports = function () {
 				return sendRequestToServer.call(this, 'alert/operators/retrieve', {});
 			}
 		}, {
+			key: 'getModifiers',
+			value: function getModifiers() {
+				return sendRequestToServer.call(this, 'alert/modifiers/retrieve', {});
+			}
+		}, {
 			key: 'getPublisherTypes',
 			value: function getPublisherTypes() {
 				return sendRequestToServer.call(this, 'alert/publishers/retrieve', {});
@@ -1465,7 +1492,7 @@ module.exports = function () {
 	return {
 		AlertManager: AlertManager,
 		timezone: timezone,
-		version: '1.4.10'
+		version: '1.4.11'
 	};
 }();
 
@@ -1552,9 +1579,13 @@ module.exports = function () {
 			assert.argumentIsRequired(condition.operator.operator_id, d + '.operator.operator_id', Number);
 
 			if (Array.isArray(condition.operator.operand)) {
-				assert.argumentIsArray(condition.operator.operand, d + '.operand', String);
+				assert.argumentIsArray(condition.operator.operand, d + '.operator.operand', String);
 			} else {
-				assert.argumentIsOptional(condition.operator.operand, d + '.operand', String);
+				assert.argumentIsOptional(condition.operator.operand, d + '.operator.operand', String);
+			}
+
+			if (condition.operator.modifiers) {
+				assert.argumentIsArray(condition.operator.modifiers, d + '.operator.modifiers', validateModifier);
 			}
 		}
 	};
@@ -1565,6 +1596,11 @@ module.exports = function () {
 		} else {
 			return 'condition';
 		}
+	}
+
+	function validateModifier(modifier, d) {
+		assert.argumentIsRequired(modifier.modifier_id, d + '.modifier_id', Number);
+		assert.argumentIsRequired(modifier.value, d + '.value', String);
 	}
 
 	return validator;
@@ -2935,6 +2971,21 @@ module.exports = function () {
             key: 'toString',
             value: function toString() {
                 return '[Scheduler]';
+            }
+        }], [{
+            key: 'schedule',
+            value: function schedule(actionToSchedule, millisecondDelay, actionDescription) {
+                var scheduler = new Scheduler();
+
+                scheduler.schedule(actionToSchedule, millisecondDelay, actionDescription).then(function (result) {
+                    scheduler.dispose();
+
+                    return result;
+                }).catch(function (e) {
+                    scheduler.dispose();
+
+                    throw e;
+                });
             }
         }]);
 
@@ -15469,9 +15520,16 @@ function createXHR(uri, options, callback) {
 }
 
 function _createXHR(options) {
-    var callback = options.callback
-    if(typeof callback === "undefined"){
+    if(typeof options.callback === "undefined"){
         throw new Error("callback argument missing")
+    }
+
+    var called = false
+    var callback = function cbOnce(err, response, body){
+        if(!called){
+            called = true
+            options.callback(err, response, body)
+        }
     }
 
     function readystatechange() {
@@ -15514,8 +15572,7 @@ function _createXHR(options) {
             evt = new Error("" + (evt || "Unknown XMLHttpRequest Error") )
         }
         evt.statusCode = 0
-        callback(evt, failureResponse)
-        callback = noop
+        return callback(evt, failureResponse)
     }
 
     // will load the data & process the response in a special response object
@@ -15547,9 +15604,7 @@ function _createXHR(options) {
         } else {
             err = new Error("Internal XMLHttpRequest Error")
         }
-        callback(err, response, response.body)
-        callback = noop
-
+        return callback(err, response, response.body)
     }
 
     var xhr = options.xhr || null
