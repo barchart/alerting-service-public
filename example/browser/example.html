@@ -24,12 +24,17 @@
         var system = 'barchart.com';
         var userId = 'barchart-test-user';
 
-        //var alertManager = new Barchart.Alerts.AlertManager();
+        var alertManager;
 
-        //var alertManager = new Barchart.Alerts.AlertManager('alerts-management-stage.barchart.com', 80, 'rest');
-        //var alertManager = new Barchart.Alerts.AlertManager('localhost', 3000, 'rest');
-        var alertManager = new Barchart.Alerts.AlertManager('alerts-management-stage.barchart.com');
-        //var alertManager = new Barchart.Alerts.AlertManager('localhost', 3000);
+        var createAlertManager = function() {
+            //return new Barchart.Alerts.AlertManager();
+
+            //return new Barchart.Alerts.AlertManager('localhost', 3000, 'rest');
+            //return new Barchart.Alerts.AlertManager('localhost', 3000);
+
+            //return new Barchart.Alerts.AlertManager('alerts-management-stage.barchart.com', 80, 'rest');
+            return new Barchart.Alerts.AlertManager('alerts-management-stage.barchart.com');
+        };
 
         var utilities = Barchart.Alerts.AlertManager;
 
@@ -64,6 +69,11 @@
                 });
             };
 
+            that.connect = function() {
+                if (!that.connected()) {
+                    reset();
+                }
+            };
             that.disconnect = function() {
                 if (that.connected()) {
                     that.activeTemplate('alert-disconnected');
@@ -72,6 +82,7 @@
                     that.alerts([ ]);
 
                     alertManager.dispose();
+                    alertManager = null;
                 }
             };
             that.changeToGrid = function() {
@@ -147,6 +158,13 @@
 
                 that.alerts.remove(modelToRemove);
             };
+
+            that.canConnect = ko.computed(function() {
+                return !that.connected();
+            });
+            that.canDisconnect = ko.computed(function() {
+                return that.connected();
+            });
 
             that.changeToGrid();
         }
@@ -919,57 +937,65 @@
             }
         }
 
-        $(document).ready(function() {
+        var reset = function() {
+            ko.cleanNode($('body')[0]);
+
+            alertManager = createAlertManager();
+
             alertManager.connect()
                 .then(function() {
                     var pageModel = new PageModel();
 
                     alertManager.subscribeAlerts({ user_id: userId, alert_system: system },
-                        function(changedAlert) {
-                            pageModel.handleAlertChange(changedAlert);
-                        },
-                        function(deletedAlert) {
-                            pageModel.handleAlertDelete(deletedAlert);
-                        }
+                            function(changedAlert) {
+                                pageModel.handleAlertChange(changedAlert);
+                            },
+                            function(deletedAlert) {
+                                pageModel.handleAlertDelete(deletedAlert);
+                            }
                     );
 
                     alertManager.getServerVersion()
-                        .then(function(version) {
-                            pageModel.version({ api: version.semver, client: Barchart.Alerts.version });
-                        });
+                            .then(function(version) {
+                                pageModel.version({ api: version.semver, client: Barchart.Alerts.version });
+                            });
 
                     alertManager.getTargets()
-                        .then(function(t) {
-                            targets(t);
-                        });
+                            .then(function(t) {
+                                targets(t);
+                            });
 
                     alertManager.getProperties()
-                        .then(function(p) {
-                            properties(p);
-                        });
+                            .then(function(p) {
+                                properties(p);
+                            });
 
                     alertManager.getOperators()
-                        .then(function(o) {
-                            operators(o);
-                        });
+                            .then(function(o) {
+                                operators(o);
+                            });
 
                     alertManager.getModifiers()
-                        .then(function(m) {
-                            modifiers(m);
-                        });
+                            .then(function(m) {
+                                modifiers(m);
+                            });
 
                     alertManager.getPublisherTypeDefaults({ user_id: userId, alert_system: system })
-                        .then(function(pt) {
-                            publisherTypes(pt);
-                        });
+                            .then(function(pt) {
+                                publisherTypes(pt);
+                            });
 
                     alertManager.getMarketDataConfiguration({ user_id: userId, alert_system: system })
-                        .then(function(mdc) {
-                            marketDataConfiguration(mdc);
-                        });
+                            .then(function(mdc) {
+                                marketDataConfiguration(mdc);
+                            });
 
                     ko.applyBindings(pageModel, $('body')[0]);
                 });
+        };
+
+        $(document).ready(function() {
+            reset();
         });
     </script>
 
@@ -981,7 +1007,8 @@
                 <span class="text-button glyphicon glyphicon-th-list" data-bind="click: changeToGrid"></span>
                 <span class="text-button glyphicon glyphicon-plus" data-bind="click: changeToCreate"></span>
                 <span class="text-button glyphicon glyphicon-user" data-bind="click: changeToPreferences"></span>
-                <span class="text-button glyphicon glyphicon-remove" data-bind="click: disconnect"></span>
+                <span class="text-button glyphicon glyphicon-remove" data-bind="click: disconnect, visible: canDisconnect"></span>
+                <span class="text-button glyphicon glyphicon-earphone" data-bind="click: connect, visible: canConnect"></span>
             </div>
         </div>
     </script>
