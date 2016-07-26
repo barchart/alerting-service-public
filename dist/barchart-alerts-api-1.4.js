@@ -1188,7 +1188,7 @@ module.exports = function () {
 							protocol = 'http';
 						}
 
-						_this2._socket = io.connect(protocol + '://' + _this2._host + ':' + _this2._port, { transports: ['websocket'], secure: _this2._secure });
+						_this2._socket = io.connect(protocol + '://' + _this2._host + ':' + _this2._port, { transports: ['websocket'], secure: _this2._secure, forceNew: true });
 
 						_this2._socket.on('connect', function () {
 							_this2._requestMap = {};
@@ -1492,7 +1492,7 @@ module.exports = function () {
 	return {
 		AlertManager: AlertManager,
 		timezone: timezone,
-		version: '1.4.11'
+		version: '1.4.12'
 	};
 }();
 
