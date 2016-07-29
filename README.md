@@ -249,7 +249,8 @@ include an "operand" value. Alerts can have multiple conditions.
                 "long": "greater than"
             },
             "operand_type": "number",
-            "operand": "200"
+            "operand": "200.00",
+            "operand_display": "200.00"
         }
     }
 
@@ -282,7 +283,7 @@ A "publisher type" that includes the default recipient for a user.
 			"news"
 		]
     }
-    
+
 Presence of the "default_recipient_hmac" field indicates that the recipient has been "verified."
 
 
@@ -621,7 +622,7 @@ JSON-in (example 1, with reset schedule, Monday-Friday at 5:30 PM):
                 "operand": "99"
             }
         } ],
-		"schedules": [ 
+		"schedules": [
 			{
 				"time": "17:30",
 				"day": "Monday",
@@ -642,10 +643,10 @@ JSON-in (example 1, with reset schedule, Monday-Friday at 5:30 PM):
 				"time": "17:30",
 				"day": "Friday",
 				"timezone": "America/Chicago"
-			} 
+			}
 		]
     }
-    
+
 JSON-out:
 
 	An "Alert" object.
@@ -745,7 +746,7 @@ JSON-in (example 2, optional filter, only "price" alerts):
 			"alert_type": "price"
 		}
 	}
-	
+
 JSON-in (example 3, optional filter, only alerts refer to AAPL):
 
 	{
@@ -755,7 +756,7 @@ JSON-in (example 3, optional filter, only alerts refer to AAPL):
 			"symbol": "AAPL"
 		}
 	}
-	
+
 JSON-in (example 4, optional filter, only alerts where the target is AAPL):
 
 	{
@@ -767,7 +768,7 @@ JSON-in (example 4, optional filter, only alerts where the target is AAPL):
 			}
 		}
 	}
-	
+
 JSON-in (example 5, optional filter, only alerts where a condition refers to AAPL):
 
 	{
@@ -787,7 +788,7 @@ JSON-out:
 
 ###subscribeAlerts(query, changeCallback, deleteCallback)
 
-Provides notification, via callbacks, when an alert has been created or 
+Provides notification, via callbacks, when an alert has been created or
 deleted for a specific user.
 
 JSON-in (the "query" parameter):

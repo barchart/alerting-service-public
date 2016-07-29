@@ -24,6 +24,7 @@
   ],
   "dependencies": {
     "barchart-instruments-client": "^2.0.1",
+    "barchart-marketdata-utilities": "^1.0.45",
     "common": "git+ssh://github.com/barchart/barchart-common-js.git#bryan/es6-upgrade",
     "socket.io-client": "1.3.5",
     "uuid": "~2.0.1"

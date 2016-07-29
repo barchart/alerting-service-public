@@ -614,7 +614,7 @@
 
                 that.targetIdentifier(condition.property.target.identifier);
 
-                var operand = condition.operator.operand;
+                var operand = condition.operator.operand_display || condition.operator.operand;
 
                 if (_.isArray(operand)) {
                     operand = operand.join(',');
