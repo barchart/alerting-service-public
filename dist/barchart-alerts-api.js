@@ -10,9 +10,14 @@ function _possibleConstructorReturn(self, call) { if (!self) { throw new Referen
 function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
 
 var assert = require('common/lang/assert');
+var is = require('common/lang/is');
 var connection = require('common/lang/connection');
 var Disposable = require('common/lang/Disposable');
 var Event = require('common/messaging/Event');
+
+var converter = require('barchart-marketdata-utilities/lib/convert');
+var InstrumentManager = require('barchart-instruments-client/lib/instruments/InstrumentManager');
+var priceParser = require('barchart-marketdata-utilities/lib/priceParser');
 
 var validate = require('./validators/validate');
 
@@ -39,23 +44,12 @@ module.exports = function () {
 			_this._mode = mode || 'socket.io';
 
 			_this._secure = connection.getIsSecure(secure);
-
-			var portToUse = void 0;
-
-			if (typeof port === 'number') {
-				portToUse = port;
-			} else {
-				if (_this._secure) {
-					portToUse = 443;
-				} else {
-					portToUse = 80;
-				}
-			}
-
-			_this._port = portToUse;
+			_this._port = getPort(_this._secure, port);
 
 			_this._adapter = null;
-			_this._adapterConnectPromise = null;
+			_this._instrumentManager = null;
+
+			_this._connectPromise = null;
 
 			_this._alertSubscriptionMap = {};
 			return _this;
@@ -69,8 +63,8 @@ module.exports = function () {
 				return Promise.resolve().then(function () {
 					checkDispose(_this2, 'connect');
 				}).then(function () {
-					if (_this2._adapterConnectPromise === null) {
-						_this2._adapterConnectPromise = Promise.resolve().then(function () {
+					if (_this2._connectPromise === null) {
+						var alertAdapterPromise = Promise.resolve().then(function () {
 							var mode = _this2._mode.toLowerCase();
 
 							var adapter = void 0;
@@ -84,19 +78,35 @@ module.exports = function () {
 							}
 
 							return adapter.connect();
-						}).then(function (adapter) {
-							_this2._adapter = adapter;
-							_this2._adapterConnectPromise = Promise.resolve(_this2._adapter);
-
-							return _this2._adapter;
 						}).catch(function (e) {
 							_this2.dispose();
 
 							throw e;
 						});
+
+						var instrumentManagerPromise = Promise.resolve().then(function () {
+							var host = 'instruments-stage.aws.barchart.com';
+							var secure = _this2._secure;
+							var port = getPort(_this2._secure);
+
+							var manager = new InstrumentManager(host, port, 'rest', secure);
+
+							return manager.connect();
+						}).catch(function (e) {
+							_this2.dispose();
+
+							throw e;
+						});
+
+						_this2._connectPromise = Promise.all([alertAdapterPromise, instrumentManagerPromise]).then(function (results) {
+							_this2._adapter = results[0];
+							_this2._instrumentManager = results[1];
+
+							return _this2;
+						});
 					}
 
-					return _this2._adapterConnectPromise;
+					return _this2._connectPromise;
 				});
 			}
 		}, {
@@ -108,6 +118,65 @@ module.exports = function () {
 					checkStatus(_this3, 'create alert');
 
 					validate.alert.forCreate(alert);
+				}).then(function () {
+					return _this3.getProperties();
+				}).then(function (properties) {
+					var propertyMap = alert.conditions.reduce(function (map, c) {
+						var property = properties.find(function (p) {
+							return p.property_id === c.property.property_id;
+						});
+
+						map[property.property_id] = property;
+
+						return map;
+					}, {});
+
+					var instrumentMap = alert.conditions.reduce(function (map, c) {
+						var property = propertyMap[c.property.property_id];
+
+						if (property.target.type === 'symbol') {
+							var symbol = c.property.target.identifier;
+
+							if (!map.hasOwnProperty(symbol)) {
+								map[symbol] = _this3._instrumentManager.lookupInstrument(symbol);
+							}
+						}
+
+						return map;
+					}, {});
+
+					return Promise.all(alert.conditions.map(function (c, i) {
+						var validatePromise = void 0;
+
+						var property = propertyMap[c.property.property_id];
+
+						if (property.target.type === 'symbol') {
+							var symbol = c.property.target.identifier;
+
+							validatePromise = instrumentMap[symbol].then(function (result) {
+								var instrument = result.instrument;
+
+								if (!instrument) {
+									throw new Error('Condition ' + i + ' is invalid. The symbol does not exist.');
+								}
+
+								if (property.format === 'price') {
+									var price = priceParser(c.operator.operand, converter.baseCodeToUnitCode(instrument.unitcode), ',');
+
+									if (!is.number(price)) {
+										throw new Error('Condition ' + i + ' is invalid. The price cannot be parsed.');
+									}
+
+									c.operator.operand_display = c.operator.operand;
+									c.operator.operand = price;
+								}
+							});
+						} else {
+							validatePromise = Promise.resolve();
+						}
+
+						return validatePromise;
+					}));
 				}).then(function () {
 					return _this3._adapter.createAlert(alert);
 				});
@@ -185,7 +254,7 @@ module.exports = function () {
 					checkStatus(_this8, 'delete alert');
 
 					validate.alert.forQuery(alert);
-				}).then(function () {
+				}).then(function () {}).then(function () {
 					return _this8._adapter.deleteAlert({ alert_id: alert.alert_id });
 				});
 			}
@@ -404,7 +473,9 @@ module.exports = function () {
 		}, {
 			key: '_onDispose',
 			value: function _onDispose() {
-				this._adapter.dispose();
+				if (this._adapter) {
+					this._adapter.dispose();
+				}
 			}
 		}, {
 			key: 'toString',
@@ -576,10 +647,26 @@ module.exports = function () {
 		}, {});
 	}
 
+	function getPort(secure, port) {
+		var portToUse = void 0;
+
+		if (typeof port === 'number') {
+			portToUse = port;
+		} else {
+			if (secure) {
+				portToUse = 443;
+			} else {
+				portToUse = 80;
+			}
+		}
+
+		return portToUse;
+	}
+
 	return AlertManager;
 }();
 
-},{"./adapters/RestAlertAdapter":3,"./adapters/SocketAlertAdapter":4,"./validators/validate":10,"common/lang/Disposable":17,"common/lang/assert":18,"common/lang/connection":20,"common/messaging/Event":22}],2:[function(require,module,exports){
+},{"./adapters/RestAlertAdapter":3,"./adapters/SocketAlertAdapter":4,"./validators/validate":10,"barchart-instruments-client/lib/instruments/InstrumentManager":15,"barchart-marketdata-utilities/lib/convert":19,"barchart-marketdata-utilities/lib/priceParser":20,"common/lang/Disposable":23,"common/lang/assert":24,"common/lang/connection":26,"common/lang/is":27,"common/messaging/Event":29}],2:[function(require,module,exports){
 'use strict';
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
@@ -710,7 +797,7 @@ module.exports = function () {
 	return AlertAdapterBase;
 }();
 
-},{"common/lang/Disposable":17,"common/lang/assert":18}],3:[function(require,module,exports){
+},{"common/lang/Disposable":23,"common/lang/assert":24}],3:[function(require,module,exports){
 'use strict';
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
@@ -772,7 +859,7 @@ module.exports = function () {
 		_createClass(RestAlertAdapter, [{
 			key: 'connect',
 			value: function connect() {
-				return this;
+				return Promise.resolve(this);
 			}
 		}, {
 			key: 'createAlert',
@@ -1068,7 +1155,7 @@ module.exports = function () {
 	return RestAlertAdapter;
 }();
 
-},{"./AlertAdapterBase":2,"common/lang/Disposable":17,"common/lang/assert":18,"common/network/rest/RestAction":23,"common/network/rest/RestEndpoint":24,"common/network/rest/RestProvider":26,"common/timing/Scheduler":27}],4:[function(require,module,exports){
+},{"./AlertAdapterBase":2,"common/lang/Disposable":23,"common/lang/assert":24,"common/network/rest/RestAction":30,"common/network/rest/RestEndpoint":31,"common/network/rest/RestProvider":33,"common/timing/Scheduler":34}],4:[function(require,module,exports){
 'use strict';
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
@@ -1479,7 +1566,7 @@ module.exports = function () {
 	return SocketAlertAdapter;
 }();
 
-},{"./AlertAdapterBase":2,"common/lang/Disposable":17,"common/lang/assert":18,"socket.io-client":65,"uuid":78}],5:[function(require,module,exports){
+},{"./AlertAdapterBase":2,"common/lang/Disposable":23,"common/lang/assert":24,"socket.io-client":72,"uuid":85}],5:[function(require,module,exports){
 'use strict';
 
 var AlertManager = require('./AlertManager');
@@ -1492,11 +1579,11 @@ module.exports = function () {
 	return {
 		AlertManager: AlertManager,
 		timezone: timezone,
-		version: '1.4.12'
+		version: '1.4.13'
 	};
 }();
 
-},{"./AlertManager":1,"common/lang/timezone":21}],6:[function(require,module,exports){
+},{"./AlertManager":1,"common/lang/timezone":28}],6:[function(require,module,exports){
 'use strict';
 
 var assert = require('common/lang/assert');
@@ -1559,7 +1646,7 @@ module.exports = function () {
 	return validator;
 }();
 
-},{"./condition":7,"./publisher":8,"common/lang/assert":18}],7:[function(require,module,exports){
+},{"./condition":7,"./publisher":8,"common/lang/assert":24}],7:[function(require,module,exports){
 'use strict';
 
 var assert = require('common/lang/assert');
@@ -1606,7 +1693,7 @@ module.exports = function () {
 	return validator;
 }();
 
-},{"common/lang/assert":18}],8:[function(require,module,exports){
+},{"common/lang/assert":24}],8:[function(require,module,exports){
 'use strict';
 
 var assert = require('common/lang/assert');
@@ -1649,7 +1736,7 @@ module.exports = function () {
 	return validator;
 }();
 
-},{"common/lang/assert":18}],9:[function(require,module,exports){
+},{"common/lang/assert":24}],9:[function(require,module,exports){
 'use strict';
 
 var assert = require('common/lang/assert');
@@ -1705,7 +1792,7 @@ module.exports = function () {
 	return validator;
 }();
 
-},{"common/lang/assert":18}],10:[function(require,module,exports){
+},{"common/lang/assert":24}],10:[function(require,module,exports){
 'use strict';
 
 var alert = require('./alert');
@@ -1884,6 +1971,674 @@ Backoff.prototype.setJitter = function(jitter){
 
 
 },{}],15:[function(require,module,exports){
+'use strict';
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
+var assert = require('common/lang/assert');
+var connection = require('common/lang/connection');
+var Disposable = require('common/lang/Disposable');
+
+var RestInstrumentAdapter = require('./adapters/RestInstrumentAdapter');
+var SocketInstrumentAdapter = require('./adapters/SocketInstrumentAdapter');
+
+module.exports = function () {
+	'use strict';
+
+	var InstrumentManager = function (_Disposable) {
+		_inherits(InstrumentManager, _Disposable);
+
+		function InstrumentManager(host, port, mode, secure) {
+			_classCallCheck(this, InstrumentManager);
+
+			var _this = _possibleConstructorReturn(this, Object.getPrototypeOf(InstrumentManager).call(this));
+
+			assert.argumentIsOptional(host, 'host', String);
+			assert.argumentIsOptional(port, 'port', Number);
+			assert.argumentIsOptional(mode, 'mode', String);
+			assert.argumentIsOptional(secure, 'secure', Boolean);
+
+			_this._host = host || 'instruments-prod.aws.barchart.com';
+			_this._mode = mode || 'socket.io';
+
+			_this._secure = connection.getIsSecure(secure);
+
+			var portToUse = void 0;
+
+			if (typeof port === 'number') {
+				portToUse = port;
+			} else {
+				if (_this._secure) {
+					portToUse = 443;
+				} else {
+					portToUse = 80;
+				}
+			}
+
+			_this._port = portToUse;
+
+			_this._adapter = null;
+			_this._connectPromise = null;
+			return _this;
+		}
+
+		_createClass(InstrumentManager, [{
+			key: 'connect',
+			value: function connect() {
+				var _this2 = this;
+
+				return Promise.resolve().then(function () {
+					checkDispose(_this2, 'connect');
+				}).then(function () {
+					if (_this2._connectPromise === null) {
+						_this2._connectPromise = Promise.resolve().then(function () {
+							var mode = _this2._mode.toLowerCase();
+
+							var adapter = void 0;
+
+							if (mode === 'rest') {
+								adapter = new RestInstrumentAdapter(_this2._host, _this2._port, _this2._secure);
+							} else if (mode === 'socket.io') {
+								adapter = new SocketInstrumentAdapter(_this2._host, _this2._port, _this2._secure);
+							} else {
+								throw new Error('Unable to connect, using unsupported mode (' + mode + ')');
+							}
+
+							return adapter.connect();
+						}).then(function (adapter) {
+							_this2._adapter = adapter;
+
+							return _this2;
+						}).catch(function (e) {
+							_this2.dispose();
+
+							throw e;
+						});
+					}
+
+					return _this2._connectPromise;
+				});
+			}
+		}, {
+			key: 'lookupInstrument',
+			value: function lookupInstrument(symbol) {
+				var _this3 = this;
+
+				return Promise.resolve().then(function () {
+					checkStatus(_this3, 'lookup instrument');
+				}).then(function () {
+					return _this3._adapter.lookupInstrument(symbol);
+				});
+			}
+		}, {
+			key: 'queryInstruments',
+			value: function queryInstruments(text) {
+				var _this4 = this;
+
+				return Promise.resolve().then(function () {
+					checkStatus(_this4, 'query instrument');
+				}).then(function () {
+					return _this4._adapter.queryInstruments(text);
+				});
+			}
+		}, {
+			key: 'getServerVersion',
+			value: function getServerVersion() {
+				var _this5 = this;
+
+				return Promise.resolve().then(function () {
+					checkStatus(_this5, 'get server version');
+				}).then(function () {
+					return _this5._adapter.getServerVersion();
+				});
+			}
+		}, {
+			key: '_onDispose',
+			value: function _onDispose() {
+				this._adapter.dispose();
+			}
+		}, {
+			key: 'toString',
+			value: function toString() {
+				return '[InstrumentManager]';
+			}
+		}]);
+
+		return InstrumentManager;
+	}(Disposable);
+
+	function checkDispose(manager, operation) {
+		if (manager.getIsDisposed()) {
+			throw new Error('Unable to perform ' + operation + ', the Instrument manager has been disposed');
+		}
+	}
+
+	function checkStatus(manager, operation) {
+		checkDispose(manager, operation);
+
+		if (manager._adapter === null) {
+			throw new Error('Unable to perform ' + operation + ', the Instrument manager has not connected to the server');
+		}
+	}
+
+	return InstrumentManager;
+}();
+
+},{"./adapters/RestInstrumentAdapter":17,"./adapters/SocketInstrumentAdapter":18,"common/lang/Disposable":23,"common/lang/assert":24,"common/lang/connection":26}],16:[function(require,module,exports){
+'use strict';
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
+var Disposable = require('common/lang/Disposable');
+
+module.exports = function () {
+	'use strict';
+
+	var InstrumentAdapterBase = function (_Disposable) {
+		_inherits(InstrumentAdapterBase, _Disposable);
+
+		function InstrumentAdapterBase() {
+			_classCallCheck(this, InstrumentAdapterBase);
+
+			return _possibleConstructorReturn(this, Object.getPrototypeOf(InstrumentAdapterBase).call(this));
+		}
+
+		_createClass(InstrumentAdapterBase, [{
+			key: 'connect',
+			value: function connect() {
+				return Promise.reject();
+			}
+		}, {
+			key: 'lookupInstrument',
+			value: function lookupInstrument(symbol) {
+				return null;
+			}
+		}, {
+			key: 'queryInstruments',
+			value: function queryInstruments(text) {
+				return null;
+			}
+		}, {
+			key: 'getServerVersion',
+			value: function getServerVersion() {
+				return null;
+			}
+		}, {
+			key: 'toString',
+			value: function toString() {
+				return '[InstrumentAdapterBase]';
+			}
+		}]);
+
+		return InstrumentAdapterBase;
+	}(Disposable);
+
+	return InstrumentAdapterBase;
+}();
+
+},{"common/lang/Disposable":23}],17:[function(require,module,exports){
+'use strict';
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
+var assert = require('common/lang/assert');
+var Disposable = require('common/lang/Disposable');
+var RestAction = require('common/network/rest/RestAction');
+var RestEndpoint = require('common/network/rest/RestEndpoint');
+var RestProvider = require('common/network/rest/RestProvider');
+
+var InstrumentAdapterBase = require('./InstrumentAdapterBase');
+
+module.exports = function () {
+	'use strict';
+
+	var RestInstrumentAdapter = function (_InstrumentAdapterBas) {
+		_inherits(RestInstrumentAdapter, _InstrumentAdapterBas);
+
+		function RestInstrumentAdapter(host, port, secure) {
+			_classCallCheck(this, RestInstrumentAdapter);
+
+			var _this = _possibleConstructorReturn(this, Object.getPrototypeOf(RestInstrumentAdapter).call(this));
+
+			assert.argumentIsOptional(host, 'host', String);
+			assert.argumentIsOptional(port, 'port', Number);
+			assert.argumentIsOptional(secure, 'secure', Boolean);
+
+			_this._restProvider = new RestProvider(host, port, secure);
+
+			_this._lookupEndpoint = new RestEndpoint(RestAction.Retrieve, ['instruments', 'symbol']);
+			_this._queryEndpoint = new RestEndpoint(RestAction.Retrieve, ['instruments', 'query', 'text']);
+			_this._versionEndpoint = new RestEndpoint(RestAction.Retrieve, ['server', 'version']);
+			return _this;
+		}
+
+		_createClass(RestInstrumentAdapter, [{
+			key: 'connect',
+			value: function connect() {
+				return this;
+			}
+		}, {
+			key: 'lookupInstrument',
+			value: function lookupInstrument(symbol) {
+				assert.argumentIsRequired(symbol, 'symbol', String);
+
+				return this._restProvider.call(this._lookupEndpoint, { symbol: symbol });
+			}
+		}, {
+			key: 'queryInstruments',
+			value: function queryInstruments(text) {
+				assert.argumentIsRequired(text, 'text', String);
+
+				return this._restProvider.call(this._queryEndpoint, { text: text });
+			}
+		}, {
+			key: 'getServerVersion',
+			value: function getServerVersion() {
+				return this._restProvider.call(this._versionEndpoint, {});
+			}
+		}, {
+			key: '_onDispose',
+			value: function _onDispose() {
+				return;
+			}
+		}, {
+			key: 'toString',
+			value: function toString() {
+				return '[RestInstrumentAdapter]';
+			}
+		}]);
+
+		return RestInstrumentAdapter;
+	}(InstrumentAdapterBase);
+
+	return RestInstrumentAdapter;
+}();
+
+},{"./InstrumentAdapterBase":16,"common/lang/Disposable":23,"common/lang/assert":24,"common/network/rest/RestAction":30,"common/network/rest/RestEndpoint":31,"common/network/rest/RestProvider":33}],18:[function(require,module,exports){
+'use strict';
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+var io = require('socket.io-client');
+var uuid = require('uuid');
+
+var assert = require('common/lang/assert');
+var Disposable = require('common/lang/Disposable');
+
+var InstrumentAdapterBase = require('./InstrumentAdapterBase');
+
+module.exports = function () {
+	'use strict';
+
+	var ConnectionState = function () {
+		function ConnectionState(description, canTransmit, canReceive, canConnect, canDisconnect) {
+			_classCallCheck(this, ConnectionState);
+
+			assert.argumentIsRequired(description, 'description', String);
+			assert.argumentIsRequired(canTransmit, 'canTransmit', Boolean);
+			assert.argumentIsRequired(canReceive, 'canReceive', Boolean);
+			assert.argumentIsRequired(canConnect, 'canConnect', Boolean);
+			assert.argumentIsRequired(canDisconnect, 'canDisconnect', Boolean);
+
+			this._description = description;
+
+			this._canTransmit = canTransmit;
+			this._canReceive = canReceive;
+
+			this._canConnect = canConnect;
+			this._canDisconnect = canDisconnect;
+		}
+
+		_createClass(ConnectionState, [{
+			key: 'getDescription',
+			value: function getDescription() {
+				return this._description;
+			}
+		}, {
+			key: 'getCanTransmit',
+			value: function getCanTransmit() {
+				return this._canTransmit;
+			}
+		}, {
+			key: 'getCanReceive',
+			value: function getCanReceive() {
+				return this._canReceive;
+			}
+		}, {
+			key: 'getCanConnect',
+			value: function getCanConnect() {
+				return this._canConnect;
+			}
+		}, {
+			key: 'getCanDisconnect',
+			value: function getCanDisconnect() {
+				return this._canDisconnect;
+			}
+		}, {
+			key: 'toString',
+			value: function toString() {
+				return '[ConnectionState (description: ' + this._description + ')]';
+			}
+		}]);
+
+		return ConnectionState;
+	}();
+
+	ConnectionState.Connecting = new ConnectionState('connecting', false, false, false, true);
+	ConnectionState.Connected = new ConnectionState('connected', true, true, false, true);
+	ConnectionState.Disconnecting = new ConnectionState('disconnecting', false, false, false, false);
+	ConnectionState.Disconnected = new ConnectionState('disconnected', false, false, true, false);
+
+	var SocketInstrumentAdapter = function (_InstrumentAdapterBas) {
+		_inherits(SocketInstrumentAdapter, _InstrumentAdapterBas);
+
+		function SocketInstrumentAdapter(host, port, secure) {
+			_classCallCheck(this, SocketInstrumentAdapter);
+
+			var _this = _possibleConstructorReturn(this, Object.getPrototypeOf(SocketInstrumentAdapter).call(this));
+
+			assert.argumentIsOptional(host, 'host', String);
+			assert.argumentIsOptional(port, 'port', Number);
+			assert.argumentIsOptional(secure, 'secure', Boolean);
+
+			_this._host = host;
+			_this._port = port;
+			_this._secure = secure;
+
+			_this._socket = null;
+			_this._connectionState = ConnectionState.Disconnected;
+
+			_this._requestMap = {};
+			return _this;
+		}
+
+		_createClass(SocketInstrumentAdapter, [{
+			key: 'connect',
+			value: function connect() {
+				var _this2 = this;
+
+				return new Promise(function (resolveCallback, rejectCallback) {
+					if (_this2._connectionState.getCanConnect()) {
+						var protocol = void 0;
+
+						if (_this2._secure) {
+							protocol = 'https';
+						} else {
+							protocol = 'http';
+						}
+
+						_this2._socket = io.connect(protocol + '://' + _this2._host + ':' + _this2._port, { transports: ['websocket'], secure: _this2._secure, forceNew: true });
+
+						_this2._socket.on('connect', function () {
+							_this2._requestMap = {};
+
+							changeConnectionState.call(_this2, ConnectionState.Connected);
+
+							resolveCallback(_this2);
+						});
+
+						_this2._socket.on('reconnecting', function () {
+							changeConnectionState.call(_this2, ConnectionState.Connecting);
+						});
+
+						_this2._socket.on('reconnect', function () {
+							changeConnectionState.call(_this2, ConnectionState.Connected);
+						});
+
+						_this2._socket.on('response', function (data) {
+							var requestId = data.requestId;
+
+							if (requestId) {
+								var requestCallback = _this2._requestMap[requestId];
+
+								if (requestCallback) {
+									delete _this2._requestMap[requestId];
+
+									requestCallback(data.response);
+								}
+							}
+						});
+					} else {
+						rejectCallback('Unable to connect.');
+					}
+				});
+			}
+		}, {
+			key: 'lookupInstrument',
+			value: function lookupInstrument(symbol) {
+				assert.argumentIsRequired(symbol, 'symbol', String);
+
+				return sendRequestToServer.call(this, 'instruments/retrieve', { symbol: symbol });
+			}
+		}, {
+			key: 'queryInstruments',
+			value: function queryInstruments(text) {
+				assert.argumentIsRequired(text, 'text', String);
+
+				return sendRequestToServer.call(this, 'instruments/query', { text: text });
+			}
+		}, {
+			key: 'getServerVersion',
+			value: function getServerVersion() {
+				return sendRequestToServer.call(this, 'server/version', {});
+			}
+		}, {
+			key: '_onDispose',
+			value: function _onDispose() {
+				if (this._socket) {
+					this._socket.disconnect();
+					this._socket = null;
+				}
+			}
+		}, {
+			key: 'toString',
+			value: function toString() {
+				return '[SocketInstrumentAdapter]';
+			}
+		}]);
+
+		return SocketInstrumentAdapter;
+	}(InstrumentAdapterBase);
+
+	function sendToServer(channel, payload) {
+		if (this._connectionState.getCanTransmit()) {
+			return Promise.resolve(this._socket.emit(channel, payload));
+		} else {
+			return Promise.reject('Unable to send data. The socket is not connected.');
+		}
+	}
+
+	function sendRequestToServer(channel, payload) {
+		var _this3 = this;
+
+		return new Promise(function (resolveCallback, rejectCallback) {
+			var requestId = uuid.v4();
+
+			_this3._requestMap[requestId] = resolveCallback;
+
+			return sendToServer.call(_this3, 'request/' + channel, { requestId: requestId, request: payload }).catch(function (e) {
+				delete _this3._requestMap[requestId];
+
+				throw rejectCallback(e);
+			});
+		});
+	}
+
+	function changeConnectionState(connectionState) {
+		this._connectionState = connectionState;
+	}
+
+	return SocketInstrumentAdapter;
+}();
+
+},{"./InstrumentAdapterBase":16,"common/lang/Disposable":23,"common/lang/assert":24,"socket.io-client":72,"uuid":85}],19:[function(require,module,exports){
+module.exports = function() {
+	'use strict';
+
+	return {
+		unitCodeToBaseCode: function(unitCode) {
+			switch (unitCode) {
+				case '2':
+					return -1;
+				case '3':
+					return -2;
+				case '4':
+					return -3;
+				case '5':
+					return -4;
+				case '6':
+					return -5;
+				case '7':
+					return -6;
+				case '8':
+					return 0;
+				case '9':
+					return 1;
+				case 'A':
+					return 2;
+				case 'B':
+					return 3;
+				case 'C':
+					return 4;
+				case 'D':
+					return 5;
+				case 'E':
+					return 6;
+				case 'F':
+					return 7;
+				default:
+					return 0;
+			}
+		},
+
+		baseCodeToUnitCode: function(baseCode) {
+			switch (baseCode) {
+				case -1:
+					return '2';
+				case -2:
+					return '3';
+				case -3:
+					return '4';
+				case -4:
+					return '5';
+				case -5:
+					return '6';
+				case -6:
+					return '7';
+				case 0:
+					return '8';
+				case 1:
+					return '9';
+				case 2:
+					return 'A';
+				case 3:
+					return 'B';
+				case 4:
+					return 'C';
+				case 5:
+					return 'D';
+				case 6:
+					return 'E';
+				case 7:
+					return 'F';
+				default:
+					return 0;
+			}
+		}
+	};
+}();
+},{}],20:[function(require,module,exports){
+module.exports = function() {
+	'use strict';
+
+	var replaceExpressions = { };
+
+	function getReplaceExpression(thousandsSeparator) {
+		if (!replaceExpressions.hasOwnProperty(thousandsSeparator)) {
+			replaceExpressions[thousandsSeparator] = new RegExp(thousandsSeparator, 'g');
+		}
+
+		return replaceExpressions[thousandsSeparator];
+	}
+
+	return function(str, unitcode, thousandsSeparator) {
+		if (str.length < 1) {
+			return undefined;
+		} else if (str === '-') {
+			return null;
+		}
+
+		if (thousandsSeparator) {
+			str = str.replace(getReplaceExpression(thousandsSeparator), '');
+		}
+
+		if (str.indexOf('.') > 0) {
+			return parseFloat(str);
+		}
+
+		var sign = (str.substr(0, 1) == '-') ? -1 : 1;
+
+		if (sign === -1) {
+			str = str.substr(1);
+		}
+
+		switch (unitcode) {
+			case '2': // 8ths
+				return sign * (((str.length > 1) ? parseInt(str.substr(0, str.length - 1)) : 0) + (parseInt(str.substr(-1)) / 8));
+			case '3': // 16ths
+				return sign * (((str.length > 2) ? parseInt(str.substr(0, str.length - 2)) : 0) + (parseInt(str.substr(-2)) / 16));
+			case '4': // 32ths
+				return sign * (((str.length > 2) ? parseInt(str.substr(0, str.length - 2)) : 0) + (parseInt(str.substr(-2)) / 32));
+			case '5': // 64ths
+				return sign * (((str.length > 2) ? parseInt(str.substr(0, str.length - 2)) : 0) + (parseInt(str.substr(-2)) / 64));
+			case '6': // 128ths
+				return sign * (((str.length > 3) ? parseInt(str.substr(0, str.length - 3)) : 0) + (parseInt(str.substr(-3)) / 128));
+			case '7': // 256ths
+				return sign * (((str.length > 3) ? parseInt(str.substr(0, str.length - 3)) : 0) + (parseInt(str.substr(-3)) / 256));
+			case '8':
+				return sign * parseInt(str);
+			case '9':
+				return sign * (parseInt(str) / 10);
+			case 'A':
+				return sign * (parseInt(str) / 100);
+			case 'B':
+				return sign * (parseInt(str) / 1000);
+			case 'C':
+				return sign * (parseInt(str) / 10000);
+			case 'D':
+				return sign * (parseInt(str) / 100000);
+			case 'E':
+				return sign * (parseInt(str) / 1000000);
+			default:
+				return sign * parseInt(str);
+		}
+	};
+}();
+},{}],21:[function(require,module,exports){
 /*
  * base64-arraybuffer
  * https://github.com/niklasvh/base64-arraybuffer
@@ -1944,7 +2699,7 @@ Backoff.prototype.setJitter = function(jitter){
   };
 })("ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/");
 
-},{}],16:[function(require,module,exports){
+},{}],22:[function(require,module,exports){
 (function (global){
 /**
  * Create a blob builder even when vendor prefixes exist
@@ -1997,7 +2752,7 @@ module.exports = (function() {
 })();
 
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{}],17:[function(require,module,exports){
+},{}],23:[function(require,module,exports){
 'use strict';
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
@@ -2089,8 +2844,10 @@ module.exports = function () {
 	return Disposable;
 }();
 
-},{"./assert":18}],18:[function(require,module,exports){
+},{"./assert":24}],24:[function(require,module,exports){
 'use strict';
+
+var is = require('./is');
 
 module.exports = function () {
 	'use strict';
@@ -2147,27 +2904,27 @@ module.exports = function () {
 
 	function checkArgumentType(variable, variableName, type, typeDescription, index) {
 		if (type === String) {
-			if (typeof variable !== 'string') {
+			if (!is.string(variable)) {
 				throwInvalidTypeError(variableName, 'string', index);
 			}
 		} else if (type === Number) {
-			if (typeof variable !== 'number') {
+			if (!is.number(variable)) {
 				throwInvalidTypeError(variableName, 'number', index);
 			}
 		} else if (type === Function) {
-			if (typeof variable !== 'function') {
+			if (!is.fn(variable)) {
 				throwInvalidTypeError(variableName, 'function', index);
 			}
 		} else if (type === Boolean) {
-			if (typeof variable !== 'boolean') {
+			if (!is.boolean(variable)) {
 				throwInvalidTypeError(variableName, 'boolean', index);
 			}
 		} else if (type === Date) {
-			if (!(variable instanceof Date)) {
+			if (!is.date(variable)) {
 				throwInvalidTypeError(variableName, 'date', index);
 			}
 		} else if (type === Array) {
-			if (!Array.isArray(variable)) {
+			if (!is.array(variable)) {
 				throwInvalidTypeError(variableName, 'array', index);
 			}
 		} else if (!(variable instanceof (type || Object))) {
@@ -2190,7 +2947,7 @@ module.exports = function () {
 	return assert;
 }();
 
-},{}],19:[function(require,module,exports){
+},{"./is":27}],25:[function(require,module,exports){
 'use strict';
 
 var assert = require('./assert');
@@ -2315,10 +3072,11 @@ module.exports = function () {
 	return attributes;
 }();
 
-},{"./assert":18}],20:[function(require,module,exports){
+},{"./assert":24}],26:[function(require,module,exports){
 'use strict';
 
 var assert = require('./../assert');
+var is = require('./../is');
 
 module.exports = function () {
 	'use strict';
@@ -2327,14 +3085,14 @@ module.exports = function () {
 		getIsSecure: function getIsSecure(secure) {
 			var returnVal = void 0;
 
-			if (typeof secure === 'boolean') {
+			if (is.boolean(secure)) {
 				returnVal = secure;
 			} else {
 				var protocol = void 0;
 
-				if (window && window.location && typeof window.location.protocol === 'string') {
+				if (window && window.location && is.string(window.location.protocol)) {
 					protocol = window.location.protocol;
-				} else if (document && document.location && typeof document.location.protocol === 'string') {
+				} else if (document && document.location && is.string(document.location.protocol)) {
 					protocol = document.location.protocol;
 				} else {
 					protocol = '';
@@ -2350,7 +3108,59 @@ module.exports = function () {
 	return connection;
 }();
 
-},{"./../assert":18}],21:[function(require,module,exports){
+},{"./../assert":24,"./../is":27}],27:[function(require,module,exports){
+'use strict';
+
+var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol ? "symbol" : typeof obj; };
+
+module.exports = function () {
+	'use strict';
+
+	return {
+		number: function number(candidate) {
+			return typeof candidate === 'number' && !isNaN(candidate);
+		},
+		nan: function nan(candidate) {
+			return typeof candidate === 'number' && isNaN(candidate);
+		},
+		string: function string(candidate) {
+			return typeof candidate === 'string';
+		},
+		date: function date(candidate) {
+			return candidate instanceof Date;
+		},
+		fn: function fn(candidate) {
+			return typeof candidate === 'function';
+		},
+		array: function array(candidate) {
+			return Array.isArray(candidate);
+		},
+		boolean: function boolean(candidate) {
+			return typeof candidate === 'boolean';
+		},
+		object: function object(candidate) {
+			return (typeof candidate === 'undefined' ? 'undefined' : _typeof(candidate)) === 'object' && candidate !== null;
+		},
+		null: function _null(candidate) {
+			return candidate === null;
+		},
+		undefined: function (_undefined) {
+			function undefined(_x) {
+				return _undefined.apply(this, arguments);
+			}
+
+			undefined.toString = function () {
+				return _undefined.toString();
+			};
+
+			return undefined;
+		}(function (candidate) {
+			return candidate === undefined;
+		})
+	};
+}();
+
+},{}],28:[function(require,module,exports){
 'use strict';
 
 var moment = require('moment-timezone/builds/moment-timezone-with-data-2010-2020');
@@ -2363,7 +3173,6 @@ module.exports = function () {
 		getTimezones: function getTimezones() {
 			return moment.tz.names();
 		},
-
 		hasTimezone: function hasTimezone(timezone) {
 			assert.argumentIsRequired(timezone, 'timezone', String);
 
@@ -2371,14 +3180,13 @@ module.exports = function () {
 				return candidate === timezone;
 			});
 		},
-
 		guessTimezone: function guessTimezone() {
 			return moment.tz.guess() || null;
 		}
 	};
 }();
 
-},{"./assert":18,"moment-timezone/builds/moment-timezone-with-data-2010-2020":57}],22:[function(require,module,exports){
+},{"./assert":24,"moment-timezone/builds/moment-timezone-with-data-2010-2020":64}],29:[function(require,module,exports){
 'use strict';
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
@@ -2505,7 +3313,7 @@ module.exports = function () {
 	return Event;
 }();
 
-},{"./../lang/Disposable":17}],23:[function(require,module,exports){
+},{"./../lang/Disposable":23}],30:[function(require,module,exports){
 'use strict';
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
@@ -2585,7 +3393,7 @@ module.exports = function () {
 	return RestAction;
 }();
 
-},{"./../../lang/assert":18}],24:[function(require,module,exports){
+},{"./../../lang/assert":24}],31:[function(require,module,exports){
 'use strict';
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
@@ -2594,6 +3402,7 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
 
 var assert = require('./../../lang/assert');
 var attributes = require('./../../lang/attributes');
+var is = require('./../../lang/is');
 
 var RestAction = require('./RestAction');
 
@@ -2645,7 +3454,7 @@ module.exports = function () {
 
 					url = url + host;
 
-					if (typeof port === 'number' && port !== 80) {
+					if (is.number(port) && port !== 80) {
 						url = url + ':' + port;
 					}
 
@@ -2700,7 +3509,7 @@ module.exports = function () {
 	return RestEndpoint;
 }();
 
-},{"./../../lang/assert":18,"./../../lang/attributes":19,"./RestAction":23}],25:[function(require,module,exports){
+},{"./../../lang/assert":24,"./../../lang/attributes":25,"./../../lang/is":27,"./RestAction":30}],32:[function(require,module,exports){
 'use strict';
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
@@ -2751,7 +3560,7 @@ module.exports = function () {
 	return RestProviderBase;
 }();
 
-},{"./../../lang/assert":18,"./RestEndpoint":24}],26:[function(require,module,exports){
+},{"./../../lang/assert":24,"./RestEndpoint":31}],33:[function(require,module,exports){
 'use strict';
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
@@ -2815,7 +3624,7 @@ module.exports = function () {
 	return XhrRestProvider;
 }();
 
-},{"./../RestProviderBase":25,"xhr":80}],27:[function(require,module,exports){
+},{"./../RestProviderBase":32,"xhr":87}],34:[function(require,module,exports){
 'use strict';
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
@@ -2995,7 +3804,7 @@ module.exports = function () {
     return Scheduler;
 }();
 
-},{"./../lang/Disposable":17,"./../lang/assert":18}],28:[function(require,module,exports){
+},{"./../lang/Disposable":23,"./../lang/assert":24}],35:[function(require,module,exports){
 /**
  * Slice reference.
  */
@@ -3020,7 +3829,7 @@ module.exports = function(obj, fn){
   }
 };
 
-},{}],29:[function(require,module,exports){
+},{}],36:[function(require,module,exports){
 
 /**
  * Expose `Emitter`.
@@ -3186,7 +3995,7 @@ Emitter.prototype.hasListeners = function(event){
   return !! this.listeners(event).length;
 };
 
-},{}],30:[function(require,module,exports){
+},{}],37:[function(require,module,exports){
 
 module.exports = function(a, b){
   var fn = function(){};
@@ -3194,7 +4003,7 @@ module.exports = function(a, b){
   a.prototype = new fn;
   a.prototype.constructor = a;
 };
-},{}],31:[function(require,module,exports){
+},{}],38:[function(require,module,exports){
 
 /**
  * Expose `debug()` as the module.
@@ -3333,11 +4142,11 @@ try {
   if (window.localStorage) debug.enable(localStorage.debug);
 } catch(e){}
 
-},{}],32:[function(require,module,exports){
+},{}],39:[function(require,module,exports){
 
 module.exports =  require('./lib/');
 
-},{"./lib/":33}],33:[function(require,module,exports){
+},{"./lib/":40}],40:[function(require,module,exports){
 
 module.exports = require('./socket');
 
@@ -3349,7 +4158,7 @@ module.exports = require('./socket');
  */
 module.exports.parser = require('engine.io-parser');
 
-},{"./socket":34,"engine.io-parser":45}],34:[function(require,module,exports){
+},{"./socket":41,"engine.io-parser":52}],41:[function(require,module,exports){
 (function (global){
 /**
  * Module dependencies.
@@ -4058,7 +4867,7 @@ Socket.prototype.filterUpgrades = function (upgrades) {
 };
 
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{"./transport":35,"./transports":36,"component-emitter":29,"debug":42,"engine.io-parser":45,"indexof":53,"parsejson":62,"parseqs":63,"parseuri":44}],35:[function(require,module,exports){
+},{"./transport":42,"./transports":43,"component-emitter":36,"debug":49,"engine.io-parser":52,"indexof":60,"parsejson":69,"parseqs":70,"parseuri":51}],42:[function(require,module,exports){
 /**
  * Module dependencies.
  */
@@ -4219,7 +5028,7 @@ Transport.prototype.onClose = function () {
   this.emit('close');
 };
 
-},{"component-emitter":29,"engine.io-parser":45}],36:[function(require,module,exports){
+},{"component-emitter":36,"engine.io-parser":52}],43:[function(require,module,exports){
 (function (global){
 /**
  * Module dependencies
@@ -4276,7 +5085,7 @@ function polling(opts){
 }
 
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{"./polling-jsonp":37,"./polling-xhr":38,"./websocket":40,"xmlhttprequest":41}],37:[function(require,module,exports){
+},{"./polling-jsonp":44,"./polling-xhr":45,"./websocket":47,"xmlhttprequest":48}],44:[function(require,module,exports){
 (function (global){
 
 /**
@@ -4513,7 +5322,7 @@ JSONPPolling.prototype.doWrite = function (data, fn) {
 };
 
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{"./polling":39,"component-inherit":30}],38:[function(require,module,exports){
+},{"./polling":46,"component-inherit":37}],45:[function(require,module,exports){
 (function (global){
 /**
  * Module requirements.
@@ -4901,7 +5710,7 @@ function unloadHandler() {
 }
 
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{"./polling":39,"component-emitter":29,"component-inherit":30,"debug":42,"xmlhttprequest":41}],39:[function(require,module,exports){
+},{"./polling":46,"component-emitter":36,"component-inherit":37,"debug":49,"xmlhttprequest":48}],46:[function(require,module,exports){
 /**
  * Module dependencies.
  */
@@ -5148,7 +5957,7 @@ Polling.prototype.uri = function(){
   return schema + '://' + this.hostname + port + this.path + query;
 };
 
-},{"../transport":35,"component-inherit":30,"debug":42,"engine.io-parser":45,"parseqs":63,"xmlhttprequest":41}],40:[function(require,module,exports){
+},{"../transport":42,"component-inherit":37,"debug":49,"engine.io-parser":52,"parseqs":70,"xmlhttprequest":48}],47:[function(require,module,exports){
 /**
  * Module dependencies.
  */
@@ -5388,7 +6197,7 @@ WS.prototype.check = function(){
   return !!WebSocket && !('__initialize' in WebSocket && this.name === WS.prototype.name);
 };
 
-},{"../transport":35,"component-inherit":30,"debug":42,"engine.io-parser":45,"parseqs":63,"ws":79}],41:[function(require,module,exports){
+},{"../transport":42,"component-inherit":37,"debug":49,"engine.io-parser":52,"parseqs":70,"ws":86}],48:[function(require,module,exports){
 // browser shim for xmlhttprequest module
 var hasCORS = require('has-cors');
 
@@ -5426,7 +6235,7 @@ module.exports = function(opts) {
   }
 }
 
-},{"has-cors":51}],42:[function(require,module,exports){
+},{"has-cors":58}],49:[function(require,module,exports){
 
 /**
  * This is the web browser implementation of `debug()`.
@@ -5575,7 +6384,7 @@ function load() {
 
 exports.enable(load());
 
-},{"./debug":43}],43:[function(require,module,exports){
+},{"./debug":50}],50:[function(require,module,exports){
 
 /**
  * This is the common logic for both the Node.js and web browser
@@ -5774,7 +6583,7 @@ function coerce(val) {
   return val;
 }
 
-},{"ms":59}],44:[function(require,module,exports){
+},{"ms":66}],51:[function(require,module,exports){
 /**
  * Parses an URI
  *
@@ -5815,7 +6624,7 @@ module.exports = function parseuri(str) {
     return uri;
 };
 
-},{}],45:[function(require,module,exports){
+},{}],52:[function(require,module,exports){
 (function (global){
 /**
  * Module dependencies.
@@ -6413,7 +7222,7 @@ exports.decodePayloadAsBinary = function (data, binaryType, callback) {
 };
 
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{"./keys":46,"after":12,"arraybuffer.slice":13,"base64-arraybuffer":15,"blob":16,"has-binary":47,"utf8":76}],46:[function(require,module,exports){
+},{"./keys":53,"after":12,"arraybuffer.slice":13,"base64-arraybuffer":21,"blob":22,"has-binary":54,"utf8":83}],53:[function(require,module,exports){
 
 /**
  * Gets the keys for an object.
@@ -6434,7 +7243,7 @@ module.exports = Object.keys || function keys (obj){
   return arr;
 };
 
-},{}],47:[function(require,module,exports){
+},{}],54:[function(require,module,exports){
 (function (global){
 
 /*
@@ -6496,7 +7305,7 @@ function hasBinary(data) {
 }
 
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{"isarray":55}],48:[function(require,module,exports){
+},{"isarray":62}],55:[function(require,module,exports){
 var isFunction = require('is-function')
 
 module.exports = forEach
@@ -6544,7 +7353,7 @@ function forEachObject(object, iterator, context) {
     }
 }
 
-},{"is-function":54}],49:[function(require,module,exports){
+},{"is-function":61}],56:[function(require,module,exports){
 (function (global){
 if (typeof window !== "undefined") {
     module.exports = window;
@@ -6557,7 +7366,7 @@ if (typeof window !== "undefined") {
 }
 
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{}],50:[function(require,module,exports){
+},{}],57:[function(require,module,exports){
 (function (global){
 
 /*
@@ -6619,7 +7428,7 @@ function hasBinary(data) {
 }
 
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{"isarray":55}],51:[function(require,module,exports){
+},{"isarray":62}],58:[function(require,module,exports){
 
 /**
  * Module dependencies.
@@ -6644,7 +7453,7 @@ try {
   module.exports = false;
 }
 
-},{"global":52}],52:[function(require,module,exports){
+},{"global":59}],59:[function(require,module,exports){
 
 /**
  * Returns `this`. Execute this without a "context" (i.e. without it being
@@ -6654,7 +7463,7 @@ try {
 
 module.exports = (function () { return this; })();
 
-},{}],53:[function(require,module,exports){
+},{}],60:[function(require,module,exports){
 
 var indexOf = [].indexOf;
 
@@ -6665,7 +7474,7 @@ module.exports = function(arr, obj){
   }
   return -1;
 };
-},{}],54:[function(require,module,exports){
+},{}],61:[function(require,module,exports){
 module.exports = isFunction
 
 var toString = Object.prototype.toString
@@ -6682,12 +7491,12 @@ function isFunction (fn) {
       fn === window.prompt))
 };
 
-},{}],55:[function(require,module,exports){
+},{}],62:[function(require,module,exports){
 module.exports = Array.isArray || function (arr) {
   return Object.prototype.toString.call(arr) == '[object Array]';
 };
 
-},{}],56:[function(require,module,exports){
+},{}],63:[function(require,module,exports){
 /*! JSON v3.2.6 | http://bestiejs.github.io/json3 | Copyright 2012-2013, Kit Cambridge | http://kit.mit-license.org */
 ;(function (window) {
   // Convenience aliases.
@@ -7550,9 +8359,9 @@ module.exports = Array.isArray || function (arr) {
   }
 }(this));
 
-},{}],57:[function(require,module,exports){
+},{}],64:[function(require,module,exports){
 //! moment-timezone.js
-//! version : 0.5.4
+//! version : 0.5.5
 //! author : Tim Wood
 //! license : MIT
 //! github.com/moment/moment-timezone
@@ -7577,7 +8386,7 @@ module.exports = Array.isArray || function (arr) {
 		return moment;
 	}
 
-	var VERSION = "0.5.4",
+	var VERSION = "0.5.5",
 		zones = {},
 		links = {},
 		names = {},
@@ -8149,7 +8958,7 @@ module.exports = Array.isArray || function (arr) {
 	}
 
 	loadData({
-		"version": "2016d",
+		"version": "2016f",
 		"zones": [
 			"Africa/Abidjan|GMT|0|0||48e5",
 			"Africa/Khartoum|EAT|-30|0||51e5",
@@ -8260,8 +9069,8 @@ module.exports = Array.isArray || function (arr) {
 			"Asia/Makassar|WITA|-80|0||15e5",
 			"Asia/Manila|PHT|-80|0||24e6",
 			"Europe/Athens|EET EEST|-20 -30|01010101010101010101010|1BWp0 1qM0 WM0 1qM0 WM0 1qM0 11A0 1o00 11A0 1o00 11A0 1o00 11A0 1qM0 WM0 1qM0 WM0 1qM0 11A0 1o00 11A0 1o00|35e5",
-			"Asia/Novokuznetsk|KRAT NOVST NOVT NOVT|-70 -70 -60 -70|01230|1BWj0 1qN0 WM0 8Hz0|55e4",
-			"Asia/Novosibirsk|NOVT NOVST NOVT|-60 -70 -70|01020|1BWk0 1qM0 WM0 8Hz0|15e5",
+			"Asia/Novokuznetsk|+07 +06|-70 -60|010|1Dp80 WM0|55e4",
+			"Asia/Novosibirsk|+06 +07|-60 -70|010101|1BWk0 1qM0 WM0 8Hz0 4eN0|15e5",
 			"Asia/Omsk|OMST OMSST OMST|-60 -70 -70|01020|1BWk0 1qM0 WM0 8Hz0|12e5",
 			"Asia/Pyongyang|KST KST|-90 -8u|01|1P4D0|29e5",
 			"Asia/Rangoon|MMT|-6u|0||48e5",
@@ -8748,7 +9557,7 @@ module.exports = Array.isArray || function (arr) {
 	return moment;
 }));
 
-},{"moment":58}],58:[function(require,module,exports){
+},{"moment":65}],65:[function(require,module,exports){
 //! moment.js
 //! version : 2.14.1
 //! authors : Tim Wood, Iskren Chernev, Moment.js contributors
@@ -12944,7 +13753,7 @@ module.exports = Array.isArray || function (arr) {
     return _moment;
 
 }));
-},{}],59:[function(require,module,exports){
+},{}],66:[function(require,module,exports){
 /**
  * Helpers.
  */
@@ -13057,7 +13866,7 @@ function plural(ms, n, name) {
   return Math.ceil(ms / n) + ' ' + name + 's';
 }
 
-},{}],60:[function(require,module,exports){
+},{}],67:[function(require,module,exports){
 
 /**
  * HOP ref.
@@ -13142,7 +13951,7 @@ exports.length = function(obj){
 exports.isEmpty = function(obj){
   return 0 == exports.length(obj);
 };
-},{}],61:[function(require,module,exports){
+},{}],68:[function(require,module,exports){
 var trim = require('trim')
   , forEach = require('for-each')
   , isArray = function(arg) {
@@ -13174,7 +13983,7 @@ module.exports = function (headers) {
 
   return result
 }
-},{"for-each":48,"trim":75}],62:[function(require,module,exports){
+},{"for-each":55,"trim":82}],69:[function(require,module,exports){
 (function (global){
 /**
  * JSON parse.
@@ -13209,7 +14018,7 @@ module.exports = function parsejson(data) {
   }
 };
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{}],63:[function(require,module,exports){
+},{}],70:[function(require,module,exports){
 /**
  * Compiles a querystring
  * Returns string representation of the object
@@ -13248,7 +14057,7 @@ exports.decode = function(qs){
   return qry;
 };
 
-},{}],64:[function(require,module,exports){
+},{}],71:[function(require,module,exports){
 /**
  * Parses an URI
  *
@@ -13275,11 +14084,11 @@ module.exports = function parseuri(str) {
   return uri;
 };
 
-},{}],65:[function(require,module,exports){
+},{}],72:[function(require,module,exports){
 
 module.exports = require('./lib/');
 
-},{"./lib/":66}],66:[function(require,module,exports){
+},{"./lib/":73}],73:[function(require,module,exports){
 
 /**
  * Module dependencies.
@@ -13368,7 +14177,7 @@ exports.connect = lookup;
 exports.Manager = require('./manager');
 exports.Socket = require('./socket');
 
-},{"./manager":67,"./socket":69,"./url":70,"debug":31,"socket.io-parser":72}],67:[function(require,module,exports){
+},{"./manager":74,"./socket":76,"./url":77,"debug":38,"socket.io-parser":79}],74:[function(require,module,exports){
 
 /**
  * Module dependencies.
@@ -13873,7 +14682,7 @@ Manager.prototype.onreconnect = function(){
   this.emitAll('reconnect', attempt);
 };
 
-},{"./on":68,"./socket":69,"./url":70,"backo2":14,"component-bind":28,"component-emitter":29,"debug":31,"engine.io-client":32,"indexof":53,"object-component":60,"socket.io-parser":72}],68:[function(require,module,exports){
+},{"./on":75,"./socket":76,"./url":77,"backo2":14,"component-bind":35,"component-emitter":36,"debug":38,"engine.io-client":39,"indexof":60,"object-component":67,"socket.io-parser":79}],75:[function(require,module,exports){
 
 /**
  * Module exports.
@@ -13899,7 +14708,7 @@ function on(obj, ev, fn) {
   };
 }
 
-},{}],69:[function(require,module,exports){
+},{}],76:[function(require,module,exports){
 
 /**
  * Module dependencies.
@@ -14286,7 +15095,7 @@ Socket.prototype.disconnect = function(){
   return this;
 };
 
-},{"./on":68,"component-bind":28,"component-emitter":29,"debug":31,"has-binary":50,"socket.io-parser":72,"to-array":74}],70:[function(require,module,exports){
+},{"./on":75,"component-bind":35,"component-emitter":36,"debug":38,"has-binary":57,"socket.io-parser":79,"to-array":81}],77:[function(require,module,exports){
 (function (global){
 
 /**
@@ -14363,7 +15172,7 @@ function url(uri, loc){
 }
 
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{"debug":31,"parseuri":64}],71:[function(require,module,exports){
+},{"debug":38,"parseuri":71}],78:[function(require,module,exports){
 (function (global){
 /*global Blob,File*/
 
@@ -14508,7 +15317,7 @@ exports.removeBlobs = function(data, callback) {
 };
 
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{"./is-buffer":73,"isarray":55}],72:[function(require,module,exports){
+},{"./is-buffer":80,"isarray":62}],79:[function(require,module,exports){
 
 /**
  * Module dependencies.
@@ -14910,7 +15719,7 @@ function error(data){
   };
 }
 
-},{"./binary":71,"./is-buffer":73,"component-emitter":29,"debug":31,"isarray":55,"json3":56}],73:[function(require,module,exports){
+},{"./binary":78,"./is-buffer":80,"component-emitter":36,"debug":38,"isarray":62,"json3":63}],80:[function(require,module,exports){
 (function (global){
 
 module.exports = isBuf;
@@ -14927,7 +15736,7 @@ function isBuf(obj) {
 }
 
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{}],74:[function(require,module,exports){
+},{}],81:[function(require,module,exports){
 module.exports = toArray
 
 function toArray(list, index) {
@@ -14942,7 +15751,7 @@ function toArray(list, index) {
     return array
 }
 
-},{}],75:[function(require,module,exports){
+},{}],82:[function(require,module,exports){
 
 exports = module.exports = trim;
 
@@ -14958,7 +15767,7 @@ exports.right = function(str){
   return str.replace(/\s*$/, '');
 };
 
-},{}],76:[function(require,module,exports){
+},{}],83:[function(require,module,exports){
 (function (global){
 /*! http://mths.be/utf8js v2.0.0 by @mathias */
 ;(function(root) {
@@ -15201,7 +16010,7 @@ exports.right = function(str){
 }(this));
 
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{}],77:[function(require,module,exports){
+},{}],84:[function(require,module,exports){
 (function (global){
 
 var rng;
@@ -15236,7 +16045,7 @@ module.exports = rng;
 
 
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{}],78:[function(require,module,exports){
+},{}],85:[function(require,module,exports){
 //     uuid.js
 //
 //     Copyright (c) 2010-2012 Robert Kieffer
@@ -15421,7 +16230,7 @@ uuid.unparse = unparse;
 
 module.exports = uuid;
 
-},{"./rng":77}],79:[function(require,module,exports){
+},{"./rng":84}],86:[function(require,module,exports){
 
 /**
  * Module dependencies.
@@ -15466,7 +16275,7 @@ function ws(uri, protocols, opts) {
 
 if (WebSocket) ws.prototype = WebSocket.prototype;
 
-},{}],80:[function(require,module,exports){
+},{}],87:[function(require,module,exports){
 "use strict";
 var window = require("global/window")
 var isFunction = require("is-function")
@@ -15703,7 +16512,7 @@ function getXml(xhr) {
 
 function noop() {}
 
-},{"global/window":49,"is-function":54,"parse-headers":61,"xtend":81}],81:[function(require,module,exports){
+},{"global/window":56,"is-function":61,"parse-headers":68,"xtend":88}],88:[function(require,module,exports){
 module.exports = extend
 
 var hasOwnProperty = Object.prototype.hasOwnProperty;
