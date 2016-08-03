@@ -135,14 +135,27 @@ module.exports = function () {
 
 					validate.alert.forCreate(alert);
 				}).then(function () {
-					return _this4.getProperties();
-				}).then(function (properties) {
+					return Promise.all([_this4.getProperties(), _this4.getOperators()]);
+				}).then(function (results) {
+					var properties = results[0];
+					var operators = results[1];
+
 					var propertyMap = alert.conditions.reduce(function (map, c) {
 						var property = properties.find(function (p) {
 							return p.property_id === c.property.property_id;
 						});
 
 						map[property.property_id] = property;
+
+						return map;
+					}, {});
+
+					var operatorMap = alert.conditions.reduce(function (map, c) {
+						var operator = operators.find(function (o) {
+							return o.operator_id === c.operator.operator_id;
+						});
+
+						map[operator.operator_id] = operator;
 
 						return map;
 					}, {});
@@ -165,6 +178,7 @@ module.exports = function () {
 						var validatePromise = void 0;
 
 						var property = propertyMap[c.property.property_id];
+						var operator = operatorMap[c.operator.operator_id];
 
 						if (property.target.type === 'symbol') {
 							(function () {
@@ -175,7 +189,7 @@ module.exports = function () {
 
 									validate.instrument.forCreate(symbol, instrument);
 
-									if (property.format === 'price') {
+									if (property.format === 'price' && operator.operand_type === 'number' && operator.operand_literal) {
 										var price = priceParser(c.operator.operand, converter.baseCodeToUnitCode(instrument.unitcode), ',');
 
 										if (!is.number(price)) {
@@ -1593,7 +1607,7 @@ module.exports = function () {
 	return {
 		AlertManager: AlertManager,
 		timezone: timezone,
-		version: '1.4.14'
+		version: '1.4.15'
 	};
 }();
 
