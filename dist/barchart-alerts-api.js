@@ -190,7 +190,13 @@ module.exports = function () {
 									validate.instrument.forCreate(symbol, instrument);
 
 									if (property.format === 'price' && operator.operand_type === 'number' && operator.operand_literal) {
-										var price = priceParser(c.operator.operand, converter.baseCodeToUnitCode(instrument.unitcode), ',');
+										var operandToParse = c.operator.operand;
+
+										if (is.string(operandToParse) && operandToParse.match(/^(-?)([0-9,]+)$/) !== null) {
+											operandToParse = operandToParse + '.0';
+										}
+
+										var price = priceParser(operandToParse, converter.baseCodeToUnitCode(instrument.unitcode), ',');
 
 										if (!is.number(price)) {
 											throw new Error('Condition ' + i + ' is invalid. The price cannot be parsed.');
@@ -1607,7 +1613,7 @@ module.exports = function () {
 	return {
 		AlertManager: AlertManager,
 		timezone: timezone,
-		version: '1.4.15'
+		version: '1.4.16'
 	};
 }();
 
