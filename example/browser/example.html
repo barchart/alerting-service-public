@@ -45,18 +45,20 @@
         var publisherTypes = ko.observable();
         var marketDataConfiguration = ko.observable();
 
-        function PageModel() {
+        function PageModel(connected, message) {
             var that = this;
 
             that.version = ko.observable({ });
-            that.connected = ko.observable(true);
+
+            that.connected = ko.observable(connected);
+            that.message = ko.observable(message);
 
             that.alert = ko.observable();
             that.alerts = ko.observableArray([ ]);
             that.publisherSettings = ko.observable();
             that.marketDataSettings = ko.observable();
-            that.activeTemplate = ko.observable('alert-grid-template');
             that.providerDescription = ko.observable(alertManager.toString());
+            that.activeTemplate = ko.observable();
 
             var getModel = function(alert) {
                 return _.find(that.alerts(), function(model) {
@@ -71,6 +73,8 @@
 
             that.connect = function() {
                 if (!that.connected()) {
+                    that.message('Attempting to connect...');
+
                     reset();
                 }
             };
@@ -166,7 +170,11 @@
                 return that.connected();
             });
 
-            that.changeToGrid();
+            if (that.connected()) {
+                that.changeToGrid();
+            } else {
+                that.activeTemplate('alert-disconnected');
+            }
         }
         function AlertDisplayModel(alert) {
             var that = this;
@@ -944,7 +952,7 @@
 
             alertManager.connect()
                 .then(function() {
-                    var pageModel = new PageModel();
+                    var pageModel = new PageModel(true);
 
                     alertManager.subscribeAlerts({ user_id: userId, alert_system: system },
                             function(changedAlert) {
@@ -990,6 +998,12 @@
                                 marketDataConfiguration(mdc);
                             });
 
+                    return pageModel;
+                }).catch(function(e) {
+                    var pageModel = new PageModel(false, e);
+
+                    return pageModel;
+                }).then(function(pageModel) {
                     ko.applyBindings(pageModel, $('body')[0]);
                 });
         };
@@ -1017,7 +1031,9 @@
         <div class="container-center-outer">
             <div class="container-center-inner">
                 <h2 class="center">Disconnected</h2>
-                <h5 class="center">Reload page to create new AlertManager</h5>
+                <!-- ko if: message -->
+                <h5 class="center" data-bind="text: message"></h5>
+                <!-- /ko -->
             </div>
         </div>
     </script>
