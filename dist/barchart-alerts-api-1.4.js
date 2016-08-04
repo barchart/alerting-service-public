@@ -78,11 +78,7 @@ module.exports = function () {
 								throw new Error('Unable to connect, using unsupported mode (' + mode + ')');
 							}
 
-							return adapter.connect();
-						}).catch(function (e) {
-							_this2.dispose();
-
-							throw e;
+							return timeout(adapter.connect(), 10000, 'Alert service is temporarily unavailable. Please try again later.');
 						});
 
 						var instrumentManagerPromise = Promise.resolve().then(function () {
@@ -92,11 +88,7 @@ module.exports = function () {
 
 							var manager = new InstrumentManager(host, port, 'rest', secure);
 
-							return manager.connect();
-						}).catch(function (e) {
-							_this2.dispose();
-
-							throw e;
+							return timeout(manager.connect(), 10000, 'Alert service is temporarily unavailable. Please try again later.');
 						});
 
 						_this2._connectPromise = Promise.all([alertAdapterPromise, instrumentManagerPromise]).then(function (results) {
@@ -104,6 +96,10 @@ module.exports = function () {
 							_this2._instrumentManager = results[1];
 
 							return _this2;
+						}).catch(function (e) {
+							_this2.dispose();
+
+							throw e;
 						});
 					}
 
@@ -679,6 +675,14 @@ module.exports = function () {
 		if (data) {
 			data.deleteEvent.fire(alert);
 		}
+	}
+
+	function timeout(promise, duration, description) {
+		return Promise.race([promise, new Promise(function (resolveCallback, rejectCallback) {
+			setTimeout(function () {
+				rejectCallback(description);
+			}, duration);
+		})]);
 	}
 
 	function getPort(secure, port) {
@@ -1613,7 +1617,7 @@ module.exports = function () {
 	return {
 		AlertManager: AlertManager,
 		timezone: timezone,
-		version: '1.4.16'
+		version: '1.4.17'
 	};
 }();
 
