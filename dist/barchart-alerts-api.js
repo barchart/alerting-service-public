@@ -71,9 +71,9 @@ module.exports = function () {
 							var adapter = void 0;
 
 							if (mode === 'rest') {
-								adapter = new RestAlertAdapter(_this2._host, _this2._port, _this2._secure, onAlertMutated.bind(_this2), onAlertDeleted.bind(_this2));
+								adapter = new RestAlertAdapter(_this2._host, _this2._port, _this2._secure, onAlertCreated.bind(_this2), onAlertMutated.bind(_this2), onAlertDeleted.bind(_this2));
 							} else if (mode === 'socket.io') {
-								adapter = new SocketAlertAdapter(_this2._host, _this2._port, _this2._secure, onAlertMutated.bind(_this2), onAlertDeleted.bind(_this2));
+								adapter = new SocketAlertAdapter(_this2._host, _this2._port, _this2._secure, onAlertCreated.bind(_this2), onAlertMutated.bind(_this2), onAlertDeleted.bind(_this2));
 							} else {
 								throw new Error('Unable to connect, using unsupported mode (' + mode + ')');
 							}
@@ -343,13 +343,14 @@ module.exports = function () {
 			}
 		}, {
 			key: 'subscribeAlerts',
-			value: function subscribeAlerts(query, changeCallback, deleteCallback) {
+			value: function subscribeAlerts(query, changeCallback, deleteCallback, createCallback) {
 				checkStatus(this, 'subscribe alerts');
 
 				validate.alert.forUser(query);
 
 				assert.argumentIsRequired(changeCallback, 'changeCallback', Function);
 				assert.argumentIsRequired(deleteCallback, 'deleteCallback', Function);
+				assert.argumentIsRequired(createCallback, 'createCallback', Function);
 
 				var userId = query.user_id;
 				var alertSystem = query.alert_system;
@@ -360,6 +361,7 @@ module.exports = function () {
 
 				if (!this._alertSubscriptionMap[userId].hasOwnProperty(alertSystem)) {
 					this._alertSubscriptionMap[userId][alertSystem] = {
+						createEvent: new Event(this),
 						changeEvent: new Event(this),
 						deleteEvent: new Event(this),
 						subscribers: 0
@@ -374,6 +376,7 @@ module.exports = function () {
 
 				subscriptionData.subscribers = subscriptionData.subscribers + 1;
 
+				var createRegistration = subscriptionData.createEvent.register(changeCallback);
 				var changeRegistration = subscriptionData.changeEvent.register(changeCallback);
 				var deleteRegistration = subscriptionData.deleteEvent.register(deleteCallback);
 
@@ -384,6 +387,7 @@ module.exports = function () {
 						subscriptionData.implementationBinding.dispose();
 					}
 
+					createRegistration.dispose();
 					changeRegistration.dispose();
 					deleteRegistration.dispose();
 				});
@@ -622,7 +626,7 @@ module.exports = function () {
 		return AlertManager;
 	}(Disposable);
 
-	function getMutationEvent(map, alert) {
+	function getMutationEvents(map, alert) {
 		var returnRef = null;
 
 		var userId = alert.user_id;
@@ -653,12 +657,24 @@ module.exports = function () {
 		}
 	}
 
+	function onAlertCreated(alert) {
+		if (!alert) {
+			return;
+		}
+
+		var data = getMutationEvents(this._alertSubscriptionMap, alert);
+
+		if (data) {
+			data.createEvent.fire(Object.assign(alert));
+		}
+	}
+
 	function onAlertMutated(alert) {
 		if (!alert) {
 			return;
 		}
 
-		var data = getMutationEvent(this._alertSubscriptionMap, alert);
+		var data = getMutationEvents(this._alertSubscriptionMap, alert);
 
 		if (data) {
 			data.changeEvent.fire(Object.assign(alert));
@@ -670,7 +686,7 @@ module.exports = function () {
 			return;
 		}
 
-		var data = getMutationEvent(this._alertSubscriptionMap, alert);
+		var data = getMutationEvents(this._alertSubscriptionMap, alert);
 
 		if (data) {
 			data.deleteEvent.fire(alert);
@@ -724,14 +740,16 @@ module.exports = function () {
 	var AlertAdapterBase = function (_Disposable) {
 		_inherits(AlertAdapterBase, _Disposable);
 
-		function AlertAdapterBase(onAlertMutated, onAlertDeleted) {
+		function AlertAdapterBase(onAlertCreated, onAlertMutated, onAlertDeleted) {
 			_classCallCheck(this, AlertAdapterBase);
 
 			var _this = _possibleConstructorReturn(this, Object.getPrototypeOf(AlertAdapterBase).call(this));
 
+			assert.argumentIsOptional(onAlertCreated, 'onAlertCreated', Function);
 			assert.argumentIsOptional(onAlertMutated, 'onAlertMutated', Function);
 			assert.argumentIsOptional(onAlertDeleted, 'onAlertDeleted', Function);
 
+			_this._onAlertCreated = onAlertCreated;
 			_this._onAlertMutated = onAlertMutated;
 			_this._onAlertDeleted = onAlertDeleted;
 			return _this;
@@ -846,6 +864,7 @@ function _possibleConstructorReturn(self, call) { if (!self) { throw new Referen
 
 function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
 
+var array = require('common/lang/array');
 var assert = require('common/lang/assert');
 var Disposable = require('common/lang/Disposable');
 var RestAction = require('common/network/rest/RestAction');
@@ -861,10 +880,10 @@ module.exports = function () {
 	var RestAlertAdapter = function (_AlertAdapterBase) {
 		_inherits(RestAlertAdapter, _AlertAdapterBase);
 
-		function RestAlertAdapter(host, port, secure, onAlertMutated, onAlertDeleted) {
+		function RestAlertAdapter(host, port, secure, onAlertCreated, onAlertMutated, onAlertDeleted) {
 			_classCallCheck(this, RestAlertAdapter);
 
-			var _this = _possibleConstructorReturn(this, Object.getPrototypeOf(RestAlertAdapter).call(this, onAlertMutated, onAlertDeleted));
+			var _this = _possibleConstructorReturn(this, Object.getPrototypeOf(RestAlertAdapter).call(this, onAlertCreated, onAlertMutated, onAlertDeleted));
 
 			assert.argumentIsOptional(host, 'host', String);
 			assert.argumentIsOptional(port, 'port', Number);
@@ -1106,8 +1125,14 @@ module.exports = function () {
 			value: function processAlerts(alerts) {
 				var _this5 = this;
 
-				var currentAlerts = indexBy(alerts, function (alert) {
+				var currentAlerts = array.indexBy(alerts, function (alert) {
 					return alert.alert_id;
+				});
+
+				var createdAlerts = Object.keys(currentAlerts).filter(function (alertId) {
+					return !_this5._alerts.hasOwnProperty(alertId);
+				}).map(function (alertId) {
+					return currentAlerts[alertId];
 				});
 
 				var mutatedAlerts = alerts.filter(function (alert) {
@@ -1130,12 +1155,20 @@ module.exports = function () {
 					return _this5._alerts[alertId];
 				});
 
+				createdAlerts.forEach(function (alert) {
+					_this5._alerts[alert.alert_id] = alert;
+				});
+
 				mutatedAlerts.forEach(function (alert) {
 					_this5._alerts[alert.alert_id] = alert;
 				});
 
 				deletedAlerts.forEach(function (alert) {
 					delete _this5._alerts[alert.alert_id];
+				});
+
+				createdAlerts.forEach(function (alert) {
+					_this5._parent._onAlertCreated(alert);
 				});
 
 				mutatedAlerts.forEach(function (alert) {
@@ -1180,20 +1213,10 @@ module.exports = function () {
 		return AlertSubscriber;
 	}(Disposable);
 
-	var indexBy = function indexBy(array, keyFunction) {
-		return array.reduce(function (map, item) {
-			var key = keyFunction(item);
-
-			map[key] = item;
-
-			return map;
-		}, {});
-	};
-
 	return RestAlertAdapter;
 }();
 
-},{"./AlertAdapterBase":2,"common/lang/Disposable":24,"common/lang/assert":26,"common/network/rest/RestAction":32,"common/network/rest/RestEndpoint":33,"common/network/rest/RestProvider":35,"common/timing/Scheduler":36}],4:[function(require,module,exports){
+},{"./AlertAdapterBase":2,"common/lang/Disposable":24,"common/lang/array":25,"common/lang/assert":26,"common/network/rest/RestAction":32,"common/network/rest/RestEndpoint":33,"common/network/rest/RestProvider":35,"common/timing/Scheduler":36}],4:[function(require,module,exports){
 'use strict';
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
@@ -1277,10 +1300,10 @@ module.exports = function () {
 	var SocketAlertAdapter = function (_AlertAdapterBase) {
 		_inherits(SocketAlertAdapter, _AlertAdapterBase);
 
-		function SocketAlertAdapter(host, port, secure, onAlertMutated, onAlertDeleted) {
+		function SocketAlertAdapter(host, port, secure, onAlertCreated, onAlertMutated, onAlertDeleted) {
 			_classCallCheck(this, SocketAlertAdapter);
 
-			var _this = _possibleConstructorReturn(this, Object.getPrototypeOf(SocketAlertAdapter).call(this, onAlertMutated, onAlertDeleted));
+			var _this = _possibleConstructorReturn(this, Object.getPrototypeOf(SocketAlertAdapter).call(this, onAlertCreated, onAlertMutated, onAlertDeleted));
 
 			assert.argumentIsOptional(host, 'host', String);
 			assert.argumentIsOptional(port, 'port', Number);
@@ -1347,6 +1370,10 @@ module.exports = function () {
 									requestCallback(data.response);
 								}
 							}
+						});
+
+						_this2._socket.on('alert/created', function (alert) {
+							_this2._onAlertCreated(alert);
 						});
 
 						_this2._socket.on('alert/mutated', function (alert) {
@@ -1617,7 +1644,7 @@ module.exports = function () {
 	return {
 		AlertManager: AlertManager,
 		timezone: timezone,
-		version: '1.4.18'
+		version: '1.4.19'
 	};
 }();
 
