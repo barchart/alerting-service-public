@@ -786,9 +786,9 @@ JSON-out:
 	An array of "Alert" objects belonging to the specified user.
 
 
-###subscribeAlerts(query, changeCallback, deleteCallback)
+###subscribeAlerts(query, changeCallback, deleteCallback, createCallback)
 
-Provides notification, via callbacks, when an alert has been created or
+Provides notification, via callbacks, when an alert has been created, changed, or
 deleted for a specific user.
 
 JSON-in (the "query" parameter):

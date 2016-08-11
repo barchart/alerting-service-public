@@ -94,20 +94,7 @@
                     return;
                 }
 
-                that.alerts([ ]);
-
                 that.activeTemplate('alert-grid-template');
-
-                alertManager.retrieveAlerts({ user_id: userId, alert_system: system })
-                    .then(function(alerts) {
-                        that.alerts([ ]);
-
-                        _.forEach(alerts, function(alert) {
-                            that.alerts.push(new AlertDisplayModel(alert));
-                        });
-
-                        sortModels();
-                    });
             };
             that.changeToCreate = function() {
                 if (!that.connected()) {
@@ -146,6 +133,15 @@
                     });
             };
 
+            that.handleAlertCreate = function(createdAlert) {
+                var existingModel = getModel(createdAlert);
+
+                if (!existingModel) {
+                    that.alerts.push(new AlertDisplayModel(createdAlert));
+
+                    sortModels();
+                }
+            };
             that.handleAlertChange = function(changedAlert) {
                 var existingModel = getModel(changedAlert);
 
@@ -960,43 +956,53 @@
                             },
                             function(deletedAlert) {
                                 pageModel.handleAlertDelete(deletedAlert);
+                            },
+                            function(createdAlert) {
+                                pageModel.handleAlertCreate(createdAlert);
                             }
                     );
 
-                    alertManager.getServerVersion()
-                            .then(function(version) {
-                                pageModel.version({ api: version.semver, client: Barchart.Alerts.version });
+                    alertManager.retrieveAlerts({ user_id: userId, alert_system: system })
+                        .then(function(alerts) {
+                            _.forEach(alerts, function(alert) {
+                                pageModel.handleAlertCreate(alert);
                             });
+                        });
+
+                    alertManager.getServerVersion()
+                        .then(function(version) {
+                            pageModel.version({ api: version.semver, client: Barchart.Alerts.version });
+                        });
 
                     alertManager.getTargets()
-                            .then(function(t) {
-                                targets(t);
-                            });
+                        .then(function(t) {
+                            targets(t);
+                        });
 
                     alertManager.getProperties()
-                            .then(function(p) {
-                                properties(p);
-                            });
+                        .then(function(p) {
+                            properties(p);
+                        });
 
                     alertManager.getOperators()
-                            .then(function(o) {
-                                operators(o);
-                            });
+                        .then(function(o) {
+                            operators(o);
+                        });
 
                     alertManager.getModifiers()
-                            .then(function(m) {
-                                modifiers(m);
-                            });
+                        .then(function(m) {
+                            modifiers(m);
+                        });
 
                     alertManager.getPublisherTypeDefaults({ user_id: userId, alert_system: system })
-                            .then(function(pt) {
-                                publisherTypes(pt);
-                            });
+                        .then(function(pt) {
+                            publisherTypes(pt);
+                        });
 
                     alertManager.getMarketDataConfiguration({ user_id: userId, alert_system: system })
-                            .then(function(mdc) {
-                                marketDataConfiguration(mdc);
-                            });
+                        .then(function(mdc) {
+                            marketDataConfiguration(mdc);
+                        });
 
                     return pageModel;
                 }).catch(function(e) {
