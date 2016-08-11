@@ -236,9 +236,9 @@ module.exports = function () {
 
 					validate.alert.forEdit(alert);
 				}).then(function () {
-					return _this6._adapter.deleteAlert(alert);
+					return _this6.deleteAlert(alert);
 				}).then(function () {
-					return _this6._adapter.createAlert(alert);
+					return _this6.createAlert(alert);
 				});
 			}
 		}, {
@@ -1617,7 +1617,7 @@ module.exports = function () {
 	return {
 		AlertManager: AlertManager,
 		timezone: timezone,
-		version: '1.4.17'
+		version: '1.4.18'
 	};
 }();
 
