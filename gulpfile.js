@@ -28,7 +28,7 @@ function getVersionForComponent() {
 }
 
 gulp.task('ensure-clean-working-directory', function() {
-    return gulp.src('./**/*')
+    return gulp.src(['./**/*', '!./node_modules/', '!./node_modules/**'])
         .pipe(gitModified('M', 'A', 'D', 'R', 'C', 'U', '??'))
         .on('data', function (file) {
             if (file) {
