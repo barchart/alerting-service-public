@@ -1644,7 +1644,7 @@ module.exports = function () {
 	return {
 		AlertManager: AlertManager,
 		timezone: timezone,
-		version: '1.4.19'
+		version: '1.4.20'
 	};
 }();
 
@@ -1769,20 +1769,12 @@ var is = require('common/lang/is');
 module.exports = function () {
 	'use strict';
 
-	var exclude = ['INDEX', 'INDEX-CBOE', 'INDEX-DOW', 'INDEX-RL', 'INDEX-NY', 'INDEX-NQ', 'INDEX-SP'];
-
 	var validator = {
 		forCreate: function forCreate(symbol, instrument) {
 			assert.argumentIsRequired(symbol, symbol, String);
 
 			if (is.null(instrument) || is.undefined(instrument)) {
 				throw new Error(symbol + ' does not appear to be a valid symbol.');
-			}
-
-			if (exclude.some(function (e) {
-				return e === instrument.exchange;
-			})) {
-				throw new Error(symbol + ' is listed on ' + instrument.exchange + '. We cannot create alerts for this exchange.');
 			}
 		}
 	};
