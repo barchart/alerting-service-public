@@ -376,7 +376,7 @@ module.exports = function () {
 
 				subscriptionData.subscribers = subscriptionData.subscribers + 1;
 
-				var createRegistration = subscriptionData.createEvent.register(changeCallback);
+				var createRegistration = subscriptionData.createEvent.register(createCallback);
 				var changeRegistration = subscriptionData.changeEvent.register(changeCallback);
 				var deleteRegistration = subscriptionData.deleteEvent.register(deleteCallback);
 
@@ -1644,7 +1644,7 @@ module.exports = function () {
 	return {
 		AlertManager: AlertManager,
 		timezone: timezone,
-		version: '1.4.20'
+		version: '1.4.21'
 	};
 }();
 
