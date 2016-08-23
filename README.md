@@ -786,10 +786,14 @@ JSON-out:
 	An array of "Alert" objects belonging to the specified user.
 
 
-###subscribeAlerts(query, changeCallback, deleteCallback, createCallback)
+###subscribeAlerts(query, changeCallback, deleteCallback, createCallback, triggerCallback)
 
 Provides notification, via callbacks, when an alert has been created, changed, or
-deleted for a specific user.
+deleted, or triggered for a specific user.
+
+In order to maintain synchronized state, the "changeCallback" is used to provide a "refresh"
+of alert state. This happens when the subscription is first established and at any subsequent
+time in the future (e.g. when the client loses and re-establishes its connection).
 
 JSON-in (the "query" parameter):
 
