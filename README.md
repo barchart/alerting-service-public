@@ -791,9 +791,9 @@ JSON-out:
 Provides notification, via callbacks, when an alert has been created, changed, or
 deleted, or triggered for a specific user.
 
-In order to maintain synchronized state, the "changeCallback" is used to provide a "refresh"
-of alert state. This happens when the subscription is first established and at any subsequent
-time in the future (e.g. when the client loses and re-establishes its connection).
+Also, in order to maintain synchronized, after subscribeAlerts is called, the consumer
+will receive each pre-existing alert via the changeCallback. Also, if the client loses
+connection to the server, each pre-existing alert will be sent to the changeCallback.
 
 JSON-in (the "query" parameter):
 
@@ -802,6 +802,9 @@ JSON-in (the "query" parameter):
         "user_id": "barchart-test-user"
 	}
 
+JSON-out:
+
+	Alert objects are passed to the callbacks.
 
 ##Utility Functions
 
