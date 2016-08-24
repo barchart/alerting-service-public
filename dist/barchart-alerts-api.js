@@ -1684,7 +1684,7 @@ module.exports = function () {
 	return {
 		AlertManager: AlertManager,
 		timezone: timezone,
-		version: '1.5.1'
+		version: '1.5.2'
 	};
 }();
 
