@@ -300,7 +300,6 @@
                 }
 
                 var alert = {
-                    name: that.name(),
                     alert_type: alertType,
                     user_notes: that.userNotes() || null,
                     user_id: userId,
@@ -379,6 +378,12 @@
                     schedules: schedules
                 };
 
+                var name = that.name();
+
+                if (_.isString(name) && name.length !== 0) {
+                    alert.name = name;
+                }
+
                 if (alertBehavior !== null) {
                     alert.alert_behavior = alertBehavior;
                 }
@@ -425,7 +430,7 @@
                 return !that.complete() && !that.processing();
             });
             that.canSave = ko.computed(function() {
-                return that.ready() && _.isString(that.name()) && that.name().length > 0;
+                return that.ready();
             });
 
             if (_.isObject(alert)) {
