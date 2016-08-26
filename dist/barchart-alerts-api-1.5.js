@@ -1684,7 +1684,7 @@ module.exports = function () {
 	return {
 		AlertManager: AlertManager,
 		timezone: timezone,
-		version: '1.5.2'
+		version: '1.5.3'
 	};
 }();
 
@@ -1708,7 +1708,7 @@ module.exports = function () {
 
 			assert.argumentIsOptional(alert.alert_id, d + '.alert_id', String);
 			assert.argumentIsOptional(alert.alert_type, d + '.alert_type', String);
-			assert.argumentIsRequired(alert.name, d + '.name', String);
+			assert.argumentIsOptional(alert.name, d + '.name', String);
 			assert.argumentIsOptional(alert.notes, d + '.notes', Object);
 			assert.argumentIsOptional(alert.user_notes, d + '.user_notes', String);
 			assert.argumentIsRequired(alert.automatic_reset, d + '.automatic_reset', Boolean);
