@@ -7,7 +7,7 @@
     "email": "bryan.ingle@barchart.com",
     "url": "http://www.barchart.com"
   },
-  "main": "./dist/barchart-alerts-api-1.4-min.js",
+  "main": "./dist/barchart-alerts-api-1.5-min.js",
   "scripts": {
     "test": "echo \"Error: Use gulp to run tests\" && exit 1",
     "build": "browserify ./lib/index.js -t [ babelify --presets [es2015] ] -s Barchart.Alerts -o dist/barchart-alerts-api.js",
