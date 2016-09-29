@@ -60,7 +60,7 @@ Clone the git repository and open the HTML page in a browser. The consumer
 code is contained within a script block of the HTML.
 
 
-###Initialization (Using REST)
+###Initialization (Using Socket.IO transport)
 
 In the browser, an object has been added to the global namespace. Connect as follows:
 
@@ -83,7 +83,7 @@ Then, call the connect method before using any operations:
 		});
 
 
-###Initialization (Using REST)
+###Initialization (Using HTTP/REST transport)
 
 To use a simple REST transport (instead of socket.io transport), change the constructor to:
 
