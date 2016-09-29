@@ -332,7 +332,7 @@ An "alert" consists of one or more "condition" objects and one or more
 * The "alert_behavior" is an optional field that is used to control what happens after an alert's conditions are met. See the description of "Alert Behaviors" below.
 
 
-###Alert Reset Schedule
+###AlertResetSchedule
 
 If an alert is configured to use the "Schedule" behavior, this object
 defines a time for the alert to resume processing.
@@ -348,7 +348,7 @@ defines a time for the alert to resume processing.
 * The "timezone" property refers to a timezone name according to the Moment.js[http://momentjs.com/timezone/docs/#/data-loading/getting-zone-names/]. If omitted, this property will default to "America/Chicago"
 
 
-###Market Data Configuration
+###MarketDataConfiguration
 
 Many alert conditions depend on market data feeds. This data structure
 defines the parameters for the market data feed which will be used
