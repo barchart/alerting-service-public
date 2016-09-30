@@ -5,7 +5,7 @@ var browserify = require('browserify');
 var buffer = require('vinyl-buffer');
 var bump = require('gulp-bump');
 var git = require('gulp-git');
-var gitModified = require('gulp-gitmodified');
+var gitStatus = require('git-get-status');
 var glob = require('glob');
 var helpers = require('babelify-external-helpers');
 var jasmine = require('gulp-jasmine');
@@ -28,13 +28,11 @@ function getVersionForComponent() {
 }
 
 gulp.task('ensure-clean-working-directory', function() {
-    return gulp.src(['./**/*', '!./node_modules/', '!./node_modules/**'])
-        .pipe(gitModified('M', 'A', 'D', 'R', 'C', 'U', '??'))
-        .on('data', function (file) {
-            if (file) {
-                throw new Error('Unable to proceed, your working directory is not clean.');
-            }
-        });
+    gitStatus(function(err, status) {
+        if (err, !status.clean) {
+            throw new Error('Unable to proceed, your working directory is not clean.');
+        }
+    });
 });
 
 gulp.task('bump-version', function () {
@@ -54,7 +52,6 @@ gulp.task('embed-version', function () {
 gulp.task('commit-changes', function () {
     return gulp.src([ './', './dist/' ])
         .pipe(git.add())
-        .pipe(gitModified('M', 'A'))
         .pipe(git.commit('Release. Bump version number'));
 });
 
