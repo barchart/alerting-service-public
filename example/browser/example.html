@@ -24,6 +24,9 @@
         //var system = 'grains.com';
         //var userId = '108265';
 
+        //var system = 'webstation.barchart.com';
+        //var userId = 'webstation-test-user';
+
         var system = 'barchart.com';
         var userId = 'barchart-test-user';
 
@@ -244,7 +247,7 @@
             that.processing = ko.observable(false);
 
             that.alertBehaviors = ko.observable([ 'terminate', 'schedule', 'automatic' ]);
-            that.alertTypes = ko.observable([ 'none', 'news', 'price' ]);
+            that.alertTypes = ko.observable([ 'none', 'news', 'price', 'match' ]);
 
             that.automaticReset = ko.computed(function() {
                 return that.alertBehavior() === 'automatic';
@@ -869,6 +872,10 @@
                                 activeAlertTypes.push('news');
                             }
 
+                            if (defaultPublisherType.matchActive()) {
+                                activeAlertTypes.push('match');
+                            }
+
                             var ptd = {
                                 publisher_type_id: defaultPublisherType.publisherTypeId(),
                                 alert_system: system,
@@ -914,6 +921,7 @@
             that.allowEndTime = ko.observable(publisherTypeDefault.allow_window_end);
             that.priceActive = ko.observable(_.includes(publisherTypeDefault.active_alert_types, 'price'));
             that.newsActive = ko.observable(_.includes(publisherTypeDefault.active_alert_types, 'news'));
+            that.matchActive = ko.observable(_.includes(publisherTypeDefault.active_alert_types, 'match'));
 
             that.selectTimezone = function(timezone) {
                 that.allowTimezone(timezone);
@@ -1426,6 +1434,7 @@
                         <th class="center col-md-1">End Time</th>
                         <th class="center col-md-1">Price Alerts</th>
                         <th class="center col-md-1">News Alerts</th>
+                        <th class="center col-md-1">Match Alerts</th>
                     </thead>
                     <tbody data-bind="template: { name: 'publisher-type-preference-template', foreach: publisherTypeDefaults }"></tbody>
                 </table>
@@ -1469,6 +1478,9 @@
             </td>
             <td class="center col-md-1">
                 <input type="checkbox" data-bind="checked: newsActive, enable: ready">
+            </td>
+            <td class="center col-md-1">
+                <input type="checkbox" data-bind="checked: matchActive, enable: ready">
             </td>
         </tr>
     </script>
