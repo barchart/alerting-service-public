@@ -1687,7 +1687,7 @@ module.exports = function () {
 	return {
 		AlertManager: AlertManager,
 		timezone: timezone,
-		version: '1.5.6'
+		version: '1.5.7'
 	};
 }();
 
@@ -1713,6 +1713,7 @@ module.exports = function () {
 			assert.argumentIsOptional(alert.name, d + '.name', String);
 			assert.argumentIsOptional(alert.notes, d + '.notes', Object);
 			assert.argumentIsOptional(alert.user_notes, d + '.user_notes', String);
+			assert.argumentIsOptional(alert.alert_system_key, d + '.alert_system_key', String);
 			assert.argumentIsRequired(alert.automatic_reset, d + '.automatic_reset', Boolean);
 
 			assert.argumentIsArray(alert.conditions, d + '.conditions', condition.forCreate);
