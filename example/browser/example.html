@@ -241,9 +241,11 @@
             that.name = ko.observable(null);
             that.userNotes = ko.observable(null);
             that.createDate = ko.observable(null);
+            that.alertSystemKey = ko.observable(null);
             that.conditions = ko.observableArray([]);
             that.publishers = ko.observableArray([]);
             that.schedules = ko.observableArray([]);
+
             that.processing = ko.observable(false);
 
             that.alertBehaviors = ko.observable([ 'terminate', 'schedule', 'automatic' ]);
@@ -264,6 +266,7 @@
                 that.name(null);
                 that.userNotes(null);
                 that.createDate(null);
+                that.alertSystemKey(null);
                 that.conditions([]);
                 that.publishers([]);
                 that.schedules([]);
@@ -387,6 +390,12 @@
                     alert.name = name;
                 }
 
+                var alertSystemKey = that.alertSystemKey();
+
+                if (_.isString(alertSystemKey) && alertSystemKey !== 0) {
+                    alert.alert_system_key = alertSystemKey;
+                }
+
                 if (alertBehavior !== null) {
                     alert.alert_behavior = alertBehavior;
                 }
@@ -449,6 +458,10 @@
 
                 if (_.isString(alert.user_notes)) {
                     that.userNotes(alert.user_notes);
+                }
+
+                if (_.isString(alert.alert_system_key)) {
+                    that.alertSystemKey(alert.alert_system_key);
                 }
 
                 that.alertType(alert.alert_type || 'none');
@@ -1107,7 +1120,7 @@
                                 <label class="control-label col-md-1">Name</label>
                             </td>
                             <td class="col-md-5">
-                                <input class="form-control" data-bind="textInput: name, enable: ready" type="text" placeholder="Alert Name">
+                                <input class="form-control" data-bind="textInput: name, enable: ready" type="text" placeholder="Alert Name (optional)">
                             </td>
                             <td class="col-md-2">
                                 <label class="control-label">Trigger Behavior</label>
@@ -1128,7 +1141,7 @@
                                 <label class="control-label col-md-1">Notes</label>
                             </td>
                             <td class="col-md-5">
-                                <input class="form-control" data-bind="textInput: userNotes, enable: ready" type="text" placeholder="User Notes">
+                                <input class="form-control" data-bind="textInput: userNotes, enable: ready" type="text" placeholder="User Notes (optional)">
                             </td>
                             <td class="col-md-2">
                                 <label class="control-label">Classification</label>
@@ -1142,6 +1155,16 @@
                                         <li class="center"><a href="#" data-bind="text: $data, click: function() { $parent.selectAlertType($data); }"></a></li>
                                     </ul>
                                 </div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="col-md-1">
+                                <label class="control-label col-md-1">Key</label>
+                            </td>
+                            <td class="col-md-5">
+                                <input class="form-control" data-bind="textInput: alertSystemKey, enable: ready" type="text" placeholder="External Key (optional)">
+                            </td>
+                            <td class="col-md-4" colspan="2">
                             </td>
                         </tr>
                         <tr data-bind="visible: createDate">
