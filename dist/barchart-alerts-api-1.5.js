@@ -35,7 +35,7 @@ module.exports = function () {
 		function AlertManager(host, port, mode, secure) {
 			_classCallCheck(this, AlertManager);
 
-			var _this = _possibleConstructorReturn(this, Object.getPrototypeOf(AlertManager).call(this));
+			var _this = _possibleConstructorReturn(this, (AlertManager.__proto__ || Object.getPrototypeOf(AlertManager)).call(this));
 
 			assert.argumentIsOptional(host, 'host', String);
 			assert.argumentIsOptional(port, 'port', Number);
@@ -762,7 +762,7 @@ module.exports = function () {
 		function AlertAdapterBase(onAlertCreated, onAlertMutated, onAlertDeleted, onAlertTriggered) {
 			_classCallCheck(this, AlertAdapterBase);
 
-			var _this = _possibleConstructorReturn(this, Object.getPrototypeOf(AlertAdapterBase).call(this));
+			var _this = _possibleConstructorReturn(this, (AlertAdapterBase.__proto__ || Object.getPrototypeOf(AlertAdapterBase)).call(this));
 
 			assert.argumentIsOptional(onAlertCreated, 'onAlertCreated', Function);
 			assert.argumentIsOptional(onAlertMutated, 'onAlertMutated', Function);
@@ -904,7 +904,7 @@ module.exports = function () {
 		function RestAlertAdapter(host, port, secure, onAlertCreated, onAlertMutated, onAlertDeleted, onAlertTriggered) {
 			_classCallCheck(this, RestAlertAdapter);
 
-			var _this = _possibleConstructorReturn(this, Object.getPrototypeOf(RestAlertAdapter).call(this, onAlertCreated, onAlertMutated, onAlertDeleted, onAlertTriggered));
+			var _this = _possibleConstructorReturn(this, (RestAlertAdapter.__proto__ || Object.getPrototypeOf(RestAlertAdapter)).call(this, onAlertCreated, onAlertMutated, onAlertDeleted, onAlertTriggered));
 
 			assert.argumentIsOptional(host, 'host', String);
 			assert.argumentIsOptional(port, 'port', Number);
@@ -1125,7 +1125,7 @@ module.exports = function () {
 		function AlertSubscriber(parent, query) {
 			_classCallCheck(this, AlertSubscriber);
 
-			var _this4 = _possibleConstructorReturn(this, Object.getPrototypeOf(AlertSubscriber).call(this));
+			var _this4 = _possibleConstructorReturn(this, (AlertSubscriber.__proto__ || Object.getPrototypeOf(AlertSubscriber)).call(this));
 
 			_this4._parent = parent;
 
@@ -1342,7 +1342,7 @@ module.exports = function () {
 		function SocketAlertAdapter(host, port, secure, onAlertCreated, onAlertMutated, onAlertDeleted, onAlertTriggered) {
 			_classCallCheck(this, SocketAlertAdapter);
 
-			var _this = _possibleConstructorReturn(this, Object.getPrototypeOf(SocketAlertAdapter).call(this, onAlertCreated, onAlertMutated, onAlertDeleted, onAlertTriggered));
+			var _this = _possibleConstructorReturn(this, (SocketAlertAdapter.__proto__ || Object.getPrototypeOf(SocketAlertAdapter)).call(this, onAlertCreated, onAlertMutated, onAlertDeleted, onAlertTriggered));
 
 			assert.argumentIsOptional(host, 'host', String);
 			assert.argumentIsOptional(port, 'port', Number);
@@ -1629,7 +1629,7 @@ module.exports = function () {
 		function AlertSubscriber(parent, query) {
 			_classCallCheck(this, AlertSubscriber);
 
-			var _this5 = _possibleConstructorReturn(this, Object.getPrototypeOf(AlertSubscriber).call(this));
+			var _this5 = _possibleConstructorReturn(this, (AlertSubscriber.__proto__ || Object.getPrototypeOf(AlertSubscriber)).call(this));
 
 			_this5._parent = parent;
 			_this5._query = query;
@@ -1687,7 +1687,7 @@ module.exports = function () {
 	return {
 		AlertManager: AlertManager,
 		timezone: timezone,
-		version: '1.5.5'
+		version: '1.5.6'
 	};
 }();
 
@@ -1709,7 +1709,6 @@ module.exports = function () {
 
 			validator.forUser(alert, description);
 
-			assert.argumentIsOptional(alert.alert_id, d + '.alert_id', String);
 			assert.argumentIsOptional(alert.alert_type, d + '.alert_type', String);
 			assert.argumentIsOptional(alert.name, d + '.name', String);
 			assert.argumentIsOptional(alert.notes, d + '.notes', Object);
@@ -2133,7 +2132,7 @@ module.exports = function () {
 		function InstrumentManager(host, port, mode, secure) {
 			_classCallCheck(this, InstrumentManager);
 
-			var _this = _possibleConstructorReturn(this, Object.getPrototypeOf(InstrumentManager).call(this));
+			var _this = _possibleConstructorReturn(this, (InstrumentManager.__proto__ || Object.getPrototypeOf(InstrumentManager)).call(this));
 
 			assert.argumentIsOptional(host, 'host', String);
 			assert.argumentIsOptional(port, 'port', Number);
@@ -2207,31 +2206,73 @@ module.exports = function () {
 				var _this3 = this;
 
 				return Promise.resolve().then(function () {
+					assert.argumentIsRequired(symbol, 'symbol', String);
+				}).then(function () {
 					checkStatus(_this3, 'lookup instrument');
 				}).then(function () {
 					return _this3._adapter.lookupInstrument(symbol);
 				});
 			}
 		}, {
-			key: 'queryInstruments',
-			value: function queryInstruments(text, region) {
+			key: 'searchInstruments',
+			value: function searchInstruments(text, region) {
 				var _this4 = this;
 
 				return Promise.resolve().then(function () {
-					checkStatus(_this4, 'query instrument');
+					assert.argumentIsRequired(text, 'text', String);
+					assert.argumentIsOptional(region, 'region', String);
 				}).then(function () {
-					return _this4._adapter.queryInstruments(text, region || 'us');
+					checkStatus(_this4, 'search instruments');
+				}).then(function () {
+					return _this4._adapter.searchInstruments(text, region || 'us');
+				});
+			}
+		}, {
+			key: 'queryInstruments',
+			value: function queryInstruments(exchange) {
+				var _this5 = this;
+
+				return Promise.resolve().then(function () {
+					assert.argumentIsOptional(exchange, 'exchange', String);
+				}).then(function () {
+					checkStatus(_this5, 'query instruments');
+				}).then(function () {
+					return _this5._adapter.queryInstruments(exchange);
+				});
+			}
+		}, {
+			key: 'lookupExchange',
+			value: function lookupExchange(id) {
+				var _this6 = this;
+
+				return Promise.resolve().then(function () {
+					assert.argumentIsRequired(id, 'id', String);
+				}).then(function () {
+					checkStatus(_this6, 'lookup exchange');
+				}).then(function () {
+					return _this6._adapter.lookupExchange(id);
+				});
+			}
+		}, {
+			key: 'queryExchanges',
+			value: function queryExchanges() {
+				var _this7 = this;
+
+				return Promise.resolve().then(function () {
+					checkStatus(_this7, 'query exchanges');
+				}).then(function () {
+					return _this7._adapter.queryExchanges();
 				});
 			}
 		}, {
 			key: 'getServerVersion',
 			value: function getServerVersion() {
-				var _this5 = this;
+				var _this8 = this;
 
 				return Promise.resolve().then(function () {
-					checkStatus(_this5, 'get server version');
+					checkStatus(_this8, 'get server version');
 				}).then(function () {
-					return _this5._adapter.getServerVersion();
+					return _this8._adapter.getServerVersion();
 				});
 			}
 		}, {
@@ -2288,7 +2329,7 @@ module.exports = function () {
 		function InstrumentAdapterBase() {
 			_classCallCheck(this, InstrumentAdapterBase);
 
-			return _possibleConstructorReturn(this, Object.getPrototypeOf(InstrumentAdapterBase).call(this));
+			return _possibleConstructorReturn(this, (InstrumentAdapterBase.__proto__ || Object.getPrototypeOf(InstrumentAdapterBase)).call(this));
 		}
 
 		_createClass(InstrumentAdapterBase, [{
@@ -2302,8 +2343,23 @@ module.exports = function () {
 				return null;
 			}
 		}, {
+			key: 'searchInstruments',
+			value: function searchInstruments(text) {
+				return null;
+			}
+		}, {
 			key: 'queryInstruments',
-			value: function queryInstruments(text) {
+			value: function queryInstruments(exchange) {
+				return null;
+			}
+		}, {
+			key: 'lookupExchange',
+			value: function lookupExchange(id) {
+				return null;
+			}
+		}, {
+			key: 'queryExchanges',
+			value: function queryExchanges() {
 				return null;
 			}
 		}, {
@@ -2352,7 +2408,7 @@ module.exports = function () {
 		function RestInstrumentAdapter(host, port, secure) {
 			_classCallCheck(this, RestInstrumentAdapter);
 
-			var _this = _possibleConstructorReturn(this, Object.getPrototypeOf(RestInstrumentAdapter).call(this));
+			var _this = _possibleConstructorReturn(this, (RestInstrumentAdapter.__proto__ || Object.getPrototypeOf(RestInstrumentAdapter)).call(this));
 
 			assert.argumentIsOptional(host, 'host', String);
 			assert.argumentIsOptional(port, 'port', Number);
@@ -2360,8 +2416,13 @@ module.exports = function () {
 
 			_this._restProvider = new RestProvider(host, port, secure);
 
-			_this._lookupEndpoint = new RestEndpoint(RestAction.Retrieve, ['instruments', 'symbol']);
-			_this._queryEndpoint = new RestEndpoint(RestAction.Retrieve, ['instruments', 'query', 'text', 'region']);
+			_this._instrumentLookupEndpoint = new RestEndpoint(RestAction.Retrieve, ['instruments', 'symbol']);
+			_this._instrumentSearchEndpoint = new RestEndpoint(RestAction.Retrieve, ['instruments', 'search', 'text', 'region']);
+			_this._instrumentQueryEndpoint = new RestEndpoint(RestAction.Retrieve, ['instruments', 'query', 'exchange']);
+
+			_this._exchangeLookupEndpoint = new RestEndpoint(RestAction.Retrieve, ['exchanges', 'id']);
+			_this._exchangeQueryEndpoint = new RestEndpoint(RestAction.Retrieve, ['exchanges']);
+
 			_this._versionEndpoint = new RestEndpoint(RestAction.Retrieve, ['server', 'version']);
 			return _this;
 		}
@@ -2374,17 +2435,27 @@ module.exports = function () {
 		}, {
 			key: 'lookupInstrument',
 			value: function lookupInstrument(symbol) {
-				assert.argumentIsRequired(symbol, 'symbol', String);
-
-				return this._restProvider.call(this._lookupEndpoint, { symbol: symbol });
+				return this._restProvider.call(this._instrumentLookupEndpoint, { symbol: symbol });
+			}
+		}, {
+			key: 'searchInstruments',
+			value: function searchInstruments(text, region) {
+				return this._restProvider.call(this._instrumentSearchEndpoint, { text: text, region: region });
 			}
 		}, {
 			key: 'queryInstruments',
-			value: function queryInstruments(text, region) {
-				assert.argumentIsRequired(text, 'text', String);
-				assert.argumentIsRequired(region, 'region', String);
-
-				return this._restProvider.call(this._queryEndpoint, { text: text, region: region });
+			value: function queryInstruments(exchange) {
+				return this._restProvider.call(this._instrumentQueryEndpoint, { exchange: exchange });
+			}
+		}, {
+			key: 'lookupExchange',
+			value: function lookupExchange(id) {
+				return this._restProvider.call(this._exchangeLookupEndpoint, { id: id });
+			}
+		}, {
+			key: 'queryExchanges',
+			value: function queryExchanges() {
+				return this._restProvider.call(this._exchangeQueryEndpoint, {});
 			}
 		}, {
 			key: 'getServerVersion',
@@ -2496,7 +2567,7 @@ module.exports = function () {
 		function SocketInstrumentAdapter(host, port, secure) {
 			_classCallCheck(this, SocketInstrumentAdapter);
 
-			var _this = _possibleConstructorReturn(this, Object.getPrototypeOf(SocketInstrumentAdapter).call(this));
+			var _this = _possibleConstructorReturn(this, (SocketInstrumentAdapter.__proto__ || Object.getPrototypeOf(SocketInstrumentAdapter)).call(this));
 
 			assert.argumentIsOptional(host, 'host', String);
 			assert.argumentIsOptional(port, 'port', Number);
@@ -2567,16 +2638,33 @@ module.exports = function () {
 		}, {
 			key: 'lookupInstrument',
 			value: function lookupInstrument(symbol) {
-				assert.argumentIsRequired(symbol, 'symbol', String);
-
 				return sendRequestToServer.call(this, 'instruments/retrieve', { symbol: symbol });
 			}
 		}, {
+			key: 'searchInstruments',
+			value: function searchInstruments(text, region) {
+				return sendRequestToServer.call(this, 'instruments/search', { text: text, region: region });
+			}
+		}, {
 			key: 'queryInstruments',
-			value: function queryInstruments(text, region) {
-				assert.argumentIsRequired(text, 'text', String);
+			value: function queryInstruments(exchange) {
+				var payload = {};
 
-				return sendRequestToServer.call(this, 'instruments/query', { text: text, region: region });
+				if (exchange) {
+					payload.exchange = exchange;
+				}
+
+				return sendRequestToServer.call(this, 'instruments/query', payload);
+			}
+		}, {
+			key: 'lookupExchange',
+			value: function lookupExchange(id) {
+				return sendRequestToServer.call(this, 'exchanges/retrieve', { id: id });
+			}
+		}, {
+			key: 'queryExchanges',
+			value: function queryExchanges() {
+				return sendRequestToServer.call(this, 'exchanges/query', {});
 			}
 		}, {
 			key: 'getServerVersion',
@@ -3104,6 +3192,13 @@ module.exports = function () {
 
 				return new DisposableAction(disposeAction);
 			}
+		}, {
+			key: 'getEmpty',
+			value: function getEmpty() {
+				return Disposable.fromAction(function () {
+					return;
+				});
+			}
 		}]);
 
 		return Disposable;
@@ -3115,7 +3210,7 @@ module.exports = function () {
 		function DisposableAction(disposeAction) {
 			_classCallCheck(this, DisposableAction);
 
-			var _this = _possibleConstructorReturn(this, Object.getPrototypeOf(DisposableAction).call(this, disposeAction));
+			var _this = _possibleConstructorReturn(this, (DisposableAction.__proto__ || Object.getPrototypeOf(DisposableAction)).call(this, disposeAction));
 
 			_this._disposeAction = disposeAction;
 			return _this;
@@ -3207,6 +3302,21 @@ module.exports = function () {
 			}
 
 			return returnRef;
+		},
+		difference: function difference(a, b) {
+			var returnRef = [];
+
+			a.forEach(function (candidate) {
+				var exclude = b.some(function (comparison) {
+					return candidate === comparison;
+				});
+
+				if (!exclude) {
+					returnRef.push(candidate);
+				}
+			});
+
+			return returnRef;
 		}
 	};
 }();
@@ -3223,7 +3333,6 @@ module.exports = function () {
 		argumentIsRequired: function argumentIsRequired(variable, variableName, type, typeDescription) {
 			checkArgumentType(variable, variableName, type, typeDescription);
 		},
-
 		argumentIsOptional: function argumentIsOptional(variable, variableName, type, typeDescription) {
 			if (variable === null || variable === undefined) {
 				return;
@@ -3231,7 +3340,6 @@ module.exports = function () {
 
 			checkArgumentType(variable, variableName, type, typeDescription);
 		},
-
 		argumentIsArray: function argumentIsArray(variable, variableName, itemConstraint, itemConstraintDescription) {
 			assert.argumentIsRequired(variable, variableName, Array);
 
@@ -3239,9 +3347,9 @@ module.exports = function () {
 				(function () {
 					var itemValidator = void 0;
 
-					if (typeof itemConstraint === 'function') {
+					if (typeof itemConstraint === 'function' && itemConstraint !== Function) {
 						itemValidator = function itemValidator(value, index) {
-							return itemConstraint(value, variableName + '[' + index + ']');
+							return value instanceof itemConstraint || itemConstraint(value, variableName + '[' + index + ']');
 						};
 					} else {
 						itemValidator = function itemValidator(value, index) {
@@ -3255,13 +3363,11 @@ module.exports = function () {
 				})();
 			}
 		},
-
 		areEqual: function areEqual(a, b, descriptionA, descriptionB) {
 			if (a !== b) {
 				throw new Error('The objects must be equal ([' + (descriptionA || a.toString()) + ' and ' + (descriptionB || b.toString()));
 			}
 		},
-
 		areNotEqual: function areNotEqual(a, b, descriptionA, descriptionB) {
 			if (a === b) {
 				throw new Error('The objects cannot be equal ([' + (descriptionA || a.toString()) + ' and ' + (descriptionB || b.toString()));
@@ -3337,7 +3443,6 @@ module.exports = function () {
 
 			return propertyTarget !== null && propertyTarget.hasOwnProperty(last(propertyNameArray));
 		},
-
 		read: function read(target, propertyNames) {
 			assert.argumentIsRequired(target, 'target', Object);
 
@@ -3362,7 +3467,6 @@ module.exports = function () {
 
 			return returnRef;
 		},
-
 		write: function write(target, propertyNames, value) {
 			assert.argumentIsRequired(target, 'target', Object);
 
@@ -3379,7 +3483,6 @@ module.exports = function () {
 
 			propertyTarget[propertyName] = value;
 		},
-
 		erase: function erase(target, propertyNames) {
 			if (!attributes.has(target, propertyNames)) {
 				return;
@@ -3395,7 +3498,7 @@ module.exports = function () {
 	};
 
 	function getPropertyNameArray(propertyNames) {
-		var returnRef;
+		var returnRef = void 0;
 
 		if (Array.isArray(propertyNames)) {
 			returnRef = propertyNames;
@@ -3478,7 +3581,7 @@ module.exports = function () {
 },{"./../assert":28,"./../is":31}],31:[function(require,module,exports){
 'use strict';
 
-var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol ? "symbol" : typeof obj; };
+var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
 
 module.exports = function () {
 	'use strict';
@@ -3564,6 +3667,7 @@ function _possibleConstructorReturn(self, call) { if (!self) { throw new Referen
 
 function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
 
+var assert = require('./../lang/assert');
 var Disposable = require('./../lang/Disposable');
 
 module.exports = function () {
@@ -3575,7 +3679,7 @@ module.exports = function () {
 		function Event(sender) {
 			_classCallCheck(this, Event);
 
-			var _this = _possibleConstructorReturn(this, Object.getPrototypeOf(Event).call(this));
+			var _this = _possibleConstructorReturn(this, (Event.__proto__ || Object.getPrototypeOf(Event)).call(this));
 
 			_this._sender = sender || null;
 
@@ -3588,9 +3692,7 @@ module.exports = function () {
 			value: function register(handler) {
 				var _this2 = this;
 
-				if (typeof handler !== 'function') {
-					throw new Error('Event handler must be a function.');
-				}
+				assert.argumentIsRequired(handler, 'handler', Function);
 
 				addRegistration.call(this, handler);
 
@@ -3605,9 +3707,7 @@ module.exports = function () {
 		}, {
 			key: 'unregister',
 			value: function unregister(handler) {
-				if (typeof handler !== 'function') {
-					throw new Error('Event handler must be a function.');
-				}
+				assert.argumentIsRequired(handler, 'handler', Function);
 
 				removeRegistration.call(this, handler);
 			}
@@ -3680,7 +3780,7 @@ module.exports = function () {
 	return Event;
 }();
 
-},{"./../lang/Disposable":26}],34:[function(require,module,exports){
+},{"./../lang/Disposable":26,"./../lang/assert":28}],34:[function(require,module,exports){
 'use strict';
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
@@ -3862,7 +3962,7 @@ module.exports = function () {
 					returnRef = data;
 				}
 
-				if (this.getAction().getPayloadIsRequired() && !_.isObject(returnRef)) {
+				if (this.getAction().getPayloadIsRequired() && !is.object(returnRef)) {
 					throw new Error('Unable to generate REST payload.');
 				}
 
@@ -3940,6 +4040,8 @@ function _inherits(subClass, superClass) { if (typeof superClass !== "function" 
 
 var xhr = require('xhr');
 
+var is = require('./../../../lang/is');
+
 var RestProviderBase = require('./../RestProviderBase');
 
 module.exports = function () {
@@ -3951,7 +4053,7 @@ module.exports = function () {
 		function XhrRestProvider(baseUrl, port, secure) {
 			_classCallCheck(this, XhrRestProvider);
 
-			return _possibleConstructorReturn(this, Object.getPrototypeOf(XhrRestProvider).call(this, baseUrl, port, secure));
+			return _possibleConstructorReturn(this, (XhrRestProvider.__proto__ || Object.getPrototypeOf(XhrRestProvider)).call(this, baseUrl, port, secure));
 		}
 
 		_createClass(XhrRestProvider, [{
@@ -3970,7 +4072,7 @@ module.exports = function () {
 						} else if (response.statusCode !== 200) {
 							var message = void 0;
 
-							if (_.isObject(body) && _.isString(body.message)) {
+							if (is.object(body) && is.string(body.message)) {
 								message = body.message;
 							} else {
 								message = 'The server returned an HTTP ' + response.statusCode + ' error.';
@@ -3991,7 +4093,7 @@ module.exports = function () {
 	return XhrRestProvider;
 }();
 
-},{"./../RestProviderBase":36,"xhr":92}],38:[function(require,module,exports){
+},{"./../../../lang/is":31,"./../RestProviderBase":36,"xhr":92}],38:[function(require,module,exports){
 'use strict';
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
@@ -4014,7 +4116,7 @@ module.exports = function () {
         function Scheduler() {
             _classCallCheck(this, Scheduler);
 
-            var _this = _possibleConstructorReturn(this, Object.getPrototypeOf(Scheduler).call(this));
+            var _this = _possibleConstructorReturn(this, (Scheduler.__proto__ || Object.getPrototypeOf(Scheduler)).call(this));
 
             _this._timeoutBindings = {};
             _this._intervalBindings = {};
@@ -10038,7 +10140,7 @@ module.exports = isNaN;
 
 },{"moment":70}],70:[function(require,module,exports){
 //! moment.js
-//! version : 2.14.1
+//! version : 2.15.1
 //! authors : Tim Wood, Iskren Chernev, Moment.js contributors
 //! license : MIT
 //! momentjs.com
@@ -10066,7 +10168,9 @@ module.exports = isNaN;
     }
 
     function isObject(input) {
-        return Object.prototype.toString.call(input) === '[object Object]';
+        // IE8 will treat undefined and null as object if it wasn't for
+        // input != null
+        return input != null && Object.prototype.toString.call(input) === '[object Object]';
     }
 
     function isObjectEmpty(obj) {
@@ -10165,7 +10269,7 @@ module.exports = isNaN;
             var parsedParts = some.call(flags.parsedDateParts, function (i) {
                 return i != null;
             });
-            m._isValid = !isNaN(m._d.getTime()) &&
+            var isNowValid = !isNaN(m._d.getTime()) &&
                 flags.overflow < 0 &&
                 !flags.empty &&
                 !flags.invalidMonth &&
@@ -10176,10 +10280,17 @@ module.exports = isNaN;
                 (!flags.meridiem || (flags.meridiem && parsedParts));
 
             if (m._strict) {
-                m._isValid = m._isValid &&
+                isNowValid = isNowValid &&
                     flags.charsLeftOver === 0 &&
                     flags.unusedTokens.length === 0 &&
                     flags.bigHour === undefined;
+            }
+
+            if (Object.isFrozen == null || !Object.isFrozen(m)) {
+                m._isValid = isNowValid;
+            }
+            else {
+                return isNowValid;
             }
         }
         return m._isValid;
@@ -10321,7 +10432,22 @@ module.exports = isNaN;
                 utils_hooks__hooks.deprecationHandler(null, msg);
             }
             if (firstTime) {
-                warn(msg + '\nArguments: ' + Array.prototype.slice.call(arguments).join(', ') + '\n' + (new Error()).stack);
+                var args = [];
+                var arg;
+                for (var i = 0; i < arguments.length; i++) {
+                    arg = '';
+                    if (typeof arguments[i] === 'object') {
+                        arg += '\n[' + i + '] ';
+                        for (var key in arguments[0]) {
+                            arg += key + ': ' + arguments[0][key] + ', ';
+                        }
+                        arg = arg.slice(0, -2); // Remove trailing comma and space
+                    } else {
+                        arg = arguments[i];
+                    }
+                    args.push(arg);
+                }
+                warn(msg + '\nArguments: ' + Array.prototype.slice.call(args).join('') + '\n' + (new Error()).stack);
                 firstTime = false;
             }
             return fn.apply(this, arguments);
@@ -10848,12 +10974,18 @@ module.exports = isNaN;
     var MONTHS_IN_FORMAT = /D[oD]?(\[[^\[\]]*\]|\s+)+MMMM?/;
     var defaultLocaleMonths = 'January_February_March_April_May_June_July_August_September_October_November_December'.split('_');
     function localeMonths (m, format) {
+        if (!m) {
+            return this._months;
+        }
         return isArray(this._months) ? this._months[m.month()] :
             this._months[(this._months.isFormat || MONTHS_IN_FORMAT).test(format) ? 'format' : 'standalone'][m.month()];
     }
 
     var defaultLocaleMonthsShort = 'Jan_Feb_Mar_Apr_May_Jun_Jul_Aug_Sep_Oct_Nov_Dec'.split('_');
     function localeMonthsShort (m, format) {
+        if (!m) {
+            return this._monthsShort;
+        }
         return isArray(this._monthsShort) ? this._monthsShort[m.month()] :
             this._monthsShort[MONTHS_IN_FORMAT.test(format) ? 'format' : 'standalone'][m.month()];
     }
@@ -11350,18 +11482,21 @@ module.exports = isNaN;
 
     var defaultLocaleWeekdays = 'Sunday_Monday_Tuesday_Wednesday_Thursday_Friday_Saturday'.split('_');
     function localeWeekdays (m, format) {
+        if (!m) {
+            return this._weekdays;
+        }
         return isArray(this._weekdays) ? this._weekdays[m.day()] :
             this._weekdays[this._weekdays.isFormat.test(format) ? 'format' : 'standalone'][m.day()];
     }
 
     var defaultLocaleWeekdaysShort = 'Sun_Mon_Tue_Wed_Thu_Fri_Sat'.split('_');
     function localeWeekdaysShort (m) {
-        return this._weekdaysShort[m.day()];
+        return (m) ? this._weekdaysShort[m.day()] : this._weekdaysShort;
     }
 
     var defaultLocaleWeekdaysMin = 'Su_Mo_Tu_We_Th_Fr_Sa'.split('_');
     function localeWeekdaysMin (m) {
-        return this._weekdaysMin[m.day()];
+        return (m) ? this._weekdaysMin[m.day()] : this._weekdaysMin;
     }
 
     function day_of_week__handleStrictParse(weekdayName, format, strict) {
@@ -12056,9 +12191,9 @@ module.exports = isNaN;
     }
 
     utils_hooks__hooks.createFromInputFallback = deprecate(
-        'moment construction falls back to js Date. This is ' +
-        'discouraged and will be removed in upcoming major ' +
-        'release. Please refer to ' +
+        'value provided is not in a recognized ISO format. moment construction falls back to js Date(), ' +
+        'which is not reliable across all browsers and versions. Non ISO date formats are ' +
+        'discouraged and will be removed in an upcoming major release. Please refer to ' +
         'http://momentjs.com/guides/#/warnings/js-date/ for more info.',
         function (config) {
             config._d = new Date(config._i + (config._useUTC ? ' UTC' : ''));
@@ -12557,6 +12692,14 @@ module.exports = isNaN;
         return obj instanceof Duration;
     }
 
+    function absRound (number) {
+        if (number < 0) {
+            return Math.round(-1 * number) * -1;
+        } else {
+            return Math.round(number);
+        }
+    }
+
     // FORMATTING
 
     function offset (token, separator) {
@@ -12707,7 +12850,13 @@ module.exports = isNaN;
         if (this._tzm) {
             this.utcOffset(this._tzm);
         } else if (typeof this._i === 'string') {
-            this.utcOffset(offsetFromString(matchOffset, this._i));
+            var tZone = offsetFromString(matchOffset, this._i);
+
+            if (tZone === 0) {
+                this.utcOffset(0, true);
+            } else {
+                this.utcOffset(offsetFromString(matchOffset, this._i));
+            }
         }
         return this;
     }
@@ -12762,7 +12911,7 @@ module.exports = isNaN;
     }
 
     // ASP.NET json date format regex
-    var aspNetRegex = /^(\-)?(?:(\d*)[. ])?(\d+)\:(\d+)(?:\:(\d+)\.?(\d{3})?\d*)?$/;
+    var aspNetRegex = /^(\-)?(?:(\d*)[. ])?(\d+)\:(\d+)(?:\:(\d+)(\.\d*)?)?$/;
 
     // from http://docs.closure-library.googlecode.com/git/closure_goog_date_date.js.source.html
     // somewhat more in line with 4.4.3.2 2004 spec, but allows decimal anywhere
@@ -12794,11 +12943,11 @@ module.exports = isNaN;
             sign = (match[1] === '-') ? -1 : 1;
             duration = {
                 y  : 0,
-                d  : toInt(match[DATE])        * sign,
-                h  : toInt(match[HOUR])        * sign,
-                m  : toInt(match[MINUTE])      * sign,
-                s  : toInt(match[SECOND])      * sign,
-                ms : toInt(match[MILLISECOND]) * sign
+                d  : toInt(match[DATE])                         * sign,
+                h  : toInt(match[HOUR])                         * sign,
+                m  : toInt(match[MINUTE])                       * sign,
+                s  : toInt(match[SECOND])                       * sign,
+                ms : toInt(absRound(match[MILLISECOND] * 1000)) * sign // the millisecond decimal point is included in the match
             };
         } else if (!!(match = isoRegex.exec(input))) {
             sign = (match[1] === '-') ? -1 : 1;
@@ -12871,14 +13020,6 @@ module.exports = isNaN;
         }
 
         return res;
-    }
-
-    function absRound (number) {
-        if (number < 0) {
-            return Math.round(-1 * number) * -1;
-        } else {
-            return Math.round(number);
-        }
     }
 
     // TODO: remove 'name' arg after deprecation is removed
@@ -14195,7 +14336,7 @@ module.exports = isNaN;
     // Side effect imports
 
 
-    utils_hooks__hooks.version = '2.14.1';
+    utils_hooks__hooks.version = '2.15.1';
 
     setHookCallback(local__createLocal);
 
@@ -16494,7 +16635,8 @@ exports.right = function(str){
 
 var rng;
 
-if (global.crypto && crypto.getRandomValues) {
+var crypto = global.crypto || global.msCrypto; // for IE 11
+if (crypto && crypto.getRandomValues) {
   // WHATWG crypto-based RNG - http://wiki.whatwg.org/wiki/Crypto
   // Moderately fast, high quality
   var _rnds8 = new Uint8Array(16);
