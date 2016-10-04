@@ -50,7 +50,7 @@ gulp.task('embed-version', function () {
 });
 
 gulp.task('commit-changes', function () {
-    return gulp.src([ './', './dist/' ])
+    return gulp.src([ './', './dist/', './package.json', './bower.json' ])
         .pipe(git.add())
         .pipe(git.commit('Release. Bump version number'));
 });
