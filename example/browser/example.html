@@ -138,6 +138,12 @@
                         that.alerts.remove(alertDisplayModel);
                     });
             };
+            that.enableAlerts = function() {
+                alertManager.enableAlerts({ alert_system: system , user_id: userId });
+            };
+            that.disableAlerts = function() {
+                alertManager.disableAlerts({ alert_system: system , user_id: userId });
+            };
 
             that.handleAlertCreate = function(createdAlert) {
                 var existingModel = getModel(createdAlert);
@@ -1074,7 +1080,11 @@
                 <th class="center col-md-1"></th>
                 <th class="left col-md-3">ID</th>
                 <th class="left col-md-2">Name</th>
-                <th class="center col-md-2">State</th>
+                <th class="center col-md-2 alert-action-buttons">
+                    <span class="text-button text-button-black glyphicon glyphicon-play" data-bind="click: enableAlerts"></span>
+                    <span style="padding-left: 10px;">State</span>
+                    <span class="text-button text-button-black glyphicon glyphicon-stop" data-bind="click: disableAlerts"></span>
+                </th>
                 <th class="center col-md-1">Conditions</th>
                 <th class="center col-md-1">Publishers</th>
                 <th class="center col-md-2">Last Triggered</th>
