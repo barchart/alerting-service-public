@@ -11,5 +11,5 @@ describe('When validating an alert object', () => {
 		it('will throw an exception if the user "alert_system" property is missing', function() {
 			expect(() => alert.forUser({ user_id: '123456'})).toThrow(new Error('The argument [alert.alert_system] must be a string'));
 		});
-	})
+	});
 });
