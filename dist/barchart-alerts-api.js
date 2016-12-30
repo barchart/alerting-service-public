@@ -1733,7 +1733,7 @@ module.exports = function () {
 	return {
 		AlertManager: AlertManager,
 		timezone: timezone,
-		version: '1.5.10'
+		version: '1.5.11'
 	};
 }();
 
@@ -9003,7 +9003,7 @@ module.exports = isNaN;
 
 },{}],69:[function(require,module,exports){
 //! moment-timezone.js
-//! version : 0.5.10
+//! version : 0.5.11
 //! Copyright (c) JS Foundation and other contributors
 //! license : MIT
 //! github.com/moment/moment-timezone
@@ -9023,12 +9023,12 @@ module.exports = isNaN;
 	"use strict";
 
 	// Do not load moment-timezone a second time.
-	if (moment.tz !== undefined) {
-		logError('Moment Timezone ' + moment.tz.version + ' was already loaded ' + (moment.tz.dataVersion ? 'with data from ' : 'without any data') + moment.tz.dataVersion);
-		return moment;
-	}
+	// if (moment.tz !== undefined) {
+	// 	logError('Moment Timezone ' + moment.tz.version + ' was already loaded ' + (moment.tz.dataVersion ? 'with data from ' : 'without any data') + moment.tz.dataVersion);
+	// 	return moment;
+	// }
 
-	var VERSION = "0.5.10",
+	var VERSION = "0.5.11",
 		zones = {},
 		links = {},
 		names = {},
@@ -16768,8 +16768,7 @@ exports.right = function(str){
 
 var rng;
 
-var crypto = global.crypto || global.msCrypto; // for IE 11
-if (crypto && crypto.getRandomValues) {
+if (global.crypto && crypto.getRandomValues) {
   // WHATWG crypto-based RNG - http://wiki.whatwg.org/wiki/Crypto
   // Moderately fast, high quality
   var _rnds8 = new Uint8Array(16);
@@ -17120,15 +17119,6 @@ function _createXHR(options) {
         return body
     }
 
-    var failureResponse = {
-                body: undefined,
-                headers: {},
-                statusCode: 0,
-                method: method,
-                url: uri,
-                rawRequest: xhr
-            }
-
     function errorFunc(evt) {
         clearTimeout(timeoutTimer)
         if(!(evt instanceof Error)){
@@ -17189,6 +17179,14 @@ function _createXHR(options) {
     var sync = !!options.sync
     var isJson = false
     var timeoutTimer
+    var failureResponse = {
+        body: undefined,
+        headers: {},
+        statusCode: 0,
+        method: method,
+        url: uri,
+        rawRequest: xhr
+    }
 
     if ("json" in options && options.json !== false) {
         isJson = true
