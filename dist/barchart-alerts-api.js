@@ -29,6 +29,8 @@ var SocketAlertAdapter = require('./adapters/SocketAlertAdapter');
 module.exports = function () {
 	'use strict';
 
+	var productionHostExpression = /(prod)/i;
+
 	var AlertManager = function (_Disposable) {
 		_inherits(AlertManager, _Disposable);
 
@@ -83,7 +85,14 @@ module.exports = function () {
 						});
 
 						var instrumentManagerPromise = Promise.resolve().then(function () {
-							var host = 'instruments-stage.aws.barchart.com';
+							var host = void 0;
+
+							if (productionHostExpression.test(_this2._host)) {
+								host = 'instruments-prod.aws.barchart.com';
+							} else {
+								host = 'instruments-stage.aws.barchart.com';
+							}
+
 							var secure = _this2._secure;
 							var port = getPort(_this2._secure);
 
@@ -1733,7 +1742,7 @@ module.exports = function () {
 	return {
 		AlertManager: AlertManager,
 		timezone: timezone,
-		version: '1.5.12'
+		version: '1.5.13'
 	};
 }();
 
