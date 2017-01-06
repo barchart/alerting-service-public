@@ -24,7 +24,7 @@
   ],
   "dependencies": {
     "barchart-instruments-client": "2.1.8",
-    "barchart-marketdata-utilities": "1.0.56",
+    "barchart-marketdata-utilities": "1.0.58",
     "common": "git+ssh://github.com/barchart/barchart-common-js.git#2.1.12",
     "socket.io-client": "1.3.5",
     "uuid": "3.0.1"
