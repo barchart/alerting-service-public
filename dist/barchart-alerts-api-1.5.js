@@ -31,6 +31,16 @@ module.exports = function () {
 
 	var productionHostExpression = /(prod)/i;
 
+	/**
+  * <p>The entry point for interacting with the alerts system.</p>
+  *
+  * @public
+  * @param {String} host - Optional. The name of the remote server.
+  * @param {Number} port - Optional. The TCP port used to connect to the remote server.
+  * @param {String} mode - Optional. The transport abstraction used to exchange data with the remote server. Valid options are "socket.io" or "rest" where the first maintains a websocket connection and the second uses XHR requests and short polling.
+  * @param {Boolean} secure - Optional. If true, the transport layer will use encryption (e.g. HTTPS or WSS).
+  */
+
 	var AlertManager = function (_Disposable) {
 		_inherits(AlertManager, _Disposable);
 
@@ -1742,7 +1752,7 @@ module.exports = function () {
 	return {
 		AlertManager: AlertManager,
 		timezone: timezone,
-		version: '1.5.13'
+		version: '1.5.14'
 	};
 }();
 
@@ -2849,6 +2859,29 @@ module.exports = function() {
 				default:
 					return 0;
 			}
+		},
+
+		dateToDayCode: function(date) {
+			var d = date.getDate();
+
+			if (d >= 1 && d <= 9)
+				return String.fromCharCode(("1").charCodeAt(0) + d - 1);
+			else if (d == 10)
+				return '0';
+			else
+				return String.fromCharCode(("A").charCodeAt(0) + d - 11);
+		},
+
+		dayCodeToNumber: function(dayCode) {
+			var d = parseInt(dayCode, 31);
+
+			if (d > 9) {
+				d++;
+			} else if (d === 0) {
+				d = 10;
+			}
+
+			return d;
 		}
 	};
 }();
@@ -3050,7 +3083,7 @@ module.exports = function() {
 			str = str.replace(getReplaceExpression(thousandsSeparator), '');
 		}
 
-		if (str.indexOf('.') > 0) {
+		if (!(str.indexOf('.') < 0)) {
 			return parseFloat(str);
 		}
 
