@@ -157,3 +157,7 @@ td .dropdown ul {
 input.percent.form-control {
     width: 90%;
 }
+
+.error-box {
+    margin-top: 0.75em;
+}

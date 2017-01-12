@@ -28,7 +28,7 @@
         //var userId = 'webstation-test-user';
 
         var system = 'barchart.com';
-        var userId = 'barchart-test-user';
+        var userId = '370677';
 
         var alertManager;
 
@@ -253,6 +253,7 @@
             that.schedules = ko.observableArray([]);
 
             that.processing = ko.observable(false);
+            that.error = ko.observable(null);
 
             that.alertBehaviors = ko.observable([ 'terminate', 'schedule', 'automatic' ]);
             that.alertTypes = ko.observable([ 'none', 'news', 'price', 'match' ]);
@@ -277,9 +278,11 @@
                 that.publishers([]);
                 that.schedules([]);
                 that.processing(false);
+                that.error(null);
             };
             that.createAlert = function() {
                 that.processing(true);
+                that.error(null);
 
                 var alertType = that.alertType();
 
@@ -403,17 +406,57 @@
                 }
 
                 if (alertBehavior !== null) {
-                    alert.alert_behavior = alertBehavior;
+					alert.alert_behavior = alertBehavior;
+				}
+
+                var executeValidationPromise = function() {
+					return _.reduce(
+						_.map(_.filter(that.conditions(), function(condition) {
+							var property = condition.property();
+
+							return property.target.type === 'symbol';
+						}), function(condition) {
+							return alertManager.checkSymbol(condition.targetIdentifier());
+						}), function(aggregatePromise, symbolPromise) {
+							var returnRef;
+
+							debugger;
+
+							if (aggregatePromise) {
+								returnRef = aggregatePromise.then(function() {
+									return symbolPromise;
+								});
+							} else  {
+								returnRef = symbolPromise;
+							}
+
+							return returnRef;
+						}, null
+					);
+                };
+
+                var executeCreatePromise = function() {
+					return alertManager.createAlert(alert)
+                        .then(function(created) {
+                            that.alert(created);
+                        });
+                };
+
+                var promise = executeValidationPromise();
+
+                if (promise === null) {
+					promise = executeCreatePromise();
+                } else {
+					promise = promise.then(function() {
+						return executeCreatePromise();
+                    });
                 }
 
-                alertManager.createAlert(alert)
-                    .then(function(created) {
-                        that.alert(created);
-                    }).catch(function(e) {
-                        console.log(e);
-                    }).then(function() {
-                        that.processing(false);
-                    });
+                promise.catch(function(e) {
+					that.error(e);
+				}).then(function() {
+					that.processing(false);
+				});
             };
 
             that.selectAlertType = function(alertType) {
@@ -1218,6 +1261,11 @@
             <!-- /ko -->
             <button class="btn btn-primary btn-default" data-bind="click: createAlert, enable: canSave">Save</button>
             <button class="btn btn-primary btn-default" data-bind="click: clearAlert, visible: complete">New</button>
+
+            <div class="alert alert-danger error-box" role="alert" data-bind="visible: error">
+                <span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span>
+                <span data-bind="text: error"></span>
+            </div>
         </div>
     </script>
 
