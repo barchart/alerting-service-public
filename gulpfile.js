@@ -45,7 +45,7 @@ gulp.task('bump-version', function () {
 gulp.task('document', function (cb) {
 	config = {
 		"opts": {
-			"destination": "./documentation"
+			"destination": "./docs"
 		},
 	};
 
