@@ -9,13 +9,13 @@ market date (e.g. when a stock trades in excess of a given price).
 This library allows a user to create, delete, and otherwise manage their alerts.
 
 
-##Setup
+## Setup
 
 This library is intended for use in the browser or headless JavaScript environments
 (i.e. Node.js). It has been released via the usual package managers.
 
 
-###npm
+### npm
 
 To import the library as a dependency to your application using npm, use the following command:
 
@@ -23,7 +23,7 @@ To import the library as a dependency to your application using npm, use the fol
 	npm install alerts-management-client -S
 
 
-###bower
+### bower
 
 To import the library as a dependency to your application using bower, use the following command:
 
@@ -31,7 +31,7 @@ To import the library as a dependency to your application using bower, use the f
 	bower install alerts-management-client -S
 
 
-###git
+### git
 
 The git repository is publicly-accessible here:
 
@@ -39,16 +39,16 @@ The git repository is publicly-accessible here:
 	https://github.com/barchart/alerts-client-js
 
 
-##Usage
+## Usage
 
-The Barchart Alert Management system exposes both REST and socket.io[http://socket.io] endpoints.
+The Barchart Alert Management system exposes both REST and [socket.io](http://socket.io) endpoints.
 However, this library is a convenience-wrapper for interacting with the Barchart Alert
 Management system. So, instead of invoking these transports directly, and worrying about the
 details of the protocol, the consumers can make single-line method calls to perform asynchronous
 operations (e.g. create alert, delete alert, etc).
 
 
-###Example
+### Example
 
 An working example browser implementation can be found in the git repository at:
 
@@ -60,7 +60,7 @@ Clone the git repository and open the HTML page in a browser. The consumer
 code is contained within a script block of the HTML.
 
 
-###Initialization (Using Socket.IO transport)
+### Initialization (Using Socket.IO transport)
 
 In the browser, an object has been added to the global namespace. Connect as follows:
 
@@ -83,7 +83,7 @@ Then, call the connect method before using any operations:
 		});
 
 
-###Initialization (Using HTTP/REST transport)
+### Initialization (Using HTTP/REST transport)
 
 To use a simple REST transport (instead of socket.io transport), change the constructor to:
 
@@ -98,7 +98,7 @@ And, finally, call the connect method before invoking any other operations:
 			// ready
 		});
 
-###Disposal
+### Disposal
 
 Once you have finished using the AlertManager, please call the "dispose" function, as follows:
 
@@ -111,7 +111,7 @@ need to create a new instance of the AlertManager, if you futher interactions ar
 necessary.
 
 
-###Asynchronous Operations
+### Asynchronous Operations
 
 All operations are asynchronous. The result of any method call will be an A+ style promise. Here
 is an example:
@@ -125,14 +125,14 @@ is an example:
 			console.log('A problem occurred.');
 		});
 
-##Data
+## Data
 
 The library uses a JSON-in, JSON-out architecture. All data exchanged is in JSON format.
 Requests must supply JSON data. Responses are composed of JSON data.
 
 The following data structures are important:
 
-###Target
+### Target
 
 A "target" refers to a type of object that can be observed.
 
@@ -144,7 +144,7 @@ A "target" refers to a type of object that can be observed.
     }
 
 
-###Property
+### Property
 
 A "property" refers to an attribute of a target. The value of
 a "property" can be checked using an "operator" object.
@@ -187,7 +187,7 @@ is expected to be a string, a number, a number (percent), or
 even a complex object.
 
 
-###Operator
+### Operator
 
 A comparison operation that can be applied to the "property" value
 of a "target" object.
@@ -214,7 +214,7 @@ as an "operand" when using the operator. If operator.operand_options has
 no items, then there no restriction is placed upon an "operand" value.
 
 
-###Condition
+### Condition
 
 A "condition" is the comparison between a "property" value using an "operator" object.
 The "target" of the "property" must include an "identifier" and the "operator" must
@@ -255,7 +255,7 @@ include an "operand" value. Alerts can have multiple conditions.
     }
 
 
-###PublisherType
+### PublisherType
 
 A "publisher type" defines a mechanism for notifying users.
 
@@ -266,7 +266,7 @@ A "publisher type" defines a mechanism for notifying users.
     }
 
 
-###PublisherTypeDefault
+### PublisherTypeDefault
 
 A "publisher type" that includes the default recipient for a user.
 
@@ -287,7 +287,7 @@ A "publisher type" that includes the default recipient for a user.
 Presence of the "default_recipient_hmac" field indicates that the recipient has been "verified."
 
 
-###Publisher
+### Publisher
 
 A "publisher" defines the rules for notification of an end user. An
 alert can have multiple publishers.
@@ -305,7 +305,7 @@ alert can have multiple publishers.
     }
 
 
-###Alert
+### Alert
 
 An "alert" consists of one or more "condition" objects and one or more
 "publisher" objects.
@@ -332,7 +332,7 @@ An "alert" consists of one or more "condition" objects and one or more
 * The "alert_behavior" is an optional field that is used to control what happens after an alert's conditions are met. See the description of "Alert Behaviors" below.
 
 
-###AlertResetSchedule
+### AlertResetSchedule
 
 If an alert is configured to use the "Schedule" behavior, this object
 defines a time for the alert to resume processing.
@@ -348,7 +348,7 @@ defines a time for the alert to resume processing.
 * The "timezone" property refers to a timezone name according to the Moment.js[http://momentjs.com/timezone/docs/#/data-loading/getting-zone-names/]. If omitted, this property will default to "America/Chicago"
 
 
-###MarketDataConfiguration
+### MarketDataConfiguration
 
 Many alert conditions depend on market data feeds. This data structure
 defines the parameters for the market data feed which will be used
@@ -362,10 +362,10 @@ to evaluate conditions (for a given user).
     }
 
 
-##Data (Enumerations)
+## Data (Enumerations)
 
 
-####Alert States
+#### Alert States
 
 * **Inactive** - The alert is not processing. It will not begin processing until started (see alertManager.enableAlert).
 * **Starting** - The alert is attempting to transition to the "Active" state. If the transition succeeds, the state will become "Active;" otherwise the state will revert to "Inactive."
@@ -375,7 +375,7 @@ to evaluate conditions (for a given user).
 * **Triggered** - The alert's conditions have been met. The alert can be manually restarted (see alertManager.enableAlert).
 
 
-####Alert Behaviors
+#### Alert Behaviors
 
 * **Terminate** - Once an alert's conditions have been met, the alert will be published, the state will become "Triggered," and processing stops. This is the default behavior.
 * **Schedule** - Once an alert's conditions have been met, the alert will be published and processing stops. However, processing will resume according to the alert's reset schedule. During the time an alert is waiting to reset, it remains in the "Active" state.
@@ -387,10 +387,10 @@ to evaluate conditions (for a given user).
 * **Binary** - A binary operator requires an "operand" value.
 
 
-##AlertManager Operations
+## AlertManager Operations
 
 
-###getServerVersion
+### getServerVersion
 
 Returns the version of the server in a JSON object, as follows:
 
@@ -406,7 +406,7 @@ JSON-out:
 	}
 
 
-###getTargets
+### getTargets
 
 Returns an array of the supported "Target" objects.
 
@@ -420,7 +420,7 @@ JSON-out:
 	An array of "Target" objects
 
 
-###getProperties
+### getProperties
 
 Returns an array of supported "Property" objects.
 
@@ -434,7 +434,7 @@ JSON-out:
 	An array of "property" objects
 
 
-###getOperators
+### getOperators
 
 Returns an array of supported "Operator" objects.
 
@@ -448,7 +448,7 @@ JSON-out:
 	An array of "Operator" objects
 
 
-###getPublisherTypes
+### getPublisherTypes
 
 Returns an array of supported "PublisherType" objects.
 
@@ -462,7 +462,7 @@ JSON-out:
 	An array of "PublisherType" objects
 
 
-###getPublisherTypeDefaults
+### getPublisherTypeDefaults
 
 Returns an array of "PublisherTypeDefault" objects.
 
@@ -478,7 +478,7 @@ JSON-out:
 	An array of "PublisherTypeDefault" objects
 
 
-###assignPublisherTypeDefault
+### assignPublisherTypeDefault
 
 Updates a PublisherTypeDefault for a specific user.
 
@@ -525,7 +525,7 @@ function to get a list of valid timezone strings.
 please include the HMAC; otherwise, omit this property;
 
 
-###getMarketDataConfiguration
+### getMarketDataConfiguration
 
 Returns a "MarketDataConfiguration" object, for the specified user.
 
@@ -541,7 +541,7 @@ JSON-out:
 	A "MarketDataConfiguration" object.
 
 
-###assignMarketDataConfiguration
+### assignMarketDataConfiguration
 
 Updates the MarketDataConfiguration for a specific user.
 
@@ -558,7 +558,7 @@ JSON-out:
 	A "MarketDataConfiguration" object.
 
 
-###createAlert
+### createAlert
 
 The following JSON object can be used to create an alert. The input is a
 simplified version of the "Alert" object.
@@ -652,7 +652,7 @@ JSON-out:
 	An "Alert" object.
 
 
-###retrieveAlert
+### retrieveAlert
 
 Gets a single "Alert" object, using its identifier:
 
@@ -667,7 +667,7 @@ JSON-out:
 	An "Alert" object.
 
 
-###editAlert
+### editAlert
 
 A composite operation that deletes an existing alert and then recreates it.
 
@@ -680,7 +680,7 @@ JSON-out:
 	An "Alert" object.
 
 
-###enableAlert
+### enableAlert
 
 Causes an "Alert" object to begin testing for matched conditions.
 Notifications will be sent as soon as the alert conditions are matched.
@@ -696,7 +696,7 @@ JSON-out:
 	The "Alert" object that was enabled.
 
 
-###disableAlert
+### disableAlert
 
 Stops an "Alert" object from processing. No notifications will be sent.
 
@@ -711,7 +711,7 @@ JSON-out:
 	The "Alert" object that was disabled.
 
 
-###deleteAlert
+### deleteAlert
 
 Deletes a single "Alert" object, using its identifier:
 
@@ -726,7 +726,7 @@ JSON-out:
 	The "Alert" object that was deleted.
 
 
-###retrieveAlerts
+### retrieveAlerts
 
 Retrieves all the "Alert" objects for a user account:
 
@@ -786,7 +786,7 @@ JSON-out:
 	An array of "Alert" objects belonging to the specified user.
 
 
-###subscribeAlerts(query, changeCallback, deleteCallback, createCallback, triggerCallback)
+### subscribeAlerts(query, changeCallback, deleteCallback, createCallback, triggerCallback)
 
 Provides notification, via callbacks, when an alert has been created, changed, or
 deleted, or triggered for a specific user.
@@ -806,20 +806,20 @@ JSON-out:
 
 	Alert objects are passed to the callbacks.
 
-##Utility Functions
+## Utility Functions
 
-###Barchart.Alerts.timezone.getTimezones
+### Barchart.Alerts.timezone.getTimezones
 
 Returns an array of strings describe valid timezones.
 
 
-###Barchart.Alerts.timezone.guessTimezone
+### Barchart.Alerts.timezone.guessTimezone
 
 Returns a string that represents a guess of the user's current
 timezone. A null value is returned if a guess cannot be made.
 
 
-##Unit Testing
+## Unit Testing
 
 Gulp and Jasmine are used. Execute unit tests, as follows:
 
