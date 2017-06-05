@@ -4,7 +4,7 @@
 
 The Barchart Alert system provides notifications (e.g. SMS messages, emails, etc) to
 Barchart users when user-defined events occur. These events are typically based on
-market date (e.g. when a stock trades in excess of a given price).
+market data (e.g. when a stock trades in excess of a given price).
 
 This library allows a user to create, delete, and otherwise manage their alerts.
 
