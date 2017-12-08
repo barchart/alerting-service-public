@@ -37,7 +37,7 @@ gulp.task('ensure-clean-working-directory', function () {
 });
 
 gulp.task('bump-version', function () {
-	return gulp.src(['./package.json', './bower.json'])
+	return gulp.src(['./package.json'])
 		.pipe(bump({type: 'patch'}).on('error', util.log))
 		.pipe(gulp.dest('./'));
 });
@@ -62,7 +62,7 @@ gulp.task('embed-version', function () {
 });
 
 gulp.task('commit-changes', function () {
-	return gulp.src(['./', './dist/', './package.json', './bower.json', './lib/alerts/index.js'])
+	return gulp.src(['./', './dist/', './package.json', './lib/alerts/index.js'])
 		.pipe(git.add())
 		.pipe(git.commit('Release. Bump version number'));
 });
@@ -86,10 +86,8 @@ gulp.task('create-tag', function (cb) {
 gulp.task('build-browser', function () {
 	return browserify('./lib/index.js', {standalone: 'Barchart.Alerts'})
 		.bundle()
-		.pipe(source('barchart-alerts-api.js'))
+		.pipe(source('barchart-alerts-api-' + getVersionForComponent() + '.js'))
 		.pipe(buffer())
-		.pipe(gulp.dest('./dist'))
-		.pipe(rename('barchart-alerts-api-' + getVersionForComponent() + '.js'))
 		.pipe(gulp.dest('./dist'))
 		.pipe(uglify())
 		.pipe(rename('barchart-alerts-api-' + getVersionForComponent() + '-min.js'))

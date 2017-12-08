@@ -20,15 +20,7 @@ This library is intended for use in the browser or headless JavaScript environme
 To import the library as a dependency to your application using npm, use the following command:
 
 
-	npm install alerts-management-client -S
-
-
-### bower
-
-To import the library as a dependency to your application using bower, use the following command:
-
-
-	bower install alerts-management-client -S
+	npm install @barchart/alerts-client-js -S
 
 
 ### git
