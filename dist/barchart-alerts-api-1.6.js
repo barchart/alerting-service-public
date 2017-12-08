@@ -1750,7 +1750,7 @@ module.exports = function () {
 	return {
 		AlertManager: AlertManager,
 		timezone: timezone,
-		version: '1.5.15'
+		version: '1.6.1'
 	};
 }();
 
