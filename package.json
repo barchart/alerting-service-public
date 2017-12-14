@@ -15,8 +15,8 @@
   },
   "keywords": [],
   "dependencies": {
-    "@barchart/common-js": "3.1.6",
-    "@barchart/instruments-client-js": "3.0.5",
+    "@barchart/common-js": "3.1.8",
+    "@barchart/instruments-client-js": "3.1.2",
     "@barchart/marketdata-utilities-js": "3.0.1",
     "socket.io-client": "2.0.3",
     "uuid": "3.1.0"
