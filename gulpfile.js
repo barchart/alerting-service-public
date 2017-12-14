@@ -60,7 +60,7 @@ gulp.task('embed-version', function () {
 });
 
 gulp.task('commit-changes', function () {
-	return gulp.src(['./', './dist/', './package.json', './lib/alerts/index.js'])
+	return gulp.src(['./', './package.json', './lib/alerts/index.js'])
 		.pipe(git.add())
 		.pipe(git.commit('Release. Bump version number'));
 });
@@ -89,8 +89,6 @@ gulp.task('build-example-bundle', function () {
 		.pipe(gulp.dest('./example/browser/'));
 });
 
-gulp.task('build', ['build-example-bundle']);
-
 gulp.task('build-test-bundle', function () {
 	return browserify({entries: glob.sync('test/specs/**/*.js')})
 		.bundle()
@@ -100,7 +98,7 @@ gulp.task('build-test-bundle', function () {
 });
 
 gulp.task('execute-browser-tests', function () {
-	return gulp.src('test/dist/barchart-alerts-api-tests.js')
+	return gulp.src('test/SpecRunner.js')
 		.pipe(jasmine());
 });
 
@@ -131,10 +129,8 @@ gulp.task('release', function (callback) {
 		'ensure-clean-working-directory',
 		'bump-version',
 		'embed-version',
-		'build',
-		'build-test-bundle',
-		'execute-browser-tests',
-		'execute-node-tests',
+		'execute-tests',
+		'build-example-bundle',
 		'commit-changes',
 		'push-changes',
 		'create-tag',
