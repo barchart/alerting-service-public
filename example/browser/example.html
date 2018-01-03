@@ -36,10 +36,10 @@
             //return new Barchart.Alerts.AlertManager();
 
             //return new Barchart.Alerts.AlertManager('localhost', 3000, 'rest');
-            //return new Barchart.Alerts.AlertManager('localhost', 3000);
+            return new Barchart.Alerts.AlertManager('localhost', 3000);
 
             //return new Barchart.Alerts.AlertManager('alerts-management-stage.barchart.com', 80, 'rest');
-            return new Barchart.Alerts.AlertManager('alerts-management-stage.barchart.com');
+            //return new Barchart.Alerts.AlertManager('alerts-management-stage.barchart.com');
         };
 
         var utilities = Barchart.Alerts.AlertManager;
@@ -214,7 +214,7 @@
             that.canStart = ko.computed(function() {
                 var alert = that.alert();
 
-                return alert.alert_state === 'Inactive' || alert.alert_state === 'Triggered' || alert.alert_state === 'Orphaned';
+                return alert.alert_state === 'Inactive' || alert.alert_state === 'Triggered' || alert.alert_state === 'Orphaned' || alert.alert_state === 'Expired';
             });
             that.canPause = ko.computed(function() {
                 var alert = that.alert();
