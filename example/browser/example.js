@@ -1750,7 +1750,7 @@ module.exports = function () {
 	return {
 		AlertManager: AlertManager,
 		timezone: timezone,
-		version: '1.6.4'
+		version: '1.6.5'
 	};
 }();
 
@@ -1881,6 +1881,10 @@ module.exports = function () {
 
 			if (is.null(instrument) || is.undefined(instrument)) {
 				throw new Error(symbol + ' does not appear to be a valid symbol.');
+			}
+
+			if (is.boolean(instrument.expired) && instrument.expired) {
+				throw new Error(symbol + ' appears to be expired.');
 			}
 		}
 	};
