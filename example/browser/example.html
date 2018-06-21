@@ -416,7 +416,20 @@
 
 							return property.target.type === 'symbol';
 						}), function(condition) {
-							return alertManager.checkSymbol(condition.targetIdentifier());
+							return alertManager.checkSymbol(condition.targetIdentifier())
+								.then((translatedSymbol) => {
+									const userSymbol = condition.targetIdentifier();
+
+									if (userSymbol !== translatedSymbol) {
+										_.forEach(alert.conditions, function(condition) {
+											if (condition.property.target.identifier === userSymbol) {
+												condition.property.target.identifier = translatedSymbol;
+											}
+										});
+									}
+
+									return true;
+								});
 						}), function(aggregatePromise, symbolPromise) {
 							var returnRef;
 
