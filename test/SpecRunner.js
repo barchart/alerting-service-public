@@ -1,4 +1,4 @@
-(function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(require,module,exports){
+(function(){function r(e,n,t){function o(i,f){if(!n[i]){if(!e[i]){var c="function"==typeof require&&require;if(!f&&c)return c(i,!0);if(u)return u(i,!0);var a=new Error("Cannot find module '"+i+"'");throw a.code="MODULE_NOT_FOUND",a}var p=n[i]={exports:{}};e[i][0].call(p.exports,function(r){var n=e[i][1][r];return o(n||r)},p,p.exports,r,e,n,t)}return n[i].exports}for(var u="function"==typeof require&&require,i=0;i<t.length;i++)o(t[i]);return o}return r})()({1:[function(require,module,exports){
 'use strict';
 
 var assert = require('@barchart/common-js/lang/assert'),
@@ -259,7 +259,7 @@ module.exports = function () {
 
 				if (typeof itemConstraint === 'function' && itemConstraint !== Function) {
 					itemValidator = function itemValidator(value, index) {
-						return value instanceof itemConstraint || itemConstraint(value, variableName + '[' + index + ']');
+						return itemConstraint.prototype !== undefined && value instanceof itemConstraint || itemConstraint(value, variableName + '[' + index + ']');
 					};
 				} else {
 					itemValidator = function itemValidator(value, index) {
@@ -282,7 +282,7 @@ module.exports = function () {
    * @param {*} variable - The value to check.
    * @param {String} variableName - The name of the value (used for formatting an error message).
    * @param {Function=} predicate - A function used to validate the item (beyond type checking).
-   * @param {Function=} predicateDescription - A description of the assertion made by the predicate (e.g. "is an integer") that is used for formatting an error message.
+   * @param {String=} predicateDescription - A description of the assertion made by the predicate (e.g. "is an integer") that is used for formatting an error message.
    */
 		argumentIsValid: function argumentIsValid(variable, variableName, predicate, predicateDescription) {
 			if (!predicate(variable)) {
@@ -323,7 +323,7 @@ module.exports = function () {
    *
    * @static
    * @public
-   * @param candidate {*}
+   * @param {*} candidate {*}
    * @returns {boolean}
    */
 		number: function number(candidate) {
@@ -376,7 +376,7 @@ module.exports = function () {
    *
    * @static
    * @public
-   * @param candidate
+   * @param {*} candidate
    * @returns {boolean}
    */
 		positive: function positive(candidate) {
@@ -389,7 +389,7 @@ module.exports = function () {
    *
    * @static
    * @public
-   * @param candidate
+   * @param {*} candidate
    * @returns {*|boolean}
    */
 		negative: function negative(candidate) {
@@ -402,7 +402,7 @@ module.exports = function () {
    *
    * @static
    * @public
-   * @param candidate
+   * @param {*} candidate
    * @returns {boolean}
    */
 		string: function string(candidate) {
@@ -415,7 +415,7 @@ module.exports = function () {
    *
    * @static
    * @public
-   * @param candidate
+   * @param {*} candidate
    * @returns {boolean}
    */
 		date: function date(candidate) {
@@ -428,7 +428,7 @@ module.exports = function () {
    *
    * @static
    * @public
-   * @param candidate
+   * @param {*} candidate
    * @returns {boolean}
    */
 		fn: function fn(candidate) {
@@ -441,7 +441,7 @@ module.exports = function () {
    *
    * @static
    * @public
-   * @param candidate
+   * @param {*} candidate
    * @returns {boolean}
    */
 		array: function array(candidate) {
@@ -454,7 +454,7 @@ module.exports = function () {
    *
    * @static
    * @public
-   * @param candidate
+   * @param {*} candidate
    * @returns {boolean}
    */
 		boolean: function boolean(candidate) {
@@ -467,7 +467,7 @@ module.exports = function () {
    *
    * @static
    * @public
-   * @param candidate
+   * @param {*} candidate
    * @returns {boolean}
    */
 		object: function object(candidate) {
@@ -480,7 +480,7 @@ module.exports = function () {
    *
    * @static
    * @public
-   * @param candidate
+   * @param {*} candidate
    * @returns {boolean}
    */
 		null: function _null(candidate) {
@@ -493,7 +493,7 @@ module.exports = function () {
    *
    * @static
    * @public
-   * @param candidate
+   * @param {*} candidate
    * @returns {boolean}
    */
 		undefined: function (_undefined) {
