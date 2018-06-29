@@ -786,7 +786,7 @@ module.exports = function () {
 	return AlertManager;
 }();
 
-},{"./adapters/RestAdapter":3,"./adapters/SocketAdapter":4,"./validators/validate":11,"@barchart/common-js/lang/Disposable":20,"@barchart/common-js/lang/array":24,"@barchart/common-js/lang/assert":25,"@barchart/common-js/lang/connection":27,"@barchart/common-js/lang/is":29,"@barchart/common-js/messaging/Event":33,"@barchart/instruments-client-js/lib/search/SearchManager":45,"@barchart/marketdata-utilities-js/lib/convert":49,"@barchart/marketdata-utilities-js/lib/priceFormatter":51,"@barchart/marketdata-utilities-js/lib/priceParser":52}],2:[function(require,module,exports){
+},{"./adapters/RestAdapter":3,"./adapters/SocketAdapter":4,"./validators/validate":11,"@barchart/common-js/lang/Disposable":21,"@barchart/common-js/lang/array":25,"@barchart/common-js/lang/assert":26,"@barchart/common-js/lang/connection":28,"@barchart/common-js/lang/is":30,"@barchart/common-js/messaging/Event":34,"@barchart/instruments-client-js/lib/search/SearchManager":46,"@barchart/marketdata-utilities-js/lib/convert":77,"@barchart/marketdata-utilities-js/lib/priceFormatter":79,"@barchart/marketdata-utilities-js/lib/priceParser":80}],2:[function(require,module,exports){
 'use strict';
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
@@ -926,7 +926,7 @@ module.exports = function () {
 	return AdapterBase;
 }();
 
-},{"@barchart/common-js/lang/Disposable":20,"@barchart/common-js/lang/assert":25}],3:[function(require,module,exports){
+},{"@barchart/common-js/lang/Disposable":21,"@barchart/common-js/lang/assert":26}],3:[function(require,module,exports){
 'use strict';
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
@@ -1313,7 +1313,7 @@ module.exports = function () {
 	return RestAdapter;
 }();
 
-},{"./AdapterBase":2,"@barchart/common-js/lang/Disposable":20,"@barchart/common-js/lang/array":24,"@barchart/common-js/lang/assert":25,"@barchart/common-js/network/rest/RestAction":34,"@barchart/common-js/network/rest/RestEndpoint":35,"@barchart/common-js/network/rest/RestProvider":37,"@barchart/common-js/timing/Scheduler":43}],4:[function(require,module,exports){
+},{"./AdapterBase":2,"@barchart/common-js/lang/Disposable":21,"@barchart/common-js/lang/array":25,"@barchart/common-js/lang/assert":26,"@barchart/common-js/network/rest/RestAction":35,"@barchart/common-js/network/rest/RestEndpoint":36,"@barchart/common-js/network/rest/RestProvider":38,"@barchart/common-js/timing/Scheduler":44}],4:[function(require,module,exports){
 'use strict';
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
@@ -1737,7 +1737,7 @@ module.exports = function () {
 	return SocketAdapter;
 }();
 
-},{"./AdapterBase":2,"@barchart/common-js/lang/Disposable":20,"@barchart/common-js/lang/assert":25,"socket.io-client":119,"uuid":140}],5:[function(require,module,exports){
+},{"./AdapterBase":2,"@barchart/common-js/lang/Disposable":21,"@barchart/common-js/lang/assert":26,"socket.io-client":145,"uuid":166}],5:[function(require,module,exports){
 'use strict';
 
 var AlertManager = require('./AlertManager');
@@ -1750,11 +1750,11 @@ module.exports = function () {
 	return {
 		AlertManager: AlertManager,
 		timezone: timezone,
-		version: '1.6.6'
+		version: '1.6.7'
 	};
 }();
 
-},{"./AlertManager":1,"@barchart/common-js/lang/timezone":32}],6:[function(require,module,exports){
+},{"./AlertManager":1,"@barchart/common-js/lang/timezone":33}],6:[function(require,module,exports){
 'use strict';
 
 var assert = require('@barchart/common-js/lang/assert'),
@@ -1818,7 +1818,7 @@ module.exports = function () {
 	return validator;
 }();
 
-},{"./condition":7,"./publisher":9,"@barchart/common-js/lang/assert":25,"@barchart/common-js/lang/is":29}],7:[function(require,module,exports){
+},{"./condition":7,"./publisher":9,"@barchart/common-js/lang/assert":26,"@barchart/common-js/lang/is":30}],7:[function(require,module,exports){
 'use strict';
 
 var assert = require('@barchart/common-js/lang/assert'),
@@ -1866,7 +1866,7 @@ module.exports = function () {
 	return validator;
 }();
 
-},{"@barchart/common-js/lang/assert":25,"@barchart/common-js/lang/is":29}],8:[function(require,module,exports){
+},{"@barchart/common-js/lang/assert":26,"@barchart/common-js/lang/is":30}],8:[function(require,module,exports){
 'use strict';
 
 var assert = require('@barchart/common-js/lang/assert'),
@@ -1892,7 +1892,7 @@ module.exports = function () {
 	return validator;
 }();
 
-},{"@barchart/common-js/lang/assert":25,"@barchart/common-js/lang/is":29}],9:[function(require,module,exports){
+},{"@barchart/common-js/lang/assert":26,"@barchart/common-js/lang/is":30}],9:[function(require,module,exports){
 'use strict';
 
 var assert = require('@barchart/common-js/lang/assert'),
@@ -1936,7 +1936,7 @@ module.exports = function () {
 	return validator;
 }();
 
-},{"@barchart/common-js/lang/assert":25,"@barchart/common-js/lang/is":29}],10:[function(require,module,exports){
+},{"@barchart/common-js/lang/assert":26,"@barchart/common-js/lang/is":30}],10:[function(require,module,exports){
 'use strict';
 
 var assert = require('@barchart/common-js/lang/assert'),
@@ -1993,7 +1993,7 @@ module.exports = function () {
 	return validator;
 }();
 
-},{"@barchart/common-js/lang/assert":25,"@barchart/common-js/lang/is":29}],11:[function(require,module,exports){
+},{"@barchart/common-js/lang/assert":26,"@barchart/common-js/lang/is":30}],11:[function(require,module,exports){
 'use strict';
 
 var alert = require('./alert'),
@@ -2128,6 +2128,6995 @@ module.exports = function () {
 }();
 
 },{}],14:[function(require,module,exports){
+'use strict';
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+var is = require('./../lang/is');
+
+module.exports = function () {
+	'use strict';
+
+	/**
+  * A tree data structure. Each instance represents a node, holding
+  * an item, a reference to the parent node, and a reference to
+  * children nodes. Children are stored in insertion order.
+  *
+  * @public
+  * @param {*} value - The value of the node.
+  * @param {Tree} parent - The parent node. If not supplied, this will be the root node.
+  */
+
+	var Tree = function () {
+		function Tree(value, parent) {
+			_classCallCheck(this, Tree);
+
+			this._value = value;
+
+			this._parent = parent || null;
+			this._children = [];
+		}
+
+		/**
+   * Gets the root node.
+   *
+   * @public
+   * @returns {Tree}
+   */
+
+
+		_createClass(Tree, [{
+			key: 'getRoot',
+			value: function getRoot() {
+				if (this.getIsRoot()) {
+					return this;
+				} else {
+					return this._parent.getRoot();
+				}
+			}
+
+			/**
+    * Returns the parent node. If this is the root node, a null value is returned.
+    *
+    * @public
+    * @returns {Tree|null}
+    */
+
+		}, {
+			key: 'getParent',
+			value: function getParent() {
+				return this._parent;
+			}
+
+			/**
+    * Returns the collection of children nodes.
+    *
+    * @public
+    * @returns {Array<Tree>}
+    */
+
+		}, {
+			key: 'getChildren',
+			value: function getChildren() {
+				return this._children;
+			}
+
+			/**
+    * Returns the value associated with the current node.
+    *
+    * @public
+    * @returns {*}
+    */
+
+		}, {
+			key: 'getValue',
+			value: function getValue() {
+				return this._value;
+			}
+
+			/**
+    * Returns true if this node has no children; otherwise false.
+    *
+    * @public
+    * @returns {boolean}
+    */
+
+		}, {
+			key: 'getIsLeaf',
+			value: function getIsLeaf() {
+				return this._children.length === 0;
+			}
+
+			/**
+    * Returns true if this node has no parent; otherwise false.
+    *
+    * @public
+    * @returns {boolean}
+    */
+
+		}, {
+			key: 'getIsRoot',
+			value: function getIsRoot() {
+				return this._parent === null;
+			}
+
+			/**
+    * Adds a child node to the current node and returns a reference
+    * to the child node.
+    *
+    * @public
+    * @param {*} value - The value of the child.
+    * @returns {Tree}
+    */
+
+		}, {
+			key: 'addChild',
+			value: function addChild(value) {
+				var returnRef = new Tree(value, this);
+
+				this._children.push(returnRef);
+
+				return returnRef;
+			}
+
+			/**
+    * Removes a child node.
+    *
+    * @public
+    * @param {Tree} node - The child to remove.
+    */
+
+		}, {
+			key: 'removeChild',
+			value: function removeChild(node) {
+				for (var i = this._children.length - 1; !(i < 0); i--) {
+					var child = this._children[i];
+
+					if (child === node) {
+						this._children.splice(i, 1);
+
+						child._parent = null;
+						child._children = [];
+
+						break;
+					}
+				}
+			}
+
+			/**
+    * Removes the current node from the parent tree. Use on a root node
+    * has no effect.
+    *
+    * @public
+    */
+
+		}, {
+			key: 'sever',
+			value: function sever() {
+				if (this.getIsRoot()) {
+					return;
+				}
+
+				this.getParent().removeChild(this);
+			}
+
+			/**
+    * Searches the children nodes for the first child node that matches the
+    * predicate.
+    *
+    * @public
+    * @param {Tree~nodePredicate} predicate - A predicate that tests each child node. The predicate takes two arguments -- the node's value, and the node itself.
+    * @returns {Tree|null}
+    */
+
+		}, {
+			key: 'findChild',
+			value: function findChild(predicate) {
+				var returnRef = null;
+
+				for (var i = 0; i < this._children.length; i++) {
+					var child = this._children[i];
+
+					if (predicate(child.getValue(), child)) {
+						returnRef = child;
+
+						break;
+					}
+				}
+
+				return returnRef;
+			}
+
+			/**
+    * Searches the tree recursively, starting with the current node.
+    *
+    * @public
+    * @param {Tree~nodePredicate} predicate - A predicate that tests each child node. The predicate takes two arguments -- the node's value, and the node itself.
+    * @param {boolean=} childrenFirst - True, if the tree should be searched depth first.
+    * @param {boolean=} includeCurrentNode - True, if the current node should be checked against the predicate.
+    * @returns {Tree|null}
+    */
+
+		}, {
+			key: 'search',
+			value: function search(predicate, childrenFirst, includeCurrentNode) {
+				var returnRef = null;
+
+				if (returnRef === null && childrenFirst && includeCurrentNode && predicate(this.getValue(), this)) {
+					returnRef = this;
+				}
+
+				for (var i = 0; i < this._children.length; i++) {
+					var child = this._children[i];
+
+					returnRef = child.search(predicate, childrenFirst, true);
+
+					if (returnRef !== null) {
+						break;
+					}
+				}
+
+				if (returnRef === null && !childrenFirst && includeCurrentNode && predicate(this.getValue(), this)) {
+					returnRef = this;
+				}
+
+				return returnRef;
+			}
+
+			/**
+    * Walks the children of the current node, running an action on each node.
+    *
+    * @public
+    * @param {Tree~nodeAction} walkAction - A action to apply to each node. The action takes two arguments -- the node's value, and the node itself.
+    * @param {boolean=} childrenFirst - True if the tree should be walked depth first.
+    * @param {boolean=} includeCurrentNode - True if the current node should be applied to the action.
+    */
+
+		}, {
+			key: 'walk',
+			value: function walk(walkAction, childrenFirst, includeCurrentNode) {
+				var predicate = function predicate(value, node) {
+					walkAction(value, node);
+
+					return false;
+				};
+
+				this.search(predicate, childrenFirst, includeCurrentNode);
+			}
+
+			/**
+    * Climbs the parents of the current node -- current node up to the root node, running an action on each node.
+    *
+    * @public
+    * @param {Tree~nodeAction} climbAction - A action to apply to each node. The action takes two arguments -- the node's value, and the node itself.
+    * @param {boolean=} includeCurrentNode - True if the current node should be applied to the action.
+    */
+
+		}, {
+			key: 'climb',
+			value: function climb(climbAction, includeCurrentNode) {
+				if (includeCurrentNode) {
+					climbAction(this.getValue(), this);
+				}
+
+				if (this._parent !== null) {
+					this._parent.climb(climbAction, true);
+				}
+			}
+
+			/**
+    * Climbs the tree, evaluating each parent until a predicate is matched. Once matched,
+    * the {@link Tree} node is returned. Otherwise, if the predicate cannot be matched,
+    * a null value is returned.
+    *
+    * @public
+    * @param {Tree~nodePredicate} predicate - A predicate that tests each child node. The predicate takes two arguments -- the node's value, and the node itself.
+    * @param {boolean=} includeCurrentNode - If true, the predicate will be applied to the current node.
+    * @returns {Tree|null}
+    */
+
+		}, {
+			key: 'findParent',
+			value: function findParent(predicate, includeCurrentNode) {
+				var returnRef = void 0;
+
+				if (is.boolean(includeCurrentNode) && includeCurrentNode && predicate(this.getValue(), this)) {
+					returnRef = this;
+				} else if (this._parent !== null) {
+					returnRef = this._parent.findParent(predicate, true);
+				} else {
+					returnRef = null;
+				}
+
+				return returnRef;
+			}
+
+			/**
+    * Creates a representation of the tree using JavaScript objects and arrays.
+    *
+    * @public
+    * @param {Function=} valueConverter - An optional function for converting the value of each node.
+    * @param {Boolean=} valueConverter - If true, empty children arrays will be excluded from output.
+    * @returns {Object}
+    */
+
+		}, {
+			key: 'toJSObj',
+			value: function toJSObj(valueConverter, omitEmptyChildren) {
+				var valueConverterToUse = void 0;
+
+				if (is.fn(valueConverter)) {
+					valueConverterToUse = valueConverter;
+				} else {
+					valueConverterToUse = function valueConverterToUse(x) {
+						return x;
+					};
+				}
+
+				var converted = {
+					value: valueConverterToUse(this._value)
+				};
+
+				if (!(is.boolean(omitEmptyChildren) && omitEmptyChildren && this._children.length === 0)) {
+					converted.children = this._children.map(function (child) {
+						return child.toJSObj(valueConverter, omitEmptyChildren);
+					});
+				}
+
+				return converted;
+			}
+		}, {
+			key: 'toString',
+			value: function toString() {
+				return '[Tree]';
+			}
+		}]);
+
+		return Tree;
+	}();
+
+	/**
+  * A predicate that is used to check a node (i.e. {@link Tree}).
+  *
+  * @callback Tree~nodePredicate
+  * @param {*} item - The candidate node's item
+  * @param {Tree} node - The candidate node.
+  * @returns {Boolean}
+  */
+
+	/**
+  * An action that is run on a node (i.e. {@link Tree}).
+  *
+  * @callback Tree~nodeAction
+  * @param {*} item - The candidate node's item
+  * @param {Tree} node - The candidate node.
+  */
+
+	return Tree;
+}();
+
+},{"./../lang/is":30}],15:[function(require,module,exports){
+'use strict';
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+var assert = require('./../../lang/assert'),
+    comparators = require('./comparators');
+
+module.exports = function () {
+	'use strict';
+
+	/**
+  * A builder for compound comparator functions (e.g. sort by last name,
+  * then by first name, then by social security number) that uses a fluent
+  * interface.
+  *
+  * @public
+  * @param {Function} comparator - The initial comparator.
+  * @param {Boolean=} invert - Indicates if the comparator should sort in descending order.
+  */
+
+	var ComparatorBuilder = function () {
+		function ComparatorBuilder(comparator, invert, previous) {
+			_classCallCheck(this, ComparatorBuilder);
+
+			assert.argumentIsRequired(comparator, 'comparator', Function);
+			assert.argumentIsOptional(invert, 'invert', Boolean);
+
+			this._comparator = comparator;
+			this._invert = invert || false;
+			this._previous = previous || null;
+		}
+
+		/**
+   * Adds a new comparator to the list of comparators to use.
+   *
+   * @public
+   * @param {Function} comparator - The next comparator function.
+   * @param {Boolean=} invert - Indicates if the comparator should sort in descending order.
+   * @returns {ComparatorBuilder}
+   */
+
+
+		_createClass(ComparatorBuilder, [{
+			key: 'thenBy',
+			value: function thenBy(comparator, invert) {
+				assert.argumentIsRequired(comparator, 'comparator', Function);
+				assert.argumentIsOptional(invert, 'invert', Boolean);
+
+				return new ComparatorBuilder(comparator, invert, this);
+			}
+
+			/**
+    * Flips the order of the comparator (e.g. ascending to descending).
+    *
+    * @public
+    * @returns {ComparatorBuilder}
+    */
+
+		}, {
+			key: 'invert',
+			value: function invert() {
+				var previous = void 0;
+
+				if (this._previous) {
+					previous = this._previous.invert();
+				} else {
+					previous = null;
+				}
+
+				return new ComparatorBuilder(this._comparator, !this._invert, previous);
+			}
+
+			/**
+    * Returns the comparator function.
+    *
+    * @public
+    * @returns {Function}
+    */
+
+		}, {
+			key: 'toComparator',
+			value: function toComparator() {
+				var _this = this;
+
+				var previousComparator = void 0;
+
+				if (this._previous) {
+					previousComparator = this._previous.toComparator();
+				} else {
+					previousComparator = comparators.empty;
+				}
+
+				return function (a, b) {
+					var result = previousComparator(a, b);
+
+					if (result === 0) {
+						var sortA = void 0;
+						var sortB = void 0;
+
+						if (_this._invert) {
+							sortA = b;
+							sortB = a;
+						} else {
+							sortA = a;
+							sortB = b;
+						}
+
+						result = _this._comparator(sortA, sortB);
+					}
+
+					return result;
+				};
+			}
+		}, {
+			key: 'toString',
+			value: function toString() {
+				return '[ComparatorBuilder]';
+			}
+
+			/**
+    * Creates a {@link ComparatorBuilder}, given an initial comparator function.
+    *
+    * @public
+    * @param {Function} comparator - The initial comparator.
+    * @param {Boolean=} invert - Indicates if the comparator should sort in descending order.
+    * @returns {ComparatorBuilder}
+    */
+
+		}], [{
+			key: 'startWith',
+			value: function startWith(comparator, invert) {
+				return new ComparatorBuilder(comparator, invert);
+			}
+		}]);
+
+		return ComparatorBuilder;
+	}();
+
+	return ComparatorBuilder;
+}();
+
+},{"./../../lang/assert":26,"./comparators":16}],16:[function(require,module,exports){
+'use strict';
+
+var assert = require('./../../lang/assert');
+
+module.exports = function () {
+	'use strict';
+
+	/**
+  * Functions that can be used as comparators.
+  *
+  * @public
+  * @module collections/sorting/comparators
+  */
+
+	return {
+		/**
+   * Compares two dates (in ascending order).
+   *
+   * @static
+   * @param {Date} a
+   * @param {Date} b
+   * @returns {Number}
+   */
+		compareDates: function compareDates(a, b) {
+			assert.argumentIsRequired(a, 'a', Date);
+			assert.argumentIsRequired(b, 'b', Date);
+
+			return a - b;
+		},
+
+		/**
+   * Compares two numbers (in ascending order).
+   *
+   * @static
+   * @param {Number} a
+   * @param {Number} b
+   * @returns {Number}
+   */
+		compareNumbers: function compareNumbers(a, b) {
+			assert.argumentIsRequired(a, 'a', Number);
+			assert.argumentIsRequired(b, 'b', Number);
+
+			return a - b;
+		},
+
+		/**
+   * Compares two strings (in ascending order), using {@link String#localeCompare}.
+   *
+   * @static
+   * @param {Number} a
+   * @param {Number} b
+   * @returns {Number}
+   */
+		compareStrings: function compareStrings(a, b) {
+			assert.argumentIsRequired(a, 'a', String);
+			assert.argumentIsRequired(b, 'b', String);
+
+			return a.localeCompare(b);
+		},
+
+		/**
+   * Compares two objects, always returning zero.
+   *
+   * @static
+   * @param {*} a
+   * @param {*} b
+   * @returns {Number}
+   */
+		empty: function empty(a, b) {
+			return 0;
+		}
+	};
+}();
+
+},{"./../../lang/assert":26}],17:[function(require,module,exports){
+'use strict';
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+var assert = require('./assert'),
+    is = require('./is');
+
+module.exports = function () {
+	'use strict';
+
+	/**
+  * A serialization container for ad hoc data where internal data is serialized
+  * as an escaped JSON string.
+  *
+  * @public
+  * @param {Object} data
+  */
+
+	var AdHoc = function () {
+		function AdHoc(data) {
+			_classCallCheck(this, AdHoc);
+
+			this._data = data || {};
+		}
+
+		/**
+   * The data.
+   * 
+   * @public
+   * @returns {Object}
+   */
+
+
+		_createClass(AdHoc, [{
+			key: 'toJSON',
+			value: function toJSON() {
+				return JSON.stringify(this._data);
+			}
+
+			/**
+    * Given a code, returns the enumeration item.
+    *
+    * @public
+    * @param {String} code
+    * @returns {AdHoc}
+    */
+
+		}, {
+			key: 'toString',
+			value: function toString() {
+				return '[AdHoc]';
+			}
+		}, {
+			key: 'data',
+			get: function get() {
+				return this._data;
+			}
+
+			/**
+    * The data.
+    *
+    * @public
+    * @param {Object} data
+    */
+			,
+			set: function set(data) {
+				assert.argumentIsRequired(data, 'data', Object);
+
+				this._data = data;
+			}
+		}], [{
+			key: 'parse',
+			value: function parse(serialized) {
+				return new AdHoc(JSON.parse(serialized));
+			}
+		}]);
+
+		return AdHoc;
+	}();
+
+	return AdHoc;
+}();
+
+},{"./assert":26,"./is":30}],18:[function(require,module,exports){
+'use strict';
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
+var assert = require('./assert'),
+    Enum = require('./Enum'),
+    is = require('./is');
+
+module.exports = function () {
+	'use strict';
+
+	/**
+  * An enumeration for currency types.
+  *
+  * @public
+  * @param {String} code - Currency code (e.g. "USD")
+  * @param {String} description - The description (e.g. "US Dollar")
+  * @param {Number} precision - The number of decimal places possible for by a real world transaction.
+  * @extends {Enum}
+  */
+
+	var Currency = function (_Enum) {
+		_inherits(Currency, _Enum);
+
+		function Currency(code, description, precision, alternateDescription) {
+			_classCallCheck(this, Currency);
+
+			var _this = _possibleConstructorReturn(this, (Currency.__proto__ || Object.getPrototypeOf(Currency)).call(this, code, description));
+
+			assert.argumentIsRequired(precision, 'precision', Number);
+			assert.argumentIsValid(precision, 'precision', is.integer, 'is an integer');
+
+			assert.argumentIsOptional(alternateDescription, 'alternateDescription', String);
+
+			_this._precision = precision;
+
+			_this._alternateDescription = alternateDescription || description;
+			return _this;
+		}
+
+		/**
+   * The maximum number of decimal places supported by a real world transaction.
+   *
+   * @public
+   * @returns {Number}
+   */
+
+
+		_createClass(Currency, [{
+			key: 'toString',
+			value: function toString() {
+				return '[Currency (code=' + this.code + ')]';
+			}
+		}, {
+			key: 'precision',
+			get: function get() {
+				return this._precision;
+			}
+
+			/**
+    * An alternate human-readable description.
+    *
+    * @public
+    * @returns {String}
+    */
+
+		}, {
+			key: 'alternateDescription',
+			get: function get() {
+				return this._alternateDescription;
+			}
+
+			/**
+    * Given a code, returns the enumeration item.
+    *
+    * @public
+    * @param {String} code
+    * @returns {Currency|null}
+    */
+
+		}], [{
+			key: 'parse',
+			value: function parse(code) {
+				return Enum.fromCode(Currency, code);
+			}
+
+			/**
+    * The Canadian Dollar.
+    *
+    * @public
+    * @returns {Currency}
+    */
+
+		}, {
+			key: 'CAD',
+			get: function get() {
+				return cad;
+			}
+
+			/**
+    * The Euro.
+    *
+    * @public
+    * @returns {Currency}
+    */
+
+		}, {
+			key: 'EUR',
+			get: function get() {
+				return eur;
+			}
+
+			/**
+    * The US Dollar.
+    *
+    * @public
+    * @returns {Currency}
+    */
+
+		}, {
+			key: 'USD',
+			get: function get() {
+				return usd;
+			}
+		}]);
+
+		return Currency;
+	}(Enum);
+
+	var cad = new Currency('CAD', 'Canadian Dollar', 2, 'CAD$');
+	var eur = new Currency('EUR', 'Euro', 2, 'EUR');
+	var usd = new Currency('USD', 'US Dollar', 2, 'US$');
+
+	return Currency;
+}();
+
+},{"./Enum":22,"./assert":26,"./is":30}],19:[function(require,module,exports){
+'use strict';
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+var assert = require('./assert'),
+    ComparatorBuilder = require('./../collections/sorting/ComparatorBuilder'),
+    comparators = require('./../collections/sorting/comparators'),
+    is = require('./is');
+
+module.exports = function () {
+	'use strict';
+
+	/**
+  * A data structure that represents a day (year, month, and day)
+  * without consideration for time or timezone.
+  *
+  * @public
+  * @param {Number} year
+  * @param {Number} month
+  * @param {Number} day
+  */
+
+	var Day = function () {
+		function Day(year, month, day) {
+			_classCallCheck(this, Day);
+
+			if (!Day.validate(year, month, day)) {
+				throw new Error('Unable to instantiate Day, input is invalid [' + year + '], [' + month + '], [' + day + ']');
+			}
+
+			this._year = year;
+			this._month = month;
+			this._day = day;
+		}
+
+		/**
+   * Calculates a new {@link Day} in the future (or past).
+   *
+   * @public
+   * @param {Number} days - The number of days to add (negative numbers can be used for subtraction).
+   * @param {Boolean=} inverse - If true, the sign of the "days" value will be flipped.
+   * @returns {Day}
+   */
+
+
+		_createClass(Day, [{
+			key: 'addDays',
+			value: function addDays(days, inverse) {
+				assert.argumentIsRequired(days, 'days', Number);
+				assert.argumentIsOptional(inverse, inverse, Boolean);
+				assert.argumentIsValid(days, 'days', is.large, 'is an integer');
+
+				var totalDaysToShift = void 0;
+
+				if (is.boolean(inverse) && inverse) {
+					totalDaysToShift = days * -1;
+				} else {
+					totalDaysToShift = days;
+				}
+
+				var positive = is.positive(totalDaysToShift);
+
+				var shiftedDay = this._day;
+				var shiftedMonth = this._month;
+				var shiftedYear = this._year;
+
+				while (totalDaysToShift !== 0) {
+					var monthDaysAvailable = void 0;
+					var monthDaysToShift = void 0;
+
+					if (positive) {
+						monthDaysAvailable = Day.getDaysInMonth(shiftedYear, shiftedMonth) - shiftedDay;
+						monthDaysToShift = Math.min(totalDaysToShift, monthDaysAvailable);
+					} else {
+						monthDaysAvailable = 1 - shiftedDay;
+						monthDaysToShift = Math.max(totalDaysToShift, monthDaysAvailable);
+					}
+
+					totalDaysToShift = totalDaysToShift - monthDaysToShift;
+
+					if (totalDaysToShift === 0) {
+						shiftedDay = shiftedDay + monthDaysToShift;
+					} else if (positive) {
+						shiftedMonth++;
+
+						if (shiftedMonth > 12) {
+							shiftedYear++;
+							shiftedMonth = 1;
+						}
+
+						shiftedDay = 0;
+					} else {
+						shiftedMonth--;
+
+						if (shiftedMonth < 1) {
+							shiftedYear--;
+							shiftedMonth = 12;
+						}
+
+						shiftedDay = Day.getDaysInMonth(shiftedYear, shiftedMonth) + 1;
+					}
+				}
+
+				return new Day(shiftedYear, shiftedMonth, shiftedDay);
+			}
+
+			/**
+    * Calculates a new {@link Day} in the past (or future).
+    *
+    * @public
+    * @param {Number} days - The number of days to subtract (negative numbers can be used for addition).
+    * @returns {Day}
+    */
+
+		}, {
+			key: 'subtractDays',
+			value: function subtractDays(days) {
+				return this.addDays(days, true);
+			}
+
+			/**
+    * Calculates a new {@link Day} in the future (or past). If the new date is at the end of
+    * the month and the new month has fewer days than the current month, days will be subtracted
+    * as necessary (e.g. adding one month to March 31 will return April 30).
+    *
+    * @public
+    * @param {Number} months - The number of months to add (negative numbers can be used for subtraction).
+    * @param {Boolean=} inverse - If true, the sign of the "days" value will be flipped.
+    * @returns {Day}
+    */
+
+		}, {
+			key: 'addMonths',
+			value: function addMonths(months, inverse) {
+				assert.argumentIsRequired(months, 'months', Number);
+				assert.argumentIsOptional(inverse, inverse, Boolean);
+				assert.argumentIsValid(months, 'months', is.large, 'is an integer');
+
+				var totalMonthsToShift = void 0;
+
+				if (is.boolean(inverse) && inverse) {
+					totalMonthsToShift = months * -1;
+				} else {
+					totalMonthsToShift = months;
+				}
+
+				var monthsToShift = totalMonthsToShift % 12;
+				var yearsToShift = (totalMonthsToShift - monthsToShift) / 12;
+
+				var shiftedYear = this.year + yearsToShift;
+				var shiftedMonth = this.month + monthsToShift;
+				var shiftedDay = this.day;
+
+				if (shiftedMonth > 12) {
+					shiftedYear = shiftedYear + 1;
+					shiftedMonth = shiftedMonth - 12;
+				}
+
+				if (shiftedMonth < 1) {
+					shiftedYear = shiftedYear - 1;
+					shiftedMonth = shiftedMonth + 12;
+				}
+
+				while (!Day.validate(shiftedYear, shiftedMonth, shiftedDay)) {
+					shiftedDay = shiftedDay - 1;
+				}
+
+				return new Day(shiftedYear, shiftedMonth, shiftedDay);
+			}
+
+			/**
+    * Calculates a new {@link Day} in the past (or future).
+    *
+    * @public
+    * @param {Number} months - The number of months to subtract (negative numbers can be used for addition).
+    * @returns {Day}
+    */
+
+		}, {
+			key: 'subtractMonths',
+			value: function subtractMonths(months) {
+				return this.addMonths(months, true);
+			}
+
+			/**
+    * Calculates a new {@link Day} in the future (or past). If the new date is at the end of
+    * the month and the new month has fewer days than the current month, days will be subtracted
+    * as necessary (e.g. adding one year to February 29 will return February 28).
+    *
+    * @public
+    * @param {Number} years - The number of years to add (negative numbers can be used for subtraction).
+    * @param {Boolean=} inverse - If true, the sign of the "days" value will be flipped.
+    * @returns {Day}
+    */
+
+		}, {
+			key: 'addYears',
+			value: function addYears(years, inverse) {
+				assert.argumentIsRequired(years, 'years', Number);
+				assert.argumentIsOptional(inverse, inverse, Boolean);
+				assert.argumentIsValid(years, 'years', is.large, 'is an integer');
+
+				var yearsToShift = void 0;
+
+				if (is.boolean(inverse) && inverse) {
+					yearsToShift = years * -1;
+				} else {
+					yearsToShift = years;
+				}
+
+				var shiftedYear = this.year + yearsToShift;
+				var shiftedMonth = this.month;
+				var shiftedDay = this.day;
+
+				while (!Day.validate(shiftedYear, shiftedMonth, shiftedDay)) {
+					shiftedDay = shiftedDay - 1;
+				}
+
+				return new Day(shiftedYear, shiftedMonth, shiftedDay);
+			}
+
+			/**
+    * Calculates a new {@link Day} in the past (or future).
+    *
+    * @public
+    * @param {Number} years - The number of years to subtract (negative numbers can be used for addition).
+    * @returns {Day}
+    */
+
+		}, {
+			key: 'subtractYears',
+			value: function subtractYears(years) {
+				return this.addYears(years, true);
+			}
+
+			/**
+    * Indicates if another {@link Day} occurs before the current instance.
+    *
+    * @public
+    * @param {Day} other
+    * @returns {boolean}
+    */
+
+		}, {
+			key: 'getIsBefore',
+			value: function getIsBefore(other) {
+				return Day.compareDays(this, other) < 0;
+			}
+
+			/**
+    * Indicates if another {@link Day} occurs after the current instance.
+    *
+    * @public
+    * @param {Day} other
+    * @returns {boolean}
+    */
+
+		}, {
+			key: 'getIsAfter',
+			value: function getIsAfter(other) {
+				return Day.compareDays(this, other) > 0;
+			}
+
+			/**
+    * Indicates the current day falls between two other days, inclusive
+    * of the range boundaries.
+    *
+    * @public
+    * @param {Day=} first
+    * @param {Day=} last
+    * @param {boolean=} exclusive
+    * @returns {boolean}
+    */
+
+		}, {
+			key: 'getIsContained',
+			value: function getIsContained(first, last) {
+				assert.argumentIsOptional(first, 'first', Day, 'Day');
+				assert.argumentIsOptional(last, 'last', Day, 'Day');
+
+				var notAfter = void 0;
+				var notBefore = void 0;
+
+				if (first && last && first.getIsAfter(last)) {
+					notBefore = false;
+					notAfter = false;
+				} else {
+					notAfter = !(last instanceof Day) || !this.getIsAfter(last);
+					notBefore = !(first instanceof Day) || !this.getIsBefore(first);
+				}
+
+				return notAfter && notBefore;
+			}
+
+			/**
+    * Indicates if another {@link Day} occurs after the current instance.
+    *
+    * @public
+    * @param {Day} other
+    * @returns {boolean}
+    */
+
+		}, {
+			key: 'getIsEqual',
+			value: function getIsEqual(other) {
+				return Day.compareDays(this, other) === 0;
+			}
+
+			/**
+    * The year.
+    *
+    * @public
+    * @returns {Number}
+    */
+
+		}, {
+			key: 'format',
+
+
+			/**
+    * Outputs the date as the formatted string: {year}-{month}-{day}.
+    *
+    * @public
+    * @returns {String}
+    */
+			value: function format() {
+				return this._year + '-' + leftPad(this._month) + '-' + leftPad(this._day);
+			}
+
+			/**
+    * Returns the JSON representation.
+    *
+    * @public
+    * @returns {String}
+    */
+
+		}, {
+			key: 'toJSON',
+			value: function toJSON() {
+				return this.format();
+			}
+
+			/**
+    * Converts a string (which matches the output of {@link Day#format} into
+    * a {@link Day} instance.
+    *
+    * @public
+    * @static
+    * @param {String} value
+    * @returns {Day}
+    */
+
+		}, {
+			key: 'toString',
+			value: function toString() {
+				return '[Day]';
+			}
+		}, {
+			key: 'year',
+			get: function get() {
+				return this._year;
+			}
+
+			/**
+    * The month of the year (January is one, December is twelve).
+    *
+    * @public
+    * @returns {Number}
+    */
+
+		}, {
+			key: 'month',
+			get: function get() {
+				return this._month;
+			}
+
+			/**
+    * The day of the month.
+    *
+    * @public
+    * @returns {Number}
+    */
+
+		}, {
+			key: 'day',
+			get: function get() {
+				return this._day;
+			}
+		}], [{
+			key: 'parse',
+			value: function parse(value) {
+				assert.argumentIsRequired(value, 'value', String);
+
+				var match = value.match(dayRegex);
+
+				if (match === null) {
+					throw new Error('Unable to parse value as Day [ ' + value + ' ]');
+				}
+
+				return new Day(parseInt(match[1]), parseInt(match[2]), parseInt(match[3]));
+			}
+
+			/**
+    * Creates a {@link Day} from the year, month, and day properties (in local time)
+    * of the {@link Date} argument.
+    *
+    * @public
+    * @static
+    * @param {Date} date
+    * @returns {Day}
+    */
+
+		}, {
+			key: 'fromDate',
+			value: function fromDate(date) {
+				assert.argumentIsRequired(date, 'date', Date);
+
+				return new Day(date.getFullYear(), date.getMonth() + 1, date.getDate());
+			}
+
+			/**
+    * Creates a {@link Day} from the year, month, and day properties (in UTC)
+    * of the {@link Date} argument.
+    *
+    * @public
+    * @static
+    * @param {Date} date
+    * @returns {Day}
+    */
+
+		}, {
+			key: 'fromDateUtc',
+			value: function fromDateUtc(date) {
+				assert.argumentIsRequired(date, 'date', Date);
+
+				return new Day(date.getUTCFullYear(), date.getUTCMonth() + 1, date.getUTCDate());
+			}
+
+			/**
+    * Returns a {@link Day} instance using today's local date.
+    *
+    * @static
+    * @public
+    * @returns {Day}
+    */
+
+		}, {
+			key: 'getToday',
+			value: function getToday() {
+				return Day.fromDate(new Date());
+			}
+
+			/**
+    * Returns true if the year, month, and day combination is valid; otherwise false.
+    *
+    * @public
+    * @static
+    * @param {Number} year
+    * @param {Number} month
+    * @param {Number} day
+    * @returns {Boolean}
+    */
+
+		}, {
+			key: 'validate',
+			value: function validate(year, month, day) {
+				return is.integer(year) && is.integer(month) && is.integer(day) && !(month < 1) && !(month > 12) && !(day < 1) && !(day > Day.getDaysInMonth(year, month));
+			}
+
+			/**
+    * Returns the number of days in a given month.
+    *
+    * @public
+    * @static
+    * @param {number} year - The year number (e.g. 2017)
+    * @param {number} month - The month number (e.g. 2 is February)
+    */
+
+		}, {
+			key: 'getDaysInMonth',
+			value: function getDaysInMonth(year, month) {
+				switch (month) {
+					case 1:
+					case 3:
+					case 5:
+					case 7:
+					case 8:
+					case 10:
+					case 12:
+						{
+							return 31;
+						}
+					case 4:
+					case 6:
+					case 9:
+					case 11:
+						{
+							return 30;
+						}
+					case 2:
+						{
+							if (year % 4 === 0 && year % 100 !== 0 || year % 400 === 0) {
+								return 29;
+							} else {
+								return 28;
+							}
+						}
+				}
+			}
+
+			/**
+    * A comparator function for {@link Day} instances.
+    *
+    * @public
+    * @static
+    * @param {Day} a
+    * @param {Day} b
+    * @returns {Number}
+    */
+
+		}, {
+			key: 'compareDays',
+			value: function compareDays(a, b) {
+				assert.argumentIsRequired(a, 'a', Day, 'Day');
+				assert.argumentIsRequired(b, 'b', Day, 'Day');
+
+				return comparator(a, b);
+			}
+		}]);
+
+		return Day;
+	}();
+
+	var dayRegex = /^([0-9]{4}).?([0-9]{2}).?([0-9]{2})$/;
+
+	function leftPad(value) {
+		return value < 10 ? '0' + value : '' + value;
+	}
+
+	var comparator = ComparatorBuilder.startWith(function (a, b) {
+		return comparators.compareNumbers(a.year, b.year);
+	}).thenBy(function (a, b) {
+		return comparators.compareNumbers(a.month, b.month);
+	}).thenBy(function (a, b) {
+		return comparators.compareNumbers(a.day, b.day);
+	}).toComparator();
+
+	return Day;
+}();
+
+},{"./../collections/sorting/ComparatorBuilder":15,"./../collections/sorting/comparators":16,"./assert":26,"./is":30}],20:[function(require,module,exports){
+'use strict';
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+var assert = require('./assert'),
+    Enum = require('./Enum'),
+    is = require('./is');
+
+var Big = require('big.js');
+
+module.exports = function () {
+	'use strict';
+
+	/**
+  * An immutable object that allows for arbitrary-precision calculations.
+  *
+  * @public
+  * @param {Decimal|Number|String} value - The value.
+  */
+
+	var Decimal = function () {
+		function Decimal(value) {
+			_classCallCheck(this, Decimal);
+
+			this._big = getBig(value);
+		}
+
+		/**
+   * Returns a new {@link Decimal} instance that is the sum of the
+   * current instance's value and the value supplied.
+   *
+   * @public
+   * @param {Decimal|Number|String} other - The value to add.
+   * @returns {Decimal}
+   */
+
+
+		_createClass(Decimal, [{
+			key: 'add',
+			value: function add(other) {
+				return new Decimal(this._big.plus(getBig(other)));
+			}
+
+			/**
+    * Returns a new {@link Decimal} instance with a value that results
+    * from the subtraction of the value supplied from the current instance's
+    * value.
+    *
+    * @public
+    * @param {Decimal|Number|String} other - The value to subtract.
+    * @returns {Decimal}
+    */
+
+		}, {
+			key: 'subtract',
+			value: function subtract(other) {
+				return new Decimal(this._big.minus(getBig(other)));
+			}
+
+			/**
+    * Returns a new {@link Decimal} instance that is the product of the
+    * current instance's value and the value supplied.
+    *
+    * @public
+    * @param {Decimal|Number|String} other - The value to add.
+    * @returns {Decimal}
+    */
+
+		}, {
+			key: 'multiply',
+			value: function multiply(other) {
+				return new Decimal(this._big.times(getBig(other)));
+			}
+
+			/**
+    * Returns a new {@link Decimal} instance with a value that results
+    * from the division of the current instance's value by the value
+    * supplied.
+    *
+    * @public
+    * @param {Decimal|Number|String} other - The value to subtract.
+    * @returns {Decimal}
+    */
+
+		}, {
+			key: 'divide',
+			value: function divide(other) {
+				return new Decimal(this._big.div(getBig(other)));
+			}
+
+			/**
+    * Returns a new {@link Decimal} with a value resulting from a rounding
+    * operation on the current value.
+    *
+    * @public
+    * @param {Number} places - The number of decimal places to retain.
+    * @param {RoundingMode=} mode - The strategy to use for rounding.
+    * @returns {Decimal}
+    */
+
+		}, {
+			key: 'round',
+			value: function round(places, mode) {
+				assert.argumentIsRequired(places, 'places', Number);
+				assert.argumentIsOptional(mode, 'mode', RoundingMode, 'RoundingMode');
+
+				var modeToUse = mode || RoundingMode.NORMAL;
+
+				return new Decimal(this._big.round(places, modeToUse.value));
+			}
+
+			/**
+    * Returns a new {@link Decimal} instance having the absolute value of
+    * the current instance's value.
+    *
+    * @public
+    * @returns {Decimal}
+    */
+
+		}, {
+			key: 'absolute',
+			value: function absolute() {
+				return new Decimal(this._big.abs());
+			}
+
+			/**
+    * Returns a new {@link Decimal} instance the opposite sign as the
+    * current instance's value.
+    *
+    * @public
+    * @returns {Decimal}
+    */
+
+		}, {
+			key: 'opposite',
+			value: function opposite() {
+				return this.multiply(-1);
+			}
+
+			/**
+    * Returns a Boolean value, indicating if the current instance's value is
+    * equal to zero (or approximately equal to zero).
+    *
+    * @public
+    * @param {Boolean=} approximate
+    * @returns {Boolean}
+    */
+
+		}, {
+			key: 'getIsZero',
+			value: function getIsZero(approximate) {
+				assert.argumentIsOptional(approximate, 'approximate', Boolean);
+
+				return this._big.eq(zero) || is.boolean(approximate) && approximate && this.round(20, RoundingMode.NORMAL).getIsZero();
+			}
+
+			/**
+    * Returns true if the current instance is positive; otherwise false.
+    *
+    * @public
+    * @returns {Boolean}
+    */
+
+		}, {
+			key: 'getIsPositive',
+			value: function getIsPositive() {
+				return this._big.gt(zero);
+			}
+
+			/**
+    * Returns true if the current instance is negative; otherwise false.
+    *
+    * @public
+    * @returns {Boolean}
+    */
+
+		}, {
+			key: 'getIsNegative',
+			value: function getIsNegative() {
+				return this._big.lt(zero);
+			}
+
+			/**
+    * Returns true if the current instance is greater than the value.
+    *
+    * @public
+    * @param {Decimal|Number|String} other - The value to compare.
+    * @returns {Boolean}
+    */
+
+		}, {
+			key: 'getIsGreaterThan',
+			value: function getIsGreaterThan(other) {
+				return this._big.gt(getBig(other));
+			}
+
+			/**
+    * Returns true if the current instance is greater than or equal to the value.
+    *
+    * @public
+    * @param {Decimal|Number|String} other - The value to compare.
+    * @returns {Boolean}
+    */
+
+		}, {
+			key: 'getIsGreaterThanOrEqual',
+			value: function getIsGreaterThanOrEqual(other) {
+				return this._big.gte(getBig(other));
+			}
+
+			/**
+    * Returns true if the current instance is less than the value.
+    *
+    * @public
+    * @param {Decimal|Number|String} other - The value to compare.
+    * @returns {Boolean}
+    */
+
+		}, {
+			key: 'getIsLessThan',
+			value: function getIsLessThan(other) {
+				return this._big.lt(getBig(other));
+			}
+
+			/**
+    * Returns true if the current instance is less than or equal to the value.
+    *
+    * @public
+    * @param {Decimal|Number|String} other - The value to compare.
+    * @returns {Boolean}
+    */
+
+		}, {
+			key: 'getIsLessThanOrEqual',
+			value: function getIsLessThanOrEqual(other) {
+				return this._big.lte(getBig(other));
+			}
+
+			/**
+    * Returns true if the current instance is equal to the value.
+    *
+    * @public
+    * @param {Decimal|Number|String} other - The value to compare.
+    * @returns {Boolean}
+    */
+
+		}, {
+			key: 'getIsEqual',
+			value: function getIsEqual(other) {
+				return this._big.eq(getBig(other));
+			}
+
+			/**
+    * Emits a floating point value that approximates the value of the current
+    * instance.
+    *
+    * @public
+    * @param {Number=} places
+    * @returns {Number}
+    */
+
+		}, {
+			key: 'toFloat',
+			value: function toFloat(places) {
+				assert.argumentIsOptional(places, 'places', Number);
+
+				// Accepting places might be a mistake here; perhaps
+				// the consumer should be forced to use the round
+				// function.
+
+				return parseFloat(this._big.toFixed(places || 16));
+			}
+
+			/**
+    * Returns a string-based representation of the instance's value.
+    *
+    * @public
+    * @returns {String}
+    */
+
+		}, {
+			key: 'toFixed',
+			value: function toFixed() {
+				return this._big.toFixed();
+			}
+
+			/**
+    * Returns the JSON representation.
+    *
+    * @public
+    * @returns {String}
+    */
+
+		}, {
+			key: 'toJSON',
+			value: function toJSON() {
+				return this.toFixed();
+			}
+
+			/**
+    * Parses the value emitted by {@link Decimal#toJSON}.
+    *
+    * @public
+    * @param {String} value
+    * @returns {Decimal}
+    */
+
+		}, {
+			key: 'toString',
+			value: function toString() {
+				return '[Decimal]';
+			}
+		}], [{
+			key: 'parse',
+			value: function parse(value) {
+				return new Decimal(value);
+			}
+
+			/**
+    * Returns an instance with the value of zero.
+    *
+    * @public
+    * @returns {Decimal}
+    */
+
+		}, {
+			key: 'getIsZero',
+
+
+			/**
+    * Runs {@link Decimal#getIsZero} and returns the result.
+    *
+    * @public
+    * @param {Decimal} instance
+    * @returns {Boolean}
+    */
+			value: function getIsZero(instance) {
+				assert.argumentIsRequired(instance, 'instance', Decimal, 'Decimal');
+
+				return instance.getIsZero();
+			}
+
+			/**
+    * Runs {@link Decimal#getIsZero} and returns the inverse.
+    *
+    * @public
+    * @param {Decimal} instance
+    * @returns {Boolean}
+    */
+
+		}, {
+			key: 'getIsNotZero',
+			value: function getIsNotZero(instance) {
+				assert.argumentIsRequired(instance, 'instance', Decimal, 'Decimal');
+
+				return !instance.getIsZero();
+			}
+
+			/**
+    * Runs {@link Decimal#getIsPositive} and returns the result.
+    *
+    * @public
+    * @param {Decimal} instance
+    * @returns {Boolean}
+    */
+
+		}, {
+			key: 'getIsPositive',
+			value: function getIsPositive(instance) {
+				assert.argumentIsRequired(instance, 'instance', Decimal, 'Decimal');
+
+				return instance.getIsPositive();
+			}
+
+			/**
+    * Checks an instance to see if its negative or zero.
+    *
+    * @public
+    * @param {Decimal} instance
+    * @returns {Boolean}
+    */
+
+		}, {
+			key: 'getIsNotPositive',
+			value: function getIsNotPositive(instance) {
+				assert.argumentIsRequired(instance, 'instance', Decimal, 'Decimal');
+
+				return instance.getIsNegative() || instance.getIsZero();
+			}
+
+			/**
+    * Runs {@link Decimal#getIsNegative} and returns the result.
+    *
+    * @public
+    * @param {Decimal} instance
+    * @returns {Boolean}
+    */
+
+		}, {
+			key: 'getIsNegative',
+			value: function getIsNegative(instance) {
+				assert.argumentIsRequired(instance, 'instance', Decimal, 'Decimal');
+
+				return instance.getIsNegative();
+			}
+
+			/**
+    * Checks an instance to see if its positive or zero.
+    *
+    * @public
+    * @param {Decimal} instance
+    * @returns {Boolean}
+    */
+
+		}, {
+			key: 'getIsNotNegative',
+			value: function getIsNotNegative(instance) {
+				assert.argumentIsRequired(instance, 'instance', Decimal, 'Decimal');
+
+				return instance.getIsPositive() || instance.getIsZero();
+			}
+
+			/**
+    * A comparator function for {@link Decimal} instances.
+    *
+    * @public
+    * @param {Decimal} a
+    * @param {Decimal} b
+    * @returns {Number}
+    */
+
+		}, {
+			key: 'compareDecimals',
+			value: function compareDecimals(a, b) {
+				assert.argumentIsRequired(a, 'a', Decimal, 'Decimal');
+				assert.argumentIsRequired(b, 'b', Decimal, 'Decimal');
+
+				if (a._big.gt(b._big)) {
+					return 1;
+				} else if (a._big.lt(b._big)) {
+					return -1;
+				} else {
+					return 0;
+				}
+			}
+		}, {
+			key: 'ZERO',
+			get: function get() {
+				return decimalZero;
+			}
+
+			/**
+    * Returns an instance with the value of one.
+    *
+    * @public
+    * @returns {Decimal}
+    */
+
+		}, {
+			key: 'ONE',
+			get: function get() {
+				return decimalOne;
+			}
+
+			/**
+    * Returns an instance with the value of one.
+    *
+    * @public
+    * @returns {Decimal}
+    */
+
+		}, {
+			key: 'NEGATIVE_ONE',
+			get: function get() {
+				return decimalNegativeOne;
+			}
+
+			/**
+    * Return the {@link RoundingMode} enumeration.
+    *
+    * @public
+    * @returns {RoundingMode}
+    */
+
+		}, {
+			key: 'ROUNDING_MODE',
+			get: function get() {
+				return RoundingMode;
+			}
+		}]);
+
+		return Decimal;
+	}();
+
+	var zero = new Big(0);
+	var positiveOne = new Big(1);
+	var negativeOne = new Big(-1);
+
+	var decimalZero = new Decimal(zero);
+	var decimalOne = new Decimal(positiveOne);
+	var decimalNegativeOne = new Decimal(negativeOne);
+
+	function getBig(value) {
+		if (value instanceof Big) {
+			return value;
+		} else if (value instanceof Decimal) {
+			return value._big;
+		} else {
+			return new Big(value);
+		}
+	}
+
+	/**
+  * An enumeration of strategies for rouding a {@link Decimal} instance.
+  *
+  * @public
+  * @inner
+  * @extends {Enum}
+  */
+
+	var RoundingMode = function (_Enum) {
+		_inherits(RoundingMode, _Enum);
+
+		function RoundingMode(value, description) {
+			_classCallCheck(this, RoundingMode);
+
+			var _this = _possibleConstructorReturn(this, (RoundingMode.__proto__ || Object.getPrototypeOf(RoundingMode)).call(this, value.toString(), description));
+
+			_this._value = value;
+			return _this;
+		}
+
+		/**
+   * The code used by the Big.js library.
+   *
+   * @ignore
+   * @returns {Number}
+   */
+
+
+		_createClass(RoundingMode, [{
+			key: 'toString',
+			value: function toString() {
+				return '[RoundingMode]';
+			}
+		}, {
+			key: 'value',
+			get: function get() {
+				return this._value;
+			}
+
+			/**
+    * Rounds away from zero.
+    *
+    * @public
+    * @returns {RoundingMode}
+    */
+
+		}], [{
+			key: 'UP',
+			get: function get() {
+				return up;
+			}
+
+			/**
+    * Rounds towards zero.
+    *
+    * @public
+    * @returns {RoundingMode}
+    */
+
+		}, {
+			key: 'DOWN',
+			get: function get() {
+				return down;
+			}
+
+			/**
+    * Rounds towards nearest neighbor. If equidistant, rounds away from zero.
+    *
+    * @public
+    * @returns {RoundingMode}
+    */
+
+		}, {
+			key: 'NORMAL',
+			get: function get() {
+				return normal;
+			}
+		}]);
+
+		return RoundingMode;
+	}(Enum);
+
+	var up = new RoundingMode(3, 'up');
+	var down = new RoundingMode(0, 'down');
+	var normal = new RoundingMode(1, 'normal');
+
+	return Decimal;
+}();
+
+},{"./Enum":22,"./assert":26,"./is":30,"big.js":86}],21:[function(require,module,exports){
+'use strict';
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+var assert = require('./assert');
+
+module.exports = function () {
+	'use strict';
+
+	/**
+  * An object that has an end-of-life process.
+  *
+  * @public
+  * @interface
+  */
+
+	var Disposable = function () {
+		function Disposable() {
+			_classCallCheck(this, Disposable);
+
+			this._disposed = false;
+		}
+
+		/**
+   * Invokes end-of-life logic. Once this function has been
+   * invoked, further interaction with the object is not
+   * recommended.
+   *
+   * @public
+   */
+
+
+		_createClass(Disposable, [{
+			key: 'dispose',
+			value: function dispose() {
+				if (this._disposed) {
+					return;
+				}
+
+				this._disposed = true;
+
+				this._onDispose();
+			}
+
+			/**
+    * @protected
+    * @abstract
+    * @ignore
+    */
+
+		}, {
+			key: '_onDispose',
+			value: function _onDispose() {
+				return;
+			}
+
+			/**
+    * Returns true if the {@link Disposable#dispose} function has been invoked.
+    *
+    * @public
+    * @returns {boolean}
+    */
+
+		}, {
+			key: 'getIsDisposed',
+			value: function getIsDisposed() {
+				return this._disposed || false;
+			}
+		}, {
+			key: 'toString',
+			value: function toString() {
+				return '[Disposable]';
+			}
+
+			/**
+    * Creates and returns a {@link Disposable} object with end-of-life logic
+    * delegated to a function.
+    *
+    * @public
+    * @param disposeAction {Function}
+    * @returns {Disposable}
+    */
+
+		}], [{
+			key: 'fromAction',
+			value: function fromAction(disposeAction) {
+				assert.argumentIsRequired(disposeAction, 'disposeAction', Function);
+
+				return new DisposableAction(disposeAction);
+			}
+
+			/**
+    * Creates and returns a {@link Disposable} object whose end-of-life
+    * logic does nothing.
+    *
+    * @public
+    * @returns {Disposable}
+    */
+
+		}, {
+			key: 'getEmpty',
+			value: function getEmpty() {
+				return Disposable.fromAction(function () {
+					return;
+				});
+			}
+		}]);
+
+		return Disposable;
+	}();
+
+	var DisposableAction = function (_Disposable) {
+		_inherits(DisposableAction, _Disposable);
+
+		function DisposableAction(disposeAction) {
+			_classCallCheck(this, DisposableAction);
+
+			var _this = _possibleConstructorReturn(this, (DisposableAction.__proto__ || Object.getPrototypeOf(DisposableAction)).call(this, disposeAction));
+
+			_this._disposeAction = disposeAction;
+			return _this;
+		}
+
+		_createClass(DisposableAction, [{
+			key: '_onDispose',
+			value: function _onDispose() {
+				this._disposeAction();
+				this._disposeAction = null;
+			}
+		}, {
+			key: 'toString',
+			value: function toString() {
+				return '[DisposableAction]';
+			}
+		}]);
+
+		return DisposableAction;
+	}(Disposable);
+
+	return Disposable;
+}();
+
+},{"./assert":26}],22:[function(require,module,exports){
+'use strict';
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+var assert = require('./assert');
+
+module.exports = function () {
+	'use strict';
+
+	var types = new Map();
+
+	/**
+  * An enumeration. Must be inherited. Do not instantiate directly.
+  * Also, this class uses the ES6 Map, therefore a polyfill must
+  * be supplied.
+  *
+  * @public
+  * @interface
+  * @param {String} code - The unique code of the enumeration item.
+  * @param {String} description - A description of the enumeration item.
+  */
+
+	var Enum = function () {
+		function Enum(code, description) {
+			_classCallCheck(this, Enum);
+
+			assert.argumentIsRequired(code, 'code', String);
+			assert.argumentIsRequired(description, 'description', String);
+
+			this._code = code;
+			this._description = description;
+
+			var c = this.constructor;
+
+			if (!types.has(c)) {
+				types.set(c, []);
+			}
+
+			var existing = Enum.fromCode(c, code);
+
+			if (existing === null) {
+				types.get(c).push(this);
+			}
+		}
+
+		/**
+   * The unique code.
+   *
+   * @returns {String}
+   */
+
+
+		_createClass(Enum, [{
+			key: 'equals',
+
+
+			/**
+    * Returns true if the provided {@link Enum} argument is equal
+    * to the instance.
+    *
+    * @param {Enum} other
+    * @returns {boolean}
+    */
+			value: function equals(other) {
+				return other === this || other instanceof Enum && other.constructor === this.constructor && other.code === this.code;
+			}
+
+			/**
+    * Returns the JSON representation.
+    *
+    * @public
+    * @returns {String}
+    */
+
+		}, {
+			key: 'toJSON',
+			value: function toJSON() {
+				return this.code;
+			}
+
+			/**
+    * Looks up a enumeration item; given the enumeration type and the enumeration
+    * item's value. If no matching item can be found, a null value is returned.
+    *
+    * @param {Function} type - The enumeration type.
+    * @param {String} code - The enumeration item's code.
+    * @returns {*|null}
+    */
+
+		}, {
+			key: 'toString',
+			value: function toString() {
+				return '[Enum]';
+			}
+		}, {
+			key: 'code',
+			get: function get() {
+				return this._code;
+			}
+
+			/**
+    * The description.
+    *
+    * @returns {String}
+    */
+
+		}, {
+			key: 'description',
+			get: function get() {
+				return this._description;
+			}
+		}], [{
+			key: 'fromCode',
+			value: function fromCode(type, code) {
+				return Enum.getItems(type).find(function (x) {
+					return x.code === code;
+				}) || null;
+			}
+
+			/**
+    * Returns all of the enumeration's items (given an enumeration type).
+    *
+    * @param {Function} type - The enumeration to list.
+    * @returns {Array}
+    */
+
+		}, {
+			key: 'getItems',
+			value: function getItems(type) {
+				return types.get(type) || [];
+			}
+		}]);
+
+		return Enum;
+	}();
+
+	return Enum;
+}();
+
+},{"./assert":26}],23:[function(require,module,exports){
+'use strict';
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+var assert = require('./assert'),
+    is = require('./is');
+
+var Decimal = require('./Decimal'),
+    Currency = require('./Currency');
+
+module.exports = function () {
+	'use strict';
+
+	/**
+  * A structure for storing money amounts.
+  *
+  * @public
+  * @param {Decimal|Number|String} - A amount, which can be parsed as a {@link Decimal}
+  * @param {Currency} - The currency.
+  */
+
+	var Money = function () {
+		function Money(value, currency) {
+			_classCallCheck(this, Money);
+
+			assert.argumentIsRequired(currency, 'currency', Currency, 'Currency');
+
+			this._decimal = getDecimal(value);
+			this._currency = currency;
+		}
+
+		/**
+   * The currency amount.
+   *
+   * @public
+   * @returns {Decimal}
+   */
+
+
+		_createClass(Money, [{
+			key: 'toAmount',
+			value: function toAmount(places, mode) {
+				return new Money(this._decimal.round(getPlaces(places), mode), this._currency);
+			}
+
+			/**
+    * Returns the JSON representation.
+    *
+    * @public
+    * @returns {Object}
+    */
+
+		}, {
+			key: 'toJSON',
+			value: function toJSON() {
+				return {
+					decimal: this._decimal,
+					currency: this._currency
+				};
+			}
+			/**
+    * Parses the value emitted by {@link Decimal#toJSON}.
+    *
+    * @public
+    * @param {Object} value
+    * @returns {Money}
+    */
+
+		}, {
+			key: 'toString',
+			value: function toString() {
+				return '[Money]';
+			}
+		}, {
+			key: 'decimal',
+			get: function get() {
+				return this._decimal;
+			}
+
+			/**
+    * The currency.
+    *
+    * @public
+    * @returns {Currency}
+    */
+
+		}, {
+			key: 'currency',
+			get: function get() {
+				return this._currency;
+			}
+		}], [{
+			key: 'parse',
+			value: function parse(value) {
+				return new Money(value.decimal, value.currency);
+			}
+		}]);
+
+		return Money;
+	}();
+
+	function getDecimal(value) {
+		if (value instanceof Decimal) {
+			return value;
+		} else {
+			return new Decimal(value);
+		}
+	}
+
+	function getPlaces(value) {
+		if (is.integer(value) && !(value < 0)) {
+			return value;
+		} else {
+			return 2;
+		}
+	}
+
+	return Money;
+}();
+
+},{"./Currency":18,"./Decimal":20,"./assert":26,"./is":30}],24:[function(require,module,exports){
+'use strict';
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+var assert = require('./assert'),
+    is = require('./is');
+
+var moment = require('moment-timezone');
+
+module.exports = function () {
+	'use strict';
+
+	/**
+  * A data structure encapsulates (and lazy loads) a moment (see https://momentjs.com/).
+  *
+  * @public
+  * @param {Number} timestamp
+  * @param {String=} timezone
+  */
+
+	var Timestamp = function () {
+		function Timestamp(timestamp, timezone) {
+			_classCallCheck(this, Timestamp);
+
+			assert.argumentIsValid(timestamp, 'timestamp', is.large, 'is an integer');
+			assert.argumentIsOptional(timezone, 'timezone', String);
+
+			this._timestamp = timestamp;
+			this._timezone = timezone || null;
+
+			this._moment = null;
+		}
+
+		/**
+   * The timestamp.
+   *
+   * @public
+   * @returns {Number}
+   */
+
+
+		_createClass(Timestamp, [{
+			key: 'toJSON',
+
+
+			/**
+    * Returns the JSON representation.
+    *
+    * @public
+    * @returns {Number}
+    */
+			value: function toJSON() {
+				return this.timestamp;
+			}
+
+			/**
+    * Parses the value emitted by {@link Timestamp#toJSON}.
+    *
+    * @public
+    * @param {String} value
+    * @returns {Timestamp}
+    */
+
+		}, {
+			key: 'toString',
+			value: function toString() {
+				return '[Timestamp]';
+			}
+		}, {
+			key: 'timestamp',
+			get: function get() {
+				return this._timestamp;
+			}
+
+			/**
+    * The moment instance.
+    *
+    * @public
+    * @returns {moment}
+    */
+
+		}, {
+			key: 'moment',
+			get: function get() {
+				if (this._moment === null) {
+					this._moment = moment(this._timestamp);
+
+					if (this._timezone !== null) {
+						this.moment.tz(this._timezone);
+					}
+				}
+
+				return this._moment;
+			}
+		}], [{
+			key: 'parse',
+			value: function parse(value) {
+				return new Timestamp(value);
+			}
+
+			/**
+    * Returns a new {@link Timestamp} instance, representing the current moment.
+    *
+    * @public
+    * @returns {Timestamp}
+    */
+
+		}, {
+			key: 'now',
+			value: function now() {
+				return new Timestamp(new Date().getTime());
+			}
+		}]);
+
+		return Timestamp;
+	}();
+
+	return Timestamp;
+}();
+
+},{"./assert":26,"./is":30,"moment-timezone":122}],25:[function(require,module,exports){
+'use strict';
+
+var assert = require('./assert'),
+    is = require('./is');
+
+module.exports = function () {
+	'use strict';
+
+	/**
+  * Utilities for working with arrays.
+  *
+  * @public
+  * @module lang/array
+  */
+
+	return {
+		/**
+   * Returns the unique items from an array, where the unique
+   * key is determined via a strict equality check.
+   *
+   * @static
+   * @param {Array} a
+   * @returns {Array}
+   */
+		unique: function unique(a) {
+			assert.argumentIsArray(a, 'a');
+
+			return this.uniqueBy(a, function (item) {
+				return item;
+			});
+		},
+
+
+		/**
+   * Returns the unique items from an array, where the unique
+   * key is determined by a delegate.
+   *
+   * @static
+   * @param {Array} a
+   * @param {Function} keySelector - A function that returns a unique key for an item.
+   * @returns {Array}
+   */
+		uniqueBy: function uniqueBy(a, keySelector) {
+			assert.argumentIsArray(a, 'a');
+
+			return a.filter(function (item, index, array) {
+				var key = keySelector(item);
+
+				return array.findIndex(function (candidate) {
+					return key === keySelector(candidate);
+				}) === index;
+			});
+		},
+
+
+		/**
+   * Splits array into groups and returns an object (where the properties have
+   * arrays). Unlike the indexBy function, there can be many items which share
+   * the same key.
+   *
+   * @static
+   * @param {Array} a
+   * @param {Function} keySelector - A function that returns a unique key for an item.
+   * @returns {Object}
+   */
+		groupBy: function groupBy(a, keySelector) {
+			assert.argumentIsArray(a, 'a');
+			assert.argumentIsRequired(keySelector, 'keySelector', Function);
+
+			return a.reduce(function (groups, item) {
+				var key = keySelector(item);
+
+				if (!groups.hasOwnProperty(key)) {
+					groups[key] = [];
+				}
+
+				groups[key].push(item);
+
+				return groups;
+			}, {});
+		},
+
+
+		/**
+   * Splits array into groups and returns an array of arrays where the items of each
+   * nested array share a common key.
+   *
+   * @static
+   * @param {Array} a
+   * @param {Function} keySelector - A function that returns a unique key for an item.
+   * @returns {Array}
+   */
+		batchBy: function batchBy(a, keySelector) {
+			assert.argumentIsArray(a, 'a');
+			assert.argumentIsRequired(keySelector, 'keySelector', Function);
+
+			var currentKey = null;
+			var currentBatch = null;
+
+			return a.reduce(function (batches, item) {
+				var key = keySelector(item);
+
+				if (currentBatch === null || currentKey !== key) {
+					currentKey = key;
+
+					currentBatch = [];
+					batches.push(currentBatch);
+				}
+
+				currentBatch.push(item);
+
+				return batches;
+			}, []);
+		},
+
+
+		/**
+   * Splits array into groups and returns an object (where the properties are items from the
+   * original array). Unlike the groupBy, only one item can have a given key value.
+   *
+   * @static
+   * @param {Array} a
+   * @param {Function} keySelector - A function that returns a unique key for an item.
+   * @returns {Object}
+   */
+		indexBy: function indexBy(a, keySelector) {
+			assert.argumentIsArray(a, 'a');
+			assert.argumentIsRequired(keySelector, 'keySelector', Function);
+
+			return a.reduce(function (map, item) {
+				var key = keySelector(item);
+
+				if (map.hasOwnProperty(key)) {
+					throw new Error('Unable to index array. A duplicate key exists.');
+				}
+
+				map[key] = item;
+
+				return map;
+			}, {});
+		},
+
+
+		/**
+   * Returns a new array containing all but the first item.
+   *
+   * @static
+   * @param {Array} a
+   * @returns {Array}
+   */
+		dropLeft: function dropLeft(a) {
+			assert.argumentIsArray(a, 'a');
+
+			var returnRef = Array.from(a);
+
+			if (returnRef.length !== 0) {
+				returnRef.shift();
+			}
+
+			return returnRef;
+		},
+
+
+		/**
+   * Returns a new array containing all but the last item.
+   *
+   * @static
+   * @param {Array} a
+   * @returns {Array}
+   */
+		dropRight: function dropRight(a) {
+			assert.argumentIsArray(a, 'a');
+
+			var returnRef = Array.from(a);
+
+			if (returnRef.length !== 0) {
+				returnRef.pop();
+			}
+
+			return returnRef;
+		},
+
+
+		/**
+   * Returns the first item from an array, or an undefined value, if the
+   * array is empty.
+   *
+   * @static
+   * @param {Array} a
+   * @returns {*|undefined}
+   */
+		first: function first(a) {
+			assert.argumentIsArray(a, 'a');
+
+			var returnRef = void 0;
+
+			if (a.length !== 0) {
+				returnRef = a[0];
+			} else {
+				returnRef = undefined;
+			}
+
+			return returnRef;
+		},
+
+
+		/**
+   * Returns the last item from an array, or an undefined value, if the
+   * array is empty.
+   *
+   * @static
+   * @param {Array} a
+   * @returns {*|undefined}
+   */
+		last: function last(a) {
+			assert.argumentIsArray(a, 'a');
+
+			var returnRef = void 0;
+
+			if (a.length !== 0) {
+				returnRef = a[a.length - 1];
+			} else {
+				returnRef = undefined;
+			}
+
+			return returnRef;
+		},
+
+
+		/**
+   * Returns a copy of an array, replacing any item that is itself an array
+   * with the item's items.
+   *
+   * @static
+   * @param {Array} a
+   * @param {Boolean=} recursive - If true, all nested arrays will be flattened.
+   * @returns {Array}
+   */
+		flatten: function flatten(a, recursive) {
+			assert.argumentIsArray(a, 'a');
+			assert.argumentIsOptional(recursive, 'recursive', Boolean);
+
+			var empty = [];
+
+			var flat = empty.concat.apply(empty, a);
+
+			if (recursive && flat.some(function (x) {
+				return is.array(x);
+			})) {
+				flat = this.flatten(flat, true);
+			}
+
+			return flat;
+		},
+
+
+		/**
+   * Breaks an array into smaller arrays, returning an array of arrays.
+   *
+   * @static
+   * @param {Array} a
+   * @param {Number} size - The maximum number of items per partition.
+   * @param {Array<Array>}
+   */
+		partition: function partition(a, size) {
+			assert.argumentIsArray(a, 'a');
+			assert.argumentIsOptional(size, 'size', Number);
+
+			var copy = a.slice(0);
+			var partitions = [];
+
+			while (copy.length !== 0) {
+				partitions.push(copy.splice(0, size));
+			}
+
+			return partitions;
+		},
+
+
+		/**
+   * Set difference operation (using strict equality).
+   *
+   * @static
+   * @param {Array} a
+   * @param {Array} b
+   * @returns {Array}
+   */
+		difference: function difference(a, b) {
+			return this.differenceBy(a, b, function (item) {
+				return item;
+			});
+		},
+
+
+		/**
+   * Set difference operation, where the uniqueness is determined by a delegate.
+   *
+   * @static
+   * @param {Array} a
+   * @param {Array} b
+   * @param {Function} keySelector - A function that returns a unique key for an item.
+   * @returns {Array}
+   */
+		differenceBy: function differenceBy(a, b, keySelector) {
+			assert.argumentIsArray(a, 'a');
+			assert.argumentIsArray(b, 'b');
+			assert.argumentIsRequired(keySelector, 'keySelector', Function);
+
+			var returnRef = [];
+
+			a.forEach(function (candidate) {
+				var exclude = b.some(function (comparison) {
+					return keySelector(candidate) === keySelector(comparison);
+				});
+
+				if (!exclude) {
+					returnRef.push(candidate);
+				}
+			});
+
+			return returnRef;
+		},
+
+
+		/**
+   * Set symmetric difference operation (using strict equality). In
+   * other words, this is the union of the differences between the
+   * sets.
+   *
+   * @static
+   * @param {Array} a
+   * @param {Array} b
+   * @returns {Array}
+   */
+		differenceSymmetric: function differenceSymmetric(a, b) {
+			return this.differenceSymmetricBy(a, b, function (item) {
+				return item;
+			});
+		},
+
+
+		/**
+   * Set symmetric difference operation, where the uniqueness is determined by a delegate.
+   *
+   * @static
+   * @param {Array} a
+   * @param {Array} b
+   * @param {Function} keySelector - A function that returns a unique key for an item.
+   * @returns {Array}
+   */
+		differenceSymmetricBy: function differenceSymmetricBy(a, b, keySelector) {
+			return this.unionBy(this.differenceBy(a, b, keySelector), this.differenceBy(b, a, keySelector), keySelector);
+		},
+
+
+		/**
+   * Set union operation (using strict equality).
+   *
+   * @static
+   * @param {Array} a
+   * @param {Array} b
+   * @returns {Array}
+   */
+		union: function union(a, b) {
+			return this.unionBy(a, b, function (item) {
+				return item;
+			});
+		},
+
+
+		/**
+   * Set union operation, where the uniqueness is determined by a delegate.
+   *
+   * @static
+   * @param {Array} a
+   * @param {Array} b
+   * @param {Function} keySelector - A function that returns a unique key for an item.
+   * @returns {Array}
+   */
+		unionBy: function unionBy(a, b, keySelector) {
+			assert.argumentIsArray(a, 'a');
+			assert.argumentIsArray(b, 'b');
+			assert.argumentIsRequired(keySelector, 'keySelector', Function);
+
+			var returnRef = a.slice();
+
+			b.forEach(function (candidate) {
+				var exclude = returnRef.some(function (comparison) {
+					return keySelector(candidate) === keySelector(comparison);
+				});
+
+				if (!exclude) {
+					returnRef.push(candidate);
+				}
+			});
+
+			return returnRef;
+		},
+
+
+		/**
+   * Set intersection operation (using strict equality).
+   *
+   * @static
+   * @param {Array} a
+   * @param {Array} b
+   * @returns {Array}
+   */
+		intersection: function intersection(a, b) {
+			return this.intersectionBy(a, b, function (item) {
+				return item;
+			});
+		},
+
+
+		/**
+   * Set intersection operation, where the uniqueness is determined by a delegate.
+   *
+   * @static
+   * @param {Array} a
+   * @param {Array} b
+   * @param {Function} keySelector - A function that returns a unique key for an item.
+   * @returns {Array}
+   */
+		intersectionBy: function intersectionBy(a, b, keySelector) {
+			assert.argumentIsArray(a, 'a');
+			assert.argumentIsArray(b, 'b');
+
+			var returnRef = [];
+
+			a.forEach(function (candidate) {
+				var include = b.some(function (comparison) {
+					return keySelector(candidate) === comparison;
+				});
+
+				if (include) {
+					returnRef.push(candidate);
+				}
+			});
+
+			return returnRef;
+		},
+
+
+		/**
+   * Removes the first item from an array which matches a predicate.
+   *
+   * @static
+   * @public
+   * @param {Array} a
+   * @param {Function} predicate
+   * @returns {Boolean}
+   */
+		remove: function remove(a, predicate) {
+			assert.argumentIsArray(a, 'a');
+			assert.argumentIsRequired(predicate, 'predicate', Function);
+
+			var index = a.findIndex(predicate);
+			var found = !(index < 0);
+
+			if (found) {
+				a.splice(index, 1);
+			}
+
+			return found;
+		}
+	};
+}();
+
+},{"./assert":26,"./is":30}],26:[function(require,module,exports){
+'use strict';
+
+var is = require('./is');
+
+module.exports = function () {
+	'use strict';
+
+	function checkArgumentType(variable, variableName, type, typeDescription, index) {
+		if (type === String) {
+			if (!is.string(variable)) {
+				throwInvalidTypeError(variableName, 'string', index);
+			}
+		} else if (type === Number) {
+			if (!is.number(variable)) {
+				throwInvalidTypeError(variableName, 'number', index);
+			}
+		} else if (type === Function) {
+			if (!is.fn(variable)) {
+				throwInvalidTypeError(variableName, 'function', index);
+			}
+		} else if (type === Boolean) {
+			if (!is.boolean(variable)) {
+				throwInvalidTypeError(variableName, 'boolean', index);
+			}
+		} else if (type === Date) {
+			if (!is.date(variable)) {
+				throwInvalidTypeError(variableName, 'date', index);
+			}
+		} else if (type === Array) {
+			if (!is.array(variable)) {
+				throwInvalidTypeError(variableName, 'array', index);
+			}
+		} else if (!(variable instanceof (type || Object))) {
+			throwInvalidTypeError(variableName, typeDescription, index);
+		}
+	}
+
+	function throwInvalidTypeError(variableName, typeDescription, index) {
+		var message = void 0;
+
+		if (typeof index === 'number') {
+			message = 'The argument [ ' + (variableName || 'unspecified') + ' ], at index [ ' + index.toString() + ' ] must be a [ ' + (typeDescription || 'unknown') + ' ]';
+		} else {
+			message = 'The argument [ ' + (variableName || 'unspecified') + ' ] must be a [ ' + (typeDescription || 'Object') + ' ]';
+		}
+
+		throw new Error(message);
+	}
+
+	function throwCustomValidationError(variableName, predicateDescription) {
+		throw new Error('The argument [ ' + (variableName || 'unspecified') + ' ] failed a validation check [ ' + (predicateDescription || 'No description available') + ' ]');
+	}
+
+	/**
+  * Utilities checking arguments.
+  *
+  * @public
+  * @module lang/assert
+  */
+	return {
+		/**
+   * Throws an error if an argument doesn't conform to the desired specification (as
+   * determined by a type check).
+   *
+   * @static
+   * @param {*} variable - The value to check.
+   * @param {String} variableName - The name of the value (used for formatting an error message).
+   * @param {*} type - The expected type of the argument.
+   * @param {String=} typeDescription - The description of the expected type (used for formatting an error message).
+   */
+		argumentIsRequired: function argumentIsRequired(variable, variableName, type, typeDescription) {
+			checkArgumentType(variable, variableName, type, typeDescription);
+		},
+
+
+		/**
+   * A relaxed version of the "argumentIsRequired" function that will not throw if
+   * the value is undefined or null.
+   *
+   * @static
+   * @param {*} variable - The value to check.
+   * @param {String} variableName - The name of the value (used for formatting an error message).
+   * @param {*} type - The expected type of the argument.
+   * @param {String=} typeDescription - The description of the expected type (used for formatting an error message).
+   */
+		argumentIsOptional: function argumentIsOptional(variable, variableName, type, typeDescription, predicate, predicateDescription) {
+			if (variable === null || variable === undefined) {
+				return;
+			}
+
+			checkArgumentType(variable, variableName, type, typeDescription);
+
+			if (is.fn(predicate) && !predicate(variable)) {
+				throwCustomValidationError(variableName, predicateDescription);
+			}
+		},
+		argumentIsArray: function argumentIsArray(variable, variableName, itemConstraint, itemConstraintDescription) {
+			this.argumentIsRequired(variable, variableName, Array);
+
+			if (itemConstraint) {
+				var itemValidator = void 0;
+
+				if (typeof itemConstraint === 'function' && itemConstraint !== Function) {
+					itemValidator = function itemValidator(value, index) {
+						return itemConstraint.prototype !== undefined && value instanceof itemConstraint || itemConstraint(value, variableName + '[' + index + ']');
+					};
+				} else {
+					itemValidator = function itemValidator(value, index) {
+						return checkArgumentType(value, variableName, itemConstraint, itemConstraintDescription, index);
+					};
+				}
+
+				variable.forEach(function (v, i) {
+					itemValidator(v, i);
+				});
+			}
+		},
+
+
+		/**
+   * Throws an error if an argument doesn't conform to the desired specification
+   * (as determined by a predicate).
+   *
+   * @static
+   * @param {*} variable - The value to check.
+   * @param {String} variableName - The name of the value (used for formatting an error message).
+   * @param {Function=} predicate - A function used to validate the item (beyond type checking).
+   * @param {String=} predicateDescription - A description of the assertion made by the predicate (e.g. "is an integer") that is used for formatting an error message.
+   */
+		argumentIsValid: function argumentIsValid(variable, variableName, predicate, predicateDescription) {
+			if (!predicate(variable)) {
+				throwCustomValidationError(variableName, predicateDescription);
+			}
+		},
+		areEqual: function areEqual(a, b, descriptionA, descriptionB) {
+			if (a !== b) {
+				throw new Error('The objects must be equal [' + (descriptionA || a.toString()) + '] and [' + (descriptionB || b.toString()) + ']');
+			}
+		},
+		areNotEqual: function areNotEqual(a, b, descriptionA, descriptionB) {
+			if (a === b) {
+				throw new Error('The objects cannot be equal [' + (descriptionA || a.toString()) + '] and [' + (descriptionB || b.toString()) + ']');
+			}
+		}
+	};
+}();
+
+},{"./is":30}],27:[function(require,module,exports){
+'use strict';
+
+var assert = require('./assert'),
+    is = require('./is');
+
+module.exports = function () {
+	'use strict';
+
+	function getPropertyNameArray(propertyNames) {
+		var separator = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : '.';
+
+		var returnRef = void 0;
+
+		if (is.array(propertyNames)) {
+			returnRef = propertyNames;
+		} else {
+			returnRef = propertyNames.split(separator);
+		}
+
+		return returnRef;
+	}
+
+	function getPropertyTarget(target, propertyNameArray, create) {
+		var returnRef = void 0;
+
+		var propertyTarget = target;
+
+		for (var i = 0; i < propertyNameArray.length - 1; i++) {
+			var propertyName = propertyNameArray[i];
+
+			if (propertyTarget.hasOwnProperty(propertyName) && !is.null(propertyTarget[propertyName]) && !is.undefined(propertyTarget[propertyName])) {
+				propertyTarget = propertyTarget[propertyName];
+			} else if (create) {
+				propertyTarget = propertyTarget[propertyName] = {};
+			} else {
+				propertyTarget = null;
+
+				break;
+			}
+		}
+
+		return propertyTarget;
+	}
+
+	function last(array) {
+		if (array.length !== 0) {
+			return array[array.length - 1];
+		} else {
+			return null;
+		}
+	}
+
+	/**
+  * Utilities for reading and writing "complex" properties to
+  * objects. For example, the property "name.first" reads the
+  * "first" property on the "name" object of the target.
+  *
+  * @public
+  * @module lang/attributes
+  */
+	return {
+		/**
+   * Checks to see if an attribute exists on the target object.
+   *
+   * @static
+   * @param {Object} target - The object to check for existence of the property.
+   * @param {String|Array<String>} propertyNames - The property to check -- either a string with separators, or an array of strings (already split by separator).
+   * @param {String=} separator - The separator (defaults to a period character).
+   * @returns {boolean}
+   */
+		has: function has(target, propertyNames, separator) {
+			assert.argumentIsRequired(target, 'target', Object);
+
+			if (is.array(propertyNames)) {
+				assert.argumentIsArray(propertyNames, 'propertyNames', String);
+			} else {
+				assert.argumentIsRequired(propertyNames, 'propertyNames', String);
+			}
+
+			var propertyNameArray = getPropertyNameArray(propertyNames, separator);
+			var propertyTarget = getPropertyTarget(target, propertyNameArray, false);
+
+			return propertyTarget !== null && propertyTarget.hasOwnProperty(last(propertyNameArray));
+		},
+
+
+		/**
+   * Returns a value from the target object. If the property doesn't exist; undefined
+   * is returned.
+   *
+   * @static
+   * @param {Object} target - The object to read from.
+   * @param {String|Array<String>} propertyNames - The property to read -- either a string with separators, or an array of strings (already split by separator).
+   * @param {String=} separator - The separator (defaults to a period character).
+   * @returns {*}
+   */
+		read: function read(target, propertyNames, separator) {
+			assert.argumentIsRequired(target, 'target', Object);
+
+			if (is.array(propertyNames)) {
+				assert.argumentIsArray(propertyNames, 'propertyNames', String);
+			} else {
+				assert.argumentIsRequired(propertyNames, 'propertyNames', String);
+			}
+
+			var propertyNameArray = getPropertyNameArray(propertyNames, separator);
+			var propertyTarget = getPropertyTarget(target, propertyNameArray, false);
+
+			var returnRef = void 0;
+
+			if (propertyTarget) {
+				var propertyName = last(propertyNameArray);
+
+				returnRef = propertyTarget[propertyName];
+			} else {
+				returnRef = undefined;
+			}
+
+			return returnRef;
+		},
+
+
+		/**
+   * Writes a value to the target object.
+   *
+   * @static
+   * @param {Object} target - The object to write to.
+   * @param {String|Array<String>} propertyNames - The property to write -- either a string with separators, or an array of strings (already split by separator).
+   * @param {String=} separator - The separator (defaults to a period character).
+   */
+		write: function write(target, propertyNames, value, separator) {
+			assert.argumentIsRequired(target, 'target', Object);
+
+			if (is.array(propertyNames)) {
+				assert.argumentIsArray(propertyNames, 'propertyNames', String);
+			} else {
+				assert.argumentIsRequired(propertyNames, 'propertyNames', String);
+			}
+
+			var propertyNameArray = getPropertyNameArray(propertyNames, separator);
+			var propertyTarget = getPropertyTarget(target, propertyNameArray, true);
+
+			var propertyName = last(propertyNameArray);
+
+			propertyTarget[propertyName] = value;
+		},
+
+
+		/**
+   * Erases a property from the target object.
+   *
+   * @static
+   * @param {Object} target - The object to erase a property from.
+   * @param {String|Array<String>} propertyNames - The property to write -- either a string with separators, or an array of strings (already split by separator).
+   * @param {String=} separator - The separator (defaults to a period character).
+   */
+		erase: function erase(target, propertyNames, separator) {
+			if (!this.has(target, propertyNames)) {
+				return;
+			}
+
+			var propertyNameArray = getPropertyNameArray(propertyNames, separator);
+			var propertyTarget = getPropertyTarget(target, propertyNameArray, true);
+
+			var propertyName = last(propertyNameArray);
+
+			delete propertyTarget[propertyName];
+		}
+	};
+}();
+
+},{"./assert":26,"./is":30}],28:[function(require,module,exports){
+'use strict';
+
+var is = require('./is');
+
+module.exports = function () {
+	'use strict';
+
+	/**
+  * Utilities checking HTTP connections.
+  *
+  * @public
+  * @module lang/connection
+  * @deprecated
+  */
+
+	return {
+		/**
+   * Returns true, if the input is a true boolean value; otherwise false.
+   *
+   * @param {Boolean=} secure
+   * @returns {Boolean}
+   */
+		getIsSecure: function getIsSecure(secure) {
+			return is.boolean(secure) && secure;
+		}
+	};
+}();
+
+},{"./is":30}],29:[function(require,module,exports){
+'use strict';
+
+module.exports = function () {
+	'use strict';
+
+	function tautology(x) {
+		return x;
+	}
+
+	function empty() {
+		return;
+	}
+
+	/**
+  * Utilities for working with functions.
+  *
+  * @public
+  * @module lang/functions
+  */
+	return {
+		/**
+   * A function that returns the first argument passed.
+   *
+   * @static
+   * @returns {Function}
+   */
+		getTautology: function getTautology() {
+			return tautology;
+		},
+
+
+		/**
+   * A function with no return value.
+   *
+   * @static
+   * @returns {Function}
+   */
+		getEmpty: function getEmpty() {
+			return empty;
+		}
+	};
+}();
+
+},{}],30:[function(require,module,exports){
+'use strict';
+
+var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
+
+module.exports = function () {
+	'use strict';
+
+	/**
+  * Utilities for interrogating variables (e.g. checking data types).
+  *
+  * @public
+  * @module lang/is
+  */
+
+	return {
+		/**
+   * Returns true, if the argument is a number. NaN will return false.
+   *
+   * @static
+   * @public
+   * @param {*} candidate {*}
+   * @returns {boolean}
+   */
+		number: function number(candidate) {
+			return typeof candidate === 'number' && !isNaN(candidate);
+		},
+
+
+		/**
+   * Returns true, if the argument is NaN.
+   *
+   * @static
+   * @public
+   * @param {*} candidate
+   * @returns {boolean}
+   */
+		nan: function nan(candidate) {
+			return typeof candidate === 'number' && isNaN(candidate);
+		},
+
+
+		/**
+   * Returns true, if the argument is a valid 32-bit integer.
+   *
+   * @static
+   * @public
+   * @param {*} candidate
+   * @returns {boolean}
+   */
+		integer: function integer(candidate) {
+			return typeof candidate === 'number' && !isNaN(candidate) && (candidate | 0) === candidate;
+		},
+
+
+		/**
+   * Returns true, if the argument is a valid integer (which can exceed 32 bits); however,
+   * the check can fail above the value of Number.MAX_SAFE_INTEGER.
+   *
+   * @static
+   * @public
+   * @param {*) candidate
+   * @returns {boolean}
+   */
+		large: function large(candidate) {
+			return typeof candidate === 'number' && !isNaN(candidate) && isFinite(candidate) && Math.floor(candidate) === candidate;
+		},
+
+
+		/**
+   * Returns true, if the argument is a number that is positive.
+   *
+   * @static
+   * @public
+   * @param {*} candidate
+   * @returns {boolean}
+   */
+		positive: function positive(candidate) {
+			return this.number(candidate) && candidate > 0;
+		},
+
+
+		/**
+   * Returns true, if the argument is a number that is negative.
+   *
+   * @static
+   * @public
+   * @param {*} candidate
+   * @returns {*|boolean}
+   */
+		negative: function negative(candidate) {
+			return this.number(candidate) && candidate < 0;
+		},
+
+
+		/**
+   * Returns true, if the argument is a string.
+   *
+   * @static
+   * @public
+   * @param {*} candidate
+   * @returns {boolean}
+   */
+		string: function string(candidate) {
+			return typeof candidate === 'string';
+		},
+
+
+		/**
+   * Returns true, if the argument is a JavaScript Date instance.
+   *
+   * @static
+   * @public
+   * @param {*} candidate
+   * @returns {boolean}
+   */
+		date: function date(candidate) {
+			return candidate instanceof Date;
+		},
+
+
+		/**
+   * Returns true, if the argument is a function.
+   *
+   * @static
+   * @public
+   * @param {*} candidate
+   * @returns {boolean}
+   */
+		fn: function fn(candidate) {
+			return typeof candidate === 'function';
+		},
+
+
+		/**
+   * Returns true, if the argument is an array.
+   *
+   * @static
+   * @public
+   * @param {*} candidate
+   * @returns {boolean}
+   */
+		array: function array(candidate) {
+			return Array.isArray(candidate);
+		},
+
+
+		/**
+   * Returns true, if the argument is a Boolean value.
+   *
+   * @static
+   * @public
+   * @param {*} candidate
+   * @returns {boolean}
+   */
+		boolean: function boolean(candidate) {
+			return typeof candidate === 'boolean';
+		},
+
+
+		/**
+   * Returns true, if the argument is an object.
+   *
+   * @static
+   * @public
+   * @param {*} candidate
+   * @returns {boolean}
+   */
+		object: function object(candidate) {
+			return (typeof candidate === 'undefined' ? 'undefined' : _typeof(candidate)) === 'object' && candidate !== null;
+		},
+
+
+		/**
+   * Returns true, if the argument is a null value.
+   *
+   * @static
+   * @public
+   * @param {*} candidate
+   * @returns {boolean}
+   */
+		null: function _null(candidate) {
+			return candidate === null;
+		},
+
+
+		/**
+   * Returns true, if the argument is an undefined value.
+   *
+   * @static
+   * @public
+   * @param {*} candidate
+   * @returns {boolean}
+   */
+		undefined: function (_undefined) {
+			function undefined(_x) {
+				return _undefined.apply(this, arguments);
+			}
+
+			undefined.toString = function () {
+				return _undefined.toString();
+			};
+
+			return undefined;
+		}(function (candidate) {
+			return candidate === undefined;
+		}),
+
+
+		/**
+   * Given two classes, determines if the "child" class extends
+   * the "parent" class (without instantiation).
+   *
+   * @param {Function} parent
+   * @param {Function} child
+   * @returns {Boolean}
+   */
+		extension: function extension(parent, child) {
+			return this.fn(parent) && this.fn(child) && child.prototype instanceof parent;
+		}
+	};
+}();
+
+},{}],31:[function(require,module,exports){
+'use strict';
+
+var array = require('./array'),
+    is = require('./is');
+
+module.exports = function () {
+	'use strict';
+
+	/**
+  * Utilities for working with objects.
+  *
+  * @public
+  * @module lang/object
+  */
+
+	var object = {
+		/**
+   * <p>Performs "deep" equality check on two objects.</p>
+   *
+   * <p>Array items are compared, object properties are compared, and
+   * finally "primitive" values are checked using strict equality rules.</p>
+   *
+   * @static
+   * @param {Object} a
+   * @param {Object} b
+   * @returns {Boolean}
+   */
+		equals: function equals(a, b) {
+			var returnVal = void 0;
+
+			if (a === b) {
+				returnVal = true;
+			} else if (is.array(a) && is.array(b)) {
+				if (a.length === b.length) {
+					returnVal = a.length === 0 || a.every(function (x, i) {
+						return object.equals(x, b[i]);
+					});
+				} else {
+					returnVal = false;
+				}
+			} else if (is.object(a) && is.object(b)) {
+				if (is.fn(a.equals) && is.fn(b.equals)) {
+					returnVal = a.equals(b);
+				} else {
+					var keysA = object.keys(a);
+					var keysB = object.keys(b);
+
+					returnVal = array.differenceSymmetric(keysA, keysB).length === 0 && keysA.every(function (key) {
+						var valueA = a[key];
+						var valueB = b[key];
+
+						return object.equals(valueA, valueB);
+					});
+				}
+			} else {
+				returnVal = false;
+			}
+
+			return returnVal;
+		},
+
+
+		/**
+   * Performs a "deep" copy.
+   *
+   * @static
+   * @param {Object} source - The object to copy.
+   * @returns {Object}
+   */
+		clone: function clone(source) {
+			var c = void 0;
+
+			if (is.array(source)) {
+				c = source.map(function (sourceItem) {
+					return object.clone(sourceItem);
+				});
+			} else if (is.object(source)) {
+				c = object.keys(source).reduce(function (accumulator, key) {
+					accumulator[key] = object.clone(source[key]);
+
+					return accumulator;
+				}, {});
+			} else {
+				c = source;
+			}
+
+			return c;
+		},
+
+
+		/**
+   * Creates a new object (or array) by performing a deep copy
+   * of the properties from each object. If the same property
+   * exists on both objects, the property value from the
+   * second object ("b") is preferred.
+   *
+   * @static
+   * @param {Object} a
+   * @param {Object} b
+   * @returns {Object}
+   */
+		merge: function merge(a, b) {
+			var m = void 0;
+
+			var mergeTarget = is.object(a) && !is.array(a);
+			var mergeSource = is.object(b) && !is.array(b);
+
+			if (mergeTarget && mergeSource) {
+				var properties = array.unique(object.keys(a).concat(object.keys(b)));
+
+				m = properties.reduce(function (accumulator, property) {
+					accumulator[property] = object.merge(a[property], b[property]);
+
+					return accumulator;
+				}, {});
+			} else if (is.undefined(b)) {
+				m = object.clone(a);
+			} else {
+				m = object.clone(b);
+			}
+
+			return m;
+		},
+
+
+		/**
+   * Given an object, returns an array of "own" properties.
+   *
+   * @static
+   * @param {Object} target - The object to interrogate.
+   * @returns {Array<string>}
+   */
+		keys: function keys(target) {
+			var keys = [];
+
+			for (var k in target) {
+				if (target.hasOwnProperty(k)) {
+					keys.push(k);
+				}
+			}
+
+			return keys;
+		}
+	};
+
+	return object;
+}();
+
+},{"./array":25,"./is":30}],32:[function(require,module,exports){
+'use strict';
+
+var assert = require('./assert');
+
+module.exports = function () {
+	'use strict';
+
+	/**
+  * Utilities for working with promises.
+  *
+  * @public
+  * @module lang/promise
+  */
+
+	return {
+		timeout: function timeout(promise, _timeout) {
+			var _this = this;
+
+			return Promise.resolve().then(function () {
+				assert.argumentIsRequired(promise, 'promise', Promise, 'Promise');
+				assert.argumentIsRequired(_timeout, 'timeout', Number);
+
+				if (!(_timeout > 0)) {
+					throw new Error('Promise timeout must be greater than zero.');
+				}
+
+				return _this.build(function (resolveCallback, rejectCallback) {
+					var pending = true;
+
+					var token = setTimeout(function () {
+						if (pending) {
+							pending = false;
+
+							rejectCallback('Promise timed out after ' + _timeout + ' milliseconds');
+						}
+					}, _timeout);
+
+					promise.then(function (result) {
+						if (pending) {
+							pending = false;
+							clearTimeout(token);
+
+							resolveCallback(result);
+						}
+					}).catch(function (error) {
+						if (pending) {
+							pending = false;
+							clearTimeout(token);
+
+							rejectCallback(error);
+						}
+					});
+				});
+			});
+		},
+
+
+		/**
+   * A mapping function that works asynchronously. Given an array of items, each item through
+   * a mapping function, which can return a promise. Then, this function returns a single promise
+   * which is the result of each mapped promise.
+   *
+   * @param {Array} items - The items to map
+   * @param {Function} mapper - The mapping function (e.g. given an item, return a promise).
+   * @param {Number} concurrency - The maximum number of promises that are allowed to run at once.
+   * @returns {Promise.<Array>}
+   */
+		map: function map(items, mapper, concurrency) {
+			var _this2 = this;
+
+			return Promise.resolve().then(function () {
+				assert.argumentIsArray(items, 'items');
+				assert.argumentIsRequired(mapper, 'mapper', Function);
+				assert.argumentIsOptional(concurrency, 'concurrency', Number);
+
+				var c = Math.max(0, concurrency || 0);
+
+				var mapPromise = void 0;
+
+				if (c === 0 || items.length === 0) {
+					mapPromise = Promise.all(items.map(function (item) {
+						return Promise.resolve(mapper(item));
+					}));
+				} else {
+					var total = items.length;
+					var active = 0;
+					var complete = 0;
+					var failure = false;
+
+					var results = Array.of(total);
+
+					var executors = items.map(function (item, index) {
+						return function () {
+							return Promise.resolve().then(function () {
+								return mapper(item);
+							}).then(function (result) {
+								results[index] = result;
+							});
+						};
+					});
+
+					mapPromise = _this2.build(function (resolveCallback, rejectCallback) {
+						var execute = function execute() {
+							if (!(executors.length > 0 && c > active && !failure)) {
+								return;
+							}
+
+							active = active + 1;
+
+							var executor = executors.shift();
+
+							executor().then(function () {
+								if (failure) {
+									return;
+								}
+
+								active = active - 1;
+								complete = complete + 1;
+
+								if (complete < total) {
+									execute();
+								} else {
+									resolveCallback(results);
+								}
+							}).catch(function (error) {
+								failure = false;
+
+								rejectCallback(error);
+							});
+
+							execute();
+						};
+
+						execute();
+					});
+				}
+
+				return mapPromise;
+			});
+		},
+
+
+		/**
+   * Runs a series of functions sequentially (where each function can be
+   * synchronous or asynchronous). The result of each function is passed
+   * to the successive function and the result of the final function is
+   * returned to the consumer.
+   *
+   * @static
+   * @public
+   * @param {Function[]} functions - An array of functions, each expecting a single argument.
+   * @param input - The argument to pass the first function.
+   * @returns {Promise.<TResult>}
+   */
+		pipeline: function pipeline(functions, input) {
+			return Promise.resolve().then(function () {
+				assert.argumentIsArray(functions, 'functions', Function);
+
+				return functions.reduce(function (previous, fn) {
+					return previous.then(function (result) {
+						return fn(result);
+					});
+				}, Promise.resolve(input));
+			});
+		},
+
+
+		/**
+   * Creates a new promise, given an executor.
+   *
+   * This is a wrapper for the {@link Promise} constructor; however, any error
+   * is caught and the resulting promise is rejected (instead of letting the
+   * error bubble up to the top-level handler).
+   *
+   * @static
+   * @public
+   * @param {Function} executor - A function which has two callback parameters. The first is used to resolve the promise, the second rejects it.
+   * @returns {Promise}
+   */
+		build: function build(executor) {
+			return new Promise(function (resolve, reject) {
+				try {
+					executor(resolve, reject);
+				} catch (e) {
+					reject(e);
+				}
+			});
+		}
+	};
+}();
+
+},{"./assert":26}],33:[function(require,module,exports){
+'use strict';
+
+var moment = require('moment-timezone/builds/moment-timezone-with-data-2010-2020'),
+    assert = require('./assert');
+
+module.exports = function () {
+	'use strict';
+
+	/**
+  * Utilities for working with arrays.
+  *
+  * @public
+  * @module lang/timezone
+  */
+
+	return {
+		/**
+   * Gets a list of names in the tz database (see https://en.wikipedia.org/wiki/Tz_database
+   * and https://en.wikipedia.org/wiki/List_of_tz_database_time_zones.
+   *
+   * @static
+   * @returns {Array<String>}
+   */
+		getTimezones: function getTimezones() {
+			return moment.tz.names();
+		},
+
+
+		/**
+   * Indicates if a timezone name exists.
+   *
+   * @static
+   * @param {String} name - The timezone name to find.
+   * @returns {Boolean}
+   */
+		hasTimezone: function hasTimezone(name) {
+			assert.argumentIsRequired(name, 'name', String);
+
+			return this.getTimezones().some(function (candidate) {
+				return candidate === name;
+			});
+		},
+
+
+		/**
+   * Attempts to guess the current timezone.
+   *
+   * @returns {String|null}
+   */
+		guessTimezone: function guessTimezone() {
+			return moment.tz.guess() || null;
+		}
+	};
+}();
+
+},{"./assert":26,"moment-timezone/builds/moment-timezone-with-data-2010-2020":120}],34:[function(require,module,exports){
+'use strict';
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
+var assert = require('./../lang/assert'),
+    Disposable = require('./../lang/Disposable');
+
+module.exports = function () {
+	'use strict';
+
+	/**
+  * An implementation of the observer pattern.
+  *
+  * @param {*} sender - The object which owns the event.
+  * @extends {Disposable}
+  */
+
+	var Event = function (_Disposable) {
+		_inherits(Event, _Disposable);
+
+		function Event(sender) {
+			_classCallCheck(this, Event);
+
+			var _this = _possibleConstructorReturn(this, (Event.__proto__ || Object.getPrototypeOf(Event)).call(this));
+
+			_this._sender = sender || null;
+
+			_this._observers = [];
+			return _this;
+		}
+
+		/**
+   * Registers an event handler which will receive a notification when
+   * {@link Event#fire} is called.
+   *
+   * @public
+   * @param {Function} handler - The function which will be called each time the event fires. The first argument will be the event data. The second argument will be the event owner (i.e. sender).
+   * @returns {Disposable}
+   */
+
+
+		_createClass(Event, [{
+			key: 'register',
+			value: function register(handler) {
+				var _this2 = this;
+
+				assert.argumentIsRequired(handler, 'handler', Function);
+
+				addRegistration.call(this, handler);
+
+				return Disposable.fromAction(function () {
+					if (_this2.getIsDisposed()) {
+						return;
+					}
+
+					removeRegistration.call(_this2, handler);
+				});
+			}
+
+			/**
+    * Removes registration for an event handler. That is, the handler will
+    * no longer be called if the event fires.
+    *
+    * @public
+    * @param {Function} handler
+    */
+
+		}, {
+			key: 'unregister',
+			value: function unregister(handler) {
+				assert.argumentIsRequired(handler, 'handler', Function);
+
+				removeRegistration.call(this, handler);
+			}
+
+			/**
+    * Removes all handlers from the event.
+    *
+    * @public
+    */
+
+		}, {
+			key: 'clear',
+			value: function clear() {
+				this._observers = [];
+			}
+
+			/**
+    * Triggers the event, calling all previously registered handlers.
+    *
+    * @public
+    * @param {*) data - The data to pass each handler.
+    */
+
+		}, {
+			key: 'fire',
+			value: function fire(data) {
+				var observers = this._observers;
+
+				for (var i = 0; i < observers.length; i++) {
+					var observer = observers[i];
+
+					observer(data, this._sender);
+				}
+			}
+
+			/**
+    * Returns true, if no handlers are currently registered.
+    *
+    * @returns {boolean}
+    */
+
+		}, {
+			key: 'getIsEmpty',
+			value: function getIsEmpty() {
+				return this._observers.length === 0;
+			}
+		}, {
+			key: '_onDispose',
+			value: function _onDispose() {
+				this._observers = null;
+			}
+		}, {
+			key: 'toString',
+			value: function toString() {
+				return '[Event]';
+			}
+		}]);
+
+		return Event;
+	}(Disposable);
+
+	function addRegistration(handler) {
+		var copiedObservers = this._observers.slice();
+
+		copiedObservers.push(handler);
+
+		this._observers = copiedObservers;
+	}
+
+	function removeRegistration(handler) {
+		var indicesToRemove = [];
+
+		for (var i = 0; i < this._observers.length; i++) {
+			var candidate = this._observers[i];
+
+			if (candidate === handler) {
+				indicesToRemove.push(i);
+			}
+		}
+
+		if (indicesToRemove.length > 0) {
+			var copiedObservers = this._observers.slice();
+
+			for (var j = indicesToRemove.length - 1; !(j < 0); j--) {
+				copiedObservers.splice(indicesToRemove[j], 1);
+			}
+
+			this._observers = copiedObservers;
+		}
+	}
+
+	return Event;
+}();
+
+},{"./../lang/Disposable":21,"./../lang/assert":26}],35:[function(require,module,exports){
+'use strict';
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
+var assert = require('./../../lang/assert'),
+    Enum = require('./../../lang/Enum');
+
+module.exports = function () {
+	'use strict';
+
+	/**
+  * Maps an action (e.g. create) to an HTTP verb (e.g. POST).
+  *
+  * @public
+  * @extends {Enum}
+  */
+
+	var RestAction = function (_Enum) {
+		_inherits(RestAction, _Enum);
+
+		function RestAction(action, httpVerb, requiresPath, requiresPayload, allowQuerystring, allowBody) {
+			_classCallCheck(this, RestAction);
+
+			var _this = _possibleConstructorReturn(this, (RestAction.__proto__ || Object.getPrototypeOf(RestAction)).call(this, action, action));
+
+			assert.argumentIsRequired(action, 'action', String);
+			assert.argumentIsRequired(httpVerb, 'httpVerb', String);
+			assert.argumentIsRequired(requiresPath, 'requiresPath', Boolean);
+			assert.argumentIsRequired(requiresPayload, 'requiresPayload', Boolean);
+			assert.argumentIsRequired(allowQuerystring, 'allowQuerystring', Boolean);
+			assert.argumentIsRequired(allowBody, 'allowBody', Boolean);
+
+			_this._action = action;
+
+			_this._httpVerb = httpVerb;
+			_this._requiresPath = requiresPath;
+			_this._requiresPayload = requiresPayload;
+			_this._allowQuerystring = allowQuerystring;
+			_this._allowBody = allowBody;
+			return _this;
+		}
+
+		/**
+   * The HTTP action (e.g. create).
+   *
+   * @public
+   * @returns {string}
+   */
+
+
+		_createClass(RestAction, [{
+			key: 'getAction',
+			value: function getAction() {
+				return this._action;
+			}
+
+			/**
+    * The HTTP verb.
+    *
+    * @public
+    * @returns {string}
+    */
+
+		}, {
+			key: 'getHttpVerb',
+			value: function getHttpVerb() {
+				return this._httpVerb;
+			}
+
+			/**
+    * Indicates if a path, beyond the base URL, is required.
+    *
+    * @public
+    * @returns {Boolean}
+    */
+
+		}, {
+			key: 'getPathIsRequired',
+			value: function getPathIsRequired() {
+				return this._requiresPath;
+			}
+
+			/**
+    * Indicates if a payload is required, either for the purpose of formulating a
+    * request body or querystring, is required.
+    *
+    * @public
+    * @returns {*}
+    */
+
+		}, {
+			key: 'getPayloadIsRequired',
+			value: function getPayloadIsRequired() {
+				return this._requiresPayload;
+			}
+
+			/**
+    * Indicates if a querystring is allowed with this action.
+    *
+    * @public
+    * @returns {Boolean}
+    */
+
+		}, {
+			key: 'getAllowQuerystring',
+			value: function getAllowQuerystring() {
+				return this._allowQuerystring;
+			}
+
+			/**
+    * Indicates if a request body is allowed with this action.
+    *
+    * @public
+    * @returns {Boolean}
+    */
+
+		}, {
+			key: 'getAllowBody',
+			value: function getAllowBody() {
+				return this._allowBody;
+			}
+
+			/**
+    * Given a code, returns the enumeration item.
+    *
+    * @public
+    * @param {String} code
+    * @returns {RestAction|null}
+    */
+
+		}], [{
+			key: 'parse',
+			value: function parse(code) {
+				return Enum.fromCode(RestAction, code);
+			}
+
+			/**
+    * The REST-ful action to create an object.
+    *
+    * @public
+    * @returns {RestAction}
+    */
+
+		}, {
+			key: 'Create',
+			get: function get() {
+				return CREATE;
+			}
+
+			/**
+    * The REST-ful action to update an object.
+    *
+    * @public
+    * @returns {RestAction}
+    */
+
+		}, {
+			key: 'Update',
+			get: function get() {
+				return UPDATE;
+			}
+
+			/**
+    * The REST-ful action to retrieve an object.
+    *
+    * @public
+    * @returns {RestAction}
+    */
+
+		}, {
+			key: 'Retrieve',
+			get: function get() {
+				return RETRIEVE;
+			}
+
+			/**
+    * The REST-ful action to delete an object.
+    *
+    * @public
+    * @returns {RestAction}
+    */
+
+		}, {
+			key: 'Delete',
+			get: function get() {
+				return DELETE;
+			}
+
+			/**
+    * The REST-ful action to retrieve execute a query for object(s).
+    *
+    * @public
+    * @returns {RestAction}
+    */
+
+		}, {
+			key: 'Query',
+			get: function get() {
+				return QUERY;
+			}
+		}]);
+
+		return RestAction;
+	}(Enum);
+
+	var CREATE = new RestAction('Create', 'POST', false, true, false, true);
+	var UPDATE = new RestAction('Update', 'PUT', true, true, false, true);
+	var RETRIEVE = new RestAction('Retrieve', 'GET', true, false, true, false);
+	var DELETE = new RestAction('Delete', 'DELETE', true, false, false, false);
+	var QUERY = new RestAction('Query', 'GET', false, false, true, false);
+
+	return RestAction;
+}();
+
+},{"./../../lang/Enum":22,"./../../lang/assert":26}],36:[function(require,module,exports){
+'use strict';
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+var assert = require('./../../lang/assert'),
+    attributes = require('./../../lang/attributes'),
+    is = require('./../../lang/is');
+
+var RestAction = require('./RestAction'),
+    RestParser = require('./RestParser');
+
+module.exports = function () {
+	'use strict';
+
+	/**
+  * Defines a REST-ful endpoint and allows construction of valid
+  * URI that can be used to call the endpoint.
+  *
+  * @public
+  * @param {RestAction} action - The action supported by the endpoint
+  * @param {Array<String>} pathProperties - The parameters required by the endpoint
+  * @param {String=} payloadProperty - The property name of the object to use as a payload for the REST action
+  * @param {Boolean=} suppressQuerystring - If true, the querystring will be omitted when making the HTTP request
+  * @param {RestParser=} responseParser - If supplied, used to parse the response.
+  */
+
+	var RestEndpoint = function () {
+		function RestEndpoint(action, pathProperties, payloadProperty, suppressQuerystring, responseParser) {
+			_classCallCheck(this, RestEndpoint);
+
+			assert.argumentIsRequired(action, 'action', RestAction, 'RestAction');
+			assert.argumentIsArray(pathProperties, 'pathProperties', String);
+			assert.argumentIsOptional(payloadProperty, 'payloadProperty', String);
+			assert.argumentIsOptional(suppressQuerystring, 'suppressQuerystring', Boolean);
+			assert.argumentIsOptional(responseParser, 'responseParser', RestParser, 'RestParser');
+
+			this._action = action;
+
+			this._pathProperties = pathProperties;
+			this._payloadProperty = payloadProperty || null;
+			this._suppressQuerystring = is.boolean(suppressQuerystring) && suppressQuerystring;
+
+			this._responseParser = responseParser || RestParser.JSON;
+		}
+
+		/**
+   * The {@link RestAction} the endpoint supports.
+   *
+   * @public
+   * @returns {RestAction}
+   */
+
+
+		_createClass(RestEndpoint, [{
+			key: 'getAction',
+			value: function getAction() {
+				return this._action;
+			}
+
+			/**
+    * Indicates if the querystring should be omitted when making the HTTP
+    * request.
+    * 
+    * @public
+    * @returns {Boolean}
+    */
+
+		}, {
+			key: 'getSuppressQuerystring',
+			value: function getSuppressQuerystring() {
+				return this._suppressQuerystring;
+			}
+
+			/**
+    * Constructs the URI used to trigger the REST action.
+    *
+    * @public
+    * @param {Object} data - The data which will be passed to the endpoint
+    * @param {String} host - The host name to call
+    * @param {Number=} port - The port
+    * @param {Boolean=} secure - If true, HTTPS is used; otherwise HTTP.
+    * @returns {*}
+    */
+
+		}, {
+			key: 'getUrl',
+			value: function getUrl(data, host, port, secure) {
+				assert.argumentIsOptional(host, 'host', String);
+				assert.argumentIsOptional(port, 'port', Number);
+				assert.argumentIsOptional(secure, 'secure', Boolean);
+
+				var path = this.getPath(data, true);
+
+				if (this.getAction().getPathIsRequired() && path.length === 0) {
+					throw new Error('Unable to generate REST query path.');
+				}
+
+				var returnRef = void 0;
+
+				if (host.length !== 0) {
+					var url = void 0;
+
+					if (secure) {
+						url = 'https://';
+					} else {
+						url = 'http://';
+					}
+
+					url = url + host;
+
+					if (is.number(port) && port !== 80) {
+						url = url + ':' + port;
+					}
+
+					returnRef = encodeURI(url + '/' + path);
+				}
+
+				return returnRef;
+			}
+		}, {
+			key: 'getPath',
+			value: function getPath(data, skipEncoding) {
+				var path = this._pathProperties.map(function (pathProperty) {
+					var pathItem = void 0;
+
+					if (attributes.has(data || {}, pathProperty)) {
+						pathItem = attributes.read(data, pathProperty);
+					} else {
+						pathItem = pathProperty;
+					}
+
+					if (!skipEncoding) {
+						pathItem = encodeURIComponent(pathItem);
+					}
+
+					return pathItem;
+				});
+
+				return path.join('/');
+			}
+		}, {
+			key: 'getPayload',
+			value: function getPayload(data) {
+				var returnRef = void 0;
+
+				if (this._payloadProperty !== null) {
+					returnRef = attributes.read(data, this._payloadProperty);
+				} else {
+					returnRef = data;
+				}
+
+				if (this.getAction().getPayloadIsRequired() && !is.object(returnRef)) {
+					throw new Error('Unable to generate REST payload.');
+				}
+
+				return returnRef;
+			}
+		}, {
+			key: 'parseResponse',
+			value: function parseResponse(response) {
+				return this._responseParser.parse(response);
+			}
+		}, {
+			key: 'toString',
+			value: function toString() {
+				return '[RestEndpoint]';
+			}
+		}]);
+
+		return RestEndpoint;
+	}();
+
+	return RestEndpoint;
+}();
+
+},{"./../../lang/assert":26,"./../../lang/attributes":27,"./../../lang/is":30,"./RestAction":35,"./RestParser":37}],37:[function(require,module,exports){
+'use strict';
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+var assert = require('./../../lang/assert');
+
+var RestParser = require('./RestParser');
+
+var Schema = require('./../../serialization/json/Schema');
+
+module.exports = function () {
+	'use strict';
+
+	/**
+  * Parses the response received by a {@link RestProviderBase}, the
+  * default implementation simply returns the response string.
+  *
+  * @public
+  */
+
+	var RestParser = function () {
+		function RestParser() {
+			_classCallCheck(this, RestParser);
+		}
+
+		/**
+   * Parses a response.
+   *
+   * @public
+   * @param {String=} response.
+   * @returns {*}
+   */
+
+
+		_createClass(RestParser, [{
+			key: 'parse',
+			value: function parse(response) {
+				assert.argumentIsOptional(response, 'response', String);
+
+				return this._parse(response);
+			}
+
+			/**
+    * @protected
+    * @abstract
+    * @ignore
+    */
+
+		}, {
+			key: '_parse',
+			value: function _parse(response) {
+				return response;
+			}
+
+			/**
+    * Returns a {@link RestParser} that does nothing -- it just returns
+    * the response string that it is given.
+    *
+    * @public
+    * @returns {RestParser}
+    */
+
+		}, {
+			key: 'toString',
+			value: function toString() {
+				return '[RestParser]';
+			}
+		}], [{
+			key: 'getJsonParser',
+
+
+			/**
+    * Returns a {@link RestParser} parses the does customized JSON parsing
+    * using a "reviver" function.
+    *
+    * @public
+    * @param {Function} reviverFactory - A function that returns a JSON.parse reviver function
+    * @returns {RestParser}
+    */
+			value: function getJsonParser(reviverFactory) {
+				return new DelegatedRestParser(function (x) {
+					return JSON.parse(x, reviverFactory());
+				});
+			}
+
+			/**
+    * Returns a {@link RestParser} parses the does customized JSON parsing
+    * based on a JSON {@link Schema}.
+    *
+    * @public
+    * @param {Schema} schema
+    * @returns {RestParser}
+    */
+
+		}, {
+			key: 'getJsonParserForSchema',
+			value: function getJsonParserForSchema(schema) {
+				assert.argumentIsRequired(schema, 'schema', Schema, 'Schema');
+
+				return RestParser.getJsonParser(schema.getReviverFactory());
+			}
+		}, {
+			key: 'DEFAULT',
+			get: function get() {
+				return restParserDefault;
+			}
+
+			/**
+    * Returns a {@link RestParser} parses the response string as JSON.
+    *
+    * @public
+    * @returns {RestParser}
+    */
+
+		}, {
+			key: 'JSON',
+			get: function get() {
+				return restParserJson;
+			}
+		}]);
+
+		return RestParser;
+	}();
+
+	var DelegatedRestParser = function (_RestParser) {
+		_inherits(DelegatedRestParser, _RestParser);
+
+		function DelegatedRestParser(delegate) {
+			_classCallCheck(this, DelegatedRestParser);
+
+			var _this = _possibleConstructorReturn(this, (DelegatedRestParser.__proto__ || Object.getPrototypeOf(DelegatedRestParser)).call(this));
+
+			assert.argumentIsRequired(delegate, 'delegate', Function);
+
+			_this._delegate = delegate;
+			return _this;
+		}
+
+		_createClass(DelegatedRestParser, [{
+			key: '_parse',
+			value: function _parse(response) {
+				return this._delegate(response);
+			}
+		}, {
+			key: 'toString',
+			value: function toString() {
+				return '[DelegatedRestParser]';
+			}
+		}]);
+
+		return DelegatedRestParser;
+	}(RestParser);
+
+	var restParserDefault = new RestParser();
+	var restParserJson = new DelegatedRestParser(function (x) {
+		return JSON.parse(x);
+	});
+
+	return RestParser;
+}();
+
+},{"./../../lang/assert":26,"./../../serialization/json/Schema":43,"./RestParser":37}],38:[function(require,module,exports){
+'use strict';
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
+var http = require('http'),
+    https = require('https'),
+    querystring = require('querystring');
+
+var promise = require('./../../lang/promise');
+
+var RestProviderBase = require('./RestProviderBase');
+
+module.exports = function () {
+	'use strict';
+
+	/**
+  * Executes REST-ful action inside a Node.js server.
+  *
+  * @public
+  * @extends {RestProviderBase}
+  */
+
+	var RestProvider = function (_RestProviderBase) {
+		_inherits(RestProvider, _RestProviderBase);
+
+		function RestProvider(host, port, secure) {
+			_classCallCheck(this, RestProvider);
+
+			return _possibleConstructorReturn(this, (RestProvider.__proto__ || Object.getPrototypeOf(RestProvider)).call(this, host, port, secure));
+		}
+
+		_createClass(RestProvider, [{
+			key: '_call',
+			value: function _call(endpoint, data, host, port, secure, token) {
+				return promise.build(function (resolveCallback, rejectCallback) {
+					var connector = void 0;
+
+					if (secure) {
+						connector = https;
+					} else {
+						connector = http;
+					}
+
+					var action = endpoint.getAction();
+					var path = endpoint.getPath(data);
+					var payload = endpoint.getPayload(data);
+
+					if (action.getAllowQuerystring() && !endpoint.getSuppressQuerystring()) {
+						var qs = querystring.stringify(payload);
+
+						if (qs) {
+							path = path + '?' + qs;
+						}
+					}
+
+					var options = {
+						method: action.getHttpVerb(),
+						hostname: host,
+						path: '/' + path,
+						port: port,
+						headers: {
+							'Content-Type': 'application/json'
+						}
+					};
+
+					if (token) {
+						options.headers['COGNITO-IDENTITY-TOKEN'] = token;
+					}
+
+					var request = connector.request(options, function (response) {
+						response.setEncoding('utf8');
+
+						var responseText = '';
+
+						response.on('error', function (error) {
+							rejectCallback(error);
+						});
+
+						response.on('data', function (chunk) {
+							responseText = responseText + chunk;
+						});
+
+						response.on('end', function () {
+							var parsed = void 0;
+							var error = void 0;
+
+							try {
+								parsed = endpoint.parseResponse(responseText);
+								error = false;
+							} catch (e) {
+								parsed = null;
+								error = true;
+							}
+
+							if (error) {
+								rejectCallback(new Error('Unable to parse JSON response.'));
+							} else {
+								resolveCallback(parsed);
+							}
+						});
+					});
+
+					if (action.getAllowBody() && payload) {
+						request.write(JSON.stringify(payload));
+					}
+
+					request.end();
+				});
+			}
+		}, {
+			key: 'toString',
+			value: function toString() {
+				return '[RestProvider]';
+			}
+		}]);
+
+		return RestProvider;
+	}(RestProviderBase);
+
+	return RestProvider;
+}();
+
+},{"./../../lang/promise":32,"./RestProviderBase":39,"http":155,"https":113,"querystring":132}],39:[function(require,module,exports){
+'use strict';
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+var assert = require('./../../lang/assert');
+
+var RestEndpoint = require('./RestEndpoint');
+
+module.exports = function () {
+	'use strict';
+
+	/**
+  * Executes REST-ful actions.
+  *
+  * @public
+  * @param {String} host - The host name to call
+  * @param {Number=} port - The port
+  * @param {Boolean=} secure - If true, HTTPS is used; otherwise HTTP.
+  * @interface
+  */
+
+	var RestProviderBase = function () {
+		function RestProviderBase(host, port, secure) {
+			_classCallCheck(this, RestProviderBase);
+
+			assert.argumentIsRequired(host, 'host', String);
+			assert.argumentIsRequired(port, 'port', Number);
+			assert.argumentIsRequired(secure, 'secure', Boolean);
+
+			this._host = host;
+			this._port = port;
+			this._secure = secure;
+		}
+
+		/**
+   * Triggers a REST action targetting a {@link RestEndpoint}.
+   *
+   * @public
+   * @param {RestEndpoint} endpoint - The enpoint to call.
+   * @param {object} data - The data to pass to the endpoint.
+  	 * @returns {Promise.<TResult>}
+   */
+
+
+		_createClass(RestProviderBase, [{
+			key: 'call',
+			value: function call(endpoint, data, token) {
+				var _this = this;
+
+				return Promise.resolve().then(function () {
+					assert.argumentIsRequired(endpoint, endpoint, RestEndpoint, 'RestEndpoint');
+
+					return _this._call(endpoint, data, _this._host, _this._port, _this._secure, token);
+				});
+			}
+
+			/**
+    * @protected
+    * @abstract
+    * @ignore
+    */
+
+		}, {
+			key: '_call',
+			value: function _call(endpoint, data, host, port, secure) {
+				return true;
+			}
+		}, {
+			key: 'toString',
+			value: function toString() {
+				return '[RestProviderBase]';
+			}
+		}]);
+
+		return RestProviderBase;
+	}();
+
+	return RestProviderBase;
+}();
+
+},{"./../../lang/assert":26,"./RestEndpoint":36}],40:[function(require,module,exports){
+'use strict';
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+var Currency = require('./../../lang/Currency'),
+    Money = require('./../../lang/Money');
+
+var DataType = require('./DataType'),
+    Field = require('./Field');
+
+module.exports = function () {
+	'use strict';
+
+	/**
+  * A complex object built from many {@link Field} instances.
+  *
+  * @public
+  * @param {String} name
+  * @param {Array<Field>} componentType
+  */
+
+	var Component = function () {
+		function Component(name, fields, reviver) {
+			_classCallCheck(this, Component);
+
+			this._name = name;
+			this._fields = fields || [];
+			this._reviver = reviver;
+		}
+
+		/**
+   * Name of the component.
+   *
+   * @public
+   * @returns {String}
+   */
+
+
+		_createClass(Component, [{
+			key: 'toString',
+			value: function toString() {
+				return '[Component (name=' + this._name + ')]';
+			}
+		}, {
+			key: 'name',
+			get: function get() {
+				return this._name;
+			}
+
+			/**
+    * Type of the component.
+    *
+    * @public
+    * @returns {ComponentType}
+    */
+
+		}, {
+			key: 'fields',
+			get: function get() {
+				return this._fields;
+			}
+
+			/**
+    * The reviver used to rebuild the entire component.
+    *
+    * @returns {Function}
+    */
+
+		}, {
+			key: 'reviver',
+			get: function get() {
+				return this._reviver;
+			}
+
+			/**
+    * The builds a {@link Component} for {@link Money}.
+    *
+    * @public
+    * @returns {Component}
+    */
+
+		}], [{
+			key: 'forMoney',
+			value: function forMoney(name) {
+				return new Component(name, [new Field('decimal', DataType.DECIMAL), new Field('currency', DataType.forEnum(Currency, 'Currency'))], function (x) {
+					return Money.parse(x);
+				});
+			}
+		}]);
+
+		return Component;
+	}();
+
+	return Component;
+}();
+
+},{"./../../lang/Currency":18,"./../../lang/Money":23,"./DataType":41,"./Field":42}],41:[function(require,module,exports){
+'use strict';
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+var moment = require('moment');
+
+var AdHoc = require('./../../lang/AdHoc'),
+    assert = require('./../../lang/assert'),
+    Day = require('./../../lang/Day'),
+    Decimal = require('./../../lang/Decimal'),
+    Enum = require('./../../lang/Enum'),
+    is = require('./../../lang/is'),
+    Timestamp = require('./../../lang/Timestamp');
+
+module.exports = function () {
+	'use strict';
+
+	/**
+  * The formal definition of a data type which is used by an {@link Field}.
+  *
+  * @public
+  * @param {String} description
+  * @param {Function=} enumerationType
+  */
+
+	var DataType = function () {
+		function DataType(description, enumerationType, reviver, validator, builder) {
+			_classCallCheck(this, DataType);
+
+			assert.argumentIsRequired(description, 'description', String);
+			assert.argumentIsOptional(enumerationType, 'enumerationType', Function);
+
+			assert.argumentIsOptional(reviver, 'reviver', Function);
+			assert.argumentIsOptional(validator, 'validator', Function);
+			assert.argumentIsOptional(builder, 'builder', Function);
+
+			if (enumerationType) {
+				assert.argumentIsValid(enumerationType, 'enumerationType', extendsEnumeration, 'is an enumeration');
+			}
+
+			this._description = description;
+			this._enumerationType = enumerationType || null;
+
+			var reviverToUse = void 0;
+
+			if (reviver) {
+				reviverToUse = reviver;
+			} else if (enumerationType) {
+				reviverToUse = function reviverToUse(x) {
+					return Enum.fromCode(enumerationType, x);
+				};
+			} else {
+				reviverToUse = function reviverToUse(x) {
+					return x;
+				};
+			}
+
+			this._reviver = reviverToUse;
+
+			var validatorToUse = void 0;
+
+			if (validator) {
+				validatorToUse = validator;
+			} else {
+				validatorToUse = function validatorToUse(candidate) {
+					return true;
+				};
+			}
+
+			this._validator = validatorToUse;
+
+			var builderToUse = void 0;
+
+			if (builder) {
+				builderToUse = builder;
+			} else {
+				builderToUse = function builderToUse(data) {
+					return data;
+				};
+			}
+
+			this._builder = builderToUse;
+		}
+
+		/**
+   * A function that converts data into the desired format.
+   *
+   * @public
+   * @param {*} data
+   * @returns {*}
+   */
+
+
+		_createClass(DataType, [{
+			key: 'convert',
+			value: function convert(data) {
+				return this._builder(data);
+			}
+
+			/**
+    * Description of the data type.
+    *
+    * @public
+    * @returns {String}
+    */
+
+		}, {
+			key: 'toString',
+			value: function toString() {
+				return '[DataType (description=' + this._description + ')]';
+			}
+		}, {
+			key: 'description',
+			get: function get() {
+				return this._description;
+			}
+
+			/**
+    * The {@Enumeration} type, if applicable.
+    *
+    * @public
+    * @returns {Function|null}
+    */
+
+		}, {
+			key: 'enumerationType',
+			get: function get() {
+				return this._enumerationType;
+			}
+
+			/**
+    * A function which "revives" a value after serialization to JSON.
+    *
+    * @public
+    * @returns {Function}
+    */
+
+		}, {
+			key: 'reviver',
+			get: function get() {
+				return this._reviver;
+			}
+
+			/**
+    * A function validates data, returning true or false.
+    *
+    * @public
+    * @returns {Function}
+    */
+
+		}, {
+			key: 'validator',
+			get: function get() {
+				return this._validator;
+			}
+
+			/**
+    * Return a {@link DataType} instance for use with an {@link @Enum}.
+    *
+    * @public
+    * @param {Function} enumerationType - A class that extends {@link Enum}
+    * @param description - The description
+    * @returns {DataType}
+    */
+
+		}], [{
+			key: 'forEnum',
+			value: function forEnum(enumerationType, description) {
+				return new DataType(description, enumerationType, null, function (x) {
+					return x instanceof enumerationType;
+				}, getBuilder(getEnumerationBuilder(enumerationType)));
+			}
+
+			/**
+    * References a string.
+    *
+    * @public
+    * @static
+    * @returns {DataType}
+    */
+
+		}, {
+			key: 'STRING',
+			get: function get() {
+				return dataTypeString;
+			}
+
+			/**
+    * References a number.
+    *
+    * @public
+    * @static
+    * @returns {DataType}
+    */
+
+		}, {
+			key: 'NUMBER',
+			get: function get() {
+				return dataTypeNumber;
+			}
+
+			/**
+    * References a Boolean value.
+    *
+    * @public
+    * @static
+    * @returns {DataType}
+    */
+
+		}, {
+			key: 'BOOLEAN',
+			get: function get() {
+				return dataTypeBoolean;
+			}
+
+			/**
+    * References an object (serialized as JSON).
+    *
+    * @public
+    * @static
+    * @returns {DataType}
+    */
+
+		}, {
+			key: 'OBJECT',
+			get: function get() {
+				return dataTypeObject;
+			}
+
+			/**
+    * References a {@link Decimal} instance.
+    *
+    * @public
+    * @static
+    * @returns {DataType}
+    */
+
+		}, {
+			key: 'DECIMAL',
+			get: function get() {
+				return dataTypeDecimal;
+			}
+
+			/**
+    * References a {@link Day} instance.
+    *
+    * @public
+    * @static
+    * @returns {DataType}
+    */
+
+		}, {
+			key: 'DAY',
+			get: function get() {
+				return dataTypeDay;
+			}
+
+			/**
+    * References a {@link Timestamp} instance.
+    *
+    * @public
+    * @static
+    * @returns {DataType}
+    */
+
+		}, {
+			key: 'TIMESTAMP',
+			get: function get() {
+				return dataTypeTimestamp;
+			}
+
+			/**
+    * References a {@link Timestamp} instance.
+    *
+    * @public
+    * @static
+    * @returns {DataType}
+    */
+
+		}, {
+			key: 'AD_HOC',
+			get: function get() {
+				return dataTypeAdHoc;
+			}
+		}]);
+
+		return DataType;
+	}();
+
+	function extendsEnumeration(EnumerationType) {
+		return is.extension(Enum, EnumerationType);
+	}
+
+	var dataTypeString = new DataType('String', null, null, is.string);
+	var dataTypeNumber = new DataType('Number', null, null, is.number);
+	var dataTypeBoolean = new DataType('Boolean', null, null, is.boolean);
+	var dataTypeObject = new DataType('Object', null, null, is.object);
+
+	var dataTypeDecimal = new DataType('Decimal', null, function (x) {
+		return Decimal.parse(x);
+	}, function (x) {
+		return x instanceof Decimal;
+	}, getBuilder(buildDecimal));
+	var dataTypeDay = new DataType('Day', null, function (x) {
+		return Day.parse(x);
+	}, function (x) {
+		return x instanceof Day;
+	}, getBuilder(buildDay));
+	var dataTypeTimestamp = new DataType('Timestamp', null, function (x) {
+		return Timestamp.parse(x);
+	}, function (x) {
+		return x instanceof Timestamp;
+	}, getBuilder(buildTimestamp));
+	var dataTypeAdHoc = new DataType('AdHoc', null, function (x) {
+		return AdHoc.parse(x);
+	}, function (x) {
+		return x instanceof AdHoc;
+	}, getBuilder(buildAdHoc));
+
+	var dataTypes = [dataTypeString, dataTypeNumber, dataTypeBoolean, dataTypeObject, dataTypeDecimal, dataTypeDay, dataTypeTimestamp, dataTypeAdHoc];
+
+	function getBuilder(builder) {
+		return function (data) {
+			try {
+				return builder(data);
+			} catch (e) {
+				return data;
+			}
+		};
+	}
+
+	function buildDecimal(data) {
+		return new Decimal(data);
+	}
+
+	function buildDay(data) {
+		if (data instanceof Day) {
+			return new Day(data.year, data.month, data.day);
+		} else if (is.date(data)) {
+			return Day.fromDate(data);
+		} else if (is.string(data)) {
+			return Day.parse(data);
+		} else if (data instanceof moment) {
+			return new Day(data.year(), data.month() + 1, data.date());
+		} else {
+			return data;
+		}
+	}
+
+	function buildTimestamp(data) {
+		return new Timestamp(data);
+	}
+
+	function buildAdHoc(data) {
+		if (data instanceof AdHoc) {
+			return new AdHoc(data.data);
+		} else if (is.object(data)) {
+			return new AdHoc(data);
+		}
+	}
+
+	function getEnumerationBuilder(enumerationType) {
+		return function (data) {
+			if (is.string(data)) {
+				return Enum.fromCode(enumerationType, data);
+			} else {
+				return data;
+			}
+		};
+	}
+
+	return DataType;
+}();
+
+},{"./../../lang/AdHoc":17,"./../../lang/Day":19,"./../../lang/Decimal":20,"./../../lang/Enum":22,"./../../lang/Timestamp":24,"./../../lang/assert":26,"./../../lang/is":30,"moment":124}],42:[function(require,module,exports){
+'use strict';
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+module.exports = function () {
+	'use strict';
+
+	/**
+  * A simple field.
+  *
+  * @public
+  * @param {String} name
+  * @param {DataType} dataType
+  * @param {Boolean} optional
+  */
+
+	var Field = function () {
+		function Field(name, dataType, optional) {
+			_classCallCheck(this, Field);
+
+			this._name = name;
+			this._dataType = dataType;
+			this._optional = optional || false;
+		}
+
+		/**
+   * Name of the field.
+   *
+   * @public
+   * @returns {String}
+   */
+
+
+		_createClass(Field, [{
+			key: 'toString',
+			value: function toString() {
+				return '[Field (name=' + this._name + ')]';
+			}
+		}, {
+			key: 'name',
+			get: function get() {
+				return this._name;
+			}
+
+			/**
+    * Type of the field.
+    *
+    * @public
+    * @returns {DataType}
+    */
+
+		}, {
+			key: 'dataType',
+			get: function get() {
+				return this._dataType;
+			}
+
+			/**
+    * Indicates if the field can be omitted without violating the schema.
+    *
+    * @public
+    * @returns {Boolean}
+    */
+
+		}, {
+			key: 'optional',
+			get: function get() {
+				return this._optional;
+			}
+		}]);
+
+		return Field;
+	}();
+
+	return Field;
+}();
+
+},{}],43:[function(require,module,exports){
+'use strict';
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
+function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr2 = Array(arr.length); i < arr.length; i++) { arr2[i] = arr[i]; } return arr2; } else { return Array.from(arr); } }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+var attributes = require('./../../lang/attributes'),
+    functions = require('./../../lang/functions'),
+    is = require('./../../lang/is');
+
+var LinkedList = require('./../../collections/LinkedList'),
+    Tree = require('./../../collections/Tree');
+
+var Component = require('./Component'),
+    Field = require('./Field');
+
+module.exports = function () {
+	'use strict';
+
+	/**
+  * A schema definition, can be used for serialization and deserialization.
+  *
+  * @public
+  * @param {String} name - The name of the schema
+  * @param {Array<Field>} fields
+  * @param {Array<Component>} components
+  * @param {Boolean=} strict
+  */
+
+	var Schema = function () {
+		function Schema(name, fields, components, strict) {
+			_classCallCheck(this, Schema);
+
+			this._name = name;
+
+			this._fields = fields || [];
+			this._components = components || [];
+
+			this._strict = is.boolean(strict) && strict;
+
+			this._revivers = getReviverItems(this._fields, this._components);
+		}
+
+		/**
+   * Accepts data and returns a new object which (should) conform to
+   * the schema.
+   *
+   * @public
+   * @param {data} data
+   * @returns {Object}
+   */
+
+
+		_createClass(Schema, [{
+			key: 'format',
+			value: function format(data) {
+				var returnRef = {};
+
+				this._fields.forEach(function (field) {
+					formatField(returnRef, field, data);
+				});
+
+				this._components.forEach(function (component) {
+					component.fields.forEach(function (field) {
+						formatField(returnRef, field, data);
+					});
+				});
+
+				return returnRef;
+			}
+
+			/**
+    * Name of the table.
+    *
+    * @public
+    * @returns {String}
+    */
+
+		}, {
+			key: 'validate',
+
+
+			/**
+    * Returns true, if an object complies with the schema.
+    *
+    * @public
+    * @param {*} candidate
+    */
+			value: function validate(candidate) {
+				var returnVal = is.object(candidate);
+
+				return false;
+			}
+
+			/**
+    * Generates a function suitable for use by {@link JSON.parse}.
+    *
+    * @public
+    * @returns {Function}
+    */
+
+		}, {
+			key: 'getReviver',
+			value: function getReviver() {
+				var head = this._revivers;
+				var node = null;
+
+				var advance = function advance(key) {
+					if (node === null) {
+						node = head;
+					} else {
+						node = node.getNext();
+					}
+
+					var item = node.getValue();
+
+					if (key !== item.name) {
+						if (item.reset || key === '' && node === head) {
+							node = null;
+						} else if (item.optional) {
+							item = advance(key);
+						} else {
+							throw new SchemaError(key, item.name, 'Schema parsing is using strict mode, unexpected key found [ found: ' + key + ', expected: ' + item.name + ' ]');
+						}
+					}
+
+					return item;
+				};
+
+				return function (key, value) {
+					return advance(key).reviver(value);
+				};
+			}
+
+			/**
+    * Returns a function that will generate a *new* reviver function
+    * (see {@link Schema#getReviver}.
+    *
+    * @public
+    * @returns {Function}
+    */
+
+		}, {
+			key: 'getReviverFactory',
+			value: function getReviverFactory() {
+				var _this = this;
+
+				return function () {
+					return _this.getReviver();
+				};
+			}
+		}, {
+			key: 'toString',
+			value: function toString() {
+				return '[Schema (name=' + this._name + ')]';
+			}
+		}, {
+			key: 'name',
+			get: function get() {
+				return this._name;
+			}
+
+			/**
+    * The fields of the table.
+    *
+    * @public
+    * @returns {Array<Field>}
+    */
+
+		}, {
+			key: 'fields',
+			get: function get() {
+				return [].concat(_toConsumableArray(this._fields));
+			}
+
+			/**
+    * The components of the table.
+    *
+    * @public
+    * @returns {Array<Component>}
+    */
+
+		}, {
+			key: 'components',
+			get: function get() {
+				return [].concat(_toConsumableArray(this._components));
+			}
+
+			/**
+    * If true, only the explicitly defined fields and components will
+    * be serialized.
+    *
+    * @public
+    * @returns {boolean}
+    */
+
+		}, {
+			key: 'strict',
+			get: function get() {
+				return this._strict;
+			}
+		}]);
+
+		return Schema;
+	}();
+
+	var SchemaError = function (_Error) {
+		_inherits(SchemaError, _Error);
+
+		function SchemaError(key, name, message) {
+			_classCallCheck(this, SchemaError);
+
+			var _this2 = _possibleConstructorReturn(this, (SchemaError.__proto__ || Object.getPrototypeOf(SchemaError)).call(this, message));
+
+			_this2.key = key;
+			_this2.name = name;
+			return _this2;
+		}
+
+		_createClass(SchemaError, [{
+			key: 'toString',
+			value: function toString() {
+				return '[SchemaError]';
+			}
+		}]);
+
+		return SchemaError;
+	}(Error);
+
+	var ReviverItem = function () {
+		function ReviverItem(name, reviver, optional, reset) {
+			_classCallCheck(this, ReviverItem);
+
+			this._name = name;
+			this._reviver = reviver || functions.getTautology();
+			this._optional = is.boolean(optional) && optional;
+			this._reset = is.boolean(reset) && reset;
+		}
+
+		_createClass(ReviverItem, [{
+			key: 'name',
+			get: function get() {
+				return this._name;
+			}
+		}, {
+			key: 'reviver',
+			get: function get() {
+				return this._reviver;
+			}
+		}, {
+			key: 'optional',
+			get: function get() {
+				return this._optional;
+			}
+		}, {
+			key: 'reset',
+			get: function get() {
+				return this._reset;
+			}
+		}]);
+
+		return ReviverItem;
+	}();
+
+	function getReviverItems(fields, components) {
+		var root = new Tree(new ReviverItem(null, null, false, true));
+
+		// 2017/08/26, BRI. The Field and Component types could inherit a common
+		// type, allowing the following duplication to be avoided with polymorphism.
+
+		fields.forEach(function (field) {
+			var names = field.name.split('.');
+
+			var node = root;
+
+			names.forEach(function (name, i) {
+				if (names.length === i + 1) {
+					node.addChild(new ReviverItem(name, field.dataType.reviver, field.optional));
+				} else {
+					var child = node.findChild(function (n) {
+						return n.name === name;
+					});
+
+					if (!child) {
+						child = node.addChild(new ReviverItem(name));
+					}
+
+					node = child;
+				}
+			});
+		});
+
+		components.forEach(function (component) {
+			var node = root;
+
+			var names = component.name.split('.');
+
+			names.forEach(function (name, i) {
+				if (names.length === i + 1) {
+					node = node.addChild(new ReviverItem(name, component.reviver));
+				} else {
+					var child = node.findChild(function (n) {
+						return n.name === name;
+					});
+
+					if (!child) {
+						child = node.addChild(new ReviverItem(name));
+					}
+
+					node = child;
+				}
+			});
+
+			component.fields.forEach(function (f) {
+				return node.addChild(new ReviverItem(f.name, f.dataType.reviver));
+			});
+		});
+
+		var head = null;
+		var current = null;
+
+		var addItemToList = function addItemToList(item, node) {
+			var itemToUse = item;
+
+			if (!node.getIsLeaf()) {
+				var required = node.search(function (i, n) {
+					return n.getIsLeaf() && !i.optional;
+				}, true, false) !== null;
+
+				if (!required) {
+					itemToUse = new ReviverItem(item.name, item.reviver, true, item.reset);
+				}
+			} else {
+				itemToUse = item;
+			}
+
+			if (current === null) {
+				current = head = new LinkedList(itemToUse);
+			} else {
+				current = current.insert(itemToUse);
+			}
+		};
+
+		root.walk(addItemToList, false, true);
+
+		return head;
+	}
+
+	function formatField(target, field, data) {
+		if (attributes.has(data, field.name)) {
+			attributes.write(target, field.name, field.dataType.convert(attributes.read(data, field.name)));
+		}
+	}
+
+	return Schema;
+}();
+
+},{"./../../collections/LinkedList":13,"./../../collections/Tree":14,"./../../lang/attributes":27,"./../../lang/functions":29,"./../../lang/is":30,"./Component":40,"./Field":42}],44:[function(require,module,exports){
+'use strict';
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
+var assert = require('./../lang/assert'),
+    Disposable = require('./../lang/Disposable'),
+    is = require('./../lang/is'),
+    object = require('./../lang/object'),
+    promise = require('./../lang/promise');
+
+module.exports = function () {
+	'use strict';
+
+	/**
+  * An object that wraps asynchronous delays (i.e. timeout and interval).
+  *
+  * @public
+  * @extends {Disposable}
+  */
+
+	var Scheduler = function (_Disposable) {
+		_inherits(Scheduler, _Disposable);
+
+		function Scheduler() {
+			_classCallCheck(this, Scheduler);
+
+			var _this = _possibleConstructorReturn(this, (Scheduler.__proto__ || Object.getPrototypeOf(Scheduler)).call(this));
+
+			_this._timeoutBindings = {};
+			_this._intervalBindings = {};
+			return _this;
+		}
+
+		/**
+   * Schedules an action to execute in the future, returning a Promise.
+   *
+   * @public
+   * @param {Function} actionToSchedule - The action to execute.
+   * @param {number} millisecondDelay - Milliseconds before the action can be started.
+   * @param {string=} actionDescription - A description of the action, used for logging purposes.
+   * @returns {Promise}
+   */
+
+
+		_createClass(Scheduler, [{
+			key: 'schedule',
+			value: function schedule(actionToSchedule, millisecondDelay, actionDescription) {
+				var _this2 = this;
+
+				return Promise.resolve().then(function () {
+					assert.argumentIsRequired(actionToSchedule, 'actionToSchedule', Function);
+					assert.argumentIsRequired(millisecondDelay, 'millisecondDelay', Number);
+					assert.argumentIsOptional(actionDescription, 'actionDescription', String);
+
+					if (_this2.getIsDisposed()) {
+						throw new Error('The Scheduler has been disposed.');
+					}
+
+					var token = void 0;
+
+					var schedulePromise = promise.build(function (resolveCallback, rejectCallback) {
+						var wrappedAction = function wrappedAction() {
+							delete _this2._timeoutBindings[token];
+
+							try {
+								resolveCallback(actionToSchedule());
+							} catch (e) {
+								rejectCallback(e);
+							}
+						};
+
+						token = setTimeout(wrappedAction, millisecondDelay);
+					});
+
+					_this2._timeoutBindings[token] = Disposable.fromAction(function () {
+						clearTimeout(token);
+
+						delete _this2._timeoutBindings[token];
+					});
+
+					return schedulePromise;
+				});
+			}
+		}, {
+			key: 'repeat',
+			value: function repeat(actionToRepeat, millisecondInterval, actionDescription) {
+				var _this3 = this;
+
+				assert.argumentIsRequired(actionToRepeat, 'actionToRepeat', Function);
+				assert.argumentIsRequired(millisecondInterval, 'millisecondInterval', Number);
+				assert.argumentIsOptional(actionDescription, 'actionDescription', String);
+
+				if (this.getIsDisposed()) {
+					throw new Error('The Scheduler has been disposed.');
+				}
+
+				var wrappedAction = function wrappedAction() {
+					try {
+						actionToRepeat();
+					} catch (e) {}
+				};
+
+				var token = setInterval(wrappedAction, millisecondInterval);
+
+				this._intervalBindings[token] = Disposable.fromAction(function () {
+					clearInterval(token);
+
+					delete _this3._intervalBindings[token];
+				});
+
+				return this._intervalBindings[token];
+			}
+
+			/**
+    * Attempts an action, repeating if necessary, using an exponential backoff.
+    *
+    * @public
+    * @param {Function} actionToBackoff - The action to attempt. If it fails -- because an error is thrown, a promise is rejected, or the function returns a falsey value -- the action will be invoked again.
+    * @param {number=} millisecondDelay - The amount of time to wait to execute the action. Subsequent failures are multiply this value by 2 ^ [number of failures]. So, a 1000 millisecond backoff would schedule attempts using the following delays: 0, 1000, 2000, 4000, 8000, etc. If not specified, the first attemopt will execute immediately, then a value of 1000 will be used.
+    * @param {string=} actionDescription - Description of the action to attempt, used for logging purposes.
+    * @param {number=} maximumAttempts - The number of attempts to before giving up.
+    * @param {Function=} failureCallback - If provided, will be invoked if a function is considered to be failing.
+    * @param {Object=} failureValue - If provided, will consider the result to have failed, if this value is returned (a deep equality check is used). If not provided, a "falsey" value will trigger a retry.
+    * @returns {Promise}
+    */
+
+		}, {
+			key: 'backoff',
+			value: function backoff(actionToBackoff, millisecondDelay, actionDescription, maximumAttempts, failureCallback, failureValue) {
+				var _this4 = this;
+
+				return Promise.resolve().then(function () {
+					assert.argumentIsRequired(actionToBackoff, 'actionToBackoff', Function);
+					assert.argumentIsOptional(millisecondDelay, 'millisecondDelay', Number);
+					assert.argumentIsOptional(actionDescription, 'actionDescription', String);
+					assert.argumentIsOptional(maximumAttempts, 'maximumAttempts', Number);
+					assert.argumentIsOptional(failureCallback, 'failureCallback', Function);
+
+					if (_this4.getIsDisposed()) {
+						throw new Error('The Scheduler has been disposed.');
+					}
+
+					var scheduleBackoff = function scheduleBackoff(failureCount, e) {
+						if (failureCount > 0 && is.fn(failureCallback)) {
+							failureCallback(failureCount);
+						}
+
+						if (maximumAttempts > 0 && failureCount > maximumAttempts) {
+							var message = 'Maximum failures reached for ' + actionDescription;
+
+							var rejection = void 0;
+
+							if (e) {
+								e.backoff = message;
+
+								rejection = e;
+							} else {
+								rejection = message;
+							}
+
+							return Promise.reject(rejection);
+						}
+
+						var backoffDelay = void 0;
+
+						if (failureCount === 0) {
+							backoffDelay = millisecondDelay || 0;
+						} else {
+							backoffDelay = (millisecondDelay || 1000) * Math.pow(2, failureCount);
+						}
+
+						var successPredicate = void 0;
+
+						if (is.undefined(failureValue)) {
+							successPredicate = function successPredicate(value) {
+								return value;
+							};
+						} else {
+							successPredicate = function successPredicate(value) {
+								return !object.equals(value, failureValue);
+							};
+						}
+
+						return _this4.schedule(actionToBackoff, backoffDelay, (actionDescription || 'unspecified') + ', attempt ' + (failureCount + 1)).then(function (result) {
+							if (successPredicate(result)) {
+								return result;
+							} else {
+								return scheduleBackoff(++failureCount);
+							}
+						}).catch(function (e) {
+							return scheduleBackoff(++failureCount, e);
+						});
+					};
+
+					return scheduleBackoff(0);
+				});
+			}
+		}, {
+			key: '_onDispose',
+			value: function _onDispose() {
+				var _this5 = this;
+
+				object.keys(this._timeoutBindings).forEach(function (key) {
+					_this5._timeoutBindings[key].dispose();
+				});
+
+				object.keys(this._intervalBindings).forEach(function (key) {
+					_this5._intervalBindings[key].dispose();
+				});
+
+				this._timeoutBindings = null;
+				this._intervalBindings = null;
+			}
+		}, {
+			key: 'toString',
+			value: function toString() {
+				return '[Scheduler]';
+			}
+		}], [{
+			key: 'schedule',
+			value: function schedule(actionToSchedule, millisecondDelay, actionDescription) {
+				var scheduler = new Scheduler();
+
+				scheduler.schedule(actionToSchedule, millisecondDelay, actionDescription).then(function (result) {
+					scheduler.dispose();
+
+					return result;
+				}).catch(function (e) {
+					scheduler.dispose();
+
+					throw e;
+				});
+			}
+		}]);
+
+		return Scheduler;
+	}(Disposable);
+
+	return Scheduler;
+}();
+
+},{"./../lang/Disposable":21,"./../lang/assert":26,"./../lang/is":30,"./../lang/object":31,"./../lang/promise":32}],45:[function(require,module,exports){
+'use strict';
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+var assert = require('@barchart/common-js/lang/assert');
+
+module.exports = function () {
+	'use strict';
+
+	var SocketConnectionState = function () {
+		function SocketConnectionState(description, canTransmit, canReceive, canConnect, canDisconnect) {
+			_classCallCheck(this, SocketConnectionState);
+
+			assert.argumentIsRequired(description, 'description', String);
+			assert.argumentIsRequired(canTransmit, 'canTransmit', Boolean);
+			assert.argumentIsRequired(canReceive, 'canReceive', Boolean);
+			assert.argumentIsRequired(canConnect, 'canConnect', Boolean);
+			assert.argumentIsRequired(canDisconnect, 'canDisconnect', Boolean);
+
+			this._description = description;
+
+			this._canTransmit = canTransmit;
+			this._canReceive = canReceive;
+
+			this._canConnect = canConnect;
+			this._canDisconnect = canDisconnect;
+		}
+
+		_createClass(SocketConnectionState, [{
+			key: 'getDescription',
+			value: function getDescription() {
+				return this._description;
+			}
+		}, {
+			key: 'getCanTransmit',
+			value: function getCanTransmit() {
+				return this._canTransmit;
+			}
+		}, {
+			key: 'getCanReceive',
+			value: function getCanReceive() {
+				return this._canReceive;
+			}
+		}, {
+			key: 'getCanConnect',
+			value: function getCanConnect() {
+				return this._canConnect;
+			}
+		}, {
+			key: 'getCanDisconnect',
+			value: function getCanDisconnect() {
+				return this._canDisconnect;
+			}
+		}, {
+			key: 'toString',
+			value: function toString() {
+				return '[SocketConnectionState (description: ' + this._description + ')]';
+			}
+		}]);
+
+		return SocketConnectionState;
+	}();
+
+	SocketConnectionState.Connecting = new SocketConnectionState('connecting', false, false, false, true);
+	SocketConnectionState.Connected = new SocketConnectionState('connected', true, true, false, true);
+	SocketConnectionState.Disconnecting = new SocketConnectionState('disconnecting', false, false, false, false);
+	SocketConnectionState.Disconnected = new SocketConnectionState('disconnected', false, false, true, false);
+
+	return SocketConnectionState;
+}();
+
+},{"@barchart/common-js/lang/assert":62}],46:[function(require,module,exports){
+'use strict';
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
+var array = require('@barchart/common-js/lang/array'),
+    assert = require('@barchart/common-js/lang/assert'),
+    connection = require('@barchart/common-js/lang/connection'),
+    Disposable = require('@barchart/common-js/lang/Disposable');
+
+var RestAdapter = require('./adapters/RestAdapter'),
+    SocketAdapter = require('./adapters/SocketAdapter');
+
+module.exports = function () {
+	'use strict';
+
+	/**
+  * A container for a connection to Barchart's Search Service
+  * that exposes various query, lookup, and search operations
+  * targeting selected entities (e.g. instruments and exchanges).
+  *
+  * @public
+  * @param {string=} host - The name of the remote host
+  * @param {number=} port - The TCP port number of the remote host
+  * @param {string=} mode - The transport mechanism. Supported values are "rest" and "socket.io"
+  * @param {boolean=} secure - Whether or not the transport layer is secure (e.g. HTTP/HTTPS, or WS/WSS)
+  */
+
+	var SearchManager = function (_Disposable) {
+		_inherits(SearchManager, _Disposable);
+
+		function SearchManager(host, port, mode, secure) {
+			_classCallCheck(this, SearchManager);
+
+			var _this = _possibleConstructorReturn(this, (SearchManager.__proto__ || Object.getPrototypeOf(SearchManager)).call(this));
+
+			assert.argumentIsOptional(host, 'host', String);
+			assert.argumentIsOptional(port, 'port', Number);
+			assert.argumentIsOptional(mode, 'mode', String);
+			assert.argumentIsOptional(secure, 'secure', Boolean);
+
+			_this._host = host || 'instruments-prod.aws.barchart.com';
+			_this._mode = mode || 'socket.io';
+
+			_this._secure = connection.getIsSecure(secure);
+
+			var portToUse = void 0;
+
+			if (typeof port === 'number') {
+				portToUse = port;
+			} else {
+				if (_this._secure) {
+					portToUse = 443;
+				} else {
+					portToUse = 80;
+				}
+			}
+
+			_this._port = portToUse;
+
+			_this._adapter = null;
+			_this._connectPromise = null;
+			return _this;
+		}
+
+		/**
+   * Establishes a connection to the backend servers. Call this
+   * function and wait for the resulting promise to resolve
+   * before attempting to use other instance functions.
+   *
+   * @public
+   * @returns {Promise.<SearchManager>}
+   */
+
+
+		_createClass(SearchManager, [{
+			key: 'connect',
+			value: function connect() {
+				var _this2 = this;
+
+				return Promise.resolve().then(function () {
+					checkDispose(_this2, 'connect');
+				}).then(function () {
+					if (_this2._connectPromise === null) {
+						_this2._connectPromise = Promise.resolve().then(function () {
+							var mode = _this2._mode.toLowerCase();
+
+							var adapter = void 0;
+
+							if (mode === 'rest') {
+								adapter = new RestAdapter(_this2._host, _this2._port, _this2._secure);
+							} else if (mode === 'socket.io') {
+								adapter = new SocketAdapter(_this2._host, _this2._port, _this2._secure);
+							} else {
+								throw new Error('Unable to connect, using unsupported mode (' + mode + ')');
+							}
+
+							return adapter.connect();
+						}).then(function (adapter) {
+							_this2._adapter = adapter;
+
+							return _this2;
+						}).catch(function (e) {
+							_this2.dispose();
+
+							throw e;
+						});
+					}
+
+					return _this2._connectPromise;
+				});
+			}
+
+			/**
+    * Lookup a single instrument by symbol.
+   	 * @public
+    * @param symbol {string}
+    * @returns {Promise.<object>}
+    */
+
+		}, {
+			key: 'lookupInstrument',
+			value: function lookupInstrument(symbol) {
+				var _this3 = this;
+
+				return Promise.resolve().then(function () {
+					assert.argumentIsRequired(symbol, 'symbol', String);
+				}).then(function () {
+					checkStatus(_this3, 'lookup instrument');
+				}).then(function () {
+					return _this3._adapter.lookupInstrument(symbol);
+				});
+			}
+
+			/**
+    * Searches a full-text index and returns a set of matching instruments.
+    *
+    * @public
+    * @param text {string}
+    * @param region {string=}
+    * @returns {Promise.<object>}
+    */
+
+		}, {
+			key: 'searchInstruments',
+			value: function searchInstruments(text, region) {
+				var _this4 = this;
+
+				return Promise.resolve().then(function () {
+					assert.argumentIsRequired(text, 'text', String);
+					assert.argumentIsOptional(region, 'region', String);
+				}).then(function () {
+					checkStatus(_this4, 'search instruments');
+				}).then(function () {
+					return _this4._adapter.searchInstruments(text, region || 'us');
+				});
+			}
+
+			/**
+    * Accepts an array of symbols and returns valid symbol metadata.
+    *
+    * @public
+    * @param symbols {Array.<string>}
+    * @returns {Promise.<object>}
+    */
+
+		}, {
+			key: 'validateInstruments',
+			value: function validateInstruments(symbols) {
+				var _this5 = this;
+
+				return Promise.resolve().then(function () {
+					assert.argumentIsArray(symbols, 'symbols', String);
+				}).then(function () {
+					checkStatus(_this5, 'validate instruments');
+				}).then(function () {
+					return _this5._adapter.validateInstruments(array.unique(symbols));
+				});
+			}
+
+			/**
+    * Returns all instruments listed on a given exchange.
+    *
+    * @public
+    * @param exchange {string}
+    * @returns {Promise.<object>}
+    */
+
+		}, {
+			key: 'queryInstruments',
+			value: function queryInstruments(exchange) {
+				var _this6 = this;
+
+				return Promise.resolve().then(function () {
+					assert.argumentIsOptional(exchange, 'exchange', String);
+				}).then(function () {
+					checkStatus(_this6, 'query instruments');
+				}).then(function () {
+					return _this6._adapter.queryInstruments(exchange);
+				});
+			}
+
+			/**
+    * Lookup a single exchange by exchange code.
+    *
+    * @public
+    * @param id {string}
+    * @returns {Promise.<object>}
+    */
+
+		}, {
+			key: 'lookupExchange',
+			value: function lookupExchange(id) {
+				var _this7 = this;
+
+				return Promise.resolve().then(function () {
+					assert.argumentIsRequired(id, 'id', String);
+				}).then(function () {
+					checkStatus(_this7, 'lookup exchange');
+				}).then(function () {
+					return _this7._adapter.lookupExchange(id);
+				});
+			}
+
+			/**
+    * Returns a list of exchanges.
+    *
+    * @public
+    * @returns {Promise.<object>}
+    */
+
+		}, {
+			key: 'queryExchanges',
+			value: function queryExchanges() {
+				var _this8 = this;
+
+				return Promise.resolve().then(function () {
+					checkStatus(_this8, 'query exchanges');
+				}).then(function () {
+					return _this8._adapter.queryExchanges();
+				});
+			}
+
+			/**
+    * Searches a full-text index and returns a set of matching grain elevators.
+    *
+    * @public
+    * @param text {string}
+    * @param zip {string=}
+    * @returns {Promise.<object>}
+    */
+
+		}, {
+			key: 'searchElevators',
+			value: function searchElevators(text, zip) {
+				var _this9 = this;
+
+				return Promise.resolve().then(function () {
+					assert.argumentIsRequired(text, 'text', String);
+				}).then(function () {
+					checkStatus(_this9, 'search elevators');
+				}).then(function () {
+					return _this9._adapter.searchElevators(text, zip || null);
+				});
+			}
+
+			/**
+    * Gets the software version of the remote service.
+    *
+    * @public
+    * @returns {Promise.<object>}
+    */
+
+		}, {
+			key: 'getServerVersion',
+			value: function getServerVersion() {
+				var _this10 = this;
+
+				return Promise.resolve().then(function () {
+					checkStatus(_this10, 'get server version');
+				}).then(function () {
+					return _this10._adapter.getServerVersion();
+				});
+			}
+
+			/**
+    * Returns the hostname of remote server.
+    *
+    * @returns {string}
+    */
+
+		}, {
+			key: 'getHost',
+			value: function getHost() {
+				return this._host;
+			}
+
+			/**
+    * Returns the TCP port of the remote server.
+    *
+    * @returns {number}
+    */
+
+		}, {
+			key: 'getPort',
+			value: function getPort() {
+				return this._port;
+			}
+
+			/**
+    * Returns a Boolean value, indicating if the connection to the
+    * remote server is secure.
+    *
+    * @returns {boolean}
+    */
+
+		}, {
+			key: 'getSecure',
+			value: function getSecure() {
+				return this._secure;
+			}
+
+			/**
+    * Returns the transport used to exchange data with the remote server,
+    * options are "rest" (communication over HTTP/HTTPS) or "socket.io"
+    * for websocket-based connection using the socket.io library.
+    *
+    * @returns {string}
+    */
+
+		}, {
+			key: 'getMode',
+			value: function getMode() {
+				return this._mode;
+			}
+
+			/**
+    * @protected
+    * @ignore
+    */
+
+		}, {
+			key: '_onDispose',
+			value: function _onDispose() {
+				if (this._adapter !== null) {
+					this._adapter.dispose();
+					this._adapter = null;
+				}
+			}
+		}, {
+			key: 'toString',
+			value: function toString() {
+				return '[SearchManager]';
+			}
+		}]);
+
+		return SearchManager;
+	}(Disposable);
+
+	function checkDispose(manager, operation) {
+		if (manager.getIsDisposed()) {
+			throw new Error('Unable to perform ' + operation + ', the Instrument manager has been disposed');
+		}
+	}
+
+	function checkStatus(manager, operation) {
+		checkDispose(manager, operation);
+
+		if (manager._adapter === null) {
+			throw new Error('Unable to perform ' + operation + ', the Instrument manager has not connected to the server');
+		}
+	}
+
+	return SearchManager;
+}();
+
+},{"./adapters/RestAdapter":48,"./adapters/SocketAdapter":49,"@barchart/common-js/lang/Disposable":57,"@barchart/common-js/lang/array":61,"@barchart/common-js/lang/assert":62,"@barchart/common-js/lang/connection":64}],47:[function(require,module,exports){
+'use strict';
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
+var Disposable = require('@barchart/common-js/lang/Disposable');
+
+module.exports = function () {
+	'use strict';
+
+	/**
+  * An interface that abstracts network transport strategy.
+  *
+  * @protected
+  * @interface
+  * @ignore
+  */
+
+	var InstrumentAdapterBase = function (_Disposable) {
+		_inherits(InstrumentAdapterBase, _Disposable);
+
+		function InstrumentAdapterBase() {
+			_classCallCheck(this, InstrumentAdapterBase);
+
+			return _possibleConstructorReturn(this, (InstrumentAdapterBase.__proto__ || Object.getPrototypeOf(InstrumentAdapterBase)).call(this));
+		}
+
+		_createClass(InstrumentAdapterBase, [{
+			key: 'connect',
+			value: function connect() {
+				return Promise.reject();
+			}
+		}, {
+			key: 'lookupInstrument',
+			value: function lookupInstrument(symbol) {
+				return null;
+			}
+		}, {
+			key: 'searchInstruments',
+			value: function searchInstruments(text) {
+				return null;
+			}
+		}, {
+			key: 'validateInstruments',
+			value: function validateInstruments(symbols) {
+				return null;
+			}
+		}, {
+			key: 'queryInstruments',
+			value: function queryInstruments(exchange) {
+				return null;
+			}
+		}, {
+			key: 'lookupExchange',
+			value: function lookupExchange(id) {
+				return null;
+			}
+		}, {
+			key: 'queryExchanges',
+			value: function queryExchanges() {
+				return null;
+			}
+		}, {
+			key: 'searchElevators',
+			value: function searchElevators(text, zip) {
+				return null;
+			}
+		}, {
+			key: 'getServerVersion',
+			value: function getServerVersion() {
+				return null;
+			}
+		}, {
+			key: 'toString',
+			value: function toString() {
+				return '[InstrumentAdapterBase]';
+			}
+		}]);
+
+		return InstrumentAdapterBase;
+	}(Disposable);
+
+	return InstrumentAdapterBase;
+}();
+
+},{"@barchart/common-js/lang/Disposable":57}],48:[function(require,module,exports){
+'use strict';
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
+var assert = require('@barchart/common-js/lang/assert'),
+    Disposable = require('@barchart/common-js/lang/Disposable'),
+    RestAction = require('@barchart/common-js/network/rest/RestAction'),
+    RestEndpoint = require('@barchart/common-js/network/rest/RestEndpoint'),
+    RestProvider = require('@barchart/common-js/network/rest/RestProvider');
+
+var InstrumentAdapterBase = require('./BaseAdapter');
+
+module.exports = function () {
+	'use strict';
+
+	/**
+  * A transport implementation that operates over HTTP/HTTPS.
+  *
+  * @protected
+  * @interface
+  * @ignore
+  */
+
+	var RestInstrumentAdapter = function (_InstrumentAdapterBas) {
+		_inherits(RestInstrumentAdapter, _InstrumentAdapterBas);
+
+		function RestInstrumentAdapter(host, port, secure) {
+			_classCallCheck(this, RestInstrumentAdapter);
+
+			var _this = _possibleConstructorReturn(this, (RestInstrumentAdapter.__proto__ || Object.getPrototypeOf(RestInstrumentAdapter)).call(this));
+
+			assert.argumentIsRequired(host, 'host', String);
+			assert.argumentIsRequired(port, 'port', Number);
+			assert.argumentIsRequired(secure, 'secure', Boolean);
+
+			_this._restProvider = new RestProvider(host, port, secure);
+
+			_this._instrumentLookupEndpoint = new RestEndpoint(RestAction.Retrieve, ['instruments', 'symbol']);
+			_this._instrumentSearchEndpoint = new RestEndpoint(RestAction.Retrieve, ['instruments', 'search', 'text', 'region']);
+			_this._instrumentValidateEndpoint = new RestEndpoint(RestAction.Retrieve, ['instruments', 'validate', 'symbols']);
+			_this._instrumentQueryEndpoint = new RestEndpoint(RestAction.Retrieve, ['instruments', 'query', 'exchange']);
+
+			_this._exchangeLookupEndpoint = new RestEndpoint(RestAction.Retrieve, ['exchanges', 'id']);
+			_this._exchangeQueryEndpoint = new RestEndpoint(RestAction.Retrieve, ['exchanges']);
+
+			_this._elevatorSearchEndpoint = new RestEndpoint(RestAction.Retrieve, ['elevators', 'search', 'text', 'zip']);
+
+			_this._versionEndpoint = new RestEndpoint(RestAction.Retrieve, ['server', 'version']);
+			return _this;
+		}
+
+		_createClass(RestInstrumentAdapter, [{
+			key: 'connect',
+			value: function connect() {
+				return this;
+			}
+		}, {
+			key: 'lookupInstrument',
+			value: function lookupInstrument(symbol) {
+				return this._restProvider.call(this._instrumentLookupEndpoint, { symbol: symbol });
+			}
+		}, {
+			key: 'searchInstruments',
+			value: function searchInstruments(text, region) {
+				return this._restProvider.call(this._instrumentSearchEndpoint, { text: text, region: region });
+			}
+		}, {
+			key: 'validateInstruments',
+			value: function validateInstruments(symbols) {
+				return this._restProvider.call(this._instrumentValidateEndpoint, { symbols: symbols.join(',') });
+			}
+		}, {
+			key: 'queryInstruments',
+			value: function queryInstruments(exchange) {
+				return this._restProvider.call(this._instrumentQueryEndpoint, { exchange: exchange });
+			}
+		}, {
+			key: 'lookupExchange',
+			value: function lookupExchange(id) {
+				return this._restProvider.call(this._exchangeLookupEndpoint, { id: id });
+			}
+		}, {
+			key: 'queryExchanges',
+			value: function queryExchanges() {
+				return this._restProvider.call(this._exchangeQueryEndpoint, {});
+			}
+		}, {
+			key: 'searchElevators',
+			value: function searchElevators(text, zip) {
+				return this._restProvider.call(this._elevatorSearchEndpoint, { text: text, zip: zip });
+			}
+		}, {
+			key: 'getServerVersion',
+			value: function getServerVersion() {
+				return this._restProvider.call(this._versionEndpoint, {});
+			}
+		}, {
+			key: '_onDispose',
+			value: function _onDispose() {
+				return;
+			}
+		}, {
+			key: 'toString',
+			value: function toString() {
+				return '[RestInstrumentAdapter]';
+			}
+		}]);
+
+		return RestInstrumentAdapter;
+	}(InstrumentAdapterBase);
+
+	return RestInstrumentAdapter;
+}();
+
+},{"./BaseAdapter":47,"@barchart/common-js/lang/Disposable":57,"@barchart/common-js/lang/assert":62,"@barchart/common-js/network/rest/RestAction":68,"@barchart/common-js/network/rest/RestEndpoint":69,"@barchart/common-js/network/rest/RestProvider":71}],49:[function(require,module,exports){
+'use strict';
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
+var io = require('socket.io-client'),
+    uuid = require('uuid');
+
+var assert = require('@barchart/common-js/lang/assert'),
+    Disposable = require('@barchart/common-js/lang/Disposable'),
+    promise = require('@barchart/common-js/lang/promise');
+
+var InstrumentAdapterBase = require('./BaseAdapter'),
+    SocketConnectionState = require('./../../common/socket/SocketConnectionState');
+
+module.exports = function () {
+	'use strict';
+
+	/**
+  * A transport implementation that operates uses [socket.io]{@link https://socket.io/}
+  *
+  * @protected
+  * @interface
+  * @ignore
+  */
+
+	var SocketInstrumentAdapter = function (_InstrumentAdapterBas) {
+		_inherits(SocketInstrumentAdapter, _InstrumentAdapterBas);
+
+		function SocketInstrumentAdapter(host, port, secure) {
+			_classCallCheck(this, SocketInstrumentAdapter);
+
+			var _this = _possibleConstructorReturn(this, (SocketInstrumentAdapter.__proto__ || Object.getPrototypeOf(SocketInstrumentAdapter)).call(this));
+
+			assert.argumentIsRequired(host, 'host', String);
+			assert.argumentIsRequired(port, 'port', Number);
+			assert.argumentIsRequired(secure, 'secure', Boolean);
+
+			_this._host = host;
+			_this._port = port;
+			_this._secure = secure;
+
+			_this._socket = null;
+			_this._connectionState = SocketConnectionState.Disconnected;
+
+			_this._requestMap = {};
+			return _this;
+		}
+
+		_createClass(SocketInstrumentAdapter, [{
+			key: 'connect',
+			value: function connect() {
+				var _this2 = this;
+
+				return promise.build(function (resolveCallback, rejectCallback) {
+					if (_this2._connectionState.getCanConnect()) {
+						var protocol = void 0;
+
+						if (_this2._secure) {
+							protocol = 'https';
+						} else {
+							protocol = 'http';
+						}
+
+						_this2._socket = io.connect(protocol + '://' + _this2._host + ':' + _this2._port, { transports: ['websocket'], secure: _this2._secure, forceNew: true });
+
+						_this2._socket.on('connect', function () {
+							_this2._requestMap = {};
+
+							changeConnectionState.call(_this2, SocketConnectionState.Connected);
+
+							resolveCallback(_this2);
+						});
+
+						_this2._socket.on('reconnecting', function () {
+							changeConnectionState.call(_this2, SocketConnectionState.Connecting);
+						});
+
+						_this2._socket.on('reconnect', function () {
+							changeConnectionState.call(_this2, SocketConnectionState.Connected);
+						});
+
+						_this2._socket.on('response', function (data) {
+							var requestId = data.requestId;
+
+							if (requestId) {
+								var requestCallback = _this2._requestMap[requestId];
+
+								if (requestCallback) {
+									delete _this2._requestMap[requestId];
+
+									requestCallback(data.response);
+								}
+							}
+						});
+					} else {
+						rejectCallback('Unable to connect.');
+					}
+				});
+			}
+		}, {
+			key: 'lookupInstrument',
+			value: function lookupInstrument(symbol) {
+				return sendRequestToServer.call(this, 'instruments/retrieve', { symbol: symbol });
+			}
+		}, {
+			key: 'searchInstruments',
+			value: function searchInstruments(text, region) {
+				return sendRequestToServer.call(this, 'instruments/search', { text: text, region: region });
+			}
+		}, {
+			key: 'validateInstruments',
+			value: function validateInstruments(symbols) {
+				return sendRequestToServer.call(this, 'instruments/validate', { symbols: symbols });
+			}
+		}, {
+			key: 'queryInstruments',
+			value: function queryInstruments(exchange) {
+				var payload = {};
+
+				if (exchange) {
+					payload.exchange = exchange;
+				}
+
+				return sendRequestToServer.call(this, 'instruments/query', payload);
+			}
+		}, {
+			key: 'lookupExchange',
+			value: function lookupExchange(id) {
+				return sendRequestToServer.call(this, 'exchanges/retrieve', { id: id });
+			}
+		}, {
+			key: 'queryExchanges',
+			value: function queryExchanges() {
+				return sendRequestToServer.call(this, 'exchanges/query', {});
+			}
+		}, {
+			key: 'searchElevators',
+			value: function searchElevators(text, zip) {
+				return sendRequestToServer.call(this, 'elevators/search', { text: text, zip: zip });
+			}
+		}, {
+			key: 'getServerVersion',
+			value: function getServerVersion() {
+				return sendRequestToServer.call(this, 'server/version', {});
+			}
+		}, {
+			key: '_onDispose',
+			value: function _onDispose() {
+				if (this._socket) {
+					this._socket.disconnect();
+					this._socket = null;
+				}
+			}
+		}, {
+			key: 'toString',
+			value: function toString() {
+				return '[SocketInstrumentAdapter]';
+			}
+		}]);
+
+		return SocketInstrumentAdapter;
+	}(InstrumentAdapterBase);
+
+	function sendToServer(channel, payload) {
+		if (this._connectionState.getCanTransmit()) {
+			return Promise.resolve(this._socket.emit(channel, payload));
+		} else {
+			return Promise.reject('Unable to send data. The socket is not connected.');
+		}
+	}
+
+	function sendRequestToServer(channel, payload) {
+		var _this3 = this;
+
+		return promise.build(function (resolveCallback, rejectCallback) {
+			var requestId = uuid.v4();
+
+			_this3._requestMap[requestId] = resolveCallback;
+
+			return sendToServer.call(_this3, 'request/' + channel, { requestId: requestId, request: payload }).catch(function (e) {
+				delete _this3._requestMap[requestId];
+
+				throw rejectCallback(e);
+			});
+		});
+	}
+
+	function changeConnectionState(connectionState) {
+		this._connectionState = connectionState;
+	}
+
+	return SocketInstrumentAdapter;
+}();
+
+},{"./../../common/socket/SocketConnectionState":45,"./BaseAdapter":47,"@barchart/common-js/lang/Disposable":57,"@barchart/common-js/lang/assert":62,"@barchart/common-js/lang/promise":67,"socket.io-client":145,"uuid":166}],50:[function(require,module,exports){
+arguments[4][13][0].apply(exports,arguments)
+},{"dup":13}],51:[function(require,module,exports){
 'use strict';
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
@@ -2399,226 +9388,11 @@ module.exports = function () {
 	return Tree;
 }();
 
-},{}],15:[function(require,module,exports){
-'use strict';
-
-var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
-
-function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-
-var assert = require('./../../lang/assert'),
-    comparators = require('./comparators');
-
-module.exports = function () {
-	'use strict';
-
-	/**
-  * A builder for compound comparator functions (e.g. sort by last name,
-  * then by first name, then by social security number) that uses a fluent
-  * interface.
-  *
-  * @public
-  * @param {Function} comparator - The initial comparator.
-  * @param {Boolean=} invert - Indicates if the comparator should sort in descending order.
-  */
-
-	var ComparatorBuilder = function () {
-		function ComparatorBuilder(comparator, invert, previous) {
-			_classCallCheck(this, ComparatorBuilder);
-
-			assert.argumentIsRequired(comparator, 'comparator', Function);
-			assert.argumentIsOptional(invert, 'invert', Boolean);
-
-			this._comparator = comparator;
-			this._invert = invert || false;
-			this._previous = previous || null;
-		}
-
-		/**
-   * Adds a new comparator to the list of comparators to use.
-   *
-   * @public
-   * @param {Function} comparator - The next comparator function.
-   * @param {Boolean=} invert - Indicates if the comparator should sort in descending order.
-   * @returns {ComparatorBuilder}
-   */
-
-
-		_createClass(ComparatorBuilder, [{
-			key: 'thenBy',
-			value: function thenBy(comparator, invert) {
-				assert.argumentIsRequired(comparator, 'comparator', Function);
-				assert.argumentIsOptional(invert, 'invert', Boolean);
-
-				return new ComparatorBuilder(comparator, invert, this);
-			}
-
-			/**
-    * Flips the order of the comparator (e.g. ascending to descending).
-    *
-    * @public
-    * @returns {ComparatorBuilder}
-    */
-
-		}, {
-			key: 'invert',
-			value: function invert() {
-				var previous = void 0;
-
-				if (this._previous) {
-					previous = this._previous.invert();
-				} else {
-					previous = null;
-				}
-
-				return new ComparatorBuilder(this._comparator, !this._invert, previous);
-			}
-
-			/**
-    * Returns the comparator function.
-    *
-    * @public
-    * @returns {Function}
-    */
-
-		}, {
-			key: 'toComparator',
-			value: function toComparator() {
-				var _this = this;
-
-				var previousComparator = void 0;
-
-				if (this._previous) {
-					previousComparator = this._previous.toComparator();
-				} else {
-					previousComparator = comparators.empty;
-				}
-
-				return function (a, b) {
-					var result = previousComparator(a, b);
-
-					if (result === 0) {
-						var sortA = void 0;
-						var sortB = void 0;
-
-						if (_this._invert) {
-							sortA = b;
-							sortB = a;
-						} else {
-							sortA = a;
-							sortB = b;
-						}
-
-						result = _this._comparator(sortA, sortB);
-					}
-
-					return result;
-				};
-			}
-		}, {
-			key: 'toString',
-			value: function toString() {
-				return '[ComparatorBuilder]';
-			}
-
-			/**
-    * Creates a {@link ComparatorBuilder}, given an initial comparator function.
-    *
-    * @public
-    * @param {Function} comparator - The initial comparator.
-    * @param {Boolean=} invert - Indicates if the comparator should sort in descending order.
-    * @returns {ComparatorBuilder}
-    */
-
-		}], [{
-			key: 'startWith',
-			value: function startWith(comparator, invert) {
-				return new ComparatorBuilder(comparator, invert);
-			}
-		}]);
-
-		return ComparatorBuilder;
-	}();
-
-	return ComparatorBuilder;
-}();
-
-},{"./../../lang/assert":25,"./comparators":16}],16:[function(require,module,exports){
-'use strict';
-
-var assert = require('./../../lang/assert');
-
-module.exports = function () {
-	'use strict';
-
-	/**
-  * Functions that can be used as comparators.
-  *
-  * @public
-  * @module collections/sorting/comparators
-  */
-
-	return {
-		/**
-   * Compares two dates (in ascending order).
-   *
-   * @static
-   * @param {Date} a
-   * @param {Date} b
-   * @returns {Number}
-   */
-		compareDates: function compareDates(a, b) {
-			assert.argumentIsRequired(a, 'a', Date);
-			assert.argumentIsRequired(b, 'b', Date);
-
-			return a - b;
-		},
-
-		/**
-   * Compares two numbers (in ascending order).
-   *
-   * @static
-   * @param {Number} a
-   * @param {Number} b
-   * @returns {Number}
-   */
-		compareNumbers: function compareNumbers(a, b) {
-			assert.argumentIsRequired(a, 'a', Number);
-			assert.argumentIsRequired(b, 'b', Number);
-
-			return a - b;
-		},
-
-		/**
-   * Compares two strings (in ascending order), using {@link String#localeCompare}.
-   *
-   * @static
-   * @param {Number} a
-   * @param {Number} b
-   * @returns {Number}
-   */
-		compareStrings: function compareStrings(a, b) {
-			assert.argumentIsRequired(a, 'a', String);
-			assert.argumentIsRequired(b, 'b', String);
-
-			return a.localeCompare(b);
-		},
-
-		/**
-   * Compares two objects, always returning zero.
-   *
-   * @static
-   * @param {*} a
-   * @param {*} b
-   * @returns {Number}
-   */
-		empty: function empty(a, b) {
-			return 0;
-		}
-	};
-}();
-
-},{"./../../lang/assert":25}],17:[function(require,module,exports){
+},{}],52:[function(require,module,exports){
+arguments[4][15][0].apply(exports,arguments)
+},{"./../../lang/assert":62,"./comparators":53,"dup":15}],53:[function(require,module,exports){
+arguments[4][16][0].apply(exports,arguments)
+},{"./../../lang/assert":62,"dup":16}],54:[function(require,module,exports){
 'use strict';
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
@@ -2744,7 +9518,7 @@ module.exports = function () {
 	return Currency;
 }();
 
-},{"./Enum":21,"./assert":25,"./is":29}],18:[function(require,module,exports){
+},{"./Enum":58,"./assert":62,"./is":66}],55:[function(require,module,exports){
 'use strict';
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
@@ -3124,7 +9898,7 @@ module.exports = function () {
 	return Day;
 }();
 
-},{"./../collections/sorting/ComparatorBuilder":15,"./../collections/sorting/comparators":16,"./assert":25,"./is":29}],19:[function(require,module,exports){
+},{"./../collections/sorting/ComparatorBuilder":52,"./../collections/sorting/comparators":53,"./assert":62,"./is":66}],56:[function(require,module,exports){
 'use strict';
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
@@ -3704,156 +10478,9 @@ module.exports = function () {
 	return Decimal;
 }();
 
-},{"./Enum":21,"./assert":25,"./is":29,"big.js":58}],20:[function(require,module,exports){
-'use strict';
-
-var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
-
-function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
-
-function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
-
-function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-
-var assert = require('./assert');
-
-module.exports = function () {
-	'use strict';
-
-	/**
-  * An object that has an end-of-life process.
-  *
-  * @public
-  * @interface
-  */
-
-	var Disposable = function () {
-		function Disposable() {
-			_classCallCheck(this, Disposable);
-
-			this._disposed = false;
-		}
-
-		/**
-   * Invokes end-of-life logic. Once this function has been
-   * invoked, further interaction with the object is not
-   * recommended.
-   *
-   * @public
-   */
-
-
-		_createClass(Disposable, [{
-			key: 'dispose',
-			value: function dispose() {
-				if (this._disposed) {
-					return;
-				}
-
-				this._disposed = true;
-
-				this._onDispose();
-			}
-
-			/**
-    * @protected
-    * @abstract
-    * @ignore
-    */
-
-		}, {
-			key: '_onDispose',
-			value: function _onDispose() {
-				return;
-			}
-
-			/**
-    * Returns true if the {@link Disposable#dispose} function has been invoked.
-    *
-    * @public
-    * @returns {boolean}
-    */
-
-		}, {
-			key: 'getIsDisposed',
-			value: function getIsDisposed() {
-				return this._disposed || false;
-			}
-		}, {
-			key: 'toString',
-			value: function toString() {
-				return '[Disposable]';
-			}
-
-			/**
-    * Creates and returns a {@link Disposable} object with end-of-life logic
-    * delegated to a function.
-    *
-    * @public
-    * @param disposeAction {Function}
-    * @returns {Disposable}
-    */
-
-		}], [{
-			key: 'fromAction',
-			value: function fromAction(disposeAction) {
-				assert.argumentIsRequired(disposeAction, 'disposeAction', Function);
-
-				return new DisposableAction(disposeAction);
-			}
-
-			/**
-    * Creates and returns a {@link Disposable} object whose end-of-life
-    * logic does nothing.
-    *
-    * @public
-    * @returns {Disposable}
-    */
-
-		}, {
-			key: 'getEmpty',
-			value: function getEmpty() {
-				return Disposable.fromAction(function () {
-					return;
-				});
-			}
-		}]);
-
-		return Disposable;
-	}();
-
-	var DisposableAction = function (_Disposable) {
-		_inherits(DisposableAction, _Disposable);
-
-		function DisposableAction(disposeAction) {
-			_classCallCheck(this, DisposableAction);
-
-			var _this = _possibleConstructorReturn(this, (DisposableAction.__proto__ || Object.getPrototypeOf(DisposableAction)).call(this, disposeAction));
-
-			_this._disposeAction = disposeAction;
-			return _this;
-		}
-
-		_createClass(DisposableAction, [{
-			key: '_onDispose',
-			value: function _onDispose() {
-				this._disposeAction();
-				this._disposeAction = null;
-			}
-		}, {
-			key: 'toString',
-			value: function toString() {
-				return '[DisposableAction]';
-			}
-		}]);
-
-		return DisposableAction;
-	}(Disposable);
-
-	return Disposable;
-}();
-
-},{"./assert":25}],21:[function(require,module,exports){
+},{"./Enum":58,"./assert":62,"./is":66,"big.js":86}],57:[function(require,module,exports){
+arguments[4][21][0].apply(exports,arguments)
+},{"./assert":62,"dup":21}],58:[function(require,module,exports){
 'use strict';
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
@@ -3995,253 +10622,11 @@ module.exports = function () {
 	return Enum;
 }();
 
-},{"./assert":25}],22:[function(require,module,exports){
-'use strict';
-
-var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
-
-function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-
-var assert = require('./assert'),
-    is = require('./is');
-
-var Decimal = require('./Decimal'),
-    Currency = require('./Currency');
-
-module.exports = function () {
-	'use strict';
-
-	/**
-  * A structure for storing money amounts.
-  *
-  * @public
-  * @param {Decimal|Number|String} - A amount, which can be parsed as a {@link Decimal}
-  * @param {Currency} - The currency.
-  */
-
-	var Money = function () {
-		function Money(value, currency) {
-			_classCallCheck(this, Money);
-
-			assert.argumentIsRequired(currency, 'currency', Currency, 'Currency');
-
-			this._decimal = getDecimal(value);
-			this._currency = currency;
-		}
-
-		/**
-   * The currency amount.
-   *
-   * @public
-   * @returns {Decimal}
-   */
-
-
-		_createClass(Money, [{
-			key: 'toAmount',
-			value: function toAmount(places, mode) {
-				return new Money(this._decimal.round(getPlaces(places), mode), this._currency);
-			}
-
-			/**
-    * Returns the JSON representation.
-    *
-    * @public
-    * @returns {Object}
-    */
-
-		}, {
-			key: 'toJSON',
-			value: function toJSON() {
-				return {
-					decimal: this._decimal,
-					currency: this._currency
-				};
-			}
-			/**
-    * Parses the value emitted by {@link Decimal#toJSON}.
-    *
-    * @public
-    * @param {Object} value
-    * @returns {Money}
-    */
-
-		}, {
-			key: 'toString',
-			value: function toString() {
-				return '[Money]';
-			}
-		}, {
-			key: 'decimal',
-			get: function get() {
-				return this._decimal;
-			}
-
-			/**
-    * The currency.
-    *
-    * @public
-    * @returns {Currency}
-    */
-
-		}, {
-			key: 'currency',
-			get: function get() {
-				return this._currency;
-			}
-		}], [{
-			key: 'parse',
-			value: function parse(value) {
-				return new Money(value.decimal, value.currency);
-			}
-		}]);
-
-		return Money;
-	}();
-
-	function getDecimal(value) {
-		if (value instanceof Decimal) {
-			return value;
-		} else {
-			return new Decimal(value);
-		}
-	}
-
-	function getPlaces(value) {
-		if (is.integer(value) && !(value < 0)) {
-			return value;
-		} else {
-			return 2;
-		}
-	}
-
-	return Money;
-}();
-
-},{"./Currency":17,"./Decimal":19,"./assert":25,"./is":29}],23:[function(require,module,exports){
-'use strict';
-
-var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
-
-function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-
-var assert = require('./assert'),
-    is = require('./is');
-
-var moment = require('moment-timezone');
-
-module.exports = function () {
-	'use strict';
-
-	/**
-  * A data structure encapsulates (and lazy loads) a moment (see https://momentjs.com/).
-  *
-  * @public
-  * @param {Number} timestamp
-  * @param {String=} timezone
-  */
-
-	var Timestamp = function () {
-		function Timestamp(timestamp, timezone) {
-			_classCallCheck(this, Timestamp);
-
-			assert.argumentIsValid(timestamp, 'timestamp', is.large, 'is an integer');
-			assert.argumentIsOptional(timezone, 'timezone', String);
-
-			this._timestamp = timestamp;
-			this._timezone = timezone || null;
-
-			this._moment = null;
-		}
-
-		/**
-   * The timestamp.
-   *
-   * @public
-   * @returns {Number}
-   */
-
-
-		_createClass(Timestamp, [{
-			key: 'toJSON',
-
-
-			/**
-    * Returns the JSON representation.
-    *
-    * @public
-    * @returns {Number}
-    */
-			value: function toJSON() {
-				return this.timestamp;
-			}
-
-			/**
-    * Parses the value emitted by {@link Timestamp#toJSON}.
-    *
-    * @public
-    * @param {String} value
-    * @returns {Timestamp}
-    */
-
-		}, {
-			key: 'toString',
-			value: function toString() {
-				return '[Timestamp]';
-			}
-		}, {
-			key: 'timestamp',
-			get: function get() {
-				return this._timestamp;
-			}
-
-			/**
-    * The moment instance.
-    *
-    * @public
-    * @returns {moment}
-    */
-
-		}, {
-			key: 'moment',
-			get: function get() {
-				if (this._moment === null) {
-					this._moment = moment(this._timestamp);
-
-					if (this._timezone !== null) {
-						this.moment.tz(this._timezone);
-					}
-				}
-
-				return this._moment;
-			}
-		}], [{
-			key: 'parse',
-			value: function parse(value) {
-				return new Timestamp(value);
-			}
-
-			/**
-    * Returns a new {@link Timestamp} instance, representing the current moment.
-    *
-    * @public
-    * @returns {Timestamp}
-    */
-
-		}, {
-			key: 'now',
-			value: function now() {
-				return new Timestamp(new Date().getTime());
-			}
-		}]);
-
-		return Timestamp;
-	}();
-
-	return Timestamp;
-}();
-
-},{"./assert":25,"./is":29,"moment-timezone":96}],24:[function(require,module,exports){
+},{"./assert":62}],59:[function(require,module,exports){
+arguments[4][23][0].apply(exports,arguments)
+},{"./Currency":54,"./Decimal":56,"./assert":62,"./is":66,"dup":23}],60:[function(require,module,exports){
+arguments[4][24][0].apply(exports,arguments)
+},{"./assert":62,"./is":66,"dup":24,"moment-timezone":122}],61:[function(require,module,exports){
 'use strict';
 
 var assert = require('./assert'),
@@ -4579,7 +10964,7 @@ module.exports = function () {
 	};
 }();
 
-},{"./assert":25,"./is":29}],25:[function(require,module,exports){
+},{"./assert":62,"./is":66}],62:[function(require,module,exports){
 'use strict';
 
 var is = require('./is');
@@ -4727,252 +11112,13 @@ module.exports = function () {
 	};
 }();
 
-},{"./is":29}],26:[function(require,module,exports){
-'use strict';
-
-var assert = require('./assert'),
-    is = require('./is');
-
-module.exports = function () {
-	'use strict';
-
-	function getPropertyNameArray(propertyNames) {
-		var separator = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : '.';
-
-		var returnRef = void 0;
-
-		if (is.array(propertyNames)) {
-			returnRef = propertyNames;
-		} else {
-			returnRef = propertyNames.split(separator);
-		}
-
-		return returnRef;
-	}
-
-	function getPropertyTarget(target, propertyNameArray, create) {
-		var returnRef = void 0;
-
-		var propertyTarget = target;
-
-		for (var i = 0; i < propertyNameArray.length - 1; i++) {
-			var propertyName = propertyNameArray[i];
-
-			if (propertyTarget.hasOwnProperty(propertyName) && !is.null(propertyTarget[propertyName]) && !is.undefined(propertyTarget[propertyName])) {
-				propertyTarget = propertyTarget[propertyName];
-			} else if (create) {
-				propertyTarget = propertyTarget[propertyName] = {};
-			} else {
-				propertyTarget = null;
-
-				break;
-			}
-		}
-
-		return propertyTarget;
-	}
-
-	function last(array) {
-		if (array.length !== 0) {
-			return array[array.length - 1];
-		} else {
-			return null;
-		}
-	}
-
-	/**
-  * Utilities for reading and writing "complex" properties to
-  * objects. For example, the property "name.first" reads the
-  * "first" property on the "name" object of the target.
-  *
-  * @public
-  * @module lang/attributes
-  */
-	return {
-		/**
-   * Checks to see if an attribute exists on the target object.
-   *
-   * @static
-   * @param {Object} target - The object to check for existence of the property.
-   * @param {String|Array<String>} propertyNames - The property to check -- either a string with separators, or an array of strings (already split by separator).
-   * @param {String=} separator - The separator (defaults to a period character).
-   * @returns {boolean}
-   */
-		has: function has(target, propertyNames, separator) {
-			assert.argumentIsRequired(target, 'target', Object);
-
-			if (is.array(propertyNames)) {
-				assert.argumentIsArray(propertyNames, 'propertyNames', String);
-			} else {
-				assert.argumentIsRequired(propertyNames, 'propertyNames', String);
-			}
-
-			var propertyNameArray = getPropertyNameArray(propertyNames, separator);
-			var propertyTarget = getPropertyTarget(target, propertyNameArray, false);
-
-			return propertyTarget !== null && propertyTarget.hasOwnProperty(last(propertyNameArray));
-		},
-
-
-		/**
-   * Returns a value from the target object. If the property doesn't exist; undefined
-   * is returned.
-   *
-   * @static
-   * @param {Object} target - The object to read from.
-   * @param {String|Array<String>} propertyNames - The property to read -- either a string with separators, or an array of strings (already split by separator).
-   * @param {String=} separator - The separator (defaults to a period character).
-   * @returns {*}
-   */
-		read: function read(target, propertyNames, separator) {
-			assert.argumentIsRequired(target, 'target', Object);
-
-			if (is.array(propertyNames)) {
-				assert.argumentIsArray(propertyNames, 'propertyNames', String);
-			} else {
-				assert.argumentIsRequired(propertyNames, 'propertyNames', String);
-			}
-
-			var propertyNameArray = getPropertyNameArray(propertyNames, separator);
-			var propertyTarget = getPropertyTarget(target, propertyNameArray, false);
-
-			var returnRef = void 0;
-
-			if (propertyTarget) {
-				var propertyName = last(propertyNameArray);
-
-				returnRef = propertyTarget[propertyName];
-			} else {
-				returnRef = undefined;
-			}
-
-			return returnRef;
-		},
-
-
-		/**
-   * Writes a value to the target object.
-   *
-   * @static
-   * @param {Object} target - The object to write to.
-   * @param {String|Array<String>} propertyNames - The property to write -- either a string with separators, or an array of strings (already split by separator).
-   * @param {String=} separator - The separator (defaults to a period character).
-   */
-		write: function write(target, propertyNames, value, separator) {
-			assert.argumentIsRequired(target, 'target', Object);
-
-			if (is.array(propertyNames)) {
-				assert.argumentIsArray(propertyNames, 'propertyNames', String);
-			} else {
-				assert.argumentIsRequired(propertyNames, 'propertyNames', String);
-			}
-
-			var propertyNameArray = getPropertyNameArray(propertyNames, separator);
-			var propertyTarget = getPropertyTarget(target, propertyNameArray, true);
-
-			var propertyName = last(propertyNameArray);
-
-			propertyTarget[propertyName] = value;
-		},
-
-
-		/**
-   * Erases a property from the target object.
-   *
-   * @static
-   * @param {Object} target - The object to erase a property from.
-   * @param {String|Array<String>} propertyNames - The property to write -- either a string with separators, or an array of strings (already split by separator).
-   * @param {String=} separator - The separator (defaults to a period character).
-   */
-		erase: function erase(target, propertyNames, separator) {
-			if (!this.has(target, propertyNames)) {
-				return;
-			}
-
-			var propertyNameArray = getPropertyNameArray(propertyNames, separator);
-			var propertyTarget = getPropertyTarget(target, propertyNameArray, true);
-
-			var propertyName = last(propertyNameArray);
-
-			delete propertyTarget[propertyName];
-		}
-	};
-}();
-
-},{"./assert":25,"./is":29}],27:[function(require,module,exports){
-'use strict';
-
-var is = require('./is');
-
-module.exports = function () {
-	'use strict';
-
-	/**
-  * Utilities checking HTTP connections.
-  *
-  * @public
-  * @module lang/connection
-  * @deprecated
-  */
-
-	return {
-		/**
-   * Returns true, if the input is a true boolean value; otherwise false.
-   *
-   * @param {Boolean=} secure
-   * @returns {Boolean}
-   */
-		getIsSecure: function getIsSecure(secure) {
-			return is.boolean(secure) && secure;
-		}
-	};
-}();
-
-},{"./is":29}],28:[function(require,module,exports){
-'use strict';
-
-module.exports = function () {
-	'use strict';
-
-	function tautology(x) {
-		return x;
-	}
-
-	function empty() {
-		return;
-	}
-
-	/**
-  * Utilities for working with functions.
-  *
-  * @public
-  * @module lang/functions
-  */
-	return {
-		/**
-   * A function that returns the first argument passed.
-   *
-   * @static
-   * @returns {Function}
-   */
-		getTautology: function getTautology() {
-			return tautology;
-		},
-
-
-		/**
-   * A function with no return value.
-   *
-   * @static
-   * @returns {Function}
-   */
-		getEmpty: function getEmpty() {
-			return empty;
-		}
-	};
-}();
-
-},{}],29:[function(require,module,exports){
+},{"./is":66}],63:[function(require,module,exports){
+arguments[4][27][0].apply(exports,arguments)
+},{"./assert":62,"./is":66,"dup":27}],64:[function(require,module,exports){
+arguments[4][28][0].apply(exports,arguments)
+},{"./is":66,"dup":28}],65:[function(require,module,exports){
+arguments[4][29][0].apply(exports,arguments)
+},{"dup":29}],66:[function(require,module,exports){
 'use strict';
 
 var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
@@ -5195,1351 +11341,19 @@ module.exports = function () {
 	};
 }();
 
-},{}],30:[function(require,module,exports){
-'use strict';
-
-var array = require('./array'),
-    is = require('./is');
-
-module.exports = function () {
-	'use strict';
-
-	/**
-  * Utilities for working with objects.
-  *
-  * @public
-  * @module lang/object
-  */
-
-	var object = {
-		/**
-   * <p>Performs "deep" equality check on two objects.</p>
-   *
-   * <p>Array items are compared, object properties are compared, and
-   * finally "primitive" values are checked using strict equality rules.</p>
-   *
-   * @static
-   * @param {Object} a
-   * @param {Object} b
-   * @returns {Boolean}
-   */
-		equals: function equals(a, b) {
-			var returnVal = void 0;
-
-			if (a === b) {
-				returnVal = true;
-			} else if (is.array(a) && is.array(b)) {
-				if (a.length === b.length) {
-					returnVal = a.length === 0 || a.every(function (x, i) {
-						return object.equals(x, b[i]);
-					});
-				} else {
-					returnVal = false;
-				}
-			} else if (is.object(a) && is.object(b)) {
-				var keysA = object.keys(a);
-				var keysB = object.keys(b);
-
-				returnVal = array.differenceSymmetric(keysA, keysB).length === 0 && keysA.every(function (key) {
-					var valueA = a[key];
-					var valueB = b[key];
-
-					return object.equals(valueA, valueB);
-				});
-			} else {
-				returnVal = false;
-			}
-
-			return returnVal;
-		},
-
-
-		/**
-   * Performs a "deep" copy.
-   *
-   * @static
-   * @param {Object} source - The object to copy.
-   * @returns {Object}
-   */
-		clone: function clone(source) {
-			var c = void 0;
-
-			if (is.array(source)) {
-				c = source.map(function (sourceItem) {
-					return object.clone(sourceItem);
-				});
-			} else if (is.object(source)) {
-				c = object.keys(source).reduce(function (accumulator, key) {
-					accumulator[key] = object.clone(source[key]);
-
-					return accumulator;
-				}, {});
-			} else {
-				c = source;
-			}
-
-			return c;
-		},
-
-
-		/**
-   * Creates a new object (or array) by performing a deep copy
-   * of the properties from each object. If the same property
-   * exists on both objects, the property value from the
-   * second object ("b") is preferred.
-   *
-   * @static
-   * @param {Object} a
-   * @param {Object} b
-   * @returns {Object}
-   */
-		merge: function merge(a, b) {
-			var m = void 0;
-
-			var mergeTarget = is.object(a) && !is.array(a);
-			var mergeSource = is.object(b) && !is.array(b);
-
-			if (mergeTarget && mergeSource) {
-				var properties = array.unique(object.keys(a).concat(object.keys(b)));
-
-				m = properties.reduce(function (accumulator, property) {
-					accumulator[property] = object.merge(a[property], b[property]);
-
-					return accumulator;
-				}, {});
-			} else if (is.undefined(b)) {
-				m = object.clone(a);
-			} else {
-				m = object.clone(b);
-			}
-
-			return m;
-		},
-
-
-		/**
-   * Given an object, returns an array of "own" properties.
-   *
-   * @static
-   * @param {Object} target - The object to interrogate.
-   * @returns {Array<string>}
-   */
-		keys: function keys(target) {
-			var keys = [];
-
-			for (var k in target) {
-				if (target.hasOwnProperty(k)) {
-					keys.push(k);
-				}
-			}
-
-			return keys;
-		}
-	};
-
-	return object;
-}();
-
-},{"./array":24,"./is":29}],31:[function(require,module,exports){
-'use strict';
-
-var assert = require('./assert');
-
-module.exports = function () {
-	'use strict';
-
-	/**
-  * Utilities for working with promises.
-  *
-  * @public
-  * @module lang/promise
-  */
-
-	return {
-		timeout: function timeout(promise, _timeout) {
-			var _this = this;
-
-			return Promise.resolve().then(function () {
-				assert.argumentIsRequired(promise, 'promise', Promise, 'Promise');
-				assert.argumentIsRequired(_timeout, 'timeout', Number);
-
-				if (!(_timeout > 0)) {
-					throw new Error('Promise timeout must be greater than zero.');
-				}
-
-				return _this.build(function (resolveCallback, rejectCallback) {
-					var pending = true;
-
-					var token = setTimeout(function () {
-						if (pending) {
-							pending = false;
-
-							rejectCallback('Promise timed out after ' + _timeout + ' milliseconds');
-						}
-					}, _timeout);
-
-					promise.then(function (result) {
-						if (pending) {
-							pending = false;
-							clearTimeout(token);
-
-							resolveCallback(result);
-						}
-					}).catch(function (error) {
-						if (pending) {
-							pending = false;
-							clearTimeout(token);
-
-							rejectCallback(error);
-						}
-					});
-				});
-			});
-		},
-
-
-		/**
-   * A mapping function that works asynchronously. Given an array of items, each item through
-   * a mapping function, which can return a promise. Then, this function returns a single promise
-   * which is the result of each mapped promise.
-   *
-   * @param {Array} items - The items to map
-   * @param {Function} mapper - The mapping function (e.g. given an item, return a promise).
-   * @param {Number} concurrency - The maximum number of promises that are allowed to run at once.
-   * @returns {Promise.<Array>}
-   */
-		map: function map(items, mapper, concurrency) {
-			var _this2 = this;
-
-			return Promise.resolve().then(function () {
-				assert.argumentIsArray(items, 'items');
-				assert.argumentIsRequired(mapper, 'mapper', Function);
-				assert.argumentIsOptional(concurrency, 'concurrency', Number);
-
-				var c = Math.max(0, concurrency || 0);
-
-				var mapPromise = void 0;
-
-				if (c === 0 || items.length === 0) {
-					mapPromise = Promise.all(items.map(function (item) {
-						return Promise.resolve(mapper(item));
-					}));
-				} else {
-					var total = items.length;
-					var active = 0;
-					var complete = 0;
-					var failure = false;
-
-					var results = Array.of(total);
-
-					var executors = items.map(function (item, index) {
-						return function () {
-							return Promise.resolve().then(function () {
-								return mapper(item);
-							}).then(function (result) {
-								results[index] = result;
-							});
-						};
-					});
-
-					mapPromise = _this2.build(function (resolveCallback, rejectCallback) {
-						var execute = function execute() {
-							if (!(executors.length > 0 && c > active && !failure)) {
-								return;
-							}
-
-							active = active + 1;
-
-							var executor = executors.shift();
-
-							executor().then(function () {
-								if (failure) {
-									return;
-								}
-
-								active = active - 1;
-								complete = complete + 1;
-
-								if (complete < total) {
-									execute();
-								} else {
-									resolveCallback(results);
-								}
-							}).catch(function (error) {
-								failure = false;
-
-								rejectCallback(error);
-							});
-
-							execute();
-						};
-
-						execute();
-					});
-				}
-
-				return mapPromise;
-			});
-		},
-
-
-		/**
-   * Runs a series of functions sequentially (where each function can be
-   * synchronous or asynchronous). The result of each function is passed
-   * to the successive function and the result of the final function is
-   * returned to the consumer.
-   *
-   * @static
-   * @public
-   * @param {Function[]} functions - An array of functions, each expecting a single argument.
-   * @param input - The argument to pass the first function.
-   * @returns {Promise.<TResult>}
-   */
-		pipeline: function pipeline(functions, input) {
-			return Promise.resolve().then(function () {
-				assert.argumentIsArray(functions, 'functions', Function);
-
-				return functions.reduce(function (previous, fn) {
-					return previous.then(function (result) {
-						return fn(result);
-					});
-				}, Promise.resolve(input));
-			});
-		},
-
-
-		/**
-   * Creates a new promise, given an executor.
-   *
-   * This is a wrapper for the {@link Promise} constructor; however, any error
-   * is caught and the resulting promise is rejected (instead of letting the
-   * error bubble up to the top-level handler).
-   *
-   * @static
-   * @public
-   * @param {Function} executor - A function which has two callback parameters. The first is used to resolve the promise, the second rejects it.
-   * @returns {Promise}
-   */
-		build: function build(executor) {
-			return new Promise(function (resolve, reject) {
-				try {
-					executor(resolve, reject);
-				} catch (e) {
-					reject(e);
-				}
-			});
-		}
-	};
-}();
-
-},{"./assert":25}],32:[function(require,module,exports){
-'use strict';
-
-var moment = require('moment-timezone/builds/moment-timezone-with-data-2010-2020'),
-    assert = require('./assert');
-
-module.exports = function () {
-	'use strict';
-
-	/**
-  * Utilities for working with arrays.
-  *
-  * @public
-  * @module lang/array
-  */
-
-	return {
-		/**
-   * Gets a list of names in the tz database (see https://en.wikipedia.org/wiki/Tz_database
-   * and https://en.wikipedia.org/wiki/List_of_tz_database_time_zones.
-   *
-   * @static
-   * @returns {Array<String>}
-   */
-		getTimezones: function getTimezones() {
-			return moment.tz.names();
-		},
-
-
-		/**
-   * Indicates if a timezone name exists.
-   *
-   * @static
-   * @param {String} name - The timezone name to find.
-   * @returns {Boolean}
-   */
-		hasTimezone: function hasTimezone(name) {
-			assert.argumentIsRequired(name, 'name', String);
-
-			return this.getTimezones().some(function (candidate) {
-				return candidate === name;
-			});
-		},
-
-
-		/**
-   * Attempts to guess the current timezone.
-   *
-   * @returns {String|null}
-   */
-		guessTimezone: function guessTimezone() {
-			return moment.tz.guess() || null;
-		}
-	};
-}();
-
-},{"./assert":25,"moment-timezone/builds/moment-timezone-with-data-2010-2020":94}],33:[function(require,module,exports){
-'use strict';
-
-var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
-
-function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-
-function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
-
-function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
-
-var assert = require('./../lang/assert'),
-    Disposable = require('./../lang/Disposable');
-
-module.exports = function () {
-	'use strict';
-
-	/**
-  * An implementation of the observer pattern.
-  *
-  * @param {*} sender - The object which owns the event.
-  * @extends {Disposable}
-  */
-
-	var Event = function (_Disposable) {
-		_inherits(Event, _Disposable);
-
-		function Event(sender) {
-			_classCallCheck(this, Event);
-
-			var _this = _possibleConstructorReturn(this, (Event.__proto__ || Object.getPrototypeOf(Event)).call(this));
-
-			_this._sender = sender || null;
-
-			_this._observers = [];
-			return _this;
-		}
-
-		/**
-   * Registers an event handler which will receive a notification when
-   * {@link Event#fire} is called.
-   *
-   * @public
-   * @param {Function} handler - The function which will be called each time the event fires. The first argument will be the event data. The second argument will be the event owner (i.e. sender).
-   * @returns {Disposable}
-   */
-
-
-		_createClass(Event, [{
-			key: 'register',
-			value: function register(handler) {
-				var _this2 = this;
-
-				assert.argumentIsRequired(handler, 'handler', Function);
-
-				addRegistration.call(this, handler);
-
-				return Disposable.fromAction(function () {
-					if (_this2.getIsDisposed()) {
-						return;
-					}
-
-					removeRegistration.call(_this2, handler);
-				});
-			}
-
-			/**
-    * Removes registration for an event handler. That is, the handler will
-    * no longer be called if the event fires.
-    *
-    * @public
-    * @param {Function} handler
-    */
-
-		}, {
-			key: 'unregister',
-			value: function unregister(handler) {
-				assert.argumentIsRequired(handler, 'handler', Function);
-
-				removeRegistration.call(this, handler);
-			}
-
-			/**
-    * Removes all handlers from the event.
-    *
-    * @public
-    */
-
-		}, {
-			key: 'clear',
-			value: function clear() {
-				this._observers = [];
-			}
-
-			/**
-    * Triggers the event, calling all previously registered handlers.
-    *
-    * @public
-    * @param {*) data - The data to pass each handler.
-    */
-
-		}, {
-			key: 'fire',
-			value: function fire(data) {
-				var observers = this._observers;
-
-				for (var i = 0; i < observers.length; i++) {
-					var observer = observers[i];
-
-					observer(data, this._sender);
-				}
-			}
-
-			/**
-    * Returns true, if no handlers are currently registered.
-    *
-    * @returns {boolean}
-    */
-
-		}, {
-			key: 'getIsEmpty',
-			value: function getIsEmpty() {
-				return this._observers.length === 0;
-			}
-		}, {
-			key: '_onDispose',
-			value: function _onDispose() {
-				this._observers = null;
-			}
-		}, {
-			key: 'toString',
-			value: function toString() {
-				return '[Event]';
-			}
-		}]);
-
-		return Event;
-	}(Disposable);
-
-	function addRegistration(handler) {
-		var copiedObservers = this._observers.slice();
-
-		copiedObservers.push(handler);
-
-		this._observers = copiedObservers;
-	}
-
-	function removeRegistration(handler) {
-		var indicesToRemove = [];
-
-		for (var i = 0; i < this._observers.length; i++) {
-			var candidate = this._observers[i];
-
-			if (candidate === handler) {
-				indicesToRemove.push(i);
-			}
-		}
-
-		if (indicesToRemove.length > 0) {
-			var copiedObservers = this._observers.slice();
-
-			for (var j = indicesToRemove.length - 1; !(j < 0); j--) {
-				copiedObservers.splice(indicesToRemove[j], 1);
-			}
-
-			this._observers = copiedObservers;
-		}
-	}
-
-	return Event;
-}();
-
-},{"./../lang/Disposable":20,"./../lang/assert":25}],34:[function(require,module,exports){
-'use strict';
-
-var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
-
-function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-
-function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
-
-function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
-
-var assert = require('./../../lang/assert'),
-    Enum = require('./../../lang/Enum');
-
-module.exports = function () {
-	'use strict';
-
-	/**
-  * Maps an action (e.g. create) to an HTTP verb (e.g. POST).
-  *
-  * @public
-  * @extends {Enum}
-  */
-
-	var RestAction = function (_Enum) {
-		_inherits(RestAction, _Enum);
-
-		function RestAction(action, httpVerb, requiresPath, requiresPayload, allowQuerystring, allowBody) {
-			_classCallCheck(this, RestAction);
-
-			var _this = _possibleConstructorReturn(this, (RestAction.__proto__ || Object.getPrototypeOf(RestAction)).call(this, action, action));
-
-			assert.argumentIsRequired(action, 'action', String);
-			assert.argumentIsRequired(httpVerb, 'httpVerb', String);
-			assert.argumentIsRequired(requiresPath, 'requiresPath', Boolean);
-			assert.argumentIsRequired(requiresPayload, 'requiresPayload', Boolean);
-			assert.argumentIsRequired(allowQuerystring, 'allowQuerystring', Boolean);
-			assert.argumentIsRequired(allowBody, 'allowBody', Boolean);
-
-			_this._action = action;
-
-			_this._httpVerb = httpVerb;
-			_this._requiresPath = requiresPath;
-			_this._requiresPayload = requiresPayload;
-			_this._allowQuerystring = allowQuerystring;
-			_this._allowBody = allowBody;
-			return _this;
-		}
-
-		/**
-   * The HTTP action (e.g. create).
-   *
-   * @public
-   * @returns {string}
-   */
-
-
-		_createClass(RestAction, [{
-			key: 'getAction',
-			value: function getAction() {
-				return this._action;
-			}
-
-			/**
-    * The HTTP verb.
-    *
-    * @public
-    * @returns {string}
-    */
-
-		}, {
-			key: 'getHttpVerb',
-			value: function getHttpVerb() {
-				return this._httpVerb;
-			}
-
-			/**
-    * Indicates if a path, beyond the base URL, is required.
-    *
-    * @public
-    * @returns {Boolean}
-    */
-
-		}, {
-			key: 'getPathIsRequired',
-			value: function getPathIsRequired() {
-				return this._requiresPath;
-			}
-
-			/**
-    * Indicates if a payload is required, either for the purpose of formulating a
-    * request body or querystring, is required.
-    *
-    * @public
-    * @returns {*}
-    */
-
-		}, {
-			key: 'getPayloadIsRequired',
-			value: function getPayloadIsRequired() {
-				return this._requiresPayload;
-			}
-
-			/**
-    * Indicates if a querystring is allowed with this action.
-    *
-    * @public
-    * @returns {Boolean}
-    */
-
-		}, {
-			key: 'getAllowQuerystring',
-			value: function getAllowQuerystring() {
-				return this._allowQuerystring;
-			}
-
-			/**
-    * Indicates if a request body is allowed with this action.
-    *
-    * @public
-    * @returns {Boolean}
-    */
-
-		}, {
-			key: 'getAllowBody',
-			value: function getAllowBody() {
-				return this._allowBody;
-			}
-
-			/**
-    * Given a code, returns the enumeration item.
-    *
-    * @public
-    * @param {String} code
-    * @returns {RestAction|null}
-    */
-
-		}], [{
-			key: 'parse',
-			value: function parse(code) {
-				return Enum.fromCode(RestAction, code);
-			}
-
-			/**
-    * The REST-ful action to create an object.
-    *
-    * @public
-    * @returns {RestAction}
-    */
-
-		}, {
-			key: 'Create',
-			get: function get() {
-				return CREATE;
-			}
-
-			/**
-    * The REST-ful action to update an object.
-    *
-    * @public
-    * @returns {RestAction}
-    */
-
-		}, {
-			key: 'Update',
-			get: function get() {
-				return UPDATE;
-			}
-
-			/**
-    * The REST-ful action to retrieve an object.
-    *
-    * @public
-    * @returns {RestAction}
-    */
-
-		}, {
-			key: 'Retrieve',
-			get: function get() {
-				return RETRIEVE;
-			}
-
-			/**
-    * The REST-ful action to delete an object.
-    *
-    * @public
-    * @returns {RestAction}
-    */
-
-		}, {
-			key: 'Delete',
-			get: function get() {
-				return DELETE;
-			}
-
-			/**
-    * The REST-ful action to retrieve execute a query for object(s).
-    *
-    * @public
-    * @returns {RestAction}
-    */
-
-		}, {
-			key: 'Query',
-			get: function get() {
-				return QUERY;
-			}
-		}]);
-
-		return RestAction;
-	}(Enum);
-
-	var CREATE = new RestAction('Create', 'POST', false, true, false, true);
-	var UPDATE = new RestAction('Update', 'PUT', true, true, false, true);
-	var RETRIEVE = new RestAction('Retrieve', 'GET', true, false, true, false);
-	var DELETE = new RestAction('Delete', 'DELETE', true, false, false, false);
-	var QUERY = new RestAction('Query', 'GET', false, false, true, false);
-
-	return RestAction;
-}();
-
-},{"./../../lang/Enum":21,"./../../lang/assert":25}],35:[function(require,module,exports){
-'use strict';
-
-var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
-
-function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-
-var assert = require('./../../lang/assert'),
-    attributes = require('./../../lang/attributes'),
-    is = require('./../../lang/is');
-
-var RestAction = require('./RestAction'),
-    RestParser = require('./RestParser');
-
-module.exports = function () {
-	'use strict';
-
-	/**
-  * Defines a REST-ful endpoint and allows construction of valid
-  * URI that can be used to call the endpoint.
-  *
-  * @public
-  * @param {RestAction} action - The action supported by the endpoint
-  * @param {Array<String>} pathProperties - The parameters required by the endpoint
-  * @param {String=} payloadProperty - The property name of the object to use as a payload for the REST action
-  * @param {Boolean=} suppressQuerystring - If true, the querystring will be omitted when making the HTTP request
-  * @param {RestParser=} responseParser - If supplied, used to parse the response.
-  */
-
-	var RestEndpoint = function () {
-		function RestEndpoint(action, pathProperties, payloadProperty, suppressQuerystring, responseParser) {
-			_classCallCheck(this, RestEndpoint);
-
-			assert.argumentIsRequired(action, 'action', RestAction, 'RestAction');
-			assert.argumentIsArray(pathProperties, 'pathProperties', String);
-			assert.argumentIsOptional(payloadProperty, 'payloadProperty', String);
-			assert.argumentIsOptional(suppressQuerystring, 'suppressQuerystring', Boolean);
-			assert.argumentIsOptional(responseParser, 'responseParser', RestParser, 'RestParser');
-
-			this._action = action;
-
-			this._pathProperties = pathProperties;
-			this._payloadProperty = payloadProperty || null;
-			this._suppressQuerystring = is.boolean(suppressQuerystring) && suppressQuerystring;
-
-			this._responseParser = responseParser || RestParser.JSON;
-		}
-
-		/**
-   * The {@link RestAction} the endpoint supports.
-   *
-   * @public
-   * @returns {RestAction}
-   */
-
-
-		_createClass(RestEndpoint, [{
-			key: 'getAction',
-			value: function getAction() {
-				return this._action;
-			}
-
-			/**
-    * Indicates if the querystring should be omitted when making the HTTP
-    * request.
-    * 
-    * @public
-    * @returns {Boolean}
-    */
-
-		}, {
-			key: 'getSuppressQuerystring',
-			value: function getSuppressQuerystring() {
-				return this._suppressQuerystring;
-			}
-
-			/**
-    * Constructs the URI used to trigger the REST action.
-    *
-    * @public
-    * @param {Object} data - The data which will be passed to the endpoint
-    * @param {String} host - The host name to call
-    * @param {Number=} port - The port
-    * @param {Boolean=} secure - If true, HTTPS is used; otherwise HTTP.
-    * @returns {*}
-    */
-
-		}, {
-			key: 'getUrl',
-			value: function getUrl(data, host, port, secure) {
-				assert.argumentIsOptional(host, 'host', String);
-				assert.argumentIsOptional(port, 'port', Number);
-				assert.argumentIsOptional(secure, 'secure', Boolean);
-
-				var path = this.getPath(data, true);
-
-				if (this.getAction().getPathIsRequired() && path.length === 0) {
-					throw new Error('Unable to generate REST query path.');
-				}
-
-				var returnRef = void 0;
-
-				if (host.length !== 0) {
-					var url = void 0;
-
-					if (secure) {
-						url = 'https://';
-					} else {
-						url = 'http://';
-					}
-
-					url = url + host;
-
-					if (is.number(port) && port !== 80) {
-						url = url + ':' + port;
-					}
-
-					returnRef = encodeURI(url + '/' + path);
-				}
-
-				return returnRef;
-			}
-		}, {
-			key: 'getPath',
-			value: function getPath(data, skipEncoding) {
-				var path = this._pathProperties.map(function (pathProperty) {
-					var pathItem = void 0;
-
-					if (attributes.has(data || {}, pathProperty)) {
-						pathItem = attributes.read(data, pathProperty);
-					} else {
-						pathItem = pathProperty;
-					}
-
-					if (!skipEncoding) {
-						pathItem = encodeURIComponent(pathItem);
-					}
-
-					return pathItem;
-				});
-
-				return path.join('/');
-			}
-		}, {
-			key: 'getPayload',
-			value: function getPayload(data) {
-				var returnRef = void 0;
-
-				if (this._payloadProperty !== null) {
-					returnRef = attributes.read(data, this._payloadProperty);
-				} else {
-					returnRef = data;
-				}
-
-				if (this.getAction().getPayloadIsRequired() && !is.object(returnRef)) {
-					throw new Error('Unable to generate REST payload.');
-				}
-
-				return returnRef;
-			}
-		}, {
-			key: 'parseResponse',
-			value: function parseResponse(response) {
-				return this._responseParser.parse(response);
-			}
-		}, {
-			key: 'toString',
-			value: function toString() {
-				return '[RestEndpoint]';
-			}
-		}]);
-
-		return RestEndpoint;
-	}();
-
-	return RestEndpoint;
-}();
-
-},{"./../../lang/assert":25,"./../../lang/attributes":26,"./../../lang/is":29,"./RestAction":34,"./RestParser":36}],36:[function(require,module,exports){
-'use strict';
-
-var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
-
-function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
-
-function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
-
-function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-
-var assert = require('./../../lang/assert');
-
-var RestParser = require('./RestParser');
-
-var Schema = require('./../../serialization/json/Schema');
-
-module.exports = function () {
-	'use strict';
-
-	/**
-  * Parses the response received by a {@link RestProviderBase}, the
-  * default implementation simply returns the response string.
-  *
-  * @public
-  */
-
-	var RestParser = function () {
-		function RestParser() {
-			_classCallCheck(this, RestParser);
-		}
-
-		/**
-   * Parses a response.
-   *
-   * @public
-   * @param {String=} response.
-   * @returns {*}
-   */
-
-
-		_createClass(RestParser, [{
-			key: 'parse',
-			value: function parse(response) {
-				assert.argumentIsOptional(response, 'response', String);
-
-				return this._parse(response);
-			}
-
-			/**
-    * @protected
-    * @abstract
-    * @ignore
-    */
-
-		}, {
-			key: '_parse',
-			value: function _parse(response) {
-				return response;
-			}
-
-			/**
-    * Returns a {@link RestParser} that does nothing -- it just returns
-    * the response string that it is given.
-    *
-    * @public
-    * @returns {RestParser}
-    */
-
-		}, {
-			key: 'toString',
-			value: function toString() {
-				return '[RestParser]';
-			}
-		}], [{
-			key: 'getJsonParser',
-
-
-			/**
-    * Returns a {@link RestParser} parses the does customized JSON parsing
-    * using a "reviver" function.
-    *
-    * @public
-    * @param {Function} reviverFactory - A function that returns a JSON.parse reviver function
-    * @returns {RestParser}
-    */
-			value: function getJsonParser(reviverFactory) {
-				return new DelegatedRestParser(function (x) {
-					return JSON.parse(x, reviverFactory());
-				});
-			}
-
-			/**
-    * Returns a {@link RestParser} parses the does customized JSON parsing
-    * based on a JSON {@link Schema}.
-    *
-    * @public
-    * @param {Schema} schema
-    * @returns {RestParser}
-    */
-
-		}, {
-			key: 'getJsonParserForSchema',
-			value: function getJsonParserForSchema(schema) {
-				assert.argumentIsRequired(schema, 'schema', Schema, 'Schema');
-
-				return RestParser.getJsonParser(schema.getReviverFactory());
-			}
-		}, {
-			key: 'DEFAULT',
-			get: function get() {
-				return restParserDefault;
-			}
-
-			/**
-    * Returns a {@link RestParser} parses the response string as JSON.
-    *
-    * @public
-    * @returns {RestParser}
-    */
-
-		}, {
-			key: 'JSON',
-			get: function get() {
-				return restParserJson;
-			}
-		}]);
-
-		return RestParser;
-	}();
-
-	var DelegatedRestParser = function (_RestParser) {
-		_inherits(DelegatedRestParser, _RestParser);
-
-		function DelegatedRestParser(delegate) {
-			_classCallCheck(this, DelegatedRestParser);
-
-			var _this = _possibleConstructorReturn(this, (DelegatedRestParser.__proto__ || Object.getPrototypeOf(DelegatedRestParser)).call(this));
-
-			assert.argumentIsRequired(delegate, 'delegate', Function);
-
-			_this._delegate = delegate;
-			return _this;
-		}
-
-		_createClass(DelegatedRestParser, [{
-			key: '_parse',
-			value: function _parse(response) {
-				return this._delegate(response);
-			}
-		}, {
-			key: 'toString',
-			value: function toString() {
-				return '[DelegatedRestParser]';
-			}
-		}]);
-
-		return DelegatedRestParser;
-	}(RestParser);
-
-	var restParserDefault = new RestParser();
-	var restParserJson = new DelegatedRestParser(function (x) {
-		return JSON.parse(x);
-	});
-
-	return RestParser;
-}();
-
-},{"./../../lang/assert":25,"./../../serialization/json/Schema":42,"./RestParser":36}],37:[function(require,module,exports){
-'use strict';
-
-var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
-
-function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-
-function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
-
-function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
-
-var http = require('http'),
-    https = require('https'),
-    querystring = require('querystring');
-
-var promise = require('./../../lang/promise');
-
-var RestProviderBase = require('./RestProviderBase');
-
-module.exports = function () {
-	'use strict';
-
-	/**
-  * Executes REST-ful action inside a Node.js server.
-  *
-  * @public
-  * @extends {RestProviderBase}
-  */
-
-	var RestProvider = function (_RestProviderBase) {
-		_inherits(RestProvider, _RestProviderBase);
-
-		function RestProvider(host, port, secure) {
-			_classCallCheck(this, RestProvider);
-
-			return _possibleConstructorReturn(this, (RestProvider.__proto__ || Object.getPrototypeOf(RestProvider)).call(this, host, port, secure));
-		}
-
-		_createClass(RestProvider, [{
-			key: '_call',
-			value: function _call(endpoint, data, host, port, secure, token) {
-				return promise.build(function (resolveCallback, rejectCallback) {
-					var connector = void 0;
-
-					if (secure) {
-						connector = https;
-					} else {
-						connector = http;
-					}
-
-					var action = endpoint.getAction();
-					var path = endpoint.getPath(data);
-					var payload = endpoint.getPayload(data);
-
-					if (action.getAllowQuerystring() && !endpoint.getSuppressQuerystring()) {
-						var qs = querystring.stringify(payload);
-
-						if (qs) {
-							path = path + '?' + qs;
-						}
-					}
-
-					var options = {
-						method: action.getHttpVerb(),
-						hostname: host,
-						path: '/' + path,
-						port: port,
-						headers: {
-							'Content-Type': 'application/json'
-						}
-					};
-
-					if (token) {
-						options.headers['COGNITO-IDENTITY-TOKEN'] = token;
-					}
-
-					var request = connector.request(options, function (response) {
-						response.setEncoding('utf8');
-
-						var responseText = '';
-
-						response.on('error', function (error) {
-							rejectCallback(error);
-						});
-
-						response.on('data', function (chunk) {
-							responseText = responseText + chunk;
-						});
-
-						response.on('end', function () {
-							var parsed = void 0;
-							var error = void 0;
-
-							try {
-								parsed = endpoint.parseResponse(responseText);
-								error = false;
-							} catch (e) {
-								parsed = null;
-								error = true;
-							}
-
-							if (error) {
-								rejectCallback(new Error('Unable to parse JSON response.'));
-							} else {
-								resolveCallback(parsed);
-							}
-						});
-					});
-
-					if (action.getAllowBody() && payload) {
-						request.write(JSON.stringify(payload));
-					}
-
-					request.end();
-				});
-			}
-		}, {
-			key: 'toString',
-			value: function toString() {
-				return '[RestProvider]';
-			}
-		}]);
-
-		return RestProvider;
-	}(RestProviderBase);
-
-	return RestProvider;
-}();
-
-},{"./../../lang/promise":31,"./RestProviderBase":38,"http":129,"https":87,"querystring":106}],38:[function(require,module,exports){
-'use strict';
-
-var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
-
-function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-
-var assert = require('./../../lang/assert');
-
-var RestEndpoint = require('./RestEndpoint');
-
-module.exports = function () {
-	'use strict';
-
-	/**
-  * Executes REST-ful actions.
-  *
-  * @public
-  * @param {String} host - The host name to call
-  * @param {Number=} port - The port
-  * @param {Boolean=} secure - If true, HTTPS is used; otherwise HTTP.
-  * @interface
-  */
-
-	var RestProviderBase = function () {
-		function RestProviderBase(host, port, secure) {
-			_classCallCheck(this, RestProviderBase);
-
-			assert.argumentIsRequired(host, 'host', String);
-			assert.argumentIsRequired(port, 'port', Number);
-			assert.argumentIsRequired(secure, 'secure', Boolean);
-
-			this._host = host;
-			this._port = port;
-			this._secure = secure;
-		}
-
-		/**
-   * Triggers a REST action targetting a {@link RestEndpoint}.
-   *
-   * @public
-   * @param {RestEndpoint} endpoint - The enpoint to call.
-   * @param {object} data - The data to pass to the endpoint.
-  	 * @returns {Promise.<TResult>}
-   */
-
-
-		_createClass(RestProviderBase, [{
-			key: 'call',
-			value: function call(endpoint, data, token) {
-				var _this = this;
-
-				return Promise.resolve().then(function () {
-					assert.argumentIsRequired(endpoint, endpoint, RestEndpoint, 'RestEndpoint');
-
-					return _this._call(endpoint, data, _this._host, _this._port, _this._secure, token);
-				});
-			}
-
-			/**
-    * @protected
-    * @abstract
-    * @ignore
-    */
-
-		}, {
-			key: '_call',
-			value: function _call(endpoint, data, host, port, secure) {
-				return true;
-			}
-		}, {
-			key: 'toString',
-			value: function toString() {
-				return '[RestProviderBase]';
-			}
-		}]);
-
-		return RestProviderBase;
-	}();
-
-	return RestProviderBase;
-}();
-
-},{"./../../lang/assert":25,"./RestEndpoint":35}],39:[function(require,module,exports){
+},{}],67:[function(require,module,exports){
+arguments[4][32][0].apply(exports,arguments)
+},{"./assert":62,"dup":32}],68:[function(require,module,exports){
+arguments[4][35][0].apply(exports,arguments)
+},{"./../../lang/Enum":58,"./../../lang/assert":62,"dup":35}],69:[function(require,module,exports){
+arguments[4][36][0].apply(exports,arguments)
+},{"./../../lang/assert":62,"./../../lang/attributes":63,"./../../lang/is":66,"./RestAction":68,"./RestParser":70,"dup":36}],70:[function(require,module,exports){
+arguments[4][37][0].apply(exports,arguments)
+},{"./../../lang/assert":62,"./../../serialization/json/Schema":76,"./RestParser":70,"dup":37}],71:[function(require,module,exports){
+arguments[4][38][0].apply(exports,arguments)
+},{"./../../lang/promise":67,"./RestProviderBase":72,"dup":38,"http":155,"https":113,"querystring":132}],72:[function(require,module,exports){
+arguments[4][39][0].apply(exports,arguments)
+},{"./../../lang/assert":62,"./RestEndpoint":69,"dup":39}],73:[function(require,module,exports){
 'use strict';
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
@@ -6638,7 +11452,7 @@ module.exports = function () {
 	return Component;
 }();
 
-},{"./../../lang/Currency":17,"./../../lang/Money":22,"./DataType":40,"./Field":41}],40:[function(require,module,exports){
+},{"./../../lang/Currency":54,"./../../lang/Money":59,"./DataType":74,"./Field":75}],74:[function(require,module,exports){
 'use strict';
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
@@ -6874,87 +11688,9 @@ module.exports = function () {
 	return DataType;
 }();
 
-},{"./../../lang/Day":18,"./../../lang/Decimal":19,"./../../lang/Enum":21,"./../../lang/Timestamp":23,"./../../lang/assert":25,"./../../lang/is":29}],41:[function(require,module,exports){
-'use strict';
-
-var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
-
-function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-
-module.exports = function () {
-	'use strict';
-
-	/**
-  * A simple field.
-  *
-  * @public
-  * @param {String} name
-  * @param {DataType} dataType
-  * @param {Boolean} optional
-  */
-
-	var Field = function () {
-		function Field(name, dataType, optional) {
-			_classCallCheck(this, Field);
-
-			this._name = name;
-			this._dataType = dataType;
-			this._optional = optional || false;
-		}
-
-		/**
-   * Name of the field.
-   *
-   * @public
-   * @returns {String}
-   */
-
-
-		_createClass(Field, [{
-			key: 'toString',
-			value: function toString() {
-				return '[Field (name=' + this._name + ')]';
-			}
-		}, {
-			key: 'name',
-			get: function get() {
-				return this._name;
-			}
-
-			/**
-    * Type of the field.
-    *
-    * @public
-    * @returns {DataType}
-    */
-
-		}, {
-			key: 'dataType',
-			get: function get() {
-				return this._dataType;
-			}
-
-			/**
-    * Indicates if the field can be omitted without violating the schema.
-    *
-    * @public
-    * @returns {Boolean}
-    */
-
-		}, {
-			key: 'optional',
-			get: function get() {
-				return this._optional;
-			}
-		}]);
-
-		return Field;
-	}();
-
-	return Field;
-}();
-
-},{}],42:[function(require,module,exports){
+},{"./../../lang/Day":55,"./../../lang/Decimal":56,"./../../lang/Enum":58,"./../../lang/Timestamp":60,"./../../lang/assert":62,"./../../lang/is":66}],75:[function(require,module,exports){
+arguments[4][42][0].apply(exports,arguments)
+},{"dup":42}],76:[function(require,module,exports){
 'use strict';
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
@@ -7257,1109 +11993,7 @@ module.exports = function () {
 	return Schema;
 }();
 
-},{"./../../collections/LinkedList":13,"./../../collections/Tree":14,"./../../lang/functions":28,"./../../lang/is":29,"./Component":39,"./Field":41}],43:[function(require,module,exports){
-'use strict';
-
-var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
-
-function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-
-function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
-
-function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
-
-var assert = require('./../lang/assert'),
-    Disposable = require('./../lang/Disposable'),
-    is = require('./../lang/is'),
-    object = require('./../lang/object'),
-    promise = require('./../lang/promise');
-
-module.exports = function () {
-	'use strict';
-
-	/**
-  * An object that wraps asynchronous delays (i.e. timeout and interval).
-  *
-  * @public
-  * @extends {Disposable}
-  */
-
-	var Scheduler = function (_Disposable) {
-		_inherits(Scheduler, _Disposable);
-
-		function Scheduler() {
-			_classCallCheck(this, Scheduler);
-
-			var _this = _possibleConstructorReturn(this, (Scheduler.__proto__ || Object.getPrototypeOf(Scheduler)).call(this));
-
-			_this._timeoutBindings = {};
-			_this._intervalBindings = {};
-			return _this;
-		}
-
-		/**
-   * Schedules an action to execute in the future, returning a Promise.
-   *
-   * @param {Function} actionToSchedule - The action to execute.
-   * @param {number} millisecondDelay - Milliseconds before the action can be started.
-   * @param {string=} actionDescription - A description of the action, used for logging purposes.
-   * @returns {Promise}
-   */
-
-
-		_createClass(Scheduler, [{
-			key: 'schedule',
-			value: function schedule(actionToSchedule, millisecondDelay, actionDescription) {
-				var _this2 = this;
-
-				return Promise.resolve().then(function () {
-					assert.argumentIsRequired(actionToSchedule, 'actionToSchedule', Function);
-					assert.argumentIsRequired(millisecondDelay, 'millisecondDelay', Number);
-					assert.argumentIsOptional(actionDescription, 'actionDescription', String);
-
-					if (_this2.getIsDisposed()) {
-						throw new Error('The Scheduler has been disposed.');
-					}
-
-					var token = void 0;
-
-					var schedulePromise = promise.build(function (resolveCallback, rejectCallback) {
-						var wrappedAction = function wrappedAction() {
-							delete _this2._timeoutBindings[token];
-
-							try {
-								resolveCallback(actionToSchedule());
-							} catch (e) {
-								rejectCallback(e);
-							}
-						};
-
-						token = setTimeout(wrappedAction, millisecondDelay);
-					});
-
-					_this2._timeoutBindings[token] = Disposable.fromAction(function () {
-						clearTimeout(token);
-
-						delete _this2._timeoutBindings[token];
-					});
-
-					return schedulePromise;
-				});
-			}
-		}, {
-			key: 'repeat',
-			value: function repeat(actionToRepeat, millisecondInterval, actionDescription) {
-				var _this3 = this;
-
-				assert.argumentIsRequired(actionToRepeat, 'actionToRepeat', Function);
-				assert.argumentIsRequired(millisecondInterval, 'millisecondInterval', Number);
-				assert.argumentIsOptional(actionDescription, 'actionDescription', String);
-
-				if (this.getIsDisposed()) {
-					throw new Error('The Scheduler has been disposed.');
-				}
-
-				var wrappedAction = function wrappedAction() {
-					try {
-						actionToRepeat();
-					} catch (e) {}
-				};
-
-				var token = setInterval(wrappedAction, millisecondInterval);
-
-				this._intervalBindings[token] = Disposable.fromAction(function () {
-					clearInterval(token);
-
-					delete _this3._intervalBindings[token];
-				});
-
-				return this._intervalBindings[token];
-			}
-
-			/**
-    * Attempts an action, repeating if necessary, using an exponential backoff.
-    *
-    * @param {Function} actionToBackoff - The action to attempt. If it fails -- because an error is thrown, a promise is rejected, or the function returns a falsey value -- the action will be invoked again.
-    * @param {number=} millisecondDelay - The amount of time to wait to execute the action. Subsequent failures are multiply this value by 2 ^ [number of failures]. So, a 1000 millisecond backoff would schedule attempts using the following delays: 0, 1000, 2000, 4000, 8000, etc. If not specified, the first attemopt will execute immediately, then a value of 1000 will be used.
-    * @param {string=} actionDescription - Description of the action to attempt, used for logging purposes.
-    * @param {number=} maximumAttempts - The number of attempts to before giving up.
-    * @param {Function=} maximumAttempts - If provided, will be invoked if a function is considered to be failing.
-    * @param {Object=} failureValue - If provided, will consider the result to have failed, if this value is returned (a deep equality check is used). If not provided, a "falsey" value will trigger a retry.
-    */
-
-		}, {
-			key: 'backoff',
-			value: function backoff(actionToBackoff, millisecondDelay, actionDescription, maximumAttempts, failureCallback, failureValue) {
-				var _this4 = this;
-
-				return Promise.resolve().then(function () {
-					assert.argumentIsRequired(actionToBackoff, 'actionToBackoff', Function);
-					assert.argumentIsOptional(millisecondDelay, 'millisecondDelay', Number);
-					assert.argumentIsOptional(actionDescription, 'actionDescription', String);
-					assert.argumentIsOptional(maximumAttempts, 'maximumAttempts', Number);
-					assert.argumentIsOptional(failureCallback, 'failureCallback', Function);
-
-					if (_this4.getIsDisposed()) {
-						throw new Error('The Scheduler has been disposed.');
-					}
-
-					var scheduleBackoff = function scheduleBackoff(failureCount) {
-						if (failureCount > 0 && is.fn(failureCallback)) {
-							failureCallback(failureCount);
-						}
-
-						if (maximumAttempts > 0 && failureCount > maximumAttempts) {
-							return Promise.reject('Maximum failures reached for ' + actionDescription);
-						}
-
-						var backoffDelay = void 0;
-
-						if (failureCount === 0) {
-							backoffDelay = millisecondDelay || 0;
-						} else {
-							backoffDelay = (millisecondDelay || 1000) * Math.pow(2, failureCount);
-						}
-
-						var successPredicate = void 0;
-
-						if (is.undefined(failureValue)) {
-							successPredicate = function successPredicate(value) {
-								return value;
-							};
-						} else {
-							successPredicate = function successPredicate(value) {
-								return !object.equals(value, failureValue);
-							};
-						}
-
-						return _this4.schedule(actionToBackoff, backoffDelay, (actionDescription || 'unspecified') + ', attempt ' + (failureCount + 1)).then(function (result) {
-							if (successPredicate(result)) {
-								return result;
-							} else {
-								return scheduleBackoff(++failureCount);
-							}
-						}).catch(function (e) {
-							return scheduleBackoff(++failureCount);
-						});
-					};
-
-					return scheduleBackoff(0);
-				});
-			}
-		}, {
-			key: '_onDispose',
-			value: function _onDispose() {
-				var _this5 = this;
-
-				object.keys(this._timeoutBindings).forEach(function (key) {
-					_this5._timeoutBindings[key].dispose();
-				});
-
-				object.keys(this._intervalBindings).forEach(function (key) {
-					_this5._intervalBindings[key].dispose();
-				});
-
-				this._timeoutBindings = null;
-				this._intervalBindings = null;
-			}
-		}, {
-			key: 'toString',
-			value: function toString() {
-				return '[Scheduler]';
-			}
-		}], [{
-			key: 'schedule',
-			value: function schedule(actionToSchedule, millisecondDelay, actionDescription) {
-				var scheduler = new Scheduler();
-
-				scheduler.schedule(actionToSchedule, millisecondDelay, actionDescription).then(function (result) {
-					scheduler.dispose();
-
-					return result;
-				}).catch(function (e) {
-					scheduler.dispose();
-
-					throw e;
-				});
-			}
-		}]);
-
-		return Scheduler;
-	}(Disposable);
-
-	return Scheduler;
-}();
-
-},{"./../lang/Disposable":20,"./../lang/assert":25,"./../lang/is":29,"./../lang/object":30,"./../lang/promise":31}],44:[function(require,module,exports){
-'use strict';
-
-var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
-
-function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-
-var assert = require('@barchart/common-js/lang/assert');
-
-module.exports = function () {
-	'use strict';
-
-	var SocketConnectionState = function () {
-		function SocketConnectionState(description, canTransmit, canReceive, canConnect, canDisconnect) {
-			_classCallCheck(this, SocketConnectionState);
-
-			assert.argumentIsRequired(description, 'description', String);
-			assert.argumentIsRequired(canTransmit, 'canTransmit', Boolean);
-			assert.argumentIsRequired(canReceive, 'canReceive', Boolean);
-			assert.argumentIsRequired(canConnect, 'canConnect', Boolean);
-			assert.argumentIsRequired(canDisconnect, 'canDisconnect', Boolean);
-
-			this._description = description;
-
-			this._canTransmit = canTransmit;
-			this._canReceive = canReceive;
-
-			this._canConnect = canConnect;
-			this._canDisconnect = canDisconnect;
-		}
-
-		_createClass(SocketConnectionState, [{
-			key: 'getDescription',
-			value: function getDescription() {
-				return this._description;
-			}
-		}, {
-			key: 'getCanTransmit',
-			value: function getCanTransmit() {
-				return this._canTransmit;
-			}
-		}, {
-			key: 'getCanReceive',
-			value: function getCanReceive() {
-				return this._canReceive;
-			}
-		}, {
-			key: 'getCanConnect',
-			value: function getCanConnect() {
-				return this._canConnect;
-			}
-		}, {
-			key: 'getCanDisconnect',
-			value: function getCanDisconnect() {
-				return this._canDisconnect;
-			}
-		}, {
-			key: 'toString',
-			value: function toString() {
-				return '[SocketConnectionState (description: ' + this._description + ')]';
-			}
-		}]);
-
-		return SocketConnectionState;
-	}();
-
-	SocketConnectionState.Connecting = new SocketConnectionState('connecting', false, false, false, true);
-	SocketConnectionState.Connected = new SocketConnectionState('connected', true, true, false, true);
-	SocketConnectionState.Disconnecting = new SocketConnectionState('disconnecting', false, false, false, false);
-	SocketConnectionState.Disconnected = new SocketConnectionState('disconnected', false, false, true, false);
-
-	return SocketConnectionState;
-}();
-
-},{"@barchart/common-js/lang/assert":25}],45:[function(require,module,exports){
-'use strict';
-
-var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
-
-function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-
-function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
-
-function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
-
-var array = require('@barchart/common-js/lang/array'),
-    assert = require('@barchart/common-js/lang/assert'),
-    connection = require('@barchart/common-js/lang/connection'),
-    Disposable = require('@barchart/common-js/lang/Disposable');
-
-var RestAdapter = require('./adapters/RestAdapter'),
-    SocketAdapter = require('./adapters/SocketAdapter');
-
-module.exports = function () {
-	'use strict';
-
-	/**
-  * A container for a connection to Barchart's Search Service
-  * that exposes various query, lookup, and search operations
-  * targeting selected entities (e.g. instruments and exchanges).
-  *
-  * @public
-  * @param {string=} host - The name of the remote host
-  * @param {number=} port - The TCP port number of the remote host
-  * @param {string=} mode - The transport mechanism. Supported values are "rest" and "socket.io"
-  * @param {boolean=} secure - Whether or not the transport layer is secure (e.g. HTTP/HTTPS, or WS/WSS)
-  */
-
-	var SearchManager = function (_Disposable) {
-		_inherits(SearchManager, _Disposable);
-
-		function SearchManager(host, port, mode, secure) {
-			_classCallCheck(this, SearchManager);
-
-			var _this = _possibleConstructorReturn(this, (SearchManager.__proto__ || Object.getPrototypeOf(SearchManager)).call(this));
-
-			assert.argumentIsOptional(host, 'host', String);
-			assert.argumentIsOptional(port, 'port', Number);
-			assert.argumentIsOptional(mode, 'mode', String);
-			assert.argumentIsOptional(secure, 'secure', Boolean);
-
-			_this._host = host || 'instruments-prod.aws.barchart.com';
-			_this._mode = mode || 'socket.io';
-
-			_this._secure = connection.getIsSecure(secure);
-
-			var portToUse = void 0;
-
-			if (typeof port === 'number') {
-				portToUse = port;
-			} else {
-				if (_this._secure) {
-					portToUse = 443;
-				} else {
-					portToUse = 80;
-				}
-			}
-
-			_this._port = portToUse;
-
-			_this._adapter = null;
-			_this._connectPromise = null;
-			return _this;
-		}
-
-		/**
-   * Establishes a connection to the backend servers. Call this
-   * function and wait for the resulting promise to resolve
-   * before attempting to use other instance functions.
-   *
-   * @public
-   * @returns {Promise.<SearchManager>}
-   */
-
-
-		_createClass(SearchManager, [{
-			key: 'connect',
-			value: function connect() {
-				var _this2 = this;
-
-				return Promise.resolve().then(function () {
-					checkDispose(_this2, 'connect');
-				}).then(function () {
-					if (_this2._connectPromise === null) {
-						_this2._connectPromise = Promise.resolve().then(function () {
-							var mode = _this2._mode.toLowerCase();
-
-							var adapter = void 0;
-
-							if (mode === 'rest') {
-								adapter = new RestAdapter(_this2._host, _this2._port, _this2._secure);
-							} else if (mode === 'socket.io') {
-								adapter = new SocketAdapter(_this2._host, _this2._port, _this2._secure);
-							} else {
-								throw new Error('Unable to connect, using unsupported mode (' + mode + ')');
-							}
-
-							return adapter.connect();
-						}).then(function (adapter) {
-							_this2._adapter = adapter;
-
-							return _this2;
-						}).catch(function (e) {
-							_this2.dispose();
-
-							throw e;
-						});
-					}
-
-					return _this2._connectPromise;
-				});
-			}
-
-			/**
-    * Lookup a single instrument by symbol.
-   	 * @public
-    * @param symbol {string}
-    * @returns {Promise.<object>}
-    */
-
-		}, {
-			key: 'lookupInstrument',
-			value: function lookupInstrument(symbol) {
-				var _this3 = this;
-
-				return Promise.resolve().then(function () {
-					assert.argumentIsRequired(symbol, 'symbol', String);
-				}).then(function () {
-					checkStatus(_this3, 'lookup instrument');
-				}).then(function () {
-					return _this3._adapter.lookupInstrument(symbol);
-				});
-			}
-
-			/**
-    * Searches a full-text index and returns a set of matching instruments.
-    *
-    * @public
-    * @param text {string}
-    * @param region {string=}
-    * @returns {Promise.<object>}
-    */
-
-		}, {
-			key: 'searchInstruments',
-			value: function searchInstruments(text, region) {
-				var _this4 = this;
-
-				return Promise.resolve().then(function () {
-					assert.argumentIsRequired(text, 'text', String);
-					assert.argumentIsOptional(region, 'region', String);
-				}).then(function () {
-					checkStatus(_this4, 'search instruments');
-				}).then(function () {
-					return _this4._adapter.searchInstruments(text, region || 'us');
-				});
-			}
-
-			/**
-    * Accepts an array of symbols and returns valid symbol metadata.
-    *
-    * @public
-    * @param symbols {Array.<string>}
-    * @returns {Promise.<object>}
-    */
-
-		}, {
-			key: 'validateInstruments',
-			value: function validateInstruments(symbols) {
-				var _this5 = this;
-
-				return Promise.resolve().then(function () {
-					assert.argumentIsArray(symbols, 'symbols', String);
-				}).then(function () {
-					checkStatus(_this5, 'validate instruments');
-				}).then(function () {
-					return _this5._adapter.validateInstruments(array.unique(symbols));
-				});
-			}
-
-			/**
-    * Returns all instruments listed on a given exchange.
-    *
-    * @public
-    * @param exchange {string}
-    * @returns {Promise.<object>}
-    */
-
-		}, {
-			key: 'queryInstruments',
-			value: function queryInstruments(exchange) {
-				var _this6 = this;
-
-				return Promise.resolve().then(function () {
-					assert.argumentIsOptional(exchange, 'exchange', String);
-				}).then(function () {
-					checkStatus(_this6, 'query instruments');
-				}).then(function () {
-					return _this6._adapter.queryInstruments(exchange);
-				});
-			}
-
-			/**
-    * Lookup a single exchange by exchange code.
-    *
-    * @public
-    * @param id {string}
-    * @returns {Promise.<object>}
-    */
-
-		}, {
-			key: 'lookupExchange',
-			value: function lookupExchange(id) {
-				var _this7 = this;
-
-				return Promise.resolve().then(function () {
-					assert.argumentIsRequired(id, 'id', String);
-				}).then(function () {
-					checkStatus(_this7, 'lookup exchange');
-				}).then(function () {
-					return _this7._adapter.lookupExchange(id);
-				});
-			}
-
-			/**
-    * Returns a list of exchanges.
-    *
-    * @public
-    * @returns {Promise.<object>}
-    */
-
-		}, {
-			key: 'queryExchanges',
-			value: function queryExchanges() {
-				var _this8 = this;
-
-				return Promise.resolve().then(function () {
-					checkStatus(_this8, 'query exchanges');
-				}).then(function () {
-					return _this8._adapter.queryExchanges();
-				});
-			}
-
-			/**
-    * Searches a full-text index and returns a set of matching grain elevators.
-    *
-    * @public
-    * @param text {string}
-    * @param zip {string=}
-    * @returns {Promise.<object>}
-    */
-
-		}, {
-			key: 'searchElevators',
-			value: function searchElevators(text, zip) {
-				var _this9 = this;
-
-				return Promise.resolve().then(function () {
-					assert.argumentIsRequired(text, 'text', String);
-				}).then(function () {
-					checkStatus(_this9, 'search elevators');
-				}).then(function () {
-					return _this9._adapter.searchElevators(text, zip || null);
-				});
-			}
-
-			/**
-    * Gets the software version of the remote service.
-    *
-    * @public
-    * @returns {Promise.<object>}
-    */
-
-		}, {
-			key: 'getServerVersion',
-			value: function getServerVersion() {
-				var _this10 = this;
-
-				return Promise.resolve().then(function () {
-					checkStatus(_this10, 'get server version');
-				}).then(function () {
-					return _this10._adapter.getServerVersion();
-				});
-			}
-
-			/**
-    * Returns the hostname of remote server.
-    *
-    * @returns {string}
-    */
-
-		}, {
-			key: 'getHost',
-			value: function getHost() {
-				return this._host;
-			}
-
-			/**
-    * Returns the TCP port of the remote server.
-    *
-    * @returns {number}
-    */
-
-		}, {
-			key: 'getPort',
-			value: function getPort() {
-				return this._port;
-			}
-
-			/**
-    * Returns a Boolean value, indicating if the connection to the
-    * remote server is secure.
-    *
-    * @returns {boolean}
-    */
-
-		}, {
-			key: 'getSecure',
-			value: function getSecure() {
-				return this._secure;
-			}
-
-			/**
-    * Returns the transport used to exchange data with the remote server,
-    * options are "rest" (communication over HTTP/HTTPS) or "socket.io"
-    * for websocket-based connection using the socket.io library.
-    *
-    * @returns {string}
-    */
-
-		}, {
-			key: 'getMode',
-			value: function getMode() {
-				return this._mode;
-			}
-
-			/**
-    * @protected
-    * @ignore
-    */
-
-		}, {
-			key: '_onDispose',
-			value: function _onDispose() {
-				if (this._adapter !== null) {
-					this._adapter.dispose();
-					this._adapter = null;
-				}
-			}
-		}, {
-			key: 'toString',
-			value: function toString() {
-				return '[SearchManager]';
-			}
-		}]);
-
-		return SearchManager;
-	}(Disposable);
-
-	function checkDispose(manager, operation) {
-		if (manager.getIsDisposed()) {
-			throw new Error('Unable to perform ' + operation + ', the Instrument manager has been disposed');
-		}
-	}
-
-	function checkStatus(manager, operation) {
-		checkDispose(manager, operation);
-
-		if (manager._adapter === null) {
-			throw new Error('Unable to perform ' + operation + ', the Instrument manager has not connected to the server');
-		}
-	}
-
-	return SearchManager;
-}();
-
-},{"./adapters/RestAdapter":47,"./adapters/SocketAdapter":48,"@barchart/common-js/lang/Disposable":20,"@barchart/common-js/lang/array":24,"@barchart/common-js/lang/assert":25,"@barchart/common-js/lang/connection":27}],46:[function(require,module,exports){
-'use strict';
-
-var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
-
-function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-
-function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
-
-function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
-
-var Disposable = require('@barchart/common-js/lang/Disposable');
-
-module.exports = function () {
-	'use strict';
-
-	/**
-  * An interface that abstracts network transport strategy.
-  *
-  * @protected
-  * @interface
-  * @ignore
-  */
-
-	var InstrumentAdapterBase = function (_Disposable) {
-		_inherits(InstrumentAdapterBase, _Disposable);
-
-		function InstrumentAdapterBase() {
-			_classCallCheck(this, InstrumentAdapterBase);
-
-			return _possibleConstructorReturn(this, (InstrumentAdapterBase.__proto__ || Object.getPrototypeOf(InstrumentAdapterBase)).call(this));
-		}
-
-		_createClass(InstrumentAdapterBase, [{
-			key: 'connect',
-			value: function connect() {
-				return Promise.reject();
-			}
-		}, {
-			key: 'lookupInstrument',
-			value: function lookupInstrument(symbol) {
-				return null;
-			}
-		}, {
-			key: 'searchInstruments',
-			value: function searchInstruments(text) {
-				return null;
-			}
-		}, {
-			key: 'validateInstruments',
-			value: function validateInstruments(symbols) {
-				return null;
-			}
-		}, {
-			key: 'queryInstruments',
-			value: function queryInstruments(exchange) {
-				return null;
-			}
-		}, {
-			key: 'lookupExchange',
-			value: function lookupExchange(id) {
-				return null;
-			}
-		}, {
-			key: 'queryExchanges',
-			value: function queryExchanges() {
-				return null;
-			}
-		}, {
-			key: 'searchElevators',
-			value: function searchElevators(text, zip) {
-				return null;
-			}
-		}, {
-			key: 'getServerVersion',
-			value: function getServerVersion() {
-				return null;
-			}
-		}, {
-			key: 'toString',
-			value: function toString() {
-				return '[InstrumentAdapterBase]';
-			}
-		}]);
-
-		return InstrumentAdapterBase;
-	}(Disposable);
-
-	return InstrumentAdapterBase;
-}();
-
-},{"@barchart/common-js/lang/Disposable":20}],47:[function(require,module,exports){
-'use strict';
-
-var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
-
-function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-
-function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
-
-function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
-
-var assert = require('@barchart/common-js/lang/assert'),
-    Disposable = require('@barchart/common-js/lang/Disposable'),
-    RestAction = require('@barchart/common-js/network/rest/RestAction'),
-    RestEndpoint = require('@barchart/common-js/network/rest/RestEndpoint'),
-    RestProvider = require('@barchart/common-js/network/rest/RestProvider');
-
-var InstrumentAdapterBase = require('./BaseAdapter');
-
-module.exports = function () {
-	'use strict';
-
-	/**
-  * A transport implementation that operates over HTTP/HTTPS.
-  *
-  * @protected
-  * @interface
-  * @ignore
-  */
-
-	var RestInstrumentAdapter = function (_InstrumentAdapterBas) {
-		_inherits(RestInstrumentAdapter, _InstrumentAdapterBas);
-
-		function RestInstrumentAdapter(host, port, secure) {
-			_classCallCheck(this, RestInstrumentAdapter);
-
-			var _this = _possibleConstructorReturn(this, (RestInstrumentAdapter.__proto__ || Object.getPrototypeOf(RestInstrumentAdapter)).call(this));
-
-			assert.argumentIsRequired(host, 'host', String);
-			assert.argumentIsRequired(port, 'port', Number);
-			assert.argumentIsRequired(secure, 'secure', Boolean);
-
-			_this._restProvider = new RestProvider(host, port, secure);
-
-			_this._instrumentLookupEndpoint = new RestEndpoint(RestAction.Retrieve, ['instruments', 'symbol']);
-			_this._instrumentSearchEndpoint = new RestEndpoint(RestAction.Retrieve, ['instruments', 'search', 'text', 'region']);
-			_this._instrumentValidateEndpoint = new RestEndpoint(RestAction.Retrieve, ['instruments', 'validate', 'symbols']);
-			_this._instrumentQueryEndpoint = new RestEndpoint(RestAction.Retrieve, ['instruments', 'query', 'exchange']);
-
-			_this._exchangeLookupEndpoint = new RestEndpoint(RestAction.Retrieve, ['exchanges', 'id']);
-			_this._exchangeQueryEndpoint = new RestEndpoint(RestAction.Retrieve, ['exchanges']);
-
-			_this._elevatorSearchEndpoint = new RestEndpoint(RestAction.Retrieve, ['elevators', 'search', 'text', 'zip']);
-
-			_this._versionEndpoint = new RestEndpoint(RestAction.Retrieve, ['server', 'version']);
-			return _this;
-		}
-
-		_createClass(RestInstrumentAdapter, [{
-			key: 'connect',
-			value: function connect() {
-				return this;
-			}
-		}, {
-			key: 'lookupInstrument',
-			value: function lookupInstrument(symbol) {
-				return this._restProvider.call(this._instrumentLookupEndpoint, { symbol: symbol });
-			}
-		}, {
-			key: 'searchInstruments',
-			value: function searchInstruments(text, region) {
-				return this._restProvider.call(this._instrumentSearchEndpoint, { text: text, region: region });
-			}
-		}, {
-			key: 'validateInstruments',
-			value: function validateInstruments(symbols) {
-				return this._restProvider.call(this._instrumentValidateEndpoint, { symbols: symbols.join(',') });
-			}
-		}, {
-			key: 'queryInstruments',
-			value: function queryInstruments(exchange) {
-				return this._restProvider.call(this._instrumentQueryEndpoint, { exchange: exchange });
-			}
-		}, {
-			key: 'lookupExchange',
-			value: function lookupExchange(id) {
-				return this._restProvider.call(this._exchangeLookupEndpoint, { id: id });
-			}
-		}, {
-			key: 'queryExchanges',
-			value: function queryExchanges() {
-				return this._restProvider.call(this._exchangeQueryEndpoint, {});
-			}
-		}, {
-			key: 'searchElevators',
-			value: function searchElevators(text, zip) {
-				return this._restProvider.call(this._elevatorSearchEndpoint, { text: text, zip: zip });
-			}
-		}, {
-			key: 'getServerVersion',
-			value: function getServerVersion() {
-				return this._restProvider.call(this._versionEndpoint, {});
-			}
-		}, {
-			key: '_onDispose',
-			value: function _onDispose() {
-				return;
-			}
-		}, {
-			key: 'toString',
-			value: function toString() {
-				return '[RestInstrumentAdapter]';
-			}
-		}]);
-
-		return RestInstrumentAdapter;
-	}(InstrumentAdapterBase);
-
-	return RestInstrumentAdapter;
-}();
-
-},{"./BaseAdapter":46,"@barchart/common-js/lang/Disposable":20,"@barchart/common-js/lang/assert":25,"@barchart/common-js/network/rest/RestAction":34,"@barchart/common-js/network/rest/RestEndpoint":35,"@barchart/common-js/network/rest/RestProvider":37}],48:[function(require,module,exports){
-'use strict';
-
-var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
-
-function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-
-function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
-
-function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
-
-var io = require('socket.io-client'),
-    uuid = require('uuid');
-
-var assert = require('@barchart/common-js/lang/assert'),
-    Disposable = require('@barchart/common-js/lang/Disposable'),
-    promise = require('@barchart/common-js/lang/promise');
-
-var InstrumentAdapterBase = require('./BaseAdapter'),
-    SocketConnectionState = require('./../../common/socket/SocketConnectionState');
-
-module.exports = function () {
-	'use strict';
-
-	/**
-  * A transport implementation that operates uses [socket.io]{@link https://socket.io/}
-  *
-  * @protected
-  * @interface
-  * @ignore
-  */
-
-	var SocketInstrumentAdapter = function (_InstrumentAdapterBas) {
-		_inherits(SocketInstrumentAdapter, _InstrumentAdapterBas);
-
-		function SocketInstrumentAdapter(host, port, secure) {
-			_classCallCheck(this, SocketInstrumentAdapter);
-
-			var _this = _possibleConstructorReturn(this, (SocketInstrumentAdapter.__proto__ || Object.getPrototypeOf(SocketInstrumentAdapter)).call(this));
-
-			assert.argumentIsRequired(host, 'host', String);
-			assert.argumentIsRequired(port, 'port', Number);
-			assert.argumentIsRequired(secure, 'secure', Boolean);
-
-			_this._host = host;
-			_this._port = port;
-			_this._secure = secure;
-
-			_this._socket = null;
-			_this._connectionState = SocketConnectionState.Disconnected;
-
-			_this._requestMap = {};
-			return _this;
-		}
-
-		_createClass(SocketInstrumentAdapter, [{
-			key: 'connect',
-			value: function connect() {
-				var _this2 = this;
-
-				return promise.build(function (resolveCallback, rejectCallback) {
-					if (_this2._connectionState.getCanConnect()) {
-						var protocol = void 0;
-
-						if (_this2._secure) {
-							protocol = 'https';
-						} else {
-							protocol = 'http';
-						}
-
-						_this2._socket = io.connect(protocol + '://' + _this2._host + ':' + _this2._port, { transports: ['websocket'], secure: _this2._secure, forceNew: true });
-
-						_this2._socket.on('connect', function () {
-							_this2._requestMap = {};
-
-							changeConnectionState.call(_this2, SocketConnectionState.Connected);
-
-							resolveCallback(_this2);
-						});
-
-						_this2._socket.on('reconnecting', function () {
-							changeConnectionState.call(_this2, SocketConnectionState.Connecting);
-						});
-
-						_this2._socket.on('reconnect', function () {
-							changeConnectionState.call(_this2, SocketConnectionState.Connected);
-						});
-
-						_this2._socket.on('response', function (data) {
-							var requestId = data.requestId;
-
-							if (requestId) {
-								var requestCallback = _this2._requestMap[requestId];
-
-								if (requestCallback) {
-									delete _this2._requestMap[requestId];
-
-									requestCallback(data.response);
-								}
-							}
-						});
-					} else {
-						rejectCallback('Unable to connect.');
-					}
-				});
-			}
-		}, {
-			key: 'lookupInstrument',
-			value: function lookupInstrument(symbol) {
-				return sendRequestToServer.call(this, 'instruments/retrieve', { symbol: symbol });
-			}
-		}, {
-			key: 'searchInstruments',
-			value: function searchInstruments(text, region) {
-				return sendRequestToServer.call(this, 'instruments/search', { text: text, region: region });
-			}
-		}, {
-			key: 'validateInstruments',
-			value: function validateInstruments(symbols) {
-				return sendRequestToServer.call(this, 'instruments/validate', { symbols: symbols });
-			}
-		}, {
-			key: 'queryInstruments',
-			value: function queryInstruments(exchange) {
-				var payload = {};
-
-				if (exchange) {
-					payload.exchange = exchange;
-				}
-
-				return sendRequestToServer.call(this, 'instruments/query', payload);
-			}
-		}, {
-			key: 'lookupExchange',
-			value: function lookupExchange(id) {
-				return sendRequestToServer.call(this, 'exchanges/retrieve', { id: id });
-			}
-		}, {
-			key: 'queryExchanges',
-			value: function queryExchanges() {
-				return sendRequestToServer.call(this, 'exchanges/query', {});
-			}
-		}, {
-			key: 'searchElevators',
-			value: function searchElevators(text, zip) {
-				return sendRequestToServer.call(this, 'elevators/search', { text: text, zip: zip });
-			}
-		}, {
-			key: 'getServerVersion',
-			value: function getServerVersion() {
-				return sendRequestToServer.call(this, 'server/version', {});
-			}
-		}, {
-			key: '_onDispose',
-			value: function _onDispose() {
-				if (this._socket) {
-					this._socket.disconnect();
-					this._socket = null;
-				}
-			}
-		}, {
-			key: 'toString',
-			value: function toString() {
-				return '[SocketInstrumentAdapter]';
-			}
-		}]);
-
-		return SocketInstrumentAdapter;
-	}(InstrumentAdapterBase);
-
-	function sendToServer(channel, payload) {
-		if (this._connectionState.getCanTransmit()) {
-			return Promise.resolve(this._socket.emit(channel, payload));
-		} else {
-			return Promise.reject('Unable to send data. The socket is not connected.');
-		}
-	}
-
-	function sendRequestToServer(channel, payload) {
-		var _this3 = this;
-
-		return promise.build(function (resolveCallback, rejectCallback) {
-			var requestId = uuid.v4();
-
-			_this3._requestMap[requestId] = resolveCallback;
-
-			return sendToServer.call(_this3, 'request/' + channel, { requestId: requestId, request: payload }).catch(function (e) {
-				delete _this3._requestMap[requestId];
-
-				throw rejectCallback(e);
-			});
-		});
-	}
-
-	function changeConnectionState(connectionState) {
-		this._connectionState = connectionState;
-	}
-
-	return SocketInstrumentAdapter;
-}();
-
-},{"./../../common/socket/SocketConnectionState":44,"./BaseAdapter":46,"@barchart/common-js/lang/Disposable":20,"@barchart/common-js/lang/assert":25,"@barchart/common-js/lang/promise":31,"socket.io-client":119,"uuid":140}],49:[function(require,module,exports){
+},{"./../../collections/LinkedList":50,"./../../collections/Tree":51,"./../../lang/functions":65,"./../../lang/is":66,"./Component":73,"./Field":75}],77:[function(require,module,exports){
 'use strict';
 
 module.exports = function () {
@@ -8462,7 +12096,7 @@ module.exports = function () {
 	};
 }();
 
-},{}],50:[function(require,module,exports){
+},{}],78:[function(require,module,exports){
 'use strict';
 
 var lodashIsNaN = require('lodash.isnan');
@@ -8524,7 +12158,7 @@ module.exports = function () {
 	};
 }();
 
-},{"lodash.isnan":93}],51:[function(require,module,exports){
+},{"lodash.isnan":119}],79:[function(require,module,exports){
 'use strict';
 
 var lodashIsNaN = require('lodash.isnan');
@@ -8657,7 +12291,7 @@ module.exports = function () {
 	};
 }();
 
-},{"./decimalFormatter":50,"lodash.isnan":93}],52:[function(require,module,exports){
+},{"./decimalFormatter":78,"lodash.isnan":119}],80:[function(require,module,exports){
 'use strict';
 
 module.exports = function () {
@@ -8733,7 +12367,7 @@ module.exports = function () {
 	};
 }();
 
-},{}],53:[function(require,module,exports){
+},{}],81:[function(require,module,exports){
 module.exports = after
 
 function after(count, callback, err_cb) {
@@ -8763,7 +12397,7 @@ function after(count, callback, err_cb) {
 
 function noop() {}
 
-},{}],54:[function(require,module,exports){
+},{}],82:[function(require,module,exports){
 /**
  * An abstraction for slicing an arraybuffer even when
  * ArrayBuffer.prototype.slice is not supported
@@ -8794,7 +12428,7 @@ module.exports = function(arraybuffer, start, end) {
   return result.buffer;
 };
 
-},{}],55:[function(require,module,exports){
+},{}],83:[function(require,module,exports){
 
 /**
  * Expose `Backoff`.
@@ -8881,7 +12515,7 @@ Backoff.prototype.setJitter = function(jitter){
 };
 
 
-},{}],56:[function(require,module,exports){
+},{}],84:[function(require,module,exports){
 /*
  * base64-arraybuffer
  * https://github.com/niklasvh/base64-arraybuffer
@@ -8950,7 +12584,7 @@ Backoff.prototype.setJitter = function(jitter){
   };
 })();
 
-},{}],57:[function(require,module,exports){
+},{}],85:[function(require,module,exports){
 'use strict'
 
 exports.byteLength = byteLength
@@ -9103,7 +12737,7 @@ function fromByteArray (uint8) {
   return parts.join('')
 }
 
-},{}],58:[function(require,module,exports){
+},{}],86:[function(require,module,exports){
 /*
  *  big.js v5.0.3
  *  A small, fast, easy-to-use library for arbitrary-precision decimal arithmetic.
@@ -10044,7 +13678,7 @@ function fromByteArray (uint8) {
   }
 })(this);
 
-},{}],59:[function(require,module,exports){
+},{}],87:[function(require,module,exports){
 (function (global){
 /**
  * Create a blob builder even when vendor prefixes exist
@@ -10144,9 +13778,9 @@ module.exports = (function() {
 })();
 
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{}],60:[function(require,module,exports){
+},{}],88:[function(require,module,exports){
 
-},{}],61:[function(require,module,exports){
+},{}],89:[function(require,module,exports){
 // shim for using process in browser
 var process = module.exports = {};
 
@@ -10332,7 +13966,7 @@ process.chdir = function (dir) {
 };
 process.umask = function() { return 0; };
 
-},{}],62:[function(require,module,exports){
+},{}],90:[function(require,module,exports){
 /*!
  * The buffer module from node.js, for the browser.
  *
@@ -12070,7 +15704,7 @@ function numberIsNaN (obj) {
   return obj !== obj // eslint-disable-line no-self-compare
 }
 
-},{"base64-js":57,"ieee754":88}],63:[function(require,module,exports){
+},{"base64-js":85,"ieee754":114}],91:[function(require,module,exports){
 module.exports = {
   "100": "Continue",
   "101": "Switching Protocols",
@@ -12136,7 +15770,7 @@ module.exports = {
   "511": "Network Authentication Required"
 }
 
-},{}],64:[function(require,module,exports){
+},{}],92:[function(require,module,exports){
 /**
  * Slice reference.
  */
@@ -12161,7 +15795,7 @@ module.exports = function(obj, fn){
   }
 };
 
-},{}],65:[function(require,module,exports){
+},{}],93:[function(require,module,exports){
 
 /**
  * Expose `Emitter`.
@@ -12326,7 +15960,7 @@ Emitter.prototype.hasListeners = function(event){
   return !! this.listeners(event).length;
 };
 
-},{}],66:[function(require,module,exports){
+},{}],94:[function(require,module,exports){
 
 module.exports = function(a, b){
   var fn = function(){};
@@ -12334,7 +15968,7 @@ module.exports = function(a, b){
   a.prototype = new fn;
   a.prototype.constructor = a;
 };
-},{}],67:[function(require,module,exports){
+},{}],95:[function(require,module,exports){
 (function (Buffer){
 // Copyright Joyent, Inc. and other Node contributors.
 //
@@ -12445,7 +16079,7 @@ function objectToString(o) {
 }
 
 }).call(this,{"isBuffer":require("../../is-buffer/index.js")})
-},{"../../is-buffer/index.js":91}],68:[function(require,module,exports){
+},{"../../is-buffer/index.js":117}],96:[function(require,module,exports){
 (function (process){
 /**
  * This is the web browser implementation of `debug()`.
@@ -12469,12 +16103,17 @@ exports.storage = 'undefined' != typeof chrome
  */
 
 exports.colors = [
-  'lightseagreen',
-  'forestgreen',
-  'goldenrod',
-  'dodgerblue',
-  'darkorchid',
-  'crimson'
+  '#0000CC', '#0000FF', '#0033CC', '#0033FF', '#0066CC', '#0066FF', '#0099CC',
+  '#0099FF', '#00CC00', '#00CC33', '#00CC66', '#00CC99', '#00CCCC', '#00CCFF',
+  '#3300CC', '#3300FF', '#3333CC', '#3333FF', '#3366CC', '#3366FF', '#3399CC',
+  '#3399FF', '#33CC00', '#33CC33', '#33CC66', '#33CC99', '#33CCCC', '#33CCFF',
+  '#6600CC', '#6600FF', '#6633CC', '#6633FF', '#66CC00', '#66CC33', '#9900CC',
+  '#9900FF', '#9933CC', '#9933FF', '#99CC00', '#99CC33', '#CC0000', '#CC0033',
+  '#CC0066', '#CC0099', '#CC00CC', '#CC00FF', '#CC3300', '#CC3333', '#CC3366',
+  '#CC3399', '#CC33CC', '#CC33FF', '#CC6600', '#CC6633', '#CC9900', '#CC9933',
+  '#CCCC00', '#CCCC33', '#FF0000', '#FF0033', '#FF0066', '#FF0099', '#FF00CC',
+  '#FF00FF', '#FF3300', '#FF3333', '#FF3366', '#FF3399', '#FF33CC', '#FF33FF',
+  '#FF6600', '#FF6633', '#FF9900', '#FF9933', '#FFCC00', '#FFCC33'
 ];
 
 /**
@@ -12491,6 +16130,11 @@ function useColors() {
   // explicitly
   if (typeof window !== 'undefined' && window.process && window.process.type === 'renderer') {
     return true;
+  }
+
+  // Internet Explorer and Edge do not support colors.
+  if (typeof navigator !== 'undefined' && navigator.userAgent && navigator.userAgent.toLowerCase().match(/(edge|trident)\/(\d+)/)) {
+    return false;
   }
 
   // is webkit? http://stackoverflow.com/a/16459606/376773
@@ -12634,7 +16278,7 @@ function localstorage() {
 }
 
 }).call(this,require('_process'))
-},{"./debug":69,"_process":61}],69:[function(require,module,exports){
+},{"./debug":97,"_process":89}],97:[function(require,module,exports){
 
 /**
  * This is the common logic for both the Node.js and web browser
@@ -12651,6 +16295,11 @@ exports.enabled = enabled;
 exports.humanize = require('ms');
 
 /**
+ * Active `debug` instances.
+ */
+exports.instances = [];
+
+/**
  * The currently active debug mode names, and names to skip.
  */
 
@@ -12664,12 +16313,6 @@ exports.skips = [];
  */
 
 exports.formatters = {};
-
-/**
- * Previous log timestamp.
- */
-
-var prevTime;
 
 /**
  * Select a color.
@@ -12698,6 +16341,8 @@ function selectColor(namespace) {
  */
 
 function createDebug(namespace) {
+
+  var prevTime;
 
   function debug() {
     // disabled?
@@ -12755,13 +16400,26 @@ function createDebug(namespace) {
   debug.enabled = exports.enabled(namespace);
   debug.useColors = exports.useColors();
   debug.color = selectColor(namespace);
+  debug.destroy = destroy;
 
   // env-specific initialization logic for debug instances
   if ('function' === typeof exports.init) {
     exports.init(debug);
   }
 
+  exports.instances.push(debug);
+
   return debug;
+}
+
+function destroy () {
+  var index = exports.instances.indexOf(this);
+  if (index !== -1) {
+    exports.instances.splice(index, 1);
+    return true;
+  } else {
+    return false;
+  }
 }
 
 /**
@@ -12778,10 +16436,11 @@ function enable(namespaces) {
   exports.names = [];
   exports.skips = [];
 
+  var i;
   var split = (typeof namespaces === 'string' ? namespaces : '').split(/[\s,]+/);
   var len = split.length;
 
-  for (var i = 0; i < len; i++) {
+  for (i = 0; i < len; i++) {
     if (!split[i]) continue; // ignore empty strings
     namespaces = split[i].replace(/\*/g, '.*?');
     if (namespaces[0] === '-') {
@@ -12789,6 +16448,11 @@ function enable(namespaces) {
     } else {
       exports.names.push(new RegExp('^' + namespaces + '$'));
     }
+  }
+
+  for (i = 0; i < exports.instances.length; i++) {
+    var instance = exports.instances[i];
+    instance.enabled = exports.enabled(instance.namespace);
   }
 }
 
@@ -12811,6 +16475,9 @@ function disable() {
  */
 
 function enabled(name) {
+  if (name[name.length - 1] === '*') {
+    return true;
+  }
   var i, len;
   for (i = 0, len = exports.skips.length; i < len; i++) {
     if (exports.skips[i].test(name)) {
@@ -12838,7 +16505,7 @@ function coerce(val) {
   return val;
 }
 
-},{"ms":99}],70:[function(require,module,exports){
+},{"ms":125}],98:[function(require,module,exports){
 
 module.exports = require('./socket');
 
@@ -12850,7 +16517,7 @@ module.exports = require('./socket');
  */
 module.exports.parser = require('engine.io-parser');
 
-},{"./socket":71,"engine.io-parser":81}],71:[function(require,module,exports){
+},{"./socket":99,"engine.io-parser":107}],99:[function(require,module,exports){
 (function (global){
 /**
  * Module dependencies.
@@ -13597,7 +17264,7 @@ Socket.prototype.filterUpgrades = function (upgrades) {
 };
 
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{"./transport":72,"./transports/index":73,"component-emitter":65,"debug":79,"engine.io-parser":81,"indexof":89,"parseqs":100,"parseuri":101}],72:[function(require,module,exports){
+},{"./transport":100,"./transports/index":101,"component-emitter":93,"debug":96,"engine.io-parser":107,"indexof":115,"parseqs":126,"parseuri":127}],100:[function(require,module,exports){
 /**
  * Module dependencies.
  */
@@ -13756,7 +17423,7 @@ Transport.prototype.onClose = function () {
   this.emit('close');
 };
 
-},{"component-emitter":65,"engine.io-parser":81}],73:[function(require,module,exports){
+},{"component-emitter":93,"engine.io-parser":107}],101:[function(require,module,exports){
 (function (global){
 /**
  * Module dependencies
@@ -13813,7 +17480,7 @@ function polling (opts) {
 }
 
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{"./polling-jsonp":74,"./polling-xhr":75,"./websocket":77,"xmlhttprequest-ssl":78}],74:[function(require,module,exports){
+},{"./polling-jsonp":102,"./polling-xhr":103,"./websocket":105,"xmlhttprequest-ssl":106}],102:[function(require,module,exports){
 (function (global){
 
 /**
@@ -14048,7 +17715,7 @@ JSONPPolling.prototype.doWrite = function (data, fn) {
 };
 
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{"./polling":76,"component-inherit":66}],75:[function(require,module,exports){
+},{"./polling":104,"component-inherit":94}],103:[function(require,module,exports){
 (function (global){
 /**
  * Module requirements.
@@ -14464,7 +18131,7 @@ function unloadHandler () {
 }
 
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{"./polling":76,"component-emitter":65,"component-inherit":66,"debug":79,"xmlhttprequest-ssl":78}],76:[function(require,module,exports){
+},{"./polling":104,"component-emitter":93,"component-inherit":94,"debug":96,"xmlhttprequest-ssl":106}],104:[function(require,module,exports){
 /**
  * Module dependencies.
  */
@@ -14711,7 +18378,7 @@ Polling.prototype.uri = function () {
   return schema + '://' + (ipv6 ? '[' + this.hostname + ']' : this.hostname) + port + this.path + query;
 };
 
-},{"../transport":72,"component-inherit":66,"debug":79,"engine.io-parser":81,"parseqs":100,"xmlhttprequest-ssl":78,"yeast":146}],77:[function(require,module,exports){
+},{"../transport":100,"component-inherit":94,"debug":96,"engine.io-parser":107,"parseqs":126,"xmlhttprequest-ssl":106,"yeast":172}],105:[function(require,module,exports){
 (function (global){
 /**
  * Module dependencies.
@@ -15001,7 +18668,7 @@ WS.prototype.check = function () {
 };
 
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{"../transport":72,"component-inherit":66,"debug":79,"engine.io-parser":81,"parseqs":100,"ws":60,"yeast":146}],78:[function(require,module,exports){
+},{"../transport":100,"component-inherit":94,"debug":96,"engine.io-parser":107,"parseqs":126,"ws":88,"yeast":172}],106:[function(require,module,exports){
 (function (global){
 // browser shim for xmlhttprequest module
 
@@ -15042,433 +18709,7 @@ module.exports = function (opts) {
 };
 
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{"has-cors":86}],79:[function(require,module,exports){
-(function (process){
-/**
- * This is the web browser implementation of `debug()`.
- *
- * Expose `debug()` as the module.
- */
-
-exports = module.exports = require('./debug');
-exports.log = log;
-exports.formatArgs = formatArgs;
-exports.save = save;
-exports.load = load;
-exports.useColors = useColors;
-exports.storage = 'undefined' != typeof chrome
-               && 'undefined' != typeof chrome.storage
-                  ? chrome.storage.local
-                  : localstorage();
-
-/**
- * Colors.
- */
-
-exports.colors = [
-  '#0000CC', '#0000FF', '#0033CC', '#0033FF', '#0066CC', '#0066FF', '#0099CC',
-  '#0099FF', '#00CC00', '#00CC33', '#00CC66', '#00CC99', '#00CCCC', '#00CCFF',
-  '#3300CC', '#3300FF', '#3333CC', '#3333FF', '#3366CC', '#3366FF', '#3399CC',
-  '#3399FF', '#33CC00', '#33CC33', '#33CC66', '#33CC99', '#33CCCC', '#33CCFF',
-  '#6600CC', '#6600FF', '#6633CC', '#6633FF', '#66CC00', '#66CC33', '#9900CC',
-  '#9900FF', '#9933CC', '#9933FF', '#99CC00', '#99CC33', '#CC0000', '#CC0033',
-  '#CC0066', '#CC0099', '#CC00CC', '#CC00FF', '#CC3300', '#CC3333', '#CC3366',
-  '#CC3399', '#CC33CC', '#CC33FF', '#CC6600', '#CC6633', '#CC9900', '#CC9933',
-  '#CCCC00', '#CCCC33', '#FF0000', '#FF0033', '#FF0066', '#FF0099', '#FF00CC',
-  '#FF00FF', '#FF3300', '#FF3333', '#FF3366', '#FF3399', '#FF33CC', '#FF33FF',
-  '#FF6600', '#FF6633', '#FF9900', '#FF9933', '#FFCC00', '#FFCC33'
-];
-
-/**
- * Currently only WebKit-based Web Inspectors, Firefox >= v31,
- * and the Firebug extension (any Firefox version) are known
- * to support "%c" CSS customizations.
- *
- * TODO: add a `localStorage` variable to explicitly enable/disable colors
- */
-
-function useColors() {
-  // NB: In an Electron preload script, document will be defined but not fully
-  // initialized. Since we know we're in Chrome, we'll just detect this case
-  // explicitly
-  if (typeof window !== 'undefined' && window.process && window.process.type === 'renderer') {
-    return true;
-  }
-
-  // Internet Explorer and Edge do not support colors.
-  if (typeof navigator !== 'undefined' && navigator.userAgent && navigator.userAgent.toLowerCase().match(/(edge|trident)\/(\d+)/)) {
-    return false;
-  }
-
-  // is webkit? http://stackoverflow.com/a/16459606/376773
-  // document is undefined in react-native: https://github.com/facebook/react-native/pull/1632
-  return (typeof document !== 'undefined' && document.documentElement && document.documentElement.style && document.documentElement.style.WebkitAppearance) ||
-    // is firebug? http://stackoverflow.com/a/398120/376773
-    (typeof window !== 'undefined' && window.console && (window.console.firebug || (window.console.exception && window.console.table))) ||
-    // is firefox >= v31?
-    // https://developer.mozilla.org/en-US/docs/Tools/Web_Console#Styling_messages
-    (typeof navigator !== 'undefined' && navigator.userAgent && navigator.userAgent.toLowerCase().match(/firefox\/(\d+)/) && parseInt(RegExp.$1, 10) >= 31) ||
-    // double check webkit in userAgent just in case we are in a worker
-    (typeof navigator !== 'undefined' && navigator.userAgent && navigator.userAgent.toLowerCase().match(/applewebkit\/(\d+)/));
-}
-
-/**
- * Map %j to `JSON.stringify()`, since no Web Inspectors do that by default.
- */
-
-exports.formatters.j = function(v) {
-  try {
-    return JSON.stringify(v);
-  } catch (err) {
-    return '[UnexpectedJSONParseError]: ' + err.message;
-  }
-};
-
-
-/**
- * Colorize log arguments if enabled.
- *
- * @api public
- */
-
-function formatArgs(args) {
-  var useColors = this.useColors;
-
-  args[0] = (useColors ? '%c' : '')
-    + this.namespace
-    + (useColors ? ' %c' : ' ')
-    + args[0]
-    + (useColors ? '%c ' : ' ')
-    + '+' + exports.humanize(this.diff);
-
-  if (!useColors) return;
-
-  var c = 'color: ' + this.color;
-  args.splice(1, 0, c, 'color: inherit')
-
-  // the final "%c" is somewhat tricky, because there could be other
-  // arguments passed either before or after the %c, so we need to
-  // figure out the correct index to insert the CSS into
-  var index = 0;
-  var lastC = 0;
-  args[0].replace(/%[a-zA-Z%]/g, function(match) {
-    if ('%%' === match) return;
-    index++;
-    if ('%c' === match) {
-      // we only are interested in the *last* %c
-      // (the user may have provided their own)
-      lastC = index;
-    }
-  });
-
-  args.splice(lastC, 0, c);
-}
-
-/**
- * Invokes `console.log()` when available.
- * No-op when `console.log` is not a "function".
- *
- * @api public
- */
-
-function log() {
-  // this hackery is required for IE8/9, where
-  // the `console.log` function doesn't have 'apply'
-  return 'object' === typeof console
-    && console.log
-    && Function.prototype.apply.call(console.log, console, arguments);
-}
-
-/**
- * Save `namespaces`.
- *
- * @param {String} namespaces
- * @api private
- */
-
-function save(namespaces) {
-  try {
-    if (null == namespaces) {
-      exports.storage.removeItem('debug');
-    } else {
-      exports.storage.debug = namespaces;
-    }
-  } catch(e) {}
-}
-
-/**
- * Load `namespaces`.
- *
- * @return {String} returns the previously persisted debug modes
- * @api private
- */
-
-function load() {
-  var r;
-  try {
-    r = exports.storage.debug;
-  } catch(e) {}
-
-  // If debug isn't set in LS, and we're in Electron, try to load $DEBUG
-  if (!r && typeof process !== 'undefined' && 'env' in process) {
-    r = process.env.DEBUG;
-  }
-
-  return r;
-}
-
-/**
- * Enable namespaces listed in `localStorage.debug` initially.
- */
-
-exports.enable(load());
-
-/**
- * Localstorage attempts to return the localstorage.
- *
- * This is necessary because safari throws
- * when a user disables cookies/localstorage
- * and you attempt to access it.
- *
- * @return {LocalStorage}
- * @api private
- */
-
-function localstorage() {
-  try {
-    return window.localStorage;
-  } catch (e) {}
-}
-
-}).call(this,require('_process'))
-},{"./debug":80,"_process":61}],80:[function(require,module,exports){
-
-/**
- * This is the common logic for both the Node.js and web browser
- * implementations of `debug()`.
- *
- * Expose `debug()` as the module.
- */
-
-exports = module.exports = createDebug.debug = createDebug['default'] = createDebug;
-exports.coerce = coerce;
-exports.disable = disable;
-exports.enable = enable;
-exports.enabled = enabled;
-exports.humanize = require('ms');
-
-/**
- * Active `debug` instances.
- */
-exports.instances = [];
-
-/**
- * The currently active debug mode names, and names to skip.
- */
-
-exports.names = [];
-exports.skips = [];
-
-/**
- * Map of special "%n" handling functions, for the debug "format" argument.
- *
- * Valid key names are a single, lower or upper-case letter, i.e. "n" and "N".
- */
-
-exports.formatters = {};
-
-/**
- * Select a color.
- * @param {String} namespace
- * @return {Number}
- * @api private
- */
-
-function selectColor(namespace) {
-  var hash = 0, i;
-
-  for (i in namespace) {
-    hash  = ((hash << 5) - hash) + namespace.charCodeAt(i);
-    hash |= 0; // Convert to 32bit integer
-  }
-
-  return exports.colors[Math.abs(hash) % exports.colors.length];
-}
-
-/**
- * Create a debugger with the given `namespace`.
- *
- * @param {String} namespace
- * @return {Function}
- * @api public
- */
-
-function createDebug(namespace) {
-
-  var prevTime;
-
-  function debug() {
-    // disabled?
-    if (!debug.enabled) return;
-
-    var self = debug;
-
-    // set `diff` timestamp
-    var curr = +new Date();
-    var ms = curr - (prevTime || curr);
-    self.diff = ms;
-    self.prev = prevTime;
-    self.curr = curr;
-    prevTime = curr;
-
-    // turn the `arguments` into a proper Array
-    var args = new Array(arguments.length);
-    for (var i = 0; i < args.length; i++) {
-      args[i] = arguments[i];
-    }
-
-    args[0] = exports.coerce(args[0]);
-
-    if ('string' !== typeof args[0]) {
-      // anything else let's inspect with %O
-      args.unshift('%O');
-    }
-
-    // apply any `formatters` transformations
-    var index = 0;
-    args[0] = args[0].replace(/%([a-zA-Z%])/g, function(match, format) {
-      // if we encounter an escaped % then don't increase the array index
-      if (match === '%%') return match;
-      index++;
-      var formatter = exports.formatters[format];
-      if ('function' === typeof formatter) {
-        var val = args[index];
-        match = formatter.call(self, val);
-
-        // now we need to remove `args[index]` since it's inlined in the `format`
-        args.splice(index, 1);
-        index--;
-      }
-      return match;
-    });
-
-    // apply env-specific formatting (colors, etc.)
-    exports.formatArgs.call(self, args);
-
-    var logFn = debug.log || exports.log || console.log.bind(console);
-    logFn.apply(self, args);
-  }
-
-  debug.namespace = namespace;
-  debug.enabled = exports.enabled(namespace);
-  debug.useColors = exports.useColors();
-  debug.color = selectColor(namespace);
-  debug.destroy = destroy;
-
-  // env-specific initialization logic for debug instances
-  if ('function' === typeof exports.init) {
-    exports.init(debug);
-  }
-
-  exports.instances.push(debug);
-
-  return debug;
-}
-
-function destroy () {
-  var index = exports.instances.indexOf(this);
-  if (index !== -1) {
-    exports.instances.splice(index, 1);
-    return true;
-  } else {
-    return false;
-  }
-}
-
-/**
- * Enables a debug mode by namespaces. This can include modes
- * separated by a colon and wildcards.
- *
- * @param {String} namespaces
- * @api public
- */
-
-function enable(namespaces) {
-  exports.save(namespaces);
-
-  exports.names = [];
-  exports.skips = [];
-
-  var i;
-  var split = (typeof namespaces === 'string' ? namespaces : '').split(/[\s,]+/);
-  var len = split.length;
-
-  for (i = 0; i < len; i++) {
-    if (!split[i]) continue; // ignore empty strings
-    namespaces = split[i].replace(/\*/g, '.*?');
-    if (namespaces[0] === '-') {
-      exports.skips.push(new RegExp('^' + namespaces.substr(1) + '$'));
-    } else {
-      exports.names.push(new RegExp('^' + namespaces + '$'));
-    }
-  }
-
-  for (i = 0; i < exports.instances.length; i++) {
-    var instance = exports.instances[i];
-    instance.enabled = exports.enabled(instance.namespace);
-  }
-}
-
-/**
- * Disable debug output.
- *
- * @api public
- */
-
-function disable() {
-  exports.enable('');
-}
-
-/**
- * Returns true if the given mode name is enabled, false otherwise.
- *
- * @param {String} name
- * @return {Boolean}
- * @api public
- */
-
-function enabled(name) {
-  if (name[name.length - 1] === '*') {
-    return true;
-  }
-  var i, len;
-  for (i = 0, len = exports.skips.length; i < len; i++) {
-    if (exports.skips[i].test(name)) {
-      return false;
-    }
-  }
-  for (i = 0, len = exports.names.length; i < len; i++) {
-    if (exports.names[i].test(name)) {
-      return true;
-    }
-  }
-  return false;
-}
-
-/**
- * Coerce `val`.
- *
- * @param {Mixed} val
- * @return {Mixed}
- * @api private
- */
-
-function coerce(val) {
-  if (val instanceof Error) return val.stack || val.message;
-  return val;
-}
-
-},{"ms":99}],81:[function(require,module,exports){
+},{"has-cors":112}],107:[function(require,module,exports){
 (function (global){
 /**
  * Module dependencies.
@@ -16078,7 +19319,7 @@ exports.decodePayloadAsBinary = function (data, binaryType, callback) {
 };
 
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{"./keys":82,"./utf8":83,"after":53,"arraybuffer.slice":54,"base64-arraybuffer":56,"blob":59,"has-binary2":85}],82:[function(require,module,exports){
+},{"./keys":108,"./utf8":109,"after":81,"arraybuffer.slice":82,"base64-arraybuffer":84,"blob":87,"has-binary2":111}],108:[function(require,module,exports){
 
 /**
  * Gets the keys for an object.
@@ -16099,7 +19340,7 @@ module.exports = Object.keys || function keys (obj){
   return arr;
 };
 
-},{}],83:[function(require,module,exports){
+},{}],109:[function(require,module,exports){
 (function (global){
 /*! https://mths.be/utf8js v2.1.2 by @mathias */
 ;(function(root) {
@@ -16358,7 +19599,7 @@ module.exports = Object.keys || function keys (obj){
 }(this));
 
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{}],84:[function(require,module,exports){
+},{}],110:[function(require,module,exports){
 // Copyright Joyent, Inc. and other Node contributors.
 //
 // Permission is hereby granted, free of charge, to any person obtaining a
@@ -16662,7 +19903,7 @@ function isUndefined(arg) {
   return arg === void 0;
 }
 
-},{}],85:[function(require,module,exports){
+},{}],111:[function(require,module,exports){
 (function (Buffer){
 /* global Blob File */
 
@@ -16730,7 +19971,7 @@ function hasBinary (obj) {
 }
 
 }).call(this,require("buffer").Buffer)
-},{"buffer":62,"isarray":92}],86:[function(require,module,exports){
+},{"buffer":90,"isarray":118}],112:[function(require,module,exports){
 
 /**
  * Module exports.
@@ -16749,7 +19990,7 @@ try {
   module.exports = false;
 }
 
-},{}],87:[function(require,module,exports){
+},{}],113:[function(require,module,exports){
 var http = require('http')
 var url = require('url')
 
@@ -16782,7 +20023,7 @@ function validateParams (params) {
   return params
 }
 
-},{"http":129,"url":137}],88:[function(require,module,exports){
+},{"http":155,"url":163}],114:[function(require,module,exports){
 exports.read = function (buffer, offset, isLE, mLen, nBytes) {
   var e, m
   var eLen = (nBytes * 8) - mLen - 1
@@ -16868,7 +20109,7 @@ exports.write = function (buffer, value, offset, isLE, mLen, nBytes) {
   buffer[offset + i - d] |= s * 128
 }
 
-},{}],89:[function(require,module,exports){
+},{}],115:[function(require,module,exports){
 
 var indexOf = [].indexOf;
 
@@ -16879,7 +20120,7 @@ module.exports = function(arr, obj){
   }
   return -1;
 };
-},{}],90:[function(require,module,exports){
+},{}],116:[function(require,module,exports){
 if (typeof Object.create === 'function') {
   // implementation from standard node.js 'util' module
   module.exports = function inherits(ctor, superCtor) {
@@ -16904,7 +20145,7 @@ if (typeof Object.create === 'function') {
   }
 }
 
-},{}],91:[function(require,module,exports){
+},{}],117:[function(require,module,exports){
 /*!
  * Determine if an object is a Buffer
  *
@@ -16927,14 +20168,14 @@ function isSlowBuffer (obj) {
   return typeof obj.readFloatLE === 'function' && typeof obj.slice === 'function' && isBuffer(obj.slice(0, 0))
 }
 
-},{}],92:[function(require,module,exports){
+},{}],118:[function(require,module,exports){
 var toString = {}.toString;
 
 module.exports = Array.isArray || function (arr) {
   return toString.call(arr) == '[object Array]';
 };
 
-},{}],93:[function(require,module,exports){
+},{}],119:[function(require,module,exports){
 /**
  * lodash 3.0.2 (Custom Build) <https://lodash.com/>
  * Build: `lodash modularize exports="npm" -o ./`
@@ -17046,7 +20287,7 @@ function isNumber(value) {
 
 module.exports = isNaN;
 
-},{}],94:[function(require,module,exports){
+},{}],120:[function(require,module,exports){
 //! moment-timezone.js
 //! version : 0.5.11
 //! Copyright (c) JS Foundation and other contributors
@@ -18248,7 +21489,7 @@ module.exports = isNaN;
 	return moment;
 }));
 
-},{"moment":98}],95:[function(require,module,exports){
+},{"moment":124}],121:[function(require,module,exports){
 module.exports={
 	"version": "2016j",
 	"zones": [
@@ -18848,11 +22089,11 @@ module.exports={
 		"Pacific/Pohnpei|Pacific/Ponape"
 	]
 }
-},{}],96:[function(require,module,exports){
+},{}],122:[function(require,module,exports){
 var moment = module.exports = require("./moment-timezone");
 moment.tz.load(require('./data/packed/latest.json'));
 
-},{"./data/packed/latest.json":95,"./moment-timezone":97}],97:[function(require,module,exports){
+},{"./data/packed/latest.json":121,"./moment-timezone":123}],123:[function(require,module,exports){
 //! moment-timezone.js
 //! version : 0.5.11
 //! Copyright (c) JS Foundation and other contributors
@@ -19455,7 +22696,7 @@ moment.tz.load(require('./data/packed/latest.json'));
 	return moment;
 }));
 
-},{"moment":98}],98:[function(require,module,exports){
+},{"moment":124}],124:[function(require,module,exports){
 //! moment.js
 
 ;(function (global, factory) {
@@ -23963,7 +27204,7 @@ moment.tz.load(require('./data/packed/latest.json'));
 
 })));
 
-},{}],99:[function(require,module,exports){
+},{}],125:[function(require,module,exports){
 /**
  * Helpers.
  */
@@ -24117,7 +27358,7 @@ function plural(ms, n, name) {
   return Math.ceil(ms / n) + ' ' + name + 's';
 }
 
-},{}],100:[function(require,module,exports){
+},{}],126:[function(require,module,exports){
 /**
  * Compiles a querystring
  * Returns string representation of the object
@@ -24156,7 +27397,7 @@ exports.decode = function(qs){
   return qry;
 };
 
-},{}],101:[function(require,module,exports){
+},{}],127:[function(require,module,exports){
 /**
  * Parses an URI
  *
@@ -24197,7 +27438,7 @@ module.exports = function parseuri(str) {
     return uri;
 };
 
-},{}],102:[function(require,module,exports){
+},{}],128:[function(require,module,exports){
 (function (process){
 'use strict';
 
@@ -24245,7 +27486,7 @@ function nextTick(fn, arg1, arg2, arg3) {
 
 
 }).call(this,require('_process'))
-},{"_process":61}],103:[function(require,module,exports){
+},{"_process":89}],129:[function(require,module,exports){
 (function (global){
 /*! https://mths.be/punycode v1.4.1 by @mathias */
 ;(function(root) {
@@ -24782,7 +28023,7 @@ function nextTick(fn, arg1, arg2, arg3) {
 }(this));
 
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{}],104:[function(require,module,exports){
+},{}],130:[function(require,module,exports){
 // Copyright Joyent, Inc. and other Node contributors.
 //
 // Permission is hereby granted, free of charge, to any person obtaining a
@@ -24868,7 +28109,7 @@ var isArray = Array.isArray || function (xs) {
   return Object.prototype.toString.call(xs) === '[object Array]';
 };
 
-},{}],105:[function(require,module,exports){
+},{}],131:[function(require,module,exports){
 // Copyright Joyent, Inc. and other Node contributors.
 //
 // Permission is hereby granted, free of charge, to any person obtaining a
@@ -24955,13 +28196,13 @@ var objectKeys = Object.keys || function (obj) {
   return res;
 };
 
-},{}],106:[function(require,module,exports){
+},{}],132:[function(require,module,exports){
 'use strict';
 
 exports.decode = exports.parse = require('./decode');
 exports.encode = exports.stringify = require('./encode');
 
-},{"./decode":104,"./encode":105}],107:[function(require,module,exports){
+},{"./decode":130,"./encode":131}],133:[function(require,module,exports){
 // Copyright Joyent, Inc. and other Node contributors.
 //
 // Permission is hereby granted, free of charge, to any person obtaining a
@@ -25093,7 +28334,7 @@ Duplex.prototype._destroy = function (err, cb) {
 
   pna.nextTick(cb, err);
 };
-},{"./_stream_readable":109,"./_stream_writable":111,"core-util-is":67,"inherits":90,"process-nextick-args":102}],108:[function(require,module,exports){
+},{"./_stream_readable":135,"./_stream_writable":137,"core-util-is":95,"inherits":116,"process-nextick-args":128}],134:[function(require,module,exports){
 // Copyright Joyent, Inc. and other Node contributors.
 //
 // Permission is hereby granted, free of charge, to any person obtaining a
@@ -25141,7 +28382,7 @@ function PassThrough(options) {
 PassThrough.prototype._transform = function (chunk, encoding, cb) {
   cb(null, chunk);
 };
-},{"./_stream_transform":110,"core-util-is":67,"inherits":90}],109:[function(require,module,exports){
+},{"./_stream_transform":136,"core-util-is":95,"inherits":116}],135:[function(require,module,exports){
 (function (process,global){
 // Copyright Joyent, Inc. and other Node contributors.
 //
@@ -26163,7 +29404,7 @@ function indexOf(xs, x) {
   return -1;
 }
 }).call(this,require('_process'),typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{"./_stream_duplex":107,"./internal/streams/BufferList":112,"./internal/streams/destroy":113,"./internal/streams/stream":114,"_process":61,"core-util-is":67,"events":84,"inherits":90,"isarray":115,"process-nextick-args":102,"safe-buffer":118,"string_decoder/":116,"util":60}],110:[function(require,module,exports){
+},{"./_stream_duplex":133,"./internal/streams/BufferList":138,"./internal/streams/destroy":139,"./internal/streams/stream":140,"_process":89,"core-util-is":95,"events":110,"inherits":116,"isarray":141,"process-nextick-args":128,"safe-buffer":144,"string_decoder/":142,"util":88}],136:[function(require,module,exports){
 // Copyright Joyent, Inc. and other Node contributors.
 //
 // Permission is hereby granted, free of charge, to any person obtaining a
@@ -26378,7 +29619,7 @@ function done(stream, er, data) {
 
   return stream.push(null);
 }
-},{"./_stream_duplex":107,"core-util-is":67,"inherits":90}],111:[function(require,module,exports){
+},{"./_stream_duplex":133,"core-util-is":95,"inherits":116}],137:[function(require,module,exports){
 (function (process,global,setImmediate){
 // Copyright Joyent, Inc. and other Node contributors.
 //
@@ -27068,7 +30309,7 @@ Writable.prototype._destroy = function (err, cb) {
   cb(err);
 };
 }).call(this,require('_process'),typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {},require("timers").setImmediate)
-},{"./_stream_duplex":107,"./internal/streams/destroy":113,"./internal/streams/stream":114,"_process":61,"core-util-is":67,"inherits":90,"process-nextick-args":102,"safe-buffer":118,"timers":133,"util-deprecate":139}],112:[function(require,module,exports){
+},{"./_stream_duplex":133,"./internal/streams/destroy":139,"./internal/streams/stream":140,"_process":89,"core-util-is":95,"inherits":116,"process-nextick-args":128,"safe-buffer":144,"timers":159,"util-deprecate":165}],138:[function(require,module,exports){
 'use strict';
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
@@ -27148,7 +30389,7 @@ if (util && util.inspect && util.inspect.custom) {
     return this.constructor.name + ' ' + obj;
   };
 }
-},{"safe-buffer":118,"util":60}],113:[function(require,module,exports){
+},{"safe-buffer":144,"util":88}],139:[function(require,module,exports){
 'use strict';
 
 /*<replacement>*/
@@ -27223,12 +30464,12 @@ module.exports = {
   destroy: destroy,
   undestroy: undestroy
 };
-},{"process-nextick-args":102}],114:[function(require,module,exports){
+},{"process-nextick-args":128}],140:[function(require,module,exports){
 module.exports = require('events').EventEmitter;
 
-},{"events":84}],115:[function(require,module,exports){
-arguments[4][92][0].apply(exports,arguments)
-},{"dup":92}],116:[function(require,module,exports){
+},{"events":110}],141:[function(require,module,exports){
+arguments[4][118][0].apply(exports,arguments)
+},{"dup":118}],142:[function(require,module,exports){
 // Copyright Joyent, Inc. and other Node contributors.
 //
 // Permission is hereby granted, free of charge, to any person obtaining a
@@ -27525,7 +30766,7 @@ function simpleWrite(buf) {
 function simpleEnd(buf) {
   return buf && buf.length ? this.write(buf) : '';
 }
-},{"safe-buffer":118}],117:[function(require,module,exports){
+},{"safe-buffer":144}],143:[function(require,module,exports){
 exports = module.exports = require('./lib/_stream_readable.js');
 exports.Stream = exports;
 exports.Readable = exports;
@@ -27534,7 +30775,7 @@ exports.Duplex = require('./lib/_stream_duplex.js');
 exports.Transform = require('./lib/_stream_transform.js');
 exports.PassThrough = require('./lib/_stream_passthrough.js');
 
-},{"./lib/_stream_duplex.js":107,"./lib/_stream_passthrough.js":108,"./lib/_stream_readable.js":109,"./lib/_stream_transform.js":110,"./lib/_stream_writable.js":111}],118:[function(require,module,exports){
+},{"./lib/_stream_duplex.js":133,"./lib/_stream_passthrough.js":134,"./lib/_stream_readable.js":135,"./lib/_stream_transform.js":136,"./lib/_stream_writable.js":137}],144:[function(require,module,exports){
 /* eslint-disable node/no-deprecated-api */
 var buffer = require('buffer')
 var Buffer = buffer.Buffer
@@ -27598,7 +30839,7 @@ SafeBuffer.allocUnsafeSlow = function (size) {
   return buffer.SlowBuffer(size)
 }
 
-},{"buffer":62}],119:[function(require,module,exports){
+},{"buffer":90}],145:[function(require,module,exports){
 
 /**
  * Module dependencies.
@@ -27694,7 +30935,7 @@ exports.connect = lookup;
 exports.Manager = require('./manager');
 exports.Socket = require('./socket');
 
-},{"./manager":120,"./socket":122,"./url":123,"debug":68,"socket.io-parser":125}],120:[function(require,module,exports){
+},{"./manager":146,"./socket":148,"./url":149,"debug":150,"socket.io-parser":153}],146:[function(require,module,exports){
 
 /**
  * Module dependencies.
@@ -28269,7 +31510,7 @@ Manager.prototype.onreconnect = function () {
   this.emitAll('reconnect', attempt);
 };
 
-},{"./on":121,"./socket":122,"backo2":55,"component-bind":64,"component-emitter":65,"debug":68,"engine.io-client":70,"indexof":89,"socket.io-parser":125}],121:[function(require,module,exports){
+},{"./on":147,"./socket":148,"backo2":83,"component-bind":92,"component-emitter":93,"debug":150,"engine.io-client":98,"indexof":115,"socket.io-parser":153}],147:[function(require,module,exports){
 
 /**
  * Module exports.
@@ -28295,7 +31536,7 @@ function on (obj, ev, fn) {
   };
 }
 
-},{}],122:[function(require,module,exports){
+},{}],148:[function(require,module,exports){
 
 /**
  * Module dependencies.
@@ -28715,7 +31956,7 @@ Socket.prototype.compress = function (compress) {
   return this;
 };
 
-},{"./on":121,"component-bind":64,"component-emitter":65,"debug":68,"parseqs":100,"socket.io-parser":125,"to-array":135}],123:[function(require,module,exports){
+},{"./on":147,"component-bind":92,"component-emitter":93,"debug":150,"parseqs":126,"socket.io-parser":153,"to-array":161}],149:[function(require,module,exports){
 (function (global){
 
 /**
@@ -28794,7 +32035,400 @@ function url (uri, loc) {
 }
 
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{"debug":68,"parseuri":101}],124:[function(require,module,exports){
+},{"debug":150,"parseuri":127}],150:[function(require,module,exports){
+(function (process){
+/**
+ * This is the web browser implementation of `debug()`.
+ *
+ * Expose `debug()` as the module.
+ */
+
+exports = module.exports = require('./debug');
+exports.log = log;
+exports.formatArgs = formatArgs;
+exports.save = save;
+exports.load = load;
+exports.useColors = useColors;
+exports.storage = 'undefined' != typeof chrome
+               && 'undefined' != typeof chrome.storage
+                  ? chrome.storage.local
+                  : localstorage();
+
+/**
+ * Colors.
+ */
+
+exports.colors = [
+  'lightseagreen',
+  'forestgreen',
+  'goldenrod',
+  'dodgerblue',
+  'darkorchid',
+  'crimson'
+];
+
+/**
+ * Currently only WebKit-based Web Inspectors, Firefox >= v31,
+ * and the Firebug extension (any Firefox version) are known
+ * to support "%c" CSS customizations.
+ *
+ * TODO: add a `localStorage` variable to explicitly enable/disable colors
+ */
+
+function useColors() {
+  // NB: In an Electron preload script, document will be defined but not fully
+  // initialized. Since we know we're in Chrome, we'll just detect this case
+  // explicitly
+  if (typeof window !== 'undefined' && window.process && window.process.type === 'renderer') {
+    return true;
+  }
+
+  // is webkit? http://stackoverflow.com/a/16459606/376773
+  // document is undefined in react-native: https://github.com/facebook/react-native/pull/1632
+  return (typeof document !== 'undefined' && document.documentElement && document.documentElement.style && document.documentElement.style.WebkitAppearance) ||
+    // is firebug? http://stackoverflow.com/a/398120/376773
+    (typeof window !== 'undefined' && window.console && (window.console.firebug || (window.console.exception && window.console.table))) ||
+    // is firefox >= v31?
+    // https://developer.mozilla.org/en-US/docs/Tools/Web_Console#Styling_messages
+    (typeof navigator !== 'undefined' && navigator.userAgent && navigator.userAgent.toLowerCase().match(/firefox\/(\d+)/) && parseInt(RegExp.$1, 10) >= 31) ||
+    // double check webkit in userAgent just in case we are in a worker
+    (typeof navigator !== 'undefined' && navigator.userAgent && navigator.userAgent.toLowerCase().match(/applewebkit\/(\d+)/));
+}
+
+/**
+ * Map %j to `JSON.stringify()`, since no Web Inspectors do that by default.
+ */
+
+exports.formatters.j = function(v) {
+  try {
+    return JSON.stringify(v);
+  } catch (err) {
+    return '[UnexpectedJSONParseError]: ' + err.message;
+  }
+};
+
+
+/**
+ * Colorize log arguments if enabled.
+ *
+ * @api public
+ */
+
+function formatArgs(args) {
+  var useColors = this.useColors;
+
+  args[0] = (useColors ? '%c' : '')
+    + this.namespace
+    + (useColors ? ' %c' : ' ')
+    + args[0]
+    + (useColors ? '%c ' : ' ')
+    + '+' + exports.humanize(this.diff);
+
+  if (!useColors) return;
+
+  var c = 'color: ' + this.color;
+  args.splice(1, 0, c, 'color: inherit')
+
+  // the final "%c" is somewhat tricky, because there could be other
+  // arguments passed either before or after the %c, so we need to
+  // figure out the correct index to insert the CSS into
+  var index = 0;
+  var lastC = 0;
+  args[0].replace(/%[a-zA-Z%]/g, function(match) {
+    if ('%%' === match) return;
+    index++;
+    if ('%c' === match) {
+      // we only are interested in the *last* %c
+      // (the user may have provided their own)
+      lastC = index;
+    }
+  });
+
+  args.splice(lastC, 0, c);
+}
+
+/**
+ * Invokes `console.log()` when available.
+ * No-op when `console.log` is not a "function".
+ *
+ * @api public
+ */
+
+function log() {
+  // this hackery is required for IE8/9, where
+  // the `console.log` function doesn't have 'apply'
+  return 'object' === typeof console
+    && console.log
+    && Function.prototype.apply.call(console.log, console, arguments);
+}
+
+/**
+ * Save `namespaces`.
+ *
+ * @param {String} namespaces
+ * @api private
+ */
+
+function save(namespaces) {
+  try {
+    if (null == namespaces) {
+      exports.storage.removeItem('debug');
+    } else {
+      exports.storage.debug = namespaces;
+    }
+  } catch(e) {}
+}
+
+/**
+ * Load `namespaces`.
+ *
+ * @return {String} returns the previously persisted debug modes
+ * @api private
+ */
+
+function load() {
+  var r;
+  try {
+    r = exports.storage.debug;
+  } catch(e) {}
+
+  // If debug isn't set in LS, and we're in Electron, try to load $DEBUG
+  if (!r && typeof process !== 'undefined' && 'env' in process) {
+    r = process.env.DEBUG;
+  }
+
+  return r;
+}
+
+/**
+ * Enable namespaces listed in `localStorage.debug` initially.
+ */
+
+exports.enable(load());
+
+/**
+ * Localstorage attempts to return the localstorage.
+ *
+ * This is necessary because safari throws
+ * when a user disables cookies/localstorage
+ * and you attempt to access it.
+ *
+ * @return {LocalStorage}
+ * @api private
+ */
+
+function localstorage() {
+  try {
+    return window.localStorage;
+  } catch (e) {}
+}
+
+}).call(this,require('_process'))
+},{"./debug":151,"_process":89}],151:[function(require,module,exports){
+
+/**
+ * This is the common logic for both the Node.js and web browser
+ * implementations of `debug()`.
+ *
+ * Expose `debug()` as the module.
+ */
+
+exports = module.exports = createDebug.debug = createDebug['default'] = createDebug;
+exports.coerce = coerce;
+exports.disable = disable;
+exports.enable = enable;
+exports.enabled = enabled;
+exports.humanize = require('ms');
+
+/**
+ * The currently active debug mode names, and names to skip.
+ */
+
+exports.names = [];
+exports.skips = [];
+
+/**
+ * Map of special "%n" handling functions, for the debug "format" argument.
+ *
+ * Valid key names are a single, lower or upper-case letter, i.e. "n" and "N".
+ */
+
+exports.formatters = {};
+
+/**
+ * Previous log timestamp.
+ */
+
+var prevTime;
+
+/**
+ * Select a color.
+ * @param {String} namespace
+ * @return {Number}
+ * @api private
+ */
+
+function selectColor(namespace) {
+  var hash = 0, i;
+
+  for (i in namespace) {
+    hash  = ((hash << 5) - hash) + namespace.charCodeAt(i);
+    hash |= 0; // Convert to 32bit integer
+  }
+
+  return exports.colors[Math.abs(hash) % exports.colors.length];
+}
+
+/**
+ * Create a debugger with the given `namespace`.
+ *
+ * @param {String} namespace
+ * @return {Function}
+ * @api public
+ */
+
+function createDebug(namespace) {
+
+  function debug() {
+    // disabled?
+    if (!debug.enabled) return;
+
+    var self = debug;
+
+    // set `diff` timestamp
+    var curr = +new Date();
+    var ms = curr - (prevTime || curr);
+    self.diff = ms;
+    self.prev = prevTime;
+    self.curr = curr;
+    prevTime = curr;
+
+    // turn the `arguments` into a proper Array
+    var args = new Array(arguments.length);
+    for (var i = 0; i < args.length; i++) {
+      args[i] = arguments[i];
+    }
+
+    args[0] = exports.coerce(args[0]);
+
+    if ('string' !== typeof args[0]) {
+      // anything else let's inspect with %O
+      args.unshift('%O');
+    }
+
+    // apply any `formatters` transformations
+    var index = 0;
+    args[0] = args[0].replace(/%([a-zA-Z%])/g, function(match, format) {
+      // if we encounter an escaped % then don't increase the array index
+      if (match === '%%') return match;
+      index++;
+      var formatter = exports.formatters[format];
+      if ('function' === typeof formatter) {
+        var val = args[index];
+        match = formatter.call(self, val);
+
+        // now we need to remove `args[index]` since it's inlined in the `format`
+        args.splice(index, 1);
+        index--;
+      }
+      return match;
+    });
+
+    // apply env-specific formatting (colors, etc.)
+    exports.formatArgs.call(self, args);
+
+    var logFn = debug.log || exports.log || console.log.bind(console);
+    logFn.apply(self, args);
+  }
+
+  debug.namespace = namespace;
+  debug.enabled = exports.enabled(namespace);
+  debug.useColors = exports.useColors();
+  debug.color = selectColor(namespace);
+
+  // env-specific initialization logic for debug instances
+  if ('function' === typeof exports.init) {
+    exports.init(debug);
+  }
+
+  return debug;
+}
+
+/**
+ * Enables a debug mode by namespaces. This can include modes
+ * separated by a colon and wildcards.
+ *
+ * @param {String} namespaces
+ * @api public
+ */
+
+function enable(namespaces) {
+  exports.save(namespaces);
+
+  exports.names = [];
+  exports.skips = [];
+
+  var split = (typeof namespaces === 'string' ? namespaces : '').split(/[\s,]+/);
+  var len = split.length;
+
+  for (var i = 0; i < len; i++) {
+    if (!split[i]) continue; // ignore empty strings
+    namespaces = split[i].replace(/\*/g, '.*?');
+    if (namespaces[0] === '-') {
+      exports.skips.push(new RegExp('^' + namespaces.substr(1) + '$'));
+    } else {
+      exports.names.push(new RegExp('^' + namespaces + '$'));
+    }
+  }
+}
+
+/**
+ * Disable debug output.
+ *
+ * @api public
+ */
+
+function disable() {
+  exports.enable('');
+}
+
+/**
+ * Returns true if the given mode name is enabled, false otherwise.
+ *
+ * @param {String} name
+ * @return {Boolean}
+ * @api public
+ */
+
+function enabled(name) {
+  var i, len;
+  for (i = 0, len = exports.skips.length; i < len; i++) {
+    if (exports.skips[i].test(name)) {
+      return false;
+    }
+  }
+  for (i = 0, len = exports.names.length; i < len; i++) {
+    if (exports.names[i].test(name)) {
+      return true;
+    }
+  }
+  return false;
+}
+
+/**
+ * Coerce `val`.
+ *
+ * @param {Mixed} val
+ * @return {Mixed}
+ * @api private
+ */
+
+function coerce(val) {
+  if (val instanceof Error) return val.stack || val.message;
+  return val;
+}
+
+},{"ms":125}],152:[function(require,module,exports){
 (function (global){
 /*global Blob,File*/
 
@@ -28939,7 +32573,7 @@ exports.removeBlobs = function(data, callback) {
 };
 
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{"./is-buffer":126,"isarray":92}],125:[function(require,module,exports){
+},{"./is-buffer":154,"isarray":118}],153:[function(require,module,exports){
 
 /**
  * Module dependencies.
@@ -29349,7 +32983,7 @@ function error(msg) {
   };
 }
 
-},{"./binary":124,"./is-buffer":126,"component-emitter":65,"debug":127,"has-binary2":85,"isarray":92}],126:[function(require,module,exports){
+},{"./binary":152,"./is-buffer":154,"component-emitter":93,"debug":96,"has-binary2":111,"isarray":118}],154:[function(require,module,exports){
 (function (global){
 
 module.exports = isBuf;
@@ -29366,11 +33000,7 @@ function isBuf(obj) {
 }
 
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{}],127:[function(require,module,exports){
-arguments[4][79][0].apply(exports,arguments)
-},{"./debug":128,"_process":61,"dup":79}],128:[function(require,module,exports){
-arguments[4][80][0].apply(exports,arguments)
-},{"dup":80,"ms":99}],129:[function(require,module,exports){
+},{}],155:[function(require,module,exports){
 (function (global){
 var ClientRequest = require('./lib/request')
 var response = require('./lib/response')
@@ -29458,7 +33088,7 @@ http.METHODS = [
 	'UNSUBSCRIBE'
 ]
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{"./lib/request":131,"./lib/response":132,"builtin-status-codes":63,"url":137,"xtend":145}],130:[function(require,module,exports){
+},{"./lib/request":157,"./lib/response":158,"builtin-status-codes":91,"url":163,"xtend":171}],156:[function(require,module,exports){
 (function (global){
 exports.fetch = isFunction(global.fetch) && isFunction(global.ReadableStream)
 
@@ -29535,7 +33165,7 @@ function isFunction (value) {
 xhr = null // Help gc
 
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{}],131:[function(require,module,exports){
+},{}],157:[function(require,module,exports){
 (function (process,global,Buffer){
 var capability = require('./capability')
 var inherits = require('inherits')
@@ -29866,7 +33496,7 @@ var unsafeHeaders = [
 ]
 
 }).call(this,require('_process'),typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {},require("buffer").Buffer)
-},{"./capability":130,"./response":132,"_process":61,"buffer":62,"inherits":90,"readable-stream":117,"to-arraybuffer":136}],132:[function(require,module,exports){
+},{"./capability":156,"./response":158,"_process":89,"buffer":90,"inherits":116,"readable-stream":143,"to-arraybuffer":162}],158:[function(require,module,exports){
 (function (process,global,Buffer){
 var capability = require('./capability')
 var inherits = require('inherits')
@@ -30094,7 +33724,7 @@ IncomingMessage.prototype._onXHRProgress = function () {
 }
 
 }).call(this,require('_process'),typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {},require("buffer").Buffer)
-},{"./capability":130,"_process":61,"buffer":62,"inherits":90,"readable-stream":117}],133:[function(require,module,exports){
+},{"./capability":156,"_process":89,"buffer":90,"inherits":116,"readable-stream":143}],159:[function(require,module,exports){
 (function (setImmediate,clearImmediate){
 var nextTick = require('process/browser.js').nextTick;
 var apply = Function.prototype.apply;
@@ -30173,9 +33803,9 @@ exports.clearImmediate = typeof clearImmediate === "function" ? clearImmediate :
   delete immediateIds[id];
 };
 }).call(this,require("timers").setImmediate,require("timers").clearImmediate)
-},{"process/browser.js":134,"timers":133}],134:[function(require,module,exports){
-arguments[4][61][0].apply(exports,arguments)
-},{"dup":61}],135:[function(require,module,exports){
+},{"process/browser.js":160,"timers":159}],160:[function(require,module,exports){
+arguments[4][89][0].apply(exports,arguments)
+},{"dup":89}],161:[function(require,module,exports){
 module.exports = toArray
 
 function toArray(list, index) {
@@ -30190,7 +33820,7 @@ function toArray(list, index) {
     return array
 }
 
-},{}],136:[function(require,module,exports){
+},{}],162:[function(require,module,exports){
 var Buffer = require('buffer').Buffer
 
 module.exports = function (buf) {
@@ -30219,7 +33849,7 @@ module.exports = function (buf) {
 	}
 }
 
-},{"buffer":62}],137:[function(require,module,exports){
+},{"buffer":90}],163:[function(require,module,exports){
 // Copyright Joyent, Inc. and other Node contributors.
 //
 // Permission is hereby granted, free of charge, to any person obtaining a
@@ -30953,7 +34583,7 @@ Url.prototype.parseHost = function() {
   if (host) this.hostname = host;
 };
 
-},{"./util":138,"punycode":103,"querystring":106}],138:[function(require,module,exports){
+},{"./util":164,"punycode":129,"querystring":132}],164:[function(require,module,exports){
 'use strict';
 
 module.exports = {
@@ -30971,7 +34601,7 @@ module.exports = {
   }
 };
 
-},{}],139:[function(require,module,exports){
+},{}],165:[function(require,module,exports){
 (function (global){
 
 /**
@@ -31042,7 +34672,7 @@ function config (name) {
 }
 
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{}],140:[function(require,module,exports){
+},{}],166:[function(require,module,exports){
 var v1 = require('./v1');
 var v4 = require('./v4');
 
@@ -31052,7 +34682,7 @@ uuid.v4 = v4;
 
 module.exports = uuid;
 
-},{"./v1":143,"./v4":144}],141:[function(require,module,exports){
+},{"./v1":169,"./v4":170}],167:[function(require,module,exports){
 /**
  * Convert array of 16 byte values to UUID string format of the form:
  * XXXXXXXX-XXXX-XXXX-XXXX-XXXXXXXXXXXX
@@ -31077,7 +34707,7 @@ function bytesToUuid(buf, offset) {
 
 module.exports = bytesToUuid;
 
-},{}],142:[function(require,module,exports){
+},{}],168:[function(require,module,exports){
 (function (global){
 // Unique ID creation requires a high quality random # generator.  In the
 // browser this is a little complicated due to unknown quality of Math.random()
@@ -31114,7 +34744,7 @@ if (!rng) {
 module.exports = rng;
 
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{}],143:[function(require,module,exports){
+},{}],169:[function(require,module,exports){
 var rng = require('./lib/rng');
 var bytesToUuid = require('./lib/bytesToUuid');
 
@@ -31216,7 +34846,7 @@ function v1(options, buf, offset) {
 
 module.exports = v1;
 
-},{"./lib/bytesToUuid":141,"./lib/rng":142}],144:[function(require,module,exports){
+},{"./lib/bytesToUuid":167,"./lib/rng":168}],170:[function(require,module,exports){
 var rng = require('./lib/rng');
 var bytesToUuid = require('./lib/bytesToUuid');
 
@@ -31247,7 +34877,7 @@ function v4(options, buf, offset) {
 
 module.exports = v4;
 
-},{"./lib/bytesToUuid":141,"./lib/rng":142}],145:[function(require,module,exports){
+},{"./lib/bytesToUuid":167,"./lib/rng":168}],171:[function(require,module,exports){
 module.exports = extend
 
 var hasOwnProperty = Object.prototype.hasOwnProperty;
@@ -31268,7 +34898,7 @@ function extend() {
     return target
 }
 
-},{}],146:[function(require,module,exports){
+},{}],172:[function(require,module,exports){
 'use strict';
 
 var alphabet = '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz-_'.split('')
