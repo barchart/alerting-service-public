@@ -786,7 +786,7 @@ module.exports = function () {
 	return AlertManager;
 }();
 
-},{"./adapters/RestAdapter":3,"./adapters/SocketAdapter":4,"./validators/validate":11,"@barchart/common-js/lang/Disposable":21,"@barchart/common-js/lang/array":25,"@barchart/common-js/lang/assert":26,"@barchart/common-js/lang/connection":28,"@barchart/common-js/lang/is":30,"@barchart/common-js/messaging/Event":34,"@barchart/instruments-client-js/lib/search/SearchManager":46,"@barchart/marketdata-utilities-js/lib/convert":77,"@barchart/marketdata-utilities-js/lib/priceFormatter":79,"@barchart/marketdata-utilities-js/lib/priceParser":80}],2:[function(require,module,exports){
+},{"./adapters/RestAdapter":3,"./adapters/SocketAdapter":4,"./validators/validate":11,"@barchart/common-js/lang/Disposable":21,"@barchart/common-js/lang/array":25,"@barchart/common-js/lang/assert":26,"@barchart/common-js/lang/connection":28,"@barchart/common-js/lang/is":30,"@barchart/common-js/messaging/Event":34,"@barchart/instruments-client-js/lib/search/SearchManager":46,"@barchart/marketdata-utilities-js/lib/convert":50,"@barchart/marketdata-utilities-js/lib/priceFormatter":52,"@barchart/marketdata-utilities-js/lib/priceParser":53}],2:[function(require,module,exports){
 'use strict';
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
@@ -1737,7 +1737,7 @@ module.exports = function () {
 	return SocketAdapter;
 }();
 
-},{"./AdapterBase":2,"@barchart/common-js/lang/Disposable":21,"@barchart/common-js/lang/assert":26,"socket.io-client":145,"uuid":166}],5:[function(require,module,exports){
+},{"./AdapterBase":2,"@barchart/common-js/lang/Disposable":21,"@barchart/common-js/lang/assert":26,"socket.io-client":118,"uuid":139}],5:[function(require,module,exports){
 'use strict';
 
 var AlertManager = require('./AlertManager');
@@ -1750,7 +1750,7 @@ module.exports = function () {
 	return {
 		AlertManager: AlertManager,
 		timezone: timezone,
-		version: '1.6.7'
+		version: '1.6.8'
 	};
 }();
 
@@ -4106,7 +4106,7 @@ module.exports = function () {
 	return Decimal;
 }();
 
-},{"./Enum":22,"./assert":26,"./is":30,"big.js":86}],21:[function(require,module,exports){
+},{"./Enum":22,"./assert":26,"./is":30,"big.js":59}],21:[function(require,module,exports){
 'use strict';
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
@@ -4643,7 +4643,7 @@ module.exports = function () {
 	return Timestamp;
 }();
 
-},{"./assert":26,"./is":30,"moment-timezone":122}],25:[function(require,module,exports){
+},{"./assert":26,"./is":30,"moment-timezone":95}],25:[function(require,module,exports){
 'use strict';
 
 var assert = require('./assert'),
@@ -6126,7 +6126,7 @@ module.exports = function () {
 	};
 }();
 
-},{"./assert":26,"moment-timezone/builds/moment-timezone-with-data-2010-2020":120}],34:[function(require,module,exports){
+},{"./assert":26,"moment-timezone/builds/moment-timezone-with-data-2010-2020":93}],34:[function(require,module,exports){
 'use strict';
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
@@ -6994,7 +6994,7 @@ module.exports = function () {
 	return RestProvider;
 }();
 
-},{"./../../lang/promise":32,"./RestProviderBase":39,"http":155,"https":113,"querystring":132}],39:[function(require,module,exports){
+},{"./../../lang/promise":32,"./RestProviderBase":39,"http":128,"https":86,"querystring":105}],39:[function(require,module,exports){
 'use strict';
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
@@ -7553,7 +7553,7 @@ module.exports = function () {
 	return DataType;
 }();
 
-},{"./../../lang/AdHoc":17,"./../../lang/Day":19,"./../../lang/Decimal":20,"./../../lang/Enum":22,"./../../lang/Timestamp":24,"./../../lang/assert":26,"./../../lang/is":30,"moment":124}],42:[function(require,module,exports){
+},{"./../../lang/AdHoc":17,"./../../lang/Day":19,"./../../lang/Decimal":20,"./../../lang/Enum":22,"./../../lang/Timestamp":24,"./../../lang/assert":26,"./../../lang/is":30,"moment":97}],42:[function(require,module,exports){
 'use strict';
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
@@ -8319,7 +8319,7 @@ module.exports = function () {
 	return SocketConnectionState;
 }();
 
-},{"@barchart/common-js/lang/assert":62}],46:[function(require,module,exports){
+},{"@barchart/common-js/lang/assert":26}],46:[function(require,module,exports){
 'use strict';
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
@@ -8701,7 +8701,7 @@ module.exports = function () {
 	return SearchManager;
 }();
 
-},{"./adapters/RestAdapter":48,"./adapters/SocketAdapter":49,"@barchart/common-js/lang/Disposable":57,"@barchart/common-js/lang/array":61,"@barchart/common-js/lang/assert":62,"@barchart/common-js/lang/connection":64}],47:[function(require,module,exports){
+},{"./adapters/RestAdapter":48,"./adapters/SocketAdapter":49,"@barchart/common-js/lang/Disposable":21,"@barchart/common-js/lang/array":25,"@barchart/common-js/lang/assert":26,"@barchart/common-js/lang/connection":28}],47:[function(require,module,exports){
 'use strict';
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
@@ -8792,7 +8792,7 @@ module.exports = function () {
 	return InstrumentAdapterBase;
 }();
 
-},{"@barchart/common-js/lang/Disposable":57}],48:[function(require,module,exports){
+},{"@barchart/common-js/lang/Disposable":21}],48:[function(require,module,exports){
 'use strict';
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
@@ -8913,7 +8913,7 @@ module.exports = function () {
 	return RestInstrumentAdapter;
 }();
 
-},{"./BaseAdapter":47,"@barchart/common-js/lang/Disposable":57,"@barchart/common-js/lang/assert":62,"@barchart/common-js/network/rest/RestAction":68,"@barchart/common-js/network/rest/RestEndpoint":69,"@barchart/common-js/network/rest/RestProvider":71}],49:[function(require,module,exports){
+},{"./BaseAdapter":47,"@barchart/common-js/lang/Disposable":21,"@barchart/common-js/lang/assert":26,"@barchart/common-js/network/rest/RestAction":35,"@barchart/common-js/network/rest/RestEndpoint":36,"@barchart/common-js/network/rest/RestProvider":38}],49:[function(require,module,exports){
 'use strict';
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
@@ -9114,2886 +9114,7 @@ module.exports = function () {
 	return SocketInstrumentAdapter;
 }();
 
-},{"./../../common/socket/SocketConnectionState":45,"./BaseAdapter":47,"@barchart/common-js/lang/Disposable":57,"@barchart/common-js/lang/assert":62,"@barchart/common-js/lang/promise":67,"socket.io-client":145,"uuid":166}],50:[function(require,module,exports){
-arguments[4][13][0].apply(exports,arguments)
-},{"dup":13}],51:[function(require,module,exports){
-'use strict';
-
-var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
-
-function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-
-module.exports = function () {
-	'use strict';
-
-	/**
-  * A tree data structure. Each instance represents a node, holding
-  * an item, a reference to the parent node, and a reference to
-  * children nodes. Children are stored in insertion order.
-  *
-  * @public
-  * @param {*} value - The value of the node.
-  * @param {Tree} parent - The parent node. If not supplied, this will be the root node.
-  */
-
-	var Tree = function () {
-		function Tree(value, parent) {
-			_classCallCheck(this, Tree);
-
-			this._value = value;
-
-			this._parent = parent || null;
-			this._children = [];
-		}
-
-		/**
-   * Returns the parent node. If this is the root node, a null value is returned.
-   *
-   * @public
-   * @returns {Tree|null}
-   */
-
-
-		_createClass(Tree, [{
-			key: 'getParent',
-			value: function getParent() {
-				return this._parent;
-			}
-
-			/**
-    * Returns the collection of children nodes.
-    *
-    * @public
-    * @returns {Array<Tree>}
-    */
-
-		}, {
-			key: 'getChildren',
-			value: function getChildren() {
-				return this._children;
-			}
-
-			/**
-    * Returns the value associated with the current node.
-    *
-    * @public
-    * @returns {*}
-    */
-
-		}, {
-			key: 'getValue',
-			value: function getValue() {
-				return this._value;
-			}
-
-			/**
-    * Returns true if this node has no children; otherwise false.
-    *
-    * @public
-    * @returns {boolean}
-    */
-
-		}, {
-			key: 'getIsLeaf',
-			value: function getIsLeaf() {
-				return this._children.length === 0;
-			}
-
-			/**
-    * Returns true if this node has no parent; otherwise false.
-    *
-    * @public
-    * @returns {boolean}
-    */
-
-		}, {
-			key: 'getIsRoot',
-			value: function getIsRoot() {
-				return this._parent === null;
-			}
-
-			/**
-    * Adds a child node to the current node and returns a reference
-    * to the child node.
-    *
-    * @public
-    * @param {*} value - The value of the child.
-    * @returns {Tree}
-    */
-
-		}, {
-			key: 'addChild',
-			value: function addChild(value) {
-				var returnRef = new Tree(value, this);
-
-				this._children.push(returnRef);
-
-				return returnRef;
-			}
-
-			/**
-    * Removes a child node.
-    *
-    * @public
-    * @param {Tree} node - The child to remove.
-    */
-
-		}, {
-			key: 'removeChild',
-			value: function removeChild(node) {
-				for (var i = this._children.length - 1; !(i < 0); i--) {
-					var child = this._children[i];
-
-					if (child === node) {
-						this._children.splice(i, 1);
-
-						child._parent = null;
-						child._children = [];
-
-						break;
-					}
-				}
-			}
-
-			/**
-    * Searches the children nodes for the first child node that matches the
-    * predicate.
-    *
-    * @public
-    * @param {Tree~nodePredicate} predicate - A predicate that tests each child node. The predicate takes two arguments -- the node's value, and the node itself.
-    * @returns {Tree|null}
-    */
-
-		}, {
-			key: 'findChild',
-			value: function findChild(predicate) {
-				var returnRef = null;
-
-				for (var i = 0; i < this._children.length; i++) {
-					var child = this._children[i];
-
-					if (predicate(child.getValue(), child)) {
-						returnRef = child;
-
-						break;
-					}
-				}
-
-				return returnRef;
-			}
-
-			/**
-    * Searches the tree recursively, starting with the current node.
-    *
-    * @public
-    * @param {Tree~nodePredicate} predicate - A predicate that tests each child node. The predicate takes two arguments -- the node's value, and the node itself.
-    * @param {boolean=} childrenFirst - True, if the tree should be searched depth first.
-    * @param {boolean=} includeCurrentNode - True, if the current node should be checked against the predicate.
-    * @returns {Tree|null}
-    */
-
-		}, {
-			key: 'search',
-			value: function search(predicate, childrenFirst, includeCurrentNode) {
-				var returnRef = null;
-
-				if (returnRef === null && childrenFirst && includeCurrentNode && predicate(this.getValue(), this)) {
-					returnRef = this;
-				}
-
-				for (var i = 0; i < this._children.length; i++) {
-					var child = this._children[i];
-
-					returnRef = child.search(predicate, childrenFirst, true);
-
-					if (returnRef !== null) {
-						break;
-					}
-				}
-
-				if (returnRef === null && !childrenFirst && includeCurrentNode && predicate(this.getValue(), this)) {
-					returnRef = this;
-				}
-
-				return returnRef;
-			}
-
-			/**
-    * Walks the children of the current node -- current node down to the lead nodes, running an action on each node.
-    *
-    * @public
-    * @param {Tree~nodeAction} walkAction - A action to apply to each node. The action takes two arguments -- the node's value, and the node itself.
-    * @param {boolean=} childrenFirst - True if the tree should be walked depth first.
-    * @param {boolean=} includeCurrentNode - True if the current node should be applied to the action.
-    */
-
-		}, {
-			key: 'walk',
-			value: function walk(walkAction, childrenFirst, includeCurrentNode) {
-				var predicate = function predicate(value, node) {
-					walkAction(value, node);
-
-					return false;
-				};
-
-				this.search(predicate, childrenFirst, includeCurrentNode);
-			}
-
-			/**
-    * Climbs the parents of the current node -- current node up to the root node, running an action on each node.
-    *
-    * @public
-    * @param {Tree~nodeAction} climbAction - A action to apply to each node. The action takes two arguments -- the node's value, and the node itself.
-    * @param {boolean=} includeCurrentNode - True if the current node should be applied to the action.
-    */
-
-		}, {
-			key: 'climb',
-			value: function climb(climbAction, includeCurrentNode) {
-				if (includeCurrentNode) {
-					climbAction(this.getValue(), this);
-				}
-
-				if (this._parent !== null) {
-					this._parent.climb(climbAction, true);
-				}
-			}
-		}, {
-			key: 'toString',
-			value: function toString() {
-				return '[Tree]';
-			}
-		}]);
-
-		return Tree;
-	}();
-
-	/**
-  * A predicate that is used to check a node (i.e. {@link Tree}).
-  *
-  * @callback Tree~nodePredicate
-  * @param {*} item - The candidate node's item
-  * @param {Tree} node - The candidate node.
-  * @returns {Boolean}
-  */
-
-	/**
-  * An action that is run on a node (i.e. {@link Tree}).
-  *
-  * @callback Tree~nodeAction
-  * @param {*} item - The candidate node's item
-  * @param {Tree} node - The candidate node.
-  */
-
-	return Tree;
-}();
-
-},{}],52:[function(require,module,exports){
-arguments[4][15][0].apply(exports,arguments)
-},{"./../../lang/assert":62,"./comparators":53,"dup":15}],53:[function(require,module,exports){
-arguments[4][16][0].apply(exports,arguments)
-},{"./../../lang/assert":62,"dup":16}],54:[function(require,module,exports){
-'use strict';
-
-var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
-
-function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-
-function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
-
-function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
-
-var assert = require('./assert'),
-    Enum = require('./Enum'),
-    is = require('./is');
-
-module.exports = function () {
-	'use strict';
-
-	/**
-  * An enumeration for currency types.
-  *
-  * @public
-  * @param {String} code - Currency code (e.g. "USD")
-  * @param {String} description - The description (e.g. "US Dollar")
-  * @param {Number} precision - The number of decimal places possible for by a real world transaction.
-  * @extends {Enum}
-  */
-
-	var Currency = function (_Enum) {
-		_inherits(Currency, _Enum);
-
-		function Currency(code, description, precision) {
-			_classCallCheck(this, Currency);
-
-			var _this = _possibleConstructorReturn(this, (Currency.__proto__ || Object.getPrototypeOf(Currency)).call(this, code, description));
-
-			assert.argumentIsRequired(precision, 'precision', Number);
-			assert.argumentIsValid(precision, 'precision', is.integer, 'is an integer');
-
-			_this._precision = precision;
-			return _this;
-		}
-
-		/**
-   * The maximum number of decimal places supported by a real world transaction.
-   *
-   * @public
-   * @returns {Number}
-   */
-
-
-		_createClass(Currency, [{
-			key: 'toString',
-			value: function toString() {
-				return '[Currency (code=' + this.code + ')]';
-			}
-		}, {
-			key: 'precision',
-			get: function get() {
-				return this._precision;
-			}
-
-			/**
-    * Given a code, returns the enumeration item.
-    *
-    * @public
-    * @param {String} code
-    * @returns {Currency|null}
-    */
-
-		}], [{
-			key: 'parse',
-			value: function parse(code) {
-				return Enum.fromCode(Currency, code);
-			}
-
-			/**
-    * The Canadian Dollar.
-    *
-    * @public
-    * @returns {Currency}
-    */
-
-		}, {
-			key: 'CAD',
-			get: function get() {
-				return cad;
-			}
-
-			/**
-    * The Euro.
-    *
-    * @public
-    * @returns {Currency}
-    */
-
-		}, {
-			key: 'EUR',
-			get: function get() {
-				return eur;
-			}
-
-			/**
-    * The US Dollar.
-    *
-    * @public
-    * @returns {Currency}
-    */
-
-		}, {
-			key: 'USD',
-			get: function get() {
-				return usd;
-			}
-		}]);
-
-		return Currency;
-	}(Enum);
-
-	var cad = new Currency('CAD', 'Canadian Dollar', 2);
-	var eur = new Currency('EUR', 'Euro', 2);
-	var usd = new Currency('USD', 'US Dollar', 2);
-
-	return Currency;
-}();
-
-},{"./Enum":58,"./assert":62,"./is":66}],55:[function(require,module,exports){
-'use strict';
-
-var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
-
-function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-
-var assert = require('./assert'),
-    ComparatorBuilder = require('./../collections/sorting/ComparatorBuilder'),
-    comparators = require('./../collections/sorting/comparators'),
-    is = require('./is');
-
-module.exports = function () {
-	'use strict';
-
-	/**
-  * A data structure that represents a day (year, month, and day)
-  * without consideration for time or timezone.
-  *
-  * @public
-  */
-
-	var Day = function () {
-		function Day(year, month, day) {
-			_classCallCheck(this, Day);
-
-			if (!Day.validate(year, month, day)) {
-				throw new Error('Unable to instantiate Day, input is invalid [' + year + '], [' + month + '], [' + day + ']');
-			}
-
-			this._year = year;
-			this._month = month;
-			this._day = day;
-		}
-
-		/**
-   * Calculates a new {@link Day} in the future (or past).
-   *
-   * @public
-   * @param {Number} days - The number of days to add (negative numbers can be used for subtraction).
-   * @param {Boolean=} inverse - If true, the sign of the "days" value will be flipped.
-   * @returns {Day}
-   */
-
-
-		_createClass(Day, [{
-			key: 'addDays',
-			value: function addDays(days, inverse) {
-				assert.argumentIsRequired(days, 'days', Number);
-				assert.argumentIsOptional(inverse, inverse, Boolean);
-				assert.argumentIsValid(days, 'days', is.large, 'is an integer');
-
-				var totalDaysToShift = days;
-
-				if (inverse) {
-					totalDaysToShift = totalDaysToShift * -1;
-				}
-
-				var positive = is.positive(totalDaysToShift);
-
-				var shiftedDay = this._day;
-				var shiftedMonth = this._month;
-				var shiftedYear = this._year;
-
-				while (totalDaysToShift !== 0) {
-					var monthDaysAvailable = void 0;
-					var monthDaysToShift = void 0;
-
-					if (positive) {
-						monthDaysAvailable = Day.getDaysInMonth(shiftedYear, shiftedMonth) - shiftedDay;
-						monthDaysToShift = Math.min(totalDaysToShift, monthDaysAvailable);
-					} else {
-						monthDaysAvailable = 1 - shiftedDay;
-						monthDaysToShift = Math.max(totalDaysToShift, monthDaysAvailable);
-					}
-
-					totalDaysToShift = totalDaysToShift - monthDaysToShift;
-
-					if (totalDaysToShift === 0) {
-						shiftedDay = shiftedDay + monthDaysToShift;
-					} else if (positive) {
-						shiftedMonth++;
-
-						if (shiftedMonth > 12) {
-							shiftedYear++;
-							shiftedMonth = 1;
-						}
-
-						shiftedDay = 0;
-					} else {
-						shiftedMonth--;
-
-						if (shiftedMonth < 1) {
-							shiftedYear--;
-							shiftedMonth = 12;
-						}
-
-						shiftedDay = Day.getDaysInMonth(shiftedYear, shiftedMonth) + 1;
-					}
-				}
-
-				return new Day(shiftedYear, shiftedMonth, shiftedDay);
-			}
-
-			/**
-    * Calculates a new {@link Day} in the past (or future).
-    *
-    * @public
-    * @param {Number} days - The number of days to subtract (negative numbers can be used for addition).
-    * @returns {Day}
-    */
-
-		}, {
-			key: 'subtractDays',
-			value: function subtractDays(days) {
-				return this.addDays(days, true);
-			}
-
-			/**
-    * Indicates if another {@link Day} occurs before the current instance.
-    *
-    * @public
-    * @param {Day} other
-    * @returns {boolean}
-    */
-
-		}, {
-			key: 'getIsBefore',
-			value: function getIsBefore(other) {
-				return Day.compareDays(this, other) < 0;
-			}
-
-			/**
-    * Indicates if another {@link Day} occurs after the current instance.
-    *
-    * @public
-    * @param {Day} other
-    * @returns {boolean}
-    */
-
-		}, {
-			key: 'getIsAfter',
-			value: function getIsAfter(other) {
-				return Day.compareDays(this, other) > 0;
-			}
-
-			/**
-    * Indicates if another {@link Day} occurs after the current instance.
-    *
-    * @public
-    * @param {Day} other
-    * @returns {boolean}
-    */
-
-		}, {
-			key: 'getIsEqual',
-			value: function getIsEqual(other) {
-				return Day.compareDays(this, other) === 0;
-			}
-
-			/**
-    * The year.
-    *
-    * @public
-    * @returns {Number}
-    */
-
-		}, {
-			key: 'format',
-
-
-			/**
-    * Outputs the date as the formatted string: {year}-{month}-{day}.
-    *
-    * @public
-    * @returns {String}
-    */
-			value: function format() {
-				return this._year + '-' + leftPad(this._month) + '-' + leftPad(this._day);
-			}
-
-			/**
-    * Returns the JSON representation.
-    *
-    * @public
-    * @returns {String}
-    */
-
-		}, {
-			key: 'toJSON',
-			value: function toJSON() {
-				return this.format();
-			}
-
-			/**
-    * Converts a string (which matches the output of {@link Day#format} into
-    * a {@link Day} instance.
-    *
-    * @public
-    * @param {String} value
-    * @returns {Day}
-    */
-
-		}, {
-			key: 'toString',
-			value: function toString() {
-				return '[Day]';
-			}
-		}, {
-			key: 'year',
-			get: function get() {
-				return this._year;
-			}
-
-			/**
-    * The month of the year (January is one, December is twelve).
-    *
-    * @public
-    * @returns {Number}
-    */
-
-		}, {
-			key: 'month',
-			get: function get() {
-				return this._month;
-			}
-
-			/**
-    * The day of the month.
-    *
-    * @public
-    * @returns {Number}
-    */
-
-		}, {
-			key: 'day',
-			get: function get() {
-				return this._day;
-			}
-		}], [{
-			key: 'parse',
-			value: function parse(value) {
-				assert.argumentIsRequired(value, 'value', String);
-
-				var match = value.match(dayRegex);
-
-				if (match === null) {
-					throw new Error('Unable to parse value as Day [ ' + value + ' ]');
-				}
-
-				return new Day(parseInt(match[1]), parseInt(match[2]), parseInt(match[3]));
-			}
-
-			/**
-    * Creates a {@link Day} from the year, month, and day properties (in local time)
-    * of the {@link Date} argument.
-    *
-    * @param {Date} date
-    * @returns {Day}
-    */
-
-		}, {
-			key: 'fromDate',
-			value: function fromDate(date) {
-				assert.argumentIsRequired(date, 'date', Date);
-
-				return new Day(date.getFullYear(), date.getMonth() + 1, date.getDate());
-			}
-
-			/**
-    * Creates a {@link Day} from the year, month, and day properties (in UTC)
-    * of the {@link Date} argument.
-    *
-    * @param {Date} date
-    * @returns {Day}
-    */
-
-		}, {
-			key: 'fromDateUtc',
-			value: function fromDateUtc(date) {
-				assert.argumentIsRequired(date, 'date', Date);
-
-				return new Day(date.getUTCFullYear(), date.getUTCMonth() + 1, date.getUTCDate());
-			}
-
-			/**
-    * Returns true if the year, month, and day combination is valid; otherwise false.
-    *
-    * @public
-    * @param {Number} year
-    * @param {Number} month
-    * @param {Number} day
-    * @returns {Boolean}
-    */
-
-		}, {
-			key: 'validate',
-			value: function validate(year, month, day) {
-				return is.integer(year) && is.integer(month) && is.integer(day) && !(month < 1) && !(month > 12) && !(day < 1) && !(day > Day.getDaysInMonth(year, month));
-			}
-
-			/**
-    * Returns the number of days in a given month.
-    *
-    * @public
-    * @param {number} year - The year number (e.g. 2017)
-    * @param {number} month - The month number (e.g. 2 is February)
-    */
-
-		}, {
-			key: 'getDaysInMonth',
-			value: function getDaysInMonth(year, month) {
-				switch (month) {
-					case 1:
-					case 3:
-					case 5:
-					case 7:
-					case 8:
-					case 10:
-					case 12:
-						{
-							return 31;
-						}
-					case 4:
-					case 6:
-					case 9:
-					case 11:
-						{
-							return 30;
-						}
-					case 2:
-						{
-							if (year % 4 === 0 && year % 100 !== 0 || year % 400 === 0) {
-								return 29;
-							} else {
-								return 28;
-							}
-						}
-				}
-			}
-
-			/**
-    * A comparator function for {@link Day} instances.
-    *
-    * @public
-    * @param {Day} a
-    * @param {Day} b
-    * @returns {Number}
-    */
-
-		}, {
-			key: 'compareDays',
-			value: function compareDays(a, b) {
-				assert.argumentIsRequired(a, 'a', Day, 'Day');
-				assert.argumentIsRequired(b, 'b', Day, 'Day');
-
-				return comparator(a, b);
-			}
-		}]);
-
-		return Day;
-	}();
-
-	var dayRegex = /^([0-9]{4}).([0-9]{2}).([0-9]{2})$/;
-
-	function leftPad(value) {
-		return value < 10 ? '0' + value : '' + value;
-	}
-
-	var comparator = ComparatorBuilder.startWith(function (a, b) {
-		return comparators.compareNumbers(a.year, b.year);
-	}).thenBy(function (a, b) {
-		return comparators.compareNumbers(a.month, b.month);
-	}).thenBy(function (a, b) {
-		return comparators.compareNumbers(a.day, b.day);
-	}).toComparator();
-
-	return Day;
-}();
-
-},{"./../collections/sorting/ComparatorBuilder":52,"./../collections/sorting/comparators":53,"./assert":62,"./is":66}],56:[function(require,module,exports){
-'use strict';
-
-var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
-
-function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
-
-function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
-
-function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-
-var assert = require('./assert'),
-    Enum = require('./Enum'),
-    is = require('./is');
-
-var Big = require('big.js');
-
-module.exports = function () {
-	'use strict';
-
-	/**
-  * An immutable object that allows for arbitrary-precision calculations.
-  *
-  * @public
-  * @param {Decimal|Number|String} value - The value.
-  */
-
-	var Decimal = function () {
-		function Decimal(value) {
-			_classCallCheck(this, Decimal);
-
-			this._big = getBig(value);
-		}
-
-		/**
-   * Returns a new {@link Decimal} instance that is the sum of the
-   * current instance's value and the value supplied.
-   *
-   * @public
-   * @param {Decimal|Number|String} other - The value to add.
-   * @returns {Decimal}
-   */
-
-
-		_createClass(Decimal, [{
-			key: 'add',
-			value: function add(other) {
-				return new Decimal(this._big.plus(getBig(other)));
-			}
-
-			/**
-    * Returns a new {@link Decimal} instance with a value that results
-    * from the subtraction of the value supplied from the current instance's
-    * value.
-    *
-    * @public
-    * @param {Decimal|Number|String} other - The value to subtract.
-    * @returns {Decimal}
-    */
-
-		}, {
-			key: 'subtract',
-			value: function subtract(other) {
-				return new Decimal(this._big.minus(getBig(other)));
-			}
-
-			/**
-    * Returns a new {@link Decimal} instance that is the product of the
-    * current instance's value and the value supplied.
-    *
-    * @public
-    * @param {Decimal|Number|String} other - The value to add.
-    * @returns {Decimal}
-    */
-
-		}, {
-			key: 'multiply',
-			value: function multiply(other) {
-				return new Decimal(this._big.times(getBig(other)));
-			}
-
-			/**
-    * Returns a new {@link Decimal} instance with a value that results
-    * from the division of the current instance's value by the value
-    * supplied.
-    *
-    * @public
-    * @param {Decimal|Number|String} other - The value to subtract.
-    * @returns {Decimal}
-    */
-
-		}, {
-			key: 'divide',
-			value: function divide(other) {
-				return new Decimal(this._big.div(getBig(other)));
-			}
-
-			/**
-    * Returns a new {@link Decimal} with a value resulting from a rounding
-    * operation on the current value.
-    *
-    * @public
-    * @param {Number} places - The number of decimal places to retain.
-    * @param {RoundingMode=} mode - The strategy to use for rounding.
-    * @returns {Decimal}
-    */
-
-		}, {
-			key: 'round',
-			value: function round(places, mode) {
-				assert.argumentIsRequired(places, 'places', Number);
-				assert.argumentIsOptional(mode, 'mode', RoundingMode, 'RoundingMode');
-
-				var modeToUse = mode || RoundingMode.NORMAL;
-
-				return new Decimal(this._big.round(places, modeToUse.value));
-			}
-
-			/**
-    * Returns a new {@link Decimal} instance having the absolute value of
-    * the current instance's value.
-    *
-    * @public
-    * @returns {Decimal}
-    */
-
-		}, {
-			key: 'absolute',
-			value: function absolute() {
-				return new Decimal(this._big.abs());
-			}
-
-			/**
-    * Returns a new {@link Decimal} instance the opposite sign as the
-    * current instance's value.
-    *
-    * @public
-    * @returns {Decimal}
-    */
-
-		}, {
-			key: 'opposite',
-			value: function opposite() {
-				return this.multiply(-1);
-			}
-
-			/**
-    * Returns a Boolean value, indicating if the current instance's value is
-    * equal to zero (or approximately equal to zero).
-    *
-    * @public
-    * @param {Boolean=} approximate
-    * @returns {Boolean}
-    */
-
-		}, {
-			key: 'getIsZero',
-			value: function getIsZero(approximate) {
-				assert.argumentIsOptional(approximate, 'approximate', Boolean);
-
-				return this._big.eq(zero) || is.boolean(approximate) && approximate && this.round(20, RoundingMode.NORMAL).getIsZero();
-			}
-
-			/**
-    * Returns true if the current instance is positive; otherwise false.
-    *
-    * @public
-    * @returns {Boolean}
-    */
-
-		}, {
-			key: 'getIsPositive',
-			value: function getIsPositive() {
-				return this._big.gt(zero);
-			}
-
-			/**
-    * Returns true if the current instance is negative; otherwise false.
-    *
-    * @public
-    * @returns {Boolean}
-    */
-
-		}, {
-			key: 'getIsNegative',
-			value: function getIsNegative() {
-				return this._big.lt(zero);
-			}
-
-			/**
-    * Returns true if the current instance is greater than the value.
-    *
-    * @public
-    * @param {Decimal|Number|String} other - The value to compare.
-    * @returns {Boolean}
-    */
-
-		}, {
-			key: 'getIsGreaterThan',
-			value: function getIsGreaterThan(other) {
-				return this._big.gt(getBig(other));
-			}
-
-			/**
-    * Returns true if the current instance is less than the value.
-    *
-    * @public
-    * @param {Decimal|Number|String} other - The value to compare.
-    * @returns {Boolean}
-    */
-
-		}, {
-			key: 'getIsLessThan',
-			value: function getIsLessThan(other) {
-				return this._big.lt(getBig(other));
-			}
-
-			/**
-    * Returns true if the current instance is equal to the value.
-    *
-    * @public
-    * @param {Decimal|Number|String} other - The value to compare.
-    * @returns {Boolean}
-    */
-
-		}, {
-			key: 'getIsEqual',
-			value: function getIsEqual(other) {
-				return this._big.eq(getBig(other));
-			}
-
-			/**
-    * Emits a floating point value that approximates the value of the current
-    * instance.
-    *
-    * @public
-    * @param {Number=} places
-    * @returns {Number}
-    */
-
-		}, {
-			key: 'toFloat',
-			value: function toFloat(places) {
-				assert.argumentIsOptional(places, 'places', Number);
-
-				// Accepting places might be a mistake here; perhaps
-				// the consumer should be forced to use the round
-				// function.
-
-				return parseFloat(this._big.toFixed(places || 16));
-			}
-
-			/**
-    * Returns a string-based representation of the instance's value.
-    *
-    * @public
-    * @returns {String}
-    */
-
-		}, {
-			key: 'toFixed',
-			value: function toFixed() {
-				return this._big.toFixed();
-			}
-
-			/**
-    * Returns the JSON representation.
-    *
-    * @public
-    * @returns {String}
-    */
-
-		}, {
-			key: 'toJSON',
-			value: function toJSON() {
-				return this.toFixed();
-			}
-
-			/**
-    * Parses the value emitted by {@link Decimal#toJSON}.
-    *
-    * @public
-    * @param {String} value
-    * @returns {Decimal}
-    */
-
-		}, {
-			key: 'toString',
-			value: function toString() {
-				return '[Decimal]';
-			}
-		}], [{
-			key: 'parse',
-			value: function parse(value) {
-				return new Decimal(value);
-			}
-
-			/**
-    * Returns an instance with the value of zero.
-    *
-    * @public
-    * @returns {Decimal}
-    */
-
-		}, {
-			key: 'getIsZero',
-
-
-			/**
-    * Runs {@link Decimal#getIsZero} and returns the result.
-    *
-    * @public
-    * @param {Decimal} instance
-    * @return {Boolean}
-    */
-			value: function getIsZero(instance) {
-				assert.argumentIsRequired(instance, 'instance', Decimal, 'Decimal');
-
-				return instance.getIsZero();
-			}
-
-			/**
-    * Runs {@link Decimal#getIsZero} and returns the inverse.
-    *
-    * @public
-    * @param {Decimal} instance
-    * @return {Boolean}
-    */
-
-		}, {
-			key: 'getIsNotZero',
-			value: function getIsNotZero(instance) {
-				assert.argumentIsRequired(instance, 'instance', Decimal, 'Decimal');
-
-				return !instance.getIsZero();
-			}
-
-			/**
-    * Runs {@link Decimal#getIsPositive} and returns the result.
-    *
-    * @public
-    * @param {Decimal} instance
-    * @return {Boolean}
-    */
-
-		}, {
-			key: 'getIsPositive',
-			value: function getIsPositive(instance) {
-				assert.argumentIsRequired(instance, 'instance', Decimal, 'Decimal');
-
-				return instance.getIsPositive();
-			}
-
-			/**
-    * Checks an instance to see if its negative or zero.
-    *
-    * @public
-    * @param {Decimal} instance
-    * @return {Boolean}
-    */
-
-		}, {
-			key: 'getIsNotPositive',
-			value: function getIsNotPositive(instance) {
-				assert.argumentIsRequired(instance, 'instance', Decimal, 'Decimal');
-
-				return instance.getIsNegative() || instance.getIsZero();
-			}
-
-			/**
-    * Runs {@link Decimal#getIsNegative} and returns the result.
-    *
-    * @public
-    * @param {Decimal} instance
-    * @return {Boolean}
-    */
-
-		}, {
-			key: 'getIsNegative',
-			value: function getIsNegative(instance) {
-				assert.argumentIsRequired(instance, 'instance', Decimal, 'Decimal');
-
-				return instance.getIsNegative();
-			}
-
-			/**
-    * Checks an instance to see if its positive or zero.
-    *
-    * @public
-    * @param {Decimal} instance
-    * @return {Boolean}
-    */
-
-		}, {
-			key: 'getIsNotNegative',
-			value: function getIsNotNegative(instance) {
-				assert.argumentIsRequired(instance, 'instance', Decimal, 'Decimal');
-
-				return instance.getIsPositive() || instance.getIsZero();
-			}
-
-			/**
-    * A comparator function for {@link Decimal} instances.
-    *
-    * @public
-    * @param {Decimal} a
-    * @param {Decimal} b
-    * @returns {Number}
-    */
-
-		}, {
-			key: 'compareDecimals',
-			value: function compareDecimals(a, b) {
-				assert.argumentIsRequired(a, 'a', Decimal, 'Decimal');
-				assert.argumentIsRequired(b, 'b', Decimal, 'Decimal');
-
-				if (a._big.gt(b)) {
-					return 1;
-				} else if (a._big.lt(b)) {
-					return -1;
-				} else {
-					return 0;
-				}
-			}
-		}, {
-			key: 'ZERO',
-			get: function get() {
-				return decimalZero;
-			}
-
-			/**
-    * Returns an instance with the value of one.
-    *
-    * @public
-    * @returns {Decimal}
-    */
-
-		}, {
-			key: 'ONE',
-			get: function get() {
-				return decimalOne;
-			}
-
-			/**
-    * Returns an instance with the value of one.
-    *
-    * @public
-    * @returns {Decimal}
-    */
-
-		}, {
-			key: 'NEGATIVE_ONE',
-			get: function get() {
-				return decimalNegativeOne;
-			}
-
-			/**
-    * Return the {@link RoundingMode} enumeration.
-    *
-    * @public
-    * @returns {RoundingMode}
-    */
-
-		}, {
-			key: 'ROUNDING_MODE',
-			get: function get() {
-				return RoundingMode;
-			}
-		}]);
-
-		return Decimal;
-	}();
-
-	var zero = new Big(0);
-	var positiveOne = new Big(1);
-	var negativeOne = new Big(-1);
-
-	var decimalZero = new Decimal(zero);
-	var decimalOne = new Decimal(positiveOne);
-	var decimalNegativeOne = new Decimal(negativeOne);
-
-	function getBig(value) {
-		if (value instanceof Big) {
-			return value;
-		} else if (value instanceof Decimal) {
-			return value._big;
-		} else {
-			return new Big(value);
-		}
-	}
-
-	/**
-  * An enumeration of strategies for rouding a {@link Decimal} instance.
-  *
-  * @public
-  * @inner
-  * @extends {Enum}
-  */
-
-	var RoundingMode = function (_Enum) {
-		_inherits(RoundingMode, _Enum);
-
-		function RoundingMode(value, description) {
-			_classCallCheck(this, RoundingMode);
-
-			var _this = _possibleConstructorReturn(this, (RoundingMode.__proto__ || Object.getPrototypeOf(RoundingMode)).call(this, value.toString(), description));
-
-			_this._value = value;
-			return _this;
-		}
-
-		/**
-   * The code used by the Big.js library.
-   *
-   * @ignore
-   * @returns {Number}
-   */
-
-
-		_createClass(RoundingMode, [{
-			key: 'toString',
-			value: function toString() {
-				return '[RoundingMode]';
-			}
-		}, {
-			key: 'value',
-			get: function get() {
-				return this._value;
-			}
-
-			/**
-    * Rounds away from zero.
-    *
-    * @public
-    * @returns {RoundingMode}
-    */
-
-		}], [{
-			key: 'UP',
-			get: function get() {
-				return up;
-			}
-
-			/**
-    * Rounds towards zero.
-    *
-    * @public
-    * @returns {RoundingMode}
-    */
-
-		}, {
-			key: 'DOWN',
-			get: function get() {
-				return down;
-			}
-
-			/**
-    * Rounds towards nearest neighbor. If equidistant, rounds away from zero.
-    *
-    * @public
-    * @returns {RoundingMode}
-    */
-
-		}, {
-			key: 'NORMAL',
-			get: function get() {
-				return normal;
-			}
-		}]);
-
-		return RoundingMode;
-	}(Enum);
-
-	var up = new RoundingMode(3, 'up');
-	var down = new RoundingMode(0, 'down');
-	var normal = new RoundingMode(1, 'normal');
-
-	return Decimal;
-}();
-
-},{"./Enum":58,"./assert":62,"./is":66,"big.js":86}],57:[function(require,module,exports){
-arguments[4][21][0].apply(exports,arguments)
-},{"./assert":62,"dup":21}],58:[function(require,module,exports){
-'use strict';
-
-var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
-
-function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-
-var assert = require('./assert');
-
-module.exports = function () {
-	'use strict';
-
-	var types = new Map();
-
-	/**
-  * An enumeration. Must be inherited. Do not instantiate directly.
-  * Also, this class uses the ES6 Map, therefore a polyfill must
-  * be supplied.
-  *
-  * @public
-  * @interface
-  * @param {String} - The unique code of the enumeration item.
-  * @param {String} - A description of the enumeration item.
-  */
-
-	var Enum = function () {
-		function Enum(code, description) {
-			_classCallCheck(this, Enum);
-
-			assert.argumentIsRequired(code, 'code', String);
-			assert.argumentIsRequired(description, 'description', String);
-
-			this._code = code;
-			this._description = description;
-
-			var c = this.constructor;
-
-			if (!types.has(c)) {
-				types.set(c, []);
-			}
-
-			var existing = Enum.fromCode(c, code);
-
-			if (existing === null) {
-				types.get(c).push(this);
-			}
-		}
-
-		/**
-   * The unique code.
-   *
-   * @returns {String}
-   */
-
-
-		_createClass(Enum, [{
-			key: 'equals',
-
-
-			/**
-    * Returns true if the provided {@link Enum} argument is equal
-    * to the instance.
-    *
-    * @param {Enum} other
-    * @returns {boolean}
-    */
-			value: function equals(other) {
-				return other === this || other instanceof Enum && other.constructor === this.constructor && other.code === this.code;
-			}
-
-			/**
-    * Returns the JSON representation.
-    *
-    * @public
-    * @returns {String}
-    */
-
-		}, {
-			key: 'toJSON',
-			value: function toJSON() {
-				return this.code;
-			}
-
-			/**
-    * Looks up a enumeration item; given the enumeration type and the enumeration
-    * item's value. If no matching item can be found, a null value is returned.
-    *
-    * @param {Function} type - The enumeration type.
-    * @param {String} code - The enumeration item's code.
-    * @returns {*|null}
-    */
-
-		}, {
-			key: 'toString',
-			value: function toString() {
-				return '[Enum]';
-			}
-		}, {
-			key: 'code',
-			get: function get() {
-				return this._code;
-			}
-
-			/**
-    * The description.
-    *
-    * @returns {String}
-    */
-
-		}, {
-			key: 'description',
-			get: function get() {
-				return this._description;
-			}
-		}], [{
-			key: 'fromCode',
-			value: function fromCode(type, code) {
-				return Enum.getItems(type).find(function (x) {
-					return x.code === code;
-				}) || null;
-			}
-
-			/**
-    * Returns all of the enumeration's items (given an enumeration type).
-    *
-    * @param {Function} type - The enumeration to list.
-    * @returns {Array}
-    */
-
-		}, {
-			key: 'getItems',
-			value: function getItems(type) {
-				return types.get(type) || [];
-			}
-		}]);
-
-		return Enum;
-	}();
-
-	return Enum;
-}();
-
-},{"./assert":62}],59:[function(require,module,exports){
-arguments[4][23][0].apply(exports,arguments)
-},{"./Currency":54,"./Decimal":56,"./assert":62,"./is":66,"dup":23}],60:[function(require,module,exports){
-arguments[4][24][0].apply(exports,arguments)
-},{"./assert":62,"./is":66,"dup":24,"moment-timezone":122}],61:[function(require,module,exports){
-'use strict';
-
-var assert = require('./assert'),
-    is = require('./is');
-
-module.exports = function () {
-	'use strict';
-
-	/**
-  * Utilities for working with arrays.
-  *
-  * @public
-  * @module lang/array
-  */
-
-	return {
-		/**
-   * Returns the unique items from an array, where the unique
-   * key is determined via a strict equality check.
-   *
-   * @static
-   * @param {Array} a
-   * @returns {Array}
-   */
-		unique: function unique(a) {
-			assert.argumentIsArray(a, 'a');
-
-			return a.filter(function (item, index, array) {
-				return array.indexOf(item) === index;
-			});
-		},
-
-
-		/**
-   * Returns the unique items from an array, where the unique
-   * key is determined by a delegate.
-   *
-   * @static
-   * @param {Array} a
-   * @param {Function} keySelector - The function, when applied to an item yields a unique key.
-   * @returns {Array}
-   */
-		uniqueBy: function uniqueBy(a, keySelector) {
-			assert.argumentIsArray(a, 'a');
-
-			return a.filter(function (item, index, array) {
-				var key = keySelector(item);
-
-				return array.findIndex(function (candidate) {
-					return key === keySelector(candidate);
-				}) === index;
-			});
-		},
-
-
-		/**
-   * Splits array into groups and returns an object (where the properties have
-   * arrays). Unlike the indexBy function, there can be many items
-   * which share the same key.
-   *
-   * @static
-   * @param {Array} a
-   * @param {Function} keySelector - The function, when applied to an item yields a key.
-   * @returns {Object}
-   */
-		groupBy: function groupBy(a, keySelector) {
-			assert.argumentIsArray(a, 'a');
-			assert.argumentIsRequired(keySelector, 'keySelector', Function);
-
-			return a.reduce(function (groups, item) {
-				var key = keySelector(item);
-
-				if (!groups.hasOwnProperty(key)) {
-					groups[key] = [];
-				}
-
-				groups[key].push(item);
-
-				return groups;
-			}, {});
-		},
-
-
-		/**
-   * Splits array into groups and returns an array of arrays where the items of each
-   * nested array share a common key.
-   *
-   * @static
-   * @param {Array} a
-   * @param {Function} keySelector - The function, when applied to an item yields a key.
-   * @returns {Array}
-   */
-		batchBy: function batchBy(a, keySelector) {
-			assert.argumentIsArray(a, 'a');
-			assert.argumentIsRequired(keySelector, 'keySelector', Function);
-
-			var currentKey = null;
-			var currentBatch = null;
-
-			return a.reduce(function (batches, item) {
-				var key = keySelector(item);
-
-				if (currentBatch === null || currentKey !== key) {
-					currentKey = key;
-
-					currentBatch = [];
-					batches.push(currentBatch);
-				}
-
-				currentBatch.push(item);
-
-				return batches;
-			}, []);
-		},
-
-
-		/**
-   * Splits array into groups and returns an object (where the properties are items from the
-   * original array). Unlike the groupBy, Only one item can have a given key
-   * value.
-   *
-   * @static
-   * @param {Array} a
-   * @param {Function} keySelector - The function, when applied to an item yields a unique key.
-   * @returns {Object}
-   */
-		indexBy: function indexBy(a, keySelector) {
-			assert.argumentIsArray(a, 'a');
-			assert.argumentIsRequired(keySelector, 'keySelector', Function);
-
-			return a.reduce(function (map, item) {
-				var key = keySelector(item);
-
-				if (map.hasOwnProperty(key)) {
-					throw new Error('Unable to index array. A duplicate key exists.');
-				}
-
-				map[key] = item;
-
-				return map;
-			}, {});
-		},
-
-
-		/**
-   * Returns a new array containing all but the last item.
-   *
-   * @static
-   * @param {Array} a
-   * @returns {Array}
-   */
-		dropRight: function dropRight(a) {
-			assert.argumentIsArray(a, 'a');
-
-			var returnRef = Array.from(a);
-
-			if (returnRef.length !== 0) {
-				returnRef.pop();
-			}
-
-			return returnRef;
-		},
-
-
-		/**
-   * Returns the last item from an array, or an undefined value, if the
-   * array is empty.
-   *
-   * @static
-   * @param {Array} a
-   * @returns {*|undefined}
-   */
-		last: function last(a) {
-			assert.argumentIsArray(a, 'a');
-
-			var returnRef = void 0;
-
-			if (a.length !== 0) {
-				returnRef = a[a.length - 1];
-			} else {
-				returnRef = undefined;
-			}
-
-			return returnRef;
-		},
-
-
-		/**
-   * Returns a copy of an array, replacing any item that is itself an array
-   * with the item's items.
-   *
-   * @static
-   * @param {Array} a
-   * @param {Boolean=} recursive - If true, all nested arrays will be flattened.
-   * @returns {Array}
-   */
-		flatten: function flatten(a, recursive) {
-			assert.argumentIsArray(a, 'a');
-			assert.argumentIsOptional(recursive, 'recursive', Boolean);
-
-			var empty = [];
-
-			var flat = empty.concat.apply(empty, a);
-
-			if (recursive && flat.some(function (x) {
-				return is.array(x);
-			})) {
-				flat = this.flatten(flat, true);
-			}
-
-			return flat;
-		},
-
-
-		/**
-   * Breaks an array into smaller arrays, returning an array of arrays.
-   *
-   * @static
-   * @param {Array} a
-   * @param {Number} size - The maximum number of items per partition.
-   * @param {Array<Array>}
-   */
-		partition: function partition(a, size) {
-			assert.argumentIsArray(a, 'a');
-			assert.argumentIsOptional(size, 'size', Number);
-
-			var copy = a.slice(0);
-			var partitions = [];
-
-			while (copy.length !== 0) {
-				partitions.push(copy.splice(0, size));
-			}
-
-			return partitions;
-		},
-
-
-		/**
-   * Set difference operation (using strict equality).
-   *
-   * @static
-   * @param {Array} a
-   * @param {Array} b
-   * @returns {Array}
-   */
-		difference: function difference(a, b) {
-			assert.argumentIsArray(a, 'a');
-			assert.argumentIsArray(b, 'b');
-
-			var returnRef = [];
-
-			a.forEach(function (candidate) {
-				var exclude = b.some(function (comparison) {
-					return candidate === comparison;
-				});
-
-				if (!exclude) {
-					returnRef.push(candidate);
-				}
-			});
-
-			return returnRef;
-		},
-
-
-		/**
-   * Set symmetric difference operation (using strict equality). In
-   * other words, this is the union of the differences between the
-   * sets.
-   *
-   * @static
-   * @param {Array} a
-   * @param {Array} b
-   * @returns {Array}
-   */
-		differenceSymmetric: function differenceSymmetric(a, b) {
-			return this.union(this.difference(a, b), this.difference(b, a));
-		},
-
-
-		/**
-   * Set union operation (using strict equality).
-   *
-   * @static
-   * @param {Array} a
-   * @param {Array} b
-   * @returns {Array}
-   */
-		union: function union(a, b) {
-			assert.argumentIsArray(a, 'a');
-			assert.argumentIsArray(b, 'b');
-
-			var returnRef = a.slice();
-
-			b.forEach(function (candidate) {
-				var exclude = returnRef.some(function (comparison) {
-					return candidate === comparison;
-				});
-
-				if (!exclude) {
-					returnRef.push(candidate);
-				}
-			});
-
-			return returnRef;
-		},
-
-
-		/**
-   * Set intersection operation (using strict equality).
-   *
-   * @static
-   * @param {Array} a
-   * @param {Array} b
-   * @returns {Array}
-   */
-		intersection: function intersection(a, b) {
-			assert.argumentIsArray(a, 'a');
-			assert.argumentIsArray(b, 'b');
-
-			var returnRef = [];
-
-			a.forEach(function (candidate) {
-				var include = b.some(function (comparison) {
-					return candidate === comparison;
-				});
-
-				if (include) {
-					returnRef.push(candidate);
-				}
-			});
-
-			return returnRef;
-		}
-	};
-}();
-
-},{"./assert":62,"./is":66}],62:[function(require,module,exports){
-'use strict';
-
-var is = require('./is');
-
-module.exports = function () {
-	'use strict';
-
-	function checkArgumentType(variable, variableName, type, typeDescription, index) {
-		if (type === String) {
-			if (!is.string(variable)) {
-				throwInvalidTypeError(variableName, 'string', index);
-			}
-		} else if (type === Number) {
-			if (!is.number(variable)) {
-				throwInvalidTypeError(variableName, 'number', index);
-			}
-		} else if (type === Function) {
-			if (!is.fn(variable)) {
-				throwInvalidTypeError(variableName, 'function', index);
-			}
-		} else if (type === Boolean) {
-			if (!is.boolean(variable)) {
-				throwInvalidTypeError(variableName, 'boolean', index);
-			}
-		} else if (type === Date) {
-			if (!is.date(variable)) {
-				throwInvalidTypeError(variableName, 'date', index);
-			}
-		} else if (type === Array) {
-			if (!is.array(variable)) {
-				throwInvalidTypeError(variableName, 'array', index);
-			}
-		} else if (!(variable instanceof (type || Object))) {
-			throwInvalidTypeError(variableName, typeDescription, index);
-		}
-	}
-
-	function throwInvalidTypeError(variableName, typeDescription, index) {
-		var message = void 0;
-
-		if (typeof index === 'number') {
-			message = 'The argument [ ' + (variableName || 'unspecified') + ' ], at index [ ' + index.toString() + ' ] must be a [ ' + (typeDescription || 'unknown') + ' ]';
-		} else {
-			message = 'The argument [ ' + (variableName || 'unspecified') + ' ] must be a [ ' + (typeDescription || 'Object') + ' ]';
-		}
-
-		throw new Error(message);
-	}
-
-	function throwCustomValidationError(variableName, predicateDescription) {
-		throw new Error('The argument [ ' + (variableName || 'unspecified') + ' ] failed a validation check [ ' + (predicateDescription || 'No description available') + ' ]');
-	}
-
-	/**
-  * Utilities checking arguments.
-  *
-  * @public
-  * @module lang/assert
-  */
-	return {
-		/**
-   * Throws an error if an argument doesn't conform to the desired specification (as
-   * determined by a type check).
-   *
-   * @static
-   * @param {*} variable - The value to check.
-   * @param {String} variableName - The name of the value (used for formatting an error message).
-   * @param {*} type - The expected type of the argument.
-   * @param {String=} typeDescription - The description of the expected type (used for formatting an error message).
-   */
-		argumentIsRequired: function argumentIsRequired(variable, variableName, type, typeDescription) {
-			checkArgumentType(variable, variableName, type, typeDescription);
-		},
-
-
-		/**
-   * A relaxed version of the "argumentIsRequired" function that will not throw if
-   * the value is undefined or null.
-   *
-   * @static
-   * @param {*} variable - The value to check.
-   * @param {String} variableName - The name of the value (used for formatting an error message).
-   * @param {*} type - The expected type of the argument.
-   * @param {String=} typeDescription - The description of the expected type (used for formatting an error message).
-   */
-		argumentIsOptional: function argumentIsOptional(variable, variableName, type, typeDescription, predicate, predicateDescription) {
-			if (variable === null || variable === undefined) {
-				return;
-			}
-
-			checkArgumentType(variable, variableName, type, typeDescription);
-
-			if (is.fn(predicate) && !predicate(variable)) {
-				throwCustomValidationError(variableName, predicateDescription);
-			}
-		},
-		argumentIsArray: function argumentIsArray(variable, variableName, itemConstraint, itemConstraintDescription) {
-			this.argumentIsRequired(variable, variableName, Array);
-
-			if (itemConstraint) {
-				var itemValidator = void 0;
-
-				if (typeof itemConstraint === 'function' && itemConstraint !== Function) {
-					itemValidator = function itemValidator(value, index) {
-						return value instanceof itemConstraint || itemConstraint(value, variableName + '[' + index + ']');
-					};
-				} else {
-					itemValidator = function itemValidator(value, index) {
-						return checkArgumentType(value, variableName, itemConstraint, itemConstraintDescription, index);
-					};
-				}
-
-				variable.forEach(function (v, i) {
-					itemValidator(v, i);
-				});
-			}
-		},
-
-
-		/**
-   * Throws an error if an argument doesn't conform to the desired specification
-   * (as determined by a predicate).
-   *
-   * @static
-   * @param {*} variable - The value to check.
-   * @param {String} variableName - The name of the value (used for formatting an error message).
-   * @param {Function=} predicate - A function used to validate the item (beyond type checking).
-   * @param {Function=} predicateDescription - A description of the assertion made by the predicate (e.g. "is an integer") that is used for formatting an error message.
-   */
-		argumentIsValid: function argumentIsValid(variable, variableName, predicate, predicateDescription) {
-			if (!predicate(variable)) {
-				throwCustomValidationError(variableName, predicateDescription);
-			}
-		},
-		areEqual: function areEqual(a, b, descriptionA, descriptionB) {
-			if (a !== b) {
-				throw new Error('The objects must be equal [' + (descriptionA || a.toString()) + '] and [' + (descriptionB || b.toString()) + ']');
-			}
-		},
-		areNotEqual: function areNotEqual(a, b, descriptionA, descriptionB) {
-			if (a === b) {
-				throw new Error('The objects cannot be equal [' + (descriptionA || a.toString()) + '] and [' + (descriptionB || b.toString()) + ']');
-			}
-		}
-	};
-}();
-
-},{"./is":66}],63:[function(require,module,exports){
-arguments[4][27][0].apply(exports,arguments)
-},{"./assert":62,"./is":66,"dup":27}],64:[function(require,module,exports){
-arguments[4][28][0].apply(exports,arguments)
-},{"./is":66,"dup":28}],65:[function(require,module,exports){
-arguments[4][29][0].apply(exports,arguments)
-},{"dup":29}],66:[function(require,module,exports){
-'use strict';
-
-var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
-
-module.exports = function () {
-	'use strict';
-
-	/**
-  * Utilities for interrogating variables (e.g. checking data types).
-  *
-  * @public
-  * @module lang/is
-  */
-
-	return {
-		/**
-   * Returns true, if the argument is a number. NaN will return false.
-   *
-   * @static
-   * @public
-   * @param candidate {*}
-   * @returns {boolean}
-   */
-		number: function number(candidate) {
-			return typeof candidate === 'number' && !isNaN(candidate);
-		},
-
-
-		/**
-   * Returns true, if the argument is NaN.
-   *
-   * @static
-   * @public
-   * @param {*} candidate
-   * @returns {boolean}
-   */
-		nan: function nan(candidate) {
-			return typeof candidate === 'number' && isNaN(candidate);
-		},
-
-
-		/**
-   * Returns true, if the argument is a valid 32-bit integer.
-   *
-   * @static
-   * @public
-   * @param {*} candidate
-   * @returns {boolean}
-   */
-		integer: function integer(candidate) {
-			return typeof candidate === 'number' && !isNaN(candidate) && (candidate | 0) === candidate;
-		},
-
-
-		/**
-   * Returns true, if the argument is a valid integer (which can exceed 32 bits); however,
-   * the check can fail above the value of Number.MAX_SAFE_INTEGER.
-   *
-   * @static
-   * @public
-   * @param {*) candidate
-   * @returns {boolean}
-   */
-		large: function large(candidate) {
-			return typeof candidate === 'number' && !isNaN(candidate) && isFinite(candidate) && Math.floor(candidate) === candidate;
-		},
-
-
-		/**
-   * Returns true, if the argument is a number that is positive.
-   *
-   * @static
-   * @public
-   * @param candidate
-   * @returns {boolean}
-   */
-		positive: function positive(candidate) {
-			return this.number(candidate) && candidate > 0;
-		},
-
-
-		/**
-   * Returns true, if the argument is a number that is negative.
-   *
-   * @static
-   * @public
-   * @param candidate
-   * @returns {*|boolean}
-   */
-		negative: function negative(candidate) {
-			return this.number(candidate) && candidate < 0;
-		},
-
-
-		/**
-   * Returns true, if the argument is a string.
-   *
-   * @static
-   * @public
-   * @param candidate
-   * @returns {boolean}
-   */
-		string: function string(candidate) {
-			return typeof candidate === 'string';
-		},
-
-
-		/**
-   * Returns true, if the argument is a JavaScript Date instance.
-   *
-   * @static
-   * @public
-   * @param candidate
-   * @returns {boolean}
-   */
-		date: function date(candidate) {
-			return candidate instanceof Date;
-		},
-
-
-		/**
-   * Returns true, if the argument is a function.
-   *
-   * @static
-   * @public
-   * @param candidate
-   * @returns {boolean}
-   */
-		fn: function fn(candidate) {
-			return typeof candidate === 'function';
-		},
-
-
-		/**
-   * Returns true, if the argument is an array.
-   *
-   * @static
-   * @public
-   * @param candidate
-   * @returns {boolean}
-   */
-		array: function array(candidate) {
-			return Array.isArray(candidate);
-		},
-
-
-		/**
-   * Returns true, if the argument is a Boolean value.
-   *
-   * @static
-   * @public
-   * @param candidate
-   * @returns {boolean}
-   */
-		boolean: function boolean(candidate) {
-			return typeof candidate === 'boolean';
-		},
-
-
-		/**
-   * Returns true, if the argument is an object.
-   *
-   * @static
-   * @public
-   * @param candidate
-   * @returns {boolean}
-   */
-		object: function object(candidate) {
-			return (typeof candidate === 'undefined' ? 'undefined' : _typeof(candidate)) === 'object' && candidate !== null;
-		},
-
-
-		/**
-   * Returns true, if the argument is a null value.
-   *
-   * @static
-   * @public
-   * @param candidate
-   * @returns {boolean}
-   */
-		null: function _null(candidate) {
-			return candidate === null;
-		},
-
-
-		/**
-   * Returns true, if the argument is an undefined value.
-   *
-   * @static
-   * @public
-   * @param candidate
-   * @returns {boolean}
-   */
-		undefined: function (_undefined) {
-			function undefined(_x) {
-				return _undefined.apply(this, arguments);
-			}
-
-			undefined.toString = function () {
-				return _undefined.toString();
-			};
-
-			return undefined;
-		}(function (candidate) {
-			return candidate === undefined;
-		}),
-
-
-		/**
-   * Given two classes, determines if the "child" class extends
-   * the "parent" class (without instantiation).
-   *
-   * @param {Function} parent
-   * @param {Function} child
-   * @returns {Boolean}
-   */
-		extension: function extension(parent, child) {
-			return this.fn(parent) && this.fn(child) && child.prototype instanceof parent;
-		}
-	};
-}();
-
-},{}],67:[function(require,module,exports){
-arguments[4][32][0].apply(exports,arguments)
-},{"./assert":62,"dup":32}],68:[function(require,module,exports){
-arguments[4][35][0].apply(exports,arguments)
-},{"./../../lang/Enum":58,"./../../lang/assert":62,"dup":35}],69:[function(require,module,exports){
-arguments[4][36][0].apply(exports,arguments)
-},{"./../../lang/assert":62,"./../../lang/attributes":63,"./../../lang/is":66,"./RestAction":68,"./RestParser":70,"dup":36}],70:[function(require,module,exports){
-arguments[4][37][0].apply(exports,arguments)
-},{"./../../lang/assert":62,"./../../serialization/json/Schema":76,"./RestParser":70,"dup":37}],71:[function(require,module,exports){
-arguments[4][38][0].apply(exports,arguments)
-},{"./../../lang/promise":67,"./RestProviderBase":72,"dup":38,"http":155,"https":113,"querystring":132}],72:[function(require,module,exports){
-arguments[4][39][0].apply(exports,arguments)
-},{"./../../lang/assert":62,"./RestEndpoint":69,"dup":39}],73:[function(require,module,exports){
-'use strict';
-
-var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
-
-function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-
-var Currency = require('./../../lang/Currency'),
-    Money = require('./../../lang/Money');
-
-var DataType = require('./DataType'),
-    Field = require('./Field');
-
-module.exports = function () {
-	'use strict';
-
-	/**
-  * A complex field built from many fields.
-  *
-  * @public
-  * @param {String} name
-  * @param {Array<Field>} componentType
-  */
-
-	var Component = function () {
-		function Component(name, fields, reviver) {
-			_classCallCheck(this, Component);
-
-			this._name = name;
-			this._fields = fields || [];
-			this._reviver = reviver;
-		}
-
-		/**
-   * Name of the component.
-   *
-   * @public
-   * @returns {String}
-   */
-
-
-		_createClass(Component, [{
-			key: 'toString',
-			value: function toString() {
-				return '[Component (name=' + this._name + ')]';
-			}
-		}, {
-			key: 'name',
-			get: function get() {
-				return this._name;
-			}
-
-			/**
-    * Type of the component.
-    *
-    * @public
-    * @returns {ComponentType}
-    */
-
-		}, {
-			key: 'fields',
-			get: function get() {
-				return this._fields;
-			}
-
-			/**
-    * The reviver used to rebuild the entire component.
-    *
-    * @returns {Function}
-    */
-
-		}, {
-			key: 'reviver',
-			get: function get() {
-				return this._reviver;
-			}
-
-			/**
-    * The builds a {@link Component} for {@link Money}.
-    *
-    * @public
-    * @returns {Component}
-    */
-
-		}], [{
-			key: 'forMoney',
-			value: function forMoney(name) {
-				return new Component(name, [new Field('decimal', DataType.DECIMAL), new Field('currency', DataType.forEnum(Currency, 'Currency'))], function (x) {
-					return Money.parse(x);
-				});
-			}
-		}]);
-
-		return Component;
-	}();
-
-	return Component;
-}();
-
-},{"./../../lang/Currency":54,"./../../lang/Money":59,"./DataType":74,"./Field":75}],74:[function(require,module,exports){
-'use strict';
-
-var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
-
-function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-
-var assert = require('./../../lang/assert'),
-    Day = require('./../../lang/Day'),
-    Decimal = require('./../../lang/Decimal'),
-    Enum = require('./../../lang/Enum'),
-    is = require('./../../lang/is'),
-    Timestamp = require('./../../lang/Timestamp');
-
-module.exports = function () {
-	'use strict';
-
-	/**
-  * The formal definition of a data type which is used by an {@link Field}.
-  *
-  * @public
-  * @param {String} description
-  * @param {Function=} enumerationType
-  */
-
-	var DataType = function () {
-		function DataType(description, enumerationType, reviver) {
-			_classCallCheck(this, DataType);
-
-			assert.argumentIsRequired(description, 'description', String);
-			assert.argumentIsOptional(enumerationType, 'enumerationType', Function);
-			assert.argumentIsOptional(reviver, 'reviver', Function);
-
-			if (enumerationType) {
-				assert.argumentIsValid(enumerationType, 'enumerationType', extendsEnumeration, 'is an enumeration');
-			}
-
-			this._description = description;
-			this._enumerationType = enumerationType || null;
-
-			var reviverToUse = void 0;
-
-			if (reviver) {
-				reviverToUse = reviver;
-			} else if (enumerationType) {
-				reviverToUse = function reviverToUse(x) {
-					return Enum.fromCode(enumerationType, x);
-				};
-			} else {
-				reviverToUse = function reviverToUse(x) {
-					return x;
-				};
-			}
-
-			this._reviver = reviverToUse;
-		}
-
-		/**
-   * Description of the data type.
-   *
-   * @public
-   * @returns {String}
-   */
-
-
-		_createClass(DataType, [{
-			key: 'toString',
-			value: function toString() {
-				return '[DataType (description=' + this._description + ')]';
-			}
-		}, {
-			key: 'description',
-			get: function get() {
-				return this._description;
-			}
-
-			/**
-    * The {@Enumeration} type, if applicable.
-    *
-    * @public
-    * @returns {Function|null}
-    */
-
-		}, {
-			key: 'enumerationType',
-			get: function get() {
-				return this._enumerationType;
-			}
-
-			/**
-    * A function which "revives" a value after serialization to JSON.
-    *
-    * @public
-    * @returns {Function}reviver
-    */
-
-		}, {
-			key: 'reviver',
-			get: function get() {
-				return this._reviver;
-			}
-
-			/**
-    * Return a {@link DataType} instance for use with an {@link @Enum}.
-    *
-    * @public
-    * @param {Function} enumerationType - A class that extends {@link Enum}
-    * @param description - The description
-    * @returns {DataType}
-    */
-
-		}], [{
-			key: 'forEnum',
-			value: function forEnum(enumerationType, description) {
-				return new DataType(description, enumerationType);
-			}
-
-			/**
-    * References a string.
-    *
-    * @public
-    * @returns {DataType}
-    */
-
-		}, {
-			key: 'STRING',
-			get: function get() {
-				return dataTypeString;
-			}
-
-			/**
-    * References a number.
-    *
-    * @public
-    * @returns {DataType}
-    */
-
-		}, {
-			key: 'NUMBER',
-			get: function get() {
-				return dataTypeNumber;
-			}
-
-			/**
-    * References a Boolean value.
-    *
-    * @public
-    * @returns {DataType}
-    */
-
-		}, {
-			key: 'BOOLEAN',
-			get: function get() {
-				return dataTypeBoolean;
-			}
-
-			/**
-    * References an object (serialized as JSON).
-    *
-    * @public
-    * @returns {DataType}
-    */
-
-		}, {
-			key: 'OBJECT',
-			get: function get() {
-				return dataTypeObject;
-			}
-
-			/**
-    * References a {@link Decimal} instance.
-    *
-    * @public
-    * @returns {DataType}
-    */
-
-		}, {
-			key: 'DECIMAL',
-			get: function get() {
-				return dataTypeDecimal;
-			}
-
-			/**
-    * References a {@link Day} instance.
-    *
-    * @public
-    * @returns {DataType}
-    */
-
-		}, {
-			key: 'DAY',
-			get: function get() {
-				return dataTypeDay;
-			}
-
-			/**
-    * References a {@link Timestamp} instance.
-    *
-    * @public
-    * @returns {DataType}
-    */
-
-		}, {
-			key: 'TIMESTAMP',
-			get: function get() {
-				return dataTypeTimestamp;
-			}
-		}]);
-
-		return DataType;
-	}();
-
-	function extendsEnumeration(EnumerationType) {
-		return is.extension(Enum, EnumerationType);
-	}
-
-	var dataTypeString = new DataType('String');
-	var dataTypeNumber = new DataType('Number');
-	var dataTypeBoolean = new DataType('Boolean');
-	var dataTypeObject = new DataType('Object');
-
-	var dataTypeDecimal = new DataType('Decimal', null, function (x) {
-		return Decimal.parse(x);
-	});
-	var dataTypeDay = new DataType('Day', null, function (x) {
-		return Day.parse(x);
-	});
-	var dataTypeTimestamp = new DataType('Timestamp', null, function (x) {
-		return Timestamp.parse(x);
-	});
-
-	var dataTypes = [dataTypeString, dataTypeNumber, dataTypeBoolean, dataTypeObject, dataTypeDecimal, dataTypeDay, dataTypeTimestamp];
-
-	return DataType;
-}();
-
-},{"./../../lang/Day":55,"./../../lang/Decimal":56,"./../../lang/Enum":58,"./../../lang/Timestamp":60,"./../../lang/assert":62,"./../../lang/is":66}],75:[function(require,module,exports){
-arguments[4][42][0].apply(exports,arguments)
-},{"dup":42}],76:[function(require,module,exports){
-'use strict';
-
-var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
-
-function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr2 = Array(arr.length); i < arr.length; i++) { arr2[i] = arr[i]; } return arr2; } else { return Array.from(arr); } }
-
-function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-
-var functions = require('./../../lang/functions'),
-    is = require('./../../lang/is');
-
-var LinkedList = require('./../../collections/LinkedList'),
-    Tree = require('./../../collections/Tree');
-
-var Component = require('./Component'),
-    Field = require('./Field');
-
-module.exports = function () {
-	'use strict';
-
-	/**
-  * A schema definition, can be used for serialization and deserialization.
-  *
-  * @public
-  * @param {String} name - The name of the schema
-  * @param {Array<Field>} fields
-  * @param {Array<Component>} components
-  * @param {Boolean=} strict
-  */
-
-	var Schema = function () {
-		function Schema(name, fields, components, strict) {
-			_classCallCheck(this, Schema);
-
-			this._name = name;
-
-			this._fields = fields || [];
-			this._components = components || [];
-
-			this._strict = is.boolean(strict) && strict;
-
-			this._revivers = getReviverItems(this._fields, this._components);
-		}
-
-		/**
-   * Name of the table.
-   *
-   * @public
-   * @returns {String}
-   */
-
-
-		_createClass(Schema, [{
-			key: 'validate',
-
-
-			/**
-    * Returns true, if an object complies with the schema.
-    *
-    * @public
-    * @param {*} candidate
-    */
-			value: function validate(candidate) {
-				var returnVal = is.object(candidate);
-
-				return false;
-			}
-
-			/**
-    * Generates a function suitable for use by JSON.parse.
-    *
-    * @public
-    * @returns {Function}
-    */
-
-		}, {
-			key: 'getReviver',
-			value: function getReviver() {
-				var head = this._revivers;
-				var node = null;
-
-				var advance = function advance(key) {
-					if (node === null) {
-						node = head;
-					} else {
-						node = node.getNext();
-					}
-
-					var item = node.getValue();
-
-					if (key !== item.name) {
-						if (item.reset || key === '' && node === head) {
-							node = null;
-						} else if (item.optional) {
-							item = advance(key);
-						} else {
-							throw new Error('Schema parsing is using strict mode, unexpected key found [ found: ' + key + ', expected: ' + item.name + ' ]');
-						}
-					}
-
-					return item;
-				};
-
-				return function (key, value) {
-					return advance(key).reviver(value);
-				};
-			}
-
-			/**
-    * Returns a function that will generate a *new* reviver function
-    * (see {@link Schema#getReviver}.
-    *
-    * @public
-    * @returns {Function}
-    */
-
-		}, {
-			key: 'getReviverFactory',
-			value: function getReviverFactory() {
-				var _this = this;
-
-				return function () {
-					return _this.getReviver();
-				};
-			}
-		}, {
-			key: 'toString',
-			value: function toString() {
-				return '[Schema (name=' + this._name + ')]';
-			}
-		}, {
-			key: 'name',
-			get: function get() {
-				return this._name;
-			}
-
-			/**
-    * The fields of the table.
-    *
-    * @public
-    * @returns {Array<Field>}
-    */
-
-		}, {
-			key: 'fields',
-			get: function get() {
-				return [].concat(_toConsumableArray(this._fields));
-			}
-
-			/**
-    * The components of the table.
-    *
-    * @public
-    * @returns {Array<Component>}
-    */
-
-		}, {
-			key: 'components',
-			get: function get() {
-				return [].concat(_toConsumableArray(this._components));
-			}
-
-			/**
-    * If true, only the explicitly defined fields and components will
-    * be serialized.
-    *
-    * @public
-    * @returns {boolean}
-    */
-
-		}, {
-			key: 'strict',
-			get: function get() {
-				return this._strict;
-			}
-		}]);
-
-		return Schema;
-	}();
-
-	var ReviverItem = function () {
-		function ReviverItem(name, reviver, optional, reset) {
-			_classCallCheck(this, ReviverItem);
-
-			this._name = name;
-			this._reviver = reviver || functions.getTautology();
-			this._optional = is.boolean(optional) && optional;
-			this._reset = is.boolean(reset) && reset;
-		}
-
-		_createClass(ReviverItem, [{
-			key: 'name',
-			get: function get() {
-				return this._name;
-			}
-		}, {
-			key: 'reviver',
-			get: function get() {
-				return this._reviver;
-			}
-		}, {
-			key: 'optional',
-			get: function get() {
-				return this._optional;
-			}
-		}, {
-			key: 'reset',
-			get: function get() {
-				return this._reset;
-			}
-		}]);
-
-		return ReviverItem;
-	}();
-
-	function getReviverItems(fields, components) {
-		var root = new Tree(new ReviverItem(null, null, false, true));
-
-		// 2017/08/26, BRI. The Field and Component types could inherit a common
-		// type, allowing the following duplication to be avoided with polymorphism.
-
-		fields.forEach(function (field) {
-			var names = field.name.split('.');
-
-			var node = root;
-
-			names.forEach(function (name, i) {
-				if (names.length === i + 1) {
-					node.addChild(new ReviverItem(name, field.dataType.reviver, field.optional));
-				} else {
-					var child = node.findChild(function (n) {
-						return n.name === name;
-					});
-
-					if (!child) {
-						child = node.addChild(new ReviverItem(name));
-					}
-
-					node = child;
-				}
-			});
-		});
-
-		components.forEach(function (component) {
-			var node = root;
-
-			var names = component.name.split('.');
-
-			names.forEach(function (name, i) {
-				if (names.length === i + 1) {
-					node = node.addChild(new ReviverItem(name, component.reviver));
-				} else {
-					var child = node.findChild(function (n) {
-						return n.name === name;
-					});
-
-					if (!child) {
-						child = node.addChild(new ReviverItem(name));
-					}
-
-					node = child;
-				}
-			});
-
-			component.fields.forEach(function (f) {
-				return node.addChild(new ReviverItem(f.name, f.dataType.reviver));
-			});
-		});
-
-		var head = null;
-		var current = null;
-
-		var addItemToList = function addItemToList(item, node) {
-			var itemToUse = item;
-
-			if (!node.getIsLeaf()) {
-				var required = node.search(function (i, n) {
-					return n.getIsLeaf() && !i.optional;
-				}, true, false) !== null;
-
-				if (!required) {
-					itemToUse = new ReviverItem(item.name, item.reviver, true, item.reset);
-				}
-			} else {
-				itemToUse = item;
-			}
-
-			if (current === null) {
-				current = head = new LinkedList(itemToUse);
-			} else {
-				current = current.insert(itemToUse);
-			}
-		};
-
-		root.walk(addItemToList, false, true);
-
-		return head;
-	}
-
-	return Schema;
-}();
-
-},{"./../../collections/LinkedList":50,"./../../collections/Tree":51,"./../../lang/functions":65,"./../../lang/is":66,"./Component":73,"./Field":75}],77:[function(require,module,exports){
+},{"./../../common/socket/SocketConnectionState":45,"./BaseAdapter":47,"@barchart/common-js/lang/Disposable":21,"@barchart/common-js/lang/assert":26,"@barchart/common-js/lang/promise":32,"socket.io-client":118,"uuid":139}],50:[function(require,module,exports){
 'use strict';
 
 module.exports = function () {
@@ -12096,7 +9217,7 @@ module.exports = function () {
 	};
 }();
 
-},{}],78:[function(require,module,exports){
+},{}],51:[function(require,module,exports){
 'use strict';
 
 var lodashIsNaN = require('lodash.isnan');
@@ -12158,7 +9279,7 @@ module.exports = function () {
 	};
 }();
 
-},{"lodash.isnan":119}],79:[function(require,module,exports){
+},{"lodash.isnan":92}],52:[function(require,module,exports){
 'use strict';
 
 var lodashIsNaN = require('lodash.isnan');
@@ -12291,7 +9412,7 @@ module.exports = function () {
 	};
 }();
 
-},{"./decimalFormatter":78,"lodash.isnan":119}],80:[function(require,module,exports){
+},{"./decimalFormatter":51,"lodash.isnan":92}],53:[function(require,module,exports){
 'use strict';
 
 module.exports = function () {
@@ -12367,7 +9488,7 @@ module.exports = function () {
 	};
 }();
 
-},{}],81:[function(require,module,exports){
+},{}],54:[function(require,module,exports){
 module.exports = after
 
 function after(count, callback, err_cb) {
@@ -12397,7 +9518,7 @@ function after(count, callback, err_cb) {
 
 function noop() {}
 
-},{}],82:[function(require,module,exports){
+},{}],55:[function(require,module,exports){
 /**
  * An abstraction for slicing an arraybuffer even when
  * ArrayBuffer.prototype.slice is not supported
@@ -12428,7 +9549,7 @@ module.exports = function(arraybuffer, start, end) {
   return result.buffer;
 };
 
-},{}],83:[function(require,module,exports){
+},{}],56:[function(require,module,exports){
 
 /**
  * Expose `Backoff`.
@@ -12515,7 +9636,7 @@ Backoff.prototype.setJitter = function(jitter){
 };
 
 
-},{}],84:[function(require,module,exports){
+},{}],57:[function(require,module,exports){
 /*
  * base64-arraybuffer
  * https://github.com/niklasvh/base64-arraybuffer
@@ -12584,7 +9705,7 @@ Backoff.prototype.setJitter = function(jitter){
   };
 })();
 
-},{}],85:[function(require,module,exports){
+},{}],58:[function(require,module,exports){
 'use strict'
 
 exports.byteLength = byteLength
@@ -12737,7 +9858,7 @@ function fromByteArray (uint8) {
   return parts.join('')
 }
 
-},{}],86:[function(require,module,exports){
+},{}],59:[function(require,module,exports){
 /*
  *  big.js v5.0.3
  *  A small, fast, easy-to-use library for arbitrary-precision decimal arithmetic.
@@ -13678,7 +10799,7 @@ function fromByteArray (uint8) {
   }
 })(this);
 
-},{}],87:[function(require,module,exports){
+},{}],60:[function(require,module,exports){
 (function (global){
 /**
  * Create a blob builder even when vendor prefixes exist
@@ -13778,9 +10899,9 @@ module.exports = (function() {
 })();
 
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{}],88:[function(require,module,exports){
+},{}],61:[function(require,module,exports){
 
-},{}],89:[function(require,module,exports){
+},{}],62:[function(require,module,exports){
 // shim for using process in browser
 var process = module.exports = {};
 
@@ -13966,7 +11087,7 @@ process.chdir = function (dir) {
 };
 process.umask = function() { return 0; };
 
-},{}],90:[function(require,module,exports){
+},{}],63:[function(require,module,exports){
 /*!
  * The buffer module from node.js, for the browser.
  *
@@ -15704,7 +12825,7 @@ function numberIsNaN (obj) {
   return obj !== obj // eslint-disable-line no-self-compare
 }
 
-},{"base64-js":85,"ieee754":114}],91:[function(require,module,exports){
+},{"base64-js":58,"ieee754":87}],64:[function(require,module,exports){
 module.exports = {
   "100": "Continue",
   "101": "Switching Protocols",
@@ -15770,7 +12891,7 @@ module.exports = {
   "511": "Network Authentication Required"
 }
 
-},{}],92:[function(require,module,exports){
+},{}],65:[function(require,module,exports){
 /**
  * Slice reference.
  */
@@ -15795,7 +12916,7 @@ module.exports = function(obj, fn){
   }
 };
 
-},{}],93:[function(require,module,exports){
+},{}],66:[function(require,module,exports){
 
 /**
  * Expose `Emitter`.
@@ -15960,7 +13081,7 @@ Emitter.prototype.hasListeners = function(event){
   return !! this.listeners(event).length;
 };
 
-},{}],94:[function(require,module,exports){
+},{}],67:[function(require,module,exports){
 
 module.exports = function(a, b){
   var fn = function(){};
@@ -15968,7 +13089,7 @@ module.exports = function(a, b){
   a.prototype = new fn;
   a.prototype.constructor = a;
 };
-},{}],95:[function(require,module,exports){
+},{}],68:[function(require,module,exports){
 (function (Buffer){
 // Copyright Joyent, Inc. and other Node contributors.
 //
@@ -16079,7 +13200,7 @@ function objectToString(o) {
 }
 
 }).call(this,{"isBuffer":require("../../is-buffer/index.js")})
-},{"../../is-buffer/index.js":117}],96:[function(require,module,exports){
+},{"../../is-buffer/index.js":90}],69:[function(require,module,exports){
 (function (process){
 /**
  * This is the web browser implementation of `debug()`.
@@ -16278,7 +13399,7 @@ function localstorage() {
 }
 
 }).call(this,require('_process'))
-},{"./debug":97,"_process":89}],97:[function(require,module,exports){
+},{"./debug":70,"_process":62}],70:[function(require,module,exports){
 
 /**
  * This is the common logic for both the Node.js and web browser
@@ -16505,7 +13626,7 @@ function coerce(val) {
   return val;
 }
 
-},{"ms":125}],98:[function(require,module,exports){
+},{"ms":98}],71:[function(require,module,exports){
 
 module.exports = require('./socket');
 
@@ -16517,7 +13638,7 @@ module.exports = require('./socket');
  */
 module.exports.parser = require('engine.io-parser');
 
-},{"./socket":99,"engine.io-parser":107}],99:[function(require,module,exports){
+},{"./socket":72,"engine.io-parser":80}],72:[function(require,module,exports){
 (function (global){
 /**
  * Module dependencies.
@@ -17264,7 +14385,7 @@ Socket.prototype.filterUpgrades = function (upgrades) {
 };
 
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{"./transport":100,"./transports/index":101,"component-emitter":93,"debug":96,"engine.io-parser":107,"indexof":115,"parseqs":126,"parseuri":127}],100:[function(require,module,exports){
+},{"./transport":73,"./transports/index":74,"component-emitter":66,"debug":69,"engine.io-parser":80,"indexof":88,"parseqs":99,"parseuri":100}],73:[function(require,module,exports){
 /**
  * Module dependencies.
  */
@@ -17423,7 +14544,7 @@ Transport.prototype.onClose = function () {
   this.emit('close');
 };
 
-},{"component-emitter":93,"engine.io-parser":107}],101:[function(require,module,exports){
+},{"component-emitter":66,"engine.io-parser":80}],74:[function(require,module,exports){
 (function (global){
 /**
  * Module dependencies
@@ -17480,7 +14601,7 @@ function polling (opts) {
 }
 
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{"./polling-jsonp":102,"./polling-xhr":103,"./websocket":105,"xmlhttprequest-ssl":106}],102:[function(require,module,exports){
+},{"./polling-jsonp":75,"./polling-xhr":76,"./websocket":78,"xmlhttprequest-ssl":79}],75:[function(require,module,exports){
 (function (global){
 
 /**
@@ -17715,7 +14836,7 @@ JSONPPolling.prototype.doWrite = function (data, fn) {
 };
 
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{"./polling":104,"component-inherit":94}],103:[function(require,module,exports){
+},{"./polling":77,"component-inherit":67}],76:[function(require,module,exports){
 (function (global){
 /**
  * Module requirements.
@@ -18131,7 +15252,7 @@ function unloadHandler () {
 }
 
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{"./polling":104,"component-emitter":93,"component-inherit":94,"debug":96,"xmlhttprequest-ssl":106}],104:[function(require,module,exports){
+},{"./polling":77,"component-emitter":66,"component-inherit":67,"debug":69,"xmlhttprequest-ssl":79}],77:[function(require,module,exports){
 /**
  * Module dependencies.
  */
@@ -18378,7 +15499,7 @@ Polling.prototype.uri = function () {
   return schema + '://' + (ipv6 ? '[' + this.hostname + ']' : this.hostname) + port + this.path + query;
 };
 
-},{"../transport":100,"component-inherit":94,"debug":96,"engine.io-parser":107,"parseqs":126,"xmlhttprequest-ssl":106,"yeast":172}],105:[function(require,module,exports){
+},{"../transport":73,"component-inherit":67,"debug":69,"engine.io-parser":80,"parseqs":99,"xmlhttprequest-ssl":79,"yeast":145}],78:[function(require,module,exports){
 (function (global){
 /**
  * Module dependencies.
@@ -18668,7 +15789,7 @@ WS.prototype.check = function () {
 };
 
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{"../transport":100,"component-inherit":94,"debug":96,"engine.io-parser":107,"parseqs":126,"ws":88,"yeast":172}],106:[function(require,module,exports){
+},{"../transport":73,"component-inherit":67,"debug":69,"engine.io-parser":80,"parseqs":99,"ws":61,"yeast":145}],79:[function(require,module,exports){
 (function (global){
 // browser shim for xmlhttprequest module
 
@@ -18709,7 +15830,7 @@ module.exports = function (opts) {
 };
 
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{"has-cors":112}],107:[function(require,module,exports){
+},{"has-cors":85}],80:[function(require,module,exports){
 (function (global){
 /**
  * Module dependencies.
@@ -19319,7 +16440,7 @@ exports.decodePayloadAsBinary = function (data, binaryType, callback) {
 };
 
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{"./keys":108,"./utf8":109,"after":81,"arraybuffer.slice":82,"base64-arraybuffer":84,"blob":87,"has-binary2":111}],108:[function(require,module,exports){
+},{"./keys":81,"./utf8":82,"after":54,"arraybuffer.slice":55,"base64-arraybuffer":57,"blob":60,"has-binary2":84}],81:[function(require,module,exports){
 
 /**
  * Gets the keys for an object.
@@ -19340,7 +16461,7 @@ module.exports = Object.keys || function keys (obj){
   return arr;
 };
 
-},{}],109:[function(require,module,exports){
+},{}],82:[function(require,module,exports){
 (function (global){
 /*! https://mths.be/utf8js v2.1.2 by @mathias */
 ;(function(root) {
@@ -19599,7 +16720,7 @@ module.exports = Object.keys || function keys (obj){
 }(this));
 
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{}],110:[function(require,module,exports){
+},{}],83:[function(require,module,exports){
 // Copyright Joyent, Inc. and other Node contributors.
 //
 // Permission is hereby granted, free of charge, to any person obtaining a
@@ -19903,7 +17024,7 @@ function isUndefined(arg) {
   return arg === void 0;
 }
 
-},{}],111:[function(require,module,exports){
+},{}],84:[function(require,module,exports){
 (function (Buffer){
 /* global Blob File */
 
@@ -19971,7 +17092,7 @@ function hasBinary (obj) {
 }
 
 }).call(this,require("buffer").Buffer)
-},{"buffer":90,"isarray":118}],112:[function(require,module,exports){
+},{"buffer":63,"isarray":91}],85:[function(require,module,exports){
 
 /**
  * Module exports.
@@ -19990,7 +17111,7 @@ try {
   module.exports = false;
 }
 
-},{}],113:[function(require,module,exports){
+},{}],86:[function(require,module,exports){
 var http = require('http')
 var url = require('url')
 
@@ -20023,7 +17144,7 @@ function validateParams (params) {
   return params
 }
 
-},{"http":155,"url":163}],114:[function(require,module,exports){
+},{"http":128,"url":136}],87:[function(require,module,exports){
 exports.read = function (buffer, offset, isLE, mLen, nBytes) {
   var e, m
   var eLen = (nBytes * 8) - mLen - 1
@@ -20109,7 +17230,7 @@ exports.write = function (buffer, value, offset, isLE, mLen, nBytes) {
   buffer[offset + i - d] |= s * 128
 }
 
-},{}],115:[function(require,module,exports){
+},{}],88:[function(require,module,exports){
 
 var indexOf = [].indexOf;
 
@@ -20120,7 +17241,7 @@ module.exports = function(arr, obj){
   }
   return -1;
 };
-},{}],116:[function(require,module,exports){
+},{}],89:[function(require,module,exports){
 if (typeof Object.create === 'function') {
   // implementation from standard node.js 'util' module
   module.exports = function inherits(ctor, superCtor) {
@@ -20145,7 +17266,7 @@ if (typeof Object.create === 'function') {
   }
 }
 
-},{}],117:[function(require,module,exports){
+},{}],90:[function(require,module,exports){
 /*!
  * Determine if an object is a Buffer
  *
@@ -20168,14 +17289,14 @@ function isSlowBuffer (obj) {
   return typeof obj.readFloatLE === 'function' && typeof obj.slice === 'function' && isBuffer(obj.slice(0, 0))
 }
 
-},{}],118:[function(require,module,exports){
+},{}],91:[function(require,module,exports){
 var toString = {}.toString;
 
 module.exports = Array.isArray || function (arr) {
   return toString.call(arr) == '[object Array]';
 };
 
-},{}],119:[function(require,module,exports){
+},{}],92:[function(require,module,exports){
 /**
  * lodash 3.0.2 (Custom Build) <https://lodash.com/>
  * Build: `lodash modularize exports="npm" -o ./`
@@ -20287,7 +17408,7 @@ function isNumber(value) {
 
 module.exports = isNaN;
 
-},{}],120:[function(require,module,exports){
+},{}],93:[function(require,module,exports){
 //! moment-timezone.js
 //! version : 0.5.11
 //! Copyright (c) JS Foundation and other contributors
@@ -21489,7 +18610,7 @@ module.exports = isNaN;
 	return moment;
 }));
 
-},{"moment":124}],121:[function(require,module,exports){
+},{"moment":97}],94:[function(require,module,exports){
 module.exports={
 	"version": "2016j",
 	"zones": [
@@ -22089,11 +19210,11 @@ module.exports={
 		"Pacific/Pohnpei|Pacific/Ponape"
 	]
 }
-},{}],122:[function(require,module,exports){
+},{}],95:[function(require,module,exports){
 var moment = module.exports = require("./moment-timezone");
 moment.tz.load(require('./data/packed/latest.json'));
 
-},{"./data/packed/latest.json":121,"./moment-timezone":123}],123:[function(require,module,exports){
+},{"./data/packed/latest.json":94,"./moment-timezone":96}],96:[function(require,module,exports){
 //! moment-timezone.js
 //! version : 0.5.11
 //! Copyright (c) JS Foundation and other contributors
@@ -22696,7 +19817,7 @@ moment.tz.load(require('./data/packed/latest.json'));
 	return moment;
 }));
 
-},{"moment":124}],124:[function(require,module,exports){
+},{"moment":97}],97:[function(require,module,exports){
 //! moment.js
 
 ;(function (global, factory) {
@@ -27204,7 +24325,7 @@ moment.tz.load(require('./data/packed/latest.json'));
 
 })));
 
-},{}],125:[function(require,module,exports){
+},{}],98:[function(require,module,exports){
 /**
  * Helpers.
  */
@@ -27358,7 +24479,7 @@ function plural(ms, n, name) {
   return Math.ceil(ms / n) + ' ' + name + 's';
 }
 
-},{}],126:[function(require,module,exports){
+},{}],99:[function(require,module,exports){
 /**
  * Compiles a querystring
  * Returns string representation of the object
@@ -27397,7 +24518,7 @@ exports.decode = function(qs){
   return qry;
 };
 
-},{}],127:[function(require,module,exports){
+},{}],100:[function(require,module,exports){
 /**
  * Parses an URI
  *
@@ -27438,7 +24559,7 @@ module.exports = function parseuri(str) {
     return uri;
 };
 
-},{}],128:[function(require,module,exports){
+},{}],101:[function(require,module,exports){
 (function (process){
 'use strict';
 
@@ -27486,7 +24607,7 @@ function nextTick(fn, arg1, arg2, arg3) {
 
 
 }).call(this,require('_process'))
-},{"_process":89}],129:[function(require,module,exports){
+},{"_process":62}],102:[function(require,module,exports){
 (function (global){
 /*! https://mths.be/punycode v1.4.1 by @mathias */
 ;(function(root) {
@@ -28023,7 +25144,7 @@ function nextTick(fn, arg1, arg2, arg3) {
 }(this));
 
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{}],130:[function(require,module,exports){
+},{}],103:[function(require,module,exports){
 // Copyright Joyent, Inc. and other Node contributors.
 //
 // Permission is hereby granted, free of charge, to any person obtaining a
@@ -28109,7 +25230,7 @@ var isArray = Array.isArray || function (xs) {
   return Object.prototype.toString.call(xs) === '[object Array]';
 };
 
-},{}],131:[function(require,module,exports){
+},{}],104:[function(require,module,exports){
 // Copyright Joyent, Inc. and other Node contributors.
 //
 // Permission is hereby granted, free of charge, to any person obtaining a
@@ -28196,13 +25317,13 @@ var objectKeys = Object.keys || function (obj) {
   return res;
 };
 
-},{}],132:[function(require,module,exports){
+},{}],105:[function(require,module,exports){
 'use strict';
 
 exports.decode = exports.parse = require('./decode');
 exports.encode = exports.stringify = require('./encode');
 
-},{"./decode":130,"./encode":131}],133:[function(require,module,exports){
+},{"./decode":103,"./encode":104}],106:[function(require,module,exports){
 // Copyright Joyent, Inc. and other Node contributors.
 //
 // Permission is hereby granted, free of charge, to any person obtaining a
@@ -28334,7 +25455,7 @@ Duplex.prototype._destroy = function (err, cb) {
 
   pna.nextTick(cb, err);
 };
-},{"./_stream_readable":135,"./_stream_writable":137,"core-util-is":95,"inherits":116,"process-nextick-args":128}],134:[function(require,module,exports){
+},{"./_stream_readable":108,"./_stream_writable":110,"core-util-is":68,"inherits":89,"process-nextick-args":101}],107:[function(require,module,exports){
 // Copyright Joyent, Inc. and other Node contributors.
 //
 // Permission is hereby granted, free of charge, to any person obtaining a
@@ -28382,7 +25503,7 @@ function PassThrough(options) {
 PassThrough.prototype._transform = function (chunk, encoding, cb) {
   cb(null, chunk);
 };
-},{"./_stream_transform":136,"core-util-is":95,"inherits":116}],135:[function(require,module,exports){
+},{"./_stream_transform":109,"core-util-is":68,"inherits":89}],108:[function(require,module,exports){
 (function (process,global){
 // Copyright Joyent, Inc. and other Node contributors.
 //
@@ -29404,7 +26525,7 @@ function indexOf(xs, x) {
   return -1;
 }
 }).call(this,require('_process'),typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{"./_stream_duplex":133,"./internal/streams/BufferList":138,"./internal/streams/destroy":139,"./internal/streams/stream":140,"_process":89,"core-util-is":95,"events":110,"inherits":116,"isarray":141,"process-nextick-args":128,"safe-buffer":144,"string_decoder/":142,"util":88}],136:[function(require,module,exports){
+},{"./_stream_duplex":106,"./internal/streams/BufferList":111,"./internal/streams/destroy":112,"./internal/streams/stream":113,"_process":62,"core-util-is":68,"events":83,"inherits":89,"isarray":114,"process-nextick-args":101,"safe-buffer":117,"string_decoder/":115,"util":61}],109:[function(require,module,exports){
 // Copyright Joyent, Inc. and other Node contributors.
 //
 // Permission is hereby granted, free of charge, to any person obtaining a
@@ -29619,7 +26740,7 @@ function done(stream, er, data) {
 
   return stream.push(null);
 }
-},{"./_stream_duplex":133,"core-util-is":95,"inherits":116}],137:[function(require,module,exports){
+},{"./_stream_duplex":106,"core-util-is":68,"inherits":89}],110:[function(require,module,exports){
 (function (process,global,setImmediate){
 // Copyright Joyent, Inc. and other Node contributors.
 //
@@ -30309,7 +27430,7 @@ Writable.prototype._destroy = function (err, cb) {
   cb(err);
 };
 }).call(this,require('_process'),typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {},require("timers").setImmediate)
-},{"./_stream_duplex":133,"./internal/streams/destroy":139,"./internal/streams/stream":140,"_process":89,"core-util-is":95,"inherits":116,"process-nextick-args":128,"safe-buffer":144,"timers":159,"util-deprecate":165}],138:[function(require,module,exports){
+},{"./_stream_duplex":106,"./internal/streams/destroy":112,"./internal/streams/stream":113,"_process":62,"core-util-is":68,"inherits":89,"process-nextick-args":101,"safe-buffer":117,"timers":132,"util-deprecate":138}],111:[function(require,module,exports){
 'use strict';
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
@@ -30389,7 +27510,7 @@ if (util && util.inspect && util.inspect.custom) {
     return this.constructor.name + ' ' + obj;
   };
 }
-},{"safe-buffer":144,"util":88}],139:[function(require,module,exports){
+},{"safe-buffer":117,"util":61}],112:[function(require,module,exports){
 'use strict';
 
 /*<replacement>*/
@@ -30464,12 +27585,12 @@ module.exports = {
   destroy: destroy,
   undestroy: undestroy
 };
-},{"process-nextick-args":128}],140:[function(require,module,exports){
+},{"process-nextick-args":101}],113:[function(require,module,exports){
 module.exports = require('events').EventEmitter;
 
-},{"events":110}],141:[function(require,module,exports){
-arguments[4][118][0].apply(exports,arguments)
-},{"dup":118}],142:[function(require,module,exports){
+},{"events":83}],114:[function(require,module,exports){
+arguments[4][91][0].apply(exports,arguments)
+},{"dup":91}],115:[function(require,module,exports){
 // Copyright Joyent, Inc. and other Node contributors.
 //
 // Permission is hereby granted, free of charge, to any person obtaining a
@@ -30766,7 +27887,7 @@ function simpleWrite(buf) {
 function simpleEnd(buf) {
   return buf && buf.length ? this.write(buf) : '';
 }
-},{"safe-buffer":144}],143:[function(require,module,exports){
+},{"safe-buffer":117}],116:[function(require,module,exports){
 exports = module.exports = require('./lib/_stream_readable.js');
 exports.Stream = exports;
 exports.Readable = exports;
@@ -30775,7 +27896,7 @@ exports.Duplex = require('./lib/_stream_duplex.js');
 exports.Transform = require('./lib/_stream_transform.js');
 exports.PassThrough = require('./lib/_stream_passthrough.js');
 
-},{"./lib/_stream_duplex.js":133,"./lib/_stream_passthrough.js":134,"./lib/_stream_readable.js":135,"./lib/_stream_transform.js":136,"./lib/_stream_writable.js":137}],144:[function(require,module,exports){
+},{"./lib/_stream_duplex.js":106,"./lib/_stream_passthrough.js":107,"./lib/_stream_readable.js":108,"./lib/_stream_transform.js":109,"./lib/_stream_writable.js":110}],117:[function(require,module,exports){
 /* eslint-disable node/no-deprecated-api */
 var buffer = require('buffer')
 var Buffer = buffer.Buffer
@@ -30839,7 +27960,7 @@ SafeBuffer.allocUnsafeSlow = function (size) {
   return buffer.SlowBuffer(size)
 }
 
-},{"buffer":90}],145:[function(require,module,exports){
+},{"buffer":63}],118:[function(require,module,exports){
 
 /**
  * Module dependencies.
@@ -30935,7 +28056,7 @@ exports.connect = lookup;
 exports.Manager = require('./manager');
 exports.Socket = require('./socket');
 
-},{"./manager":146,"./socket":148,"./url":149,"debug":150,"socket.io-parser":153}],146:[function(require,module,exports){
+},{"./manager":119,"./socket":121,"./url":122,"debug":123,"socket.io-parser":126}],119:[function(require,module,exports){
 
 /**
  * Module dependencies.
@@ -31510,7 +28631,7 @@ Manager.prototype.onreconnect = function () {
   this.emitAll('reconnect', attempt);
 };
 
-},{"./on":147,"./socket":148,"backo2":83,"component-bind":92,"component-emitter":93,"debug":150,"engine.io-client":98,"indexof":115,"socket.io-parser":153}],147:[function(require,module,exports){
+},{"./on":120,"./socket":121,"backo2":56,"component-bind":65,"component-emitter":66,"debug":123,"engine.io-client":71,"indexof":88,"socket.io-parser":126}],120:[function(require,module,exports){
 
 /**
  * Module exports.
@@ -31536,7 +28657,7 @@ function on (obj, ev, fn) {
   };
 }
 
-},{}],148:[function(require,module,exports){
+},{}],121:[function(require,module,exports){
 
 /**
  * Module dependencies.
@@ -31956,7 +29077,7 @@ Socket.prototype.compress = function (compress) {
   return this;
 };
 
-},{"./on":147,"component-bind":92,"component-emitter":93,"debug":150,"parseqs":126,"socket.io-parser":153,"to-array":161}],149:[function(require,module,exports){
+},{"./on":120,"component-bind":65,"component-emitter":66,"debug":123,"parseqs":99,"socket.io-parser":126,"to-array":134}],122:[function(require,module,exports){
 (function (global){
 
 /**
@@ -32035,7 +29156,7 @@ function url (uri, loc) {
 }
 
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{"debug":150,"parseuri":127}],150:[function(require,module,exports){
+},{"debug":123,"parseuri":100}],123:[function(require,module,exports){
 (function (process){
 /**
  * This is the web browser implementation of `debug()`.
@@ -32224,7 +29345,7 @@ function localstorage() {
 }
 
 }).call(this,require('_process'))
-},{"./debug":151,"_process":89}],151:[function(require,module,exports){
+},{"./debug":124,"_process":62}],124:[function(require,module,exports){
 
 /**
  * This is the common logic for both the Node.js and web browser
@@ -32428,7 +29549,7 @@ function coerce(val) {
   return val;
 }
 
-},{"ms":125}],152:[function(require,module,exports){
+},{"ms":98}],125:[function(require,module,exports){
 (function (global){
 /*global Blob,File*/
 
@@ -32573,7 +29694,7 @@ exports.removeBlobs = function(data, callback) {
 };
 
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{"./is-buffer":154,"isarray":118}],153:[function(require,module,exports){
+},{"./is-buffer":127,"isarray":91}],126:[function(require,module,exports){
 
 /**
  * Module dependencies.
@@ -32983,7 +30104,7 @@ function error(msg) {
   };
 }
 
-},{"./binary":152,"./is-buffer":154,"component-emitter":93,"debug":96,"has-binary2":111,"isarray":118}],154:[function(require,module,exports){
+},{"./binary":125,"./is-buffer":127,"component-emitter":66,"debug":69,"has-binary2":84,"isarray":91}],127:[function(require,module,exports){
 (function (global){
 
 module.exports = isBuf;
@@ -33000,7 +30121,7 @@ function isBuf(obj) {
 }
 
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{}],155:[function(require,module,exports){
+},{}],128:[function(require,module,exports){
 (function (global){
 var ClientRequest = require('./lib/request')
 var response = require('./lib/response')
@@ -33088,7 +30209,7 @@ http.METHODS = [
 	'UNSUBSCRIBE'
 ]
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{"./lib/request":157,"./lib/response":158,"builtin-status-codes":91,"url":163,"xtend":171}],156:[function(require,module,exports){
+},{"./lib/request":130,"./lib/response":131,"builtin-status-codes":64,"url":136,"xtend":144}],129:[function(require,module,exports){
 (function (global){
 exports.fetch = isFunction(global.fetch) && isFunction(global.ReadableStream)
 
@@ -33165,7 +30286,7 @@ function isFunction (value) {
 xhr = null // Help gc
 
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{}],157:[function(require,module,exports){
+},{}],130:[function(require,module,exports){
 (function (process,global,Buffer){
 var capability = require('./capability')
 var inherits = require('inherits')
@@ -33496,7 +30617,7 @@ var unsafeHeaders = [
 ]
 
 }).call(this,require('_process'),typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {},require("buffer").Buffer)
-},{"./capability":156,"./response":158,"_process":89,"buffer":90,"inherits":116,"readable-stream":143,"to-arraybuffer":162}],158:[function(require,module,exports){
+},{"./capability":129,"./response":131,"_process":62,"buffer":63,"inherits":89,"readable-stream":116,"to-arraybuffer":135}],131:[function(require,module,exports){
 (function (process,global,Buffer){
 var capability = require('./capability')
 var inherits = require('inherits')
@@ -33724,7 +30845,7 @@ IncomingMessage.prototype._onXHRProgress = function () {
 }
 
 }).call(this,require('_process'),typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {},require("buffer").Buffer)
-},{"./capability":156,"_process":89,"buffer":90,"inherits":116,"readable-stream":143}],159:[function(require,module,exports){
+},{"./capability":129,"_process":62,"buffer":63,"inherits":89,"readable-stream":116}],132:[function(require,module,exports){
 (function (setImmediate,clearImmediate){
 var nextTick = require('process/browser.js').nextTick;
 var apply = Function.prototype.apply;
@@ -33803,9 +30924,9 @@ exports.clearImmediate = typeof clearImmediate === "function" ? clearImmediate :
   delete immediateIds[id];
 };
 }).call(this,require("timers").setImmediate,require("timers").clearImmediate)
-},{"process/browser.js":160,"timers":159}],160:[function(require,module,exports){
-arguments[4][89][0].apply(exports,arguments)
-},{"dup":89}],161:[function(require,module,exports){
+},{"process/browser.js":133,"timers":132}],133:[function(require,module,exports){
+arguments[4][62][0].apply(exports,arguments)
+},{"dup":62}],134:[function(require,module,exports){
 module.exports = toArray
 
 function toArray(list, index) {
@@ -33820,7 +30941,7 @@ function toArray(list, index) {
     return array
 }
 
-},{}],162:[function(require,module,exports){
+},{}],135:[function(require,module,exports){
 var Buffer = require('buffer').Buffer
 
 module.exports = function (buf) {
@@ -33849,7 +30970,7 @@ module.exports = function (buf) {
 	}
 }
 
-},{"buffer":90}],163:[function(require,module,exports){
+},{"buffer":63}],136:[function(require,module,exports){
 // Copyright Joyent, Inc. and other Node contributors.
 //
 // Permission is hereby granted, free of charge, to any person obtaining a
@@ -34583,7 +31704,7 @@ Url.prototype.parseHost = function() {
   if (host) this.hostname = host;
 };
 
-},{"./util":164,"punycode":129,"querystring":132}],164:[function(require,module,exports){
+},{"./util":137,"punycode":102,"querystring":105}],137:[function(require,module,exports){
 'use strict';
 
 module.exports = {
@@ -34601,7 +31722,7 @@ module.exports = {
   }
 };
 
-},{}],165:[function(require,module,exports){
+},{}],138:[function(require,module,exports){
 (function (global){
 
 /**
@@ -34672,7 +31793,7 @@ function config (name) {
 }
 
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{}],166:[function(require,module,exports){
+},{}],139:[function(require,module,exports){
 var v1 = require('./v1');
 var v4 = require('./v4');
 
@@ -34682,7 +31803,7 @@ uuid.v4 = v4;
 
 module.exports = uuid;
 
-},{"./v1":169,"./v4":170}],167:[function(require,module,exports){
+},{"./v1":142,"./v4":143}],140:[function(require,module,exports){
 /**
  * Convert array of 16 byte values to UUID string format of the form:
  * XXXXXXXX-XXXX-XXXX-XXXX-XXXXXXXXXXXX
@@ -34707,7 +31828,7 @@ function bytesToUuid(buf, offset) {
 
 module.exports = bytesToUuid;
 
-},{}],168:[function(require,module,exports){
+},{}],141:[function(require,module,exports){
 (function (global){
 // Unique ID creation requires a high quality random # generator.  In the
 // browser this is a little complicated due to unknown quality of Math.random()
@@ -34744,7 +31865,7 @@ if (!rng) {
 module.exports = rng;
 
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{}],169:[function(require,module,exports){
+},{}],142:[function(require,module,exports){
 var rng = require('./lib/rng');
 var bytesToUuid = require('./lib/bytesToUuid');
 
@@ -34846,7 +31967,7 @@ function v1(options, buf, offset) {
 
 module.exports = v1;
 
-},{"./lib/bytesToUuid":167,"./lib/rng":168}],170:[function(require,module,exports){
+},{"./lib/bytesToUuid":140,"./lib/rng":141}],143:[function(require,module,exports){
 var rng = require('./lib/rng');
 var bytesToUuid = require('./lib/bytesToUuid');
 
@@ -34877,7 +31998,7 @@ function v4(options, buf, offset) {
 
 module.exports = v4;
 
-},{"./lib/bytesToUuid":167,"./lib/rng":168}],171:[function(require,module,exports){
+},{"./lib/bytesToUuid":140,"./lib/rng":141}],144:[function(require,module,exports){
 module.exports = extend
 
 var hasOwnProperty = Object.prototype.hasOwnProperty;
@@ -34898,7 +32019,7 @@ function extend() {
     return target
 }
 
-},{}],172:[function(require,module,exports){
+},{}],145:[function(require,module,exports){
 'use strict';
 
 var alphabet = '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz-_'.split('')
