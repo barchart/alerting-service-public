@@ -10,7 +10,6 @@ var glob = require('glob');
 var jasmine = require('gulp-jasmine');
 var jsdoc = require('gulp-jsdoc3');
 var jshint = require('gulp-jshint');
-var rename = require('gulp-rename');
 var replace = require('gulp-replace');
 var runSequence = require('run-sequence');
 var source = require('vinyl-source-stream');
@@ -54,7 +53,7 @@ gulp.task('document', function (cb) {
 gulp.task('embed-version', function () {
 	var version = getVersionFromPackage();
 
-	return gulp.src(['./lib/alerts/index.js'])
+	return gulp.src(['./lib/index.js'])
 		.pipe(replace(/(version:\s*')([0-9]+\.[0-9]+\.[0-9]+)(')/g, '$1' + version + '$3'))
 		.pipe(gulp.dest('./lib/alerts/'));
 });
@@ -82,7 +81,7 @@ gulp.task('create-tag', function (cb) {
 });
 
 gulp.task('build-example-bundle', function () {
-	return browserify('./lib/index.js', {standalone: 'Barchart.Alerts'})
+	return browserify(['./lib/index.js', './example/browser/js/startup.js'])
 		.bundle()
 		.pipe(source('example.js'))
 		.pipe(buffer())

@@ -1,4 +1,1098 @@
-(function(f){if(typeof exports==="object"&&typeof module!=="undefined"){module.exports=f()}else if(typeof define==="function"&&define.amd){define([],f)}else{var g;if(typeof window!=="undefined"){g=window}else if(typeof global!=="undefined"){g=global}else if(typeof self!=="undefined"){g=self}else{g=this}(g.Barchart || (g.Barchart = {})).Alerts = f()}})(function(){var define,module,exports;return (function(){function r(e,n,t){function o(i,f){if(!n[i]){if(!e[i]){var c="function"==typeof require&&require;if(!f&&c)return c(i,!0);if(u)return u(i,!0);var a=new Error("Cannot find module '"+i+"'");throw a.code="MODULE_NOT_FOUND",a}var p=n[i]={exports:{}};e[i][0].call(p.exports,function(r){var n=e[i][1][r];return o(n||r)},p,p.exports,r,e,n,t)}return n[i].exports}for(var u="function"==typeof require&&require,i=0;i<t.length;i++)o(t[i]);return o}return r})()({1:[function(require,module,exports){
+(function(){function r(e,n,t){function o(i,f){if(!n[i]){if(!e[i]){var c="function"==typeof require&&require;if(!f&&c)return c(i,!0);if(u)return u(i,!0);var a=new Error("Cannot find module '"+i+"'");throw a.code="MODULE_NOT_FOUND",a}var p=n[i]={exports:{}};e[i][0].call(p.exports,function(r){var n=e[i][1][r];return o(n||r)},p,p.exports,r,e,n,t)}return n[i].exports}for(var u="function"==typeof require&&require,i=0;i<t.length;i++)o(t[i]);return o}return r})()({1:[function(require,module,exports){
+'use strict';
+
+var AlertManager = require('./../../../lib/alerts/AlertManager'),
+    JwtProvider = require('./../../../lib/alerts/JwtProvider'),
+    timezone = require('@barchart/common-js/lang/timezone'),
+    version = require('./../../../lib/index').version;
+
+var EndpointBuilder = require('@barchart/common-js/api/http/builders/EndpointBuilder'),
+    ProtocolType = require('@barchart/common-js/api/http/definitions/ProtocolType'),
+    ResponseInterceptor = require('@barchart/common-js/api/http/interceptors/ResponseInterceptor'),
+    VerbType = require('@barchart/common-js/api/http/definitions/VerbType');
+
+var JwtGateway = require('@barchart/tgam-jwt-js/lib/JwtGateway');
+
+module.exports = function () {
+	'use strict';
+
+	//var system = 'grains.com';
+	//var userId = '108265';
+
+	//var system = 'webstation.barchart.com';
+	//var userId = 'webstation-test-user';
+
+	var system = 'theglobeandmail.com';
+	var userId = '65895092';
+
+	var alertManager;
+
+	var createJwtProvider = function createJwtProvider() {
+		var endpoint = EndpointBuilder.for('JwtTokenGenerator', 'Jwt Token Generator').withVerb(VerbType.GET).withProtocol(ProtocolType.HTTPS).withHost('y0glq1g3x7.execute-api.us-east-1.amazonaws.com').withPathBuilder(function (pb) {
+			pb.withLiteralParameter('dev', 'dev').withLiteralParameter('token', 'token').withLiteralParameter('barchart', 'barchart').withLiteralParameter('generator', 'generator');
+		}).withQueryBuilder(function (qb) {
+			qb.withLiteralParameter('userId', 'userId', '123456789');
+		}).withResponseInterceptor(ResponseInterceptor.DATA).endpoint;
+
+		return JwtGateway.forDevelopment(endpoint).then(function (gateway) {
+			return new JwtProvider(function () {
+				return gateway.readToken();
+			}, 60000, 'TGAM');
+		});
+	};
+
+	var createAlertManager = function createAlertManager() {
+		//return new AlertManager();
+
+		//return new AlertManager('localhost', 3000, 'rest');
+		//return new AlertManager('localhost', 3000);
+
+		//return new AlertManager('alerts-management-stage.barchart.com', 80, 'rest');
+		return new AlertManager('alerts-management-stage.barchart.com');
+	};
+
+	var utilities = AlertManager;
+
+	var targets = ko.observable();
+	var properties = ko.observable();
+	var operators = ko.observable();
+	var modifiers = ko.observable();
+	var publisherTypes = ko.observable();
+	var marketDataConfiguration = ko.observable();
+
+	function PageModel(connected, message) {
+		var that = this;
+
+		that.version = ko.observable({});
+
+		that.connected = ko.observable(connected);
+		that.message = ko.observable(message);
+
+		that.alert = ko.observable();
+		that.alerts = ko.observableArray([]);
+		that.publisherSettings = ko.observable();
+		that.marketDataSettings = ko.observable();
+		that.providerDescription = ko.observable(alertManager.toString());
+		that.activeTemplate = ko.observable();
+
+		var getModel = function getModel(alert) {
+			return _.find(that.alerts(), function (model) {
+				return model.alert().alert_id === alert.alert_id;
+			});
+		};
+		var sortModels = function sortModels() {
+			that.alerts.sort(function (a, b) {
+				return a.alert().name.localeCompare(b.alert().name);
+			});
+		};
+
+		that.connect = function () {
+			if (!that.connected()) {
+				that.message('Attempting to connect...');
+
+				reset();
+			}
+		};
+		that.disconnect = function () {
+			if (that.connected()) {
+				that.activeTemplate('alert-disconnected');
+
+				that.connected(false);
+				that.alerts([]);
+
+				alertManager.dispose();
+				alertManager = null;
+			}
+		};
+		that.changeToGrid = function () {
+			if (!that.connected()) {
+				return;
+			}
+
+			that.activeTemplate('alert-grid-template');
+		};
+		that.changeToCreate = function () {
+			if (!that.connected()) {
+				return;
+			}
+
+			that.alert = new AlertEntryModel();
+
+			that.activeTemplate('alert-entry-template');
+		};
+		that.changeToView = function (alertEntryModel) {
+			if (!that.connected()) {
+				return;
+			}
+
+			that.alert = new AlertEntryModel(alertEntryModel.alert());
+
+			that.activeTemplate('alert-entry-template');
+		};
+		that.changeToPreferences = function () {
+			if (!that.connected()) {
+				return;
+			}
+
+			that.publisherSettings = new AlertPublisherTypeDefaultsModel(publisherTypes());
+			that.marketDataSettings = new MarketDataConfigurationModel(marketDataConfiguration());
+
+			that.activeTemplate('alert-preferences-template');
+		};
+		that.deleteAlert = function (alertDisplayModel) {
+			alertDisplayModel.processing(true);
+
+			alertManager.deleteAlert(alertDisplayModel.alert()).then(function () {
+				that.alerts.remove(alertDisplayModel);
+			});
+		};
+		that.enableAlerts = function () {
+			alertManager.enableAlerts({ alert_system: system, user_id: userId });
+		};
+		that.disableAlerts = function () {
+			alertManager.disableAlerts({ alert_system: system, user_id: userId });
+		};
+
+		that.handleAlertCreate = function (createdAlert) {
+			var existingModel = getModel(createdAlert);
+
+			if (!existingModel) {
+				that.alerts.push(new AlertDisplayModel(createdAlert));
+
+				sortModels();
+			}
+		};
+		that.handleAlertChange = function (changedAlert) {
+			var existingModel = getModel(changedAlert);
+
+			if (existingModel) {
+				existingModel.alert(changedAlert);
+			} else {
+				that.alerts.push(new AlertDisplayModel(changedAlert));
+
+				sortModels();
+			}
+		};
+		that.handleAlertTrigger = function (triggeredAlert) {
+			that.handleAlertChange(triggeredAlert);
+
+			toastr.info('Alert Triggered: ' + triggeredAlert.name);
+		};
+		that.handleAlertDelete = function (deletedAlert) {
+			var modelToRemove = getModel(deletedAlert);
+
+			that.alerts.remove(modelToRemove);
+		};
+
+		that.canConnect = ko.computed(function () {
+			return !that.connected();
+		});
+		that.canDisconnect = ko.computed(function () {
+			return that.connected();
+		});
+
+		if (that.connected()) {
+			that.changeToGrid();
+		} else {
+			that.activeTemplate('alert-disconnected');
+		}
+	}
+	function AlertDisplayModel(alert) {
+		var that = this;
+
+		that.alert = ko.observable(alert);
+		that.processing = ko.observable(false);
+
+		that.lastTriggerDateDisplay = ko.computed(function () {
+			var alert = that.alert();
+
+			var returnRef;
+
+			if (alert.last_trigger_date) {
+				var lastTriggerDate = new Date(parseInt(alert.last_trigger_date));
+
+				returnRef = lastTriggerDate.toString();
+			} else {
+				returnRef = 'never';
+			}
+
+			return returnRef;
+		});
+
+		that.canStart = ko.computed(function () {
+			var alert = that.alert();
+
+			return alert.alert_state === 'Inactive' || alert.alert_state === 'Triggered' || alert.alert_state === 'Orphaned' || alert.alert_state === 'Expired';
+		});
+		that.canPause = ko.computed(function () {
+			var alert = that.alert();
+
+			return alert.alert_state === 'Active';
+		});
+		that.canRefresh = ko.computed(function () {
+			return !that.canStart() && !that.canPause();
+		});
+
+		that.start = function () {
+			alertManager.enableAlert(that.alert());
+		};
+		that.pause = function () {
+			alertManager.disableAlert(that.alert());
+		};
+		that.refresh = function () {
+			alertManager.retrieveAlert(that.alert()).then(function (refreshedAlert) {
+				that.alert(refreshedAlert);
+			});
+		};
+	}
+	function AlertEntryModel(alert) {
+		var that = this;
+
+		that.alert = ko.observable(alert || null);
+		that.alertType = ko.observable('none');
+		that.alertBehavior = ko.observable('terminate');
+		that.name = ko.observable(null);
+		that.userNotes = ko.observable(null);
+		that.createDate = ko.observable(null);
+		that.alertSystemKey = ko.observable(null);
+		that.conditions = ko.observableArray([]);
+		that.publishers = ko.observableArray([]);
+		that.schedules = ko.observableArray([]);
+
+		that.processing = ko.observable(false);
+		that.error = ko.observable(null);
+
+		that.alertBehaviors = ko.observable(['terminate', 'schedule', 'automatic']);
+		that.alertTypes = ko.observable(['none', 'news', 'price', 'match']);
+
+		that.automaticReset = ko.computed(function () {
+			return that.alertBehavior() === 'automatic';
+		});
+
+		that.showSchedules = ko.computed(function () {
+			return that.alertBehavior() === 'schedule';
+		});
+
+		that.clearAlert = function () {
+			that.alert(null);
+			that.alertType('none');
+			that.alertBehavior('terminate');
+			that.name(null);
+			that.userNotes(null);
+			that.createDate(null);
+			that.alertSystemKey(null);
+			that.conditions([]);
+			that.publishers([]);
+			that.schedules([]);
+			that.processing(false);
+			that.error(null);
+		};
+		that.createAlert = function () {
+			that.processing(true);
+			that.error(null);
+
+			var alertType = that.alertType();
+
+			if (alertType === 'none') {
+				alertType = null;
+			}
+
+			var alertBehavior = that.alertBehavior();
+
+			if (alertType === 'news' && alertBehavior === 'automatic') {
+				alertBehavior = null;
+			}
+
+			if (alertBehavior === 'automatic') {
+				alertBehavior = 'terminate';
+			}
+
+			var schedules;
+
+			if (alertBehavior === 'schedule') {
+				schedules = _.map(that.schedules(), function (schedule) {
+					return {
+						time: schedule.time(),
+						day: schedule.day(),
+						timezone: schedule.timezone()
+					};
+				});
+			} else {
+				schedules = [];
+			}
+
+			var alert = {
+				alert_type: alertType,
+				user_notes: that.userNotes() || null,
+				user_id: userId,
+				alert_system: system,
+				automatic_reset: that.automaticReset(),
+				conditions: _.map(that.conditions(), function (condition) {
+					var property = condition.property();
+					var operator = condition.operator();
+					var operand = condition.operand();
+
+					if (operator.operand_type === 'Array' && _.isString(operand)) {
+						operand = _.map(operand.split(','), function (item) {
+							return _.trim(item);
+						});
+					}
+
+					if (property.type === 'percent') {
+						operand = parseFloat(operand) / 100;
+						operand = operand.toString();
+					}
+
+					var conditionData = {
+						property: {
+							property_id: property.property_id,
+							target: {
+								identifier: condition.targetIdentifier()
+							}
+						},
+						operator: {
+							operator_id: operator.operator_id,
+							operand: operand
+						}
+					};
+
+					var modifiers = _.filter(condition.modifiers(), function (modifier) {
+						return modifier.modifier() !== null;
+					});
+
+					if (_.isArray(modifiers) && modifiers.length > 0) {
+						conditionData.operator.modifiers = _.map(modifiers, function (modifier) {
+							var value = modifier.value();
+							var m = modifier.modifier();
+
+							if (m.type === 'percent') {
+								value = parseFloat(value) / 100;
+								value = value.toString();
+							}
+
+							return {
+								modifier_id: m.modifier_id,
+								value: value
+							};
+						});
+					}
+
+					var qualifiers = condition.qualifiers();
+
+					if (qualifiers.length > 0) {
+						conditionData.property.target.qualifiers = _.map(qualifiers, function (qualifier) {
+							return qualifier.qualifierValue();
+						});
+					}
+
+					return conditionData;
+				}),
+				publishers: _.map(that.publishers(), function (publisher) {
+					return {
+						type: {
+							publisher_type_id: publisher.publisherType().publisher_type_id
+						},
+						use_default_recipient: publisher.useDefaultRecipient(),
+						recipient: publisher.recipient(),
+						format: publisher.format()
+					};
+				}),
+				schedules: schedules
+			};
+
+			var name = that.name();
+
+			if (_.isString(name) && name.length !== 0) {
+				alert.name = name;
+			}
+
+			var alertSystemKey = that.alertSystemKey();
+
+			if (_.isString(alertSystemKey) && alertSystemKey !== 0) {
+				alert.alert_system_key = alertSystemKey;
+			}
+
+			if (alertBehavior !== null) {
+				alert.alert_behavior = alertBehavior;
+			}
+
+			var executeValidationPromise = function executeValidationPromise() {
+				return _.reduce(_.map(_.filter(that.conditions(), function (condition) {
+					var property = condition.property();
+
+					return property.target.type === 'symbol';
+				}), function (condition) {
+					return alertManager.checkSymbol(condition.targetIdentifier()).then(function (translatedSymbol) {
+						var userSymbol = condition.targetIdentifier();
+
+						if (userSymbol !== translatedSymbol) {
+							_.forEach(alert.conditions, function (condition) {
+								if (condition.property.target.identifier === userSymbol) {
+									condition.property.target.identifier = translatedSymbol;
+								}
+							});
+						}
+
+						return true;
+					});
+				}), function (aggregatePromise, symbolPromise) {
+					var returnRef;
+
+					if (aggregatePromise) {
+						returnRef = aggregatePromise.then(function () {
+							return symbolPromise;
+						});
+					} else {
+						returnRef = symbolPromise;
+					}
+
+					return returnRef;
+				}, null);
+			};
+
+			var executeCreatePromise = function executeCreatePromise() {
+				return alertManager.createAlert(alert).then(function (created) {
+					that.alert(created);
+				});
+			};
+
+			var promise = executeValidationPromise();
+
+			if (promise === null) {
+				promise = executeCreatePromise();
+			} else {
+				promise = promise.then(function () {
+					return executeCreatePromise();
+				});
+			}
+
+			promise.catch(function (e) {
+				that.error(e);
+			}).then(function () {
+				that.processing(false);
+			});
+		};
+
+		that.selectAlertType = function (alertType) {
+			that.alertType(alertType);
+		};
+		that.selectAlertBehavior = function (alertBehavior) {
+			that.alertBehavior(alertBehavior);
+		};
+		that.addCondition = function (conditionToAdd) {
+			that.conditions.push(new AlertConditionModel(that.ready, conditionToAdd || null));
+		};
+		that.removeCondition = function (conditionToRemove) {
+			that.conditions.remove(conditionToRemove);
+		};
+		that.addPublisher = function (publisherToAdd) {
+			that.publishers.push(new AlertPublisherModel(that.ready, publisherToAdd || null));
+		};
+		that.removePublisher = function (publisherToRemove) {
+			that.publishers.remove(publisherToRemove);
+		};
+		that.addSchedule = function (scheduleToAdd) {
+			that.schedules.push(new AlertScheduleModel(that.ready, scheduleToAdd || null));
+		};
+		that.removeSchedule = function (scheduleToRemove) {
+			that.schedules.remove(scheduleToRemove);
+		};
+
+		that.complete = ko.computed(function () {
+			return _.isObject(that.alert());
+		});
+		that.ready = ko.computed(function () {
+			return !that.complete() && !that.processing();
+		});
+		that.canSave = ko.computed(function () {
+			return that.ready();
+		});
+
+		if (_.isObject(alert)) {
+			that.name(alert.name);
+
+			var alertBehavior = alert.alert_behavior || terminate;
+
+			if (alertBehavior === 'terminate' && alert.automatic_reset) {
+				alertBehavior = 'automatic';
+			}
+
+			that.alertBehavior(alertBehavior);
+
+			if (_.isString(alert.user_notes)) {
+				that.userNotes(alert.user_notes);
+			}
+
+			if (_.isString(alert.alert_system_key)) {
+				that.alertSystemKey(alert.alert_system_key);
+			}
+
+			that.alertType(alert.alert_type || 'none');
+
+			that.createDate(new Date(parseInt(alert.create_date)));
+
+			_.forEach(alert.conditions, function (condition) {
+				that.addCondition(condition);
+			});
+			_.forEach(alert.publishers, function (publisher) {
+				that.addPublisher(publisher);
+			});
+			_.forEach(alert.schedules, function (schedule) {
+				that.addSchedule(schedule);
+			});
+		}
+	}
+	function AlertScheduleModel(ready, schedule) {
+		var that = this;
+
+		that.time = ko.observable(null);
+
+		that.day = ko.observable('Monday');
+		that.days = ko.observable(['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday']);
+
+		that.timezones = ko.observable(timezone.getTimezones());
+		that.timezone = ko.observable(timezone.guessTimezone());
+
+		that.selectDay = function (day) {
+			that.day(day);
+		};
+		that.selectTimezone = function (timezone) {
+			that.timezone(timezone);
+		};
+
+		that.ready = ready;
+
+		if (_.isObject(schedule)) {
+			that.time(schedule.time);
+			that.day(schedule.day);
+			that.timezone(schedule.timezone);
+		}
+	}
+	function AlertConditionModel(ready, condition) {
+		var that = this;
+
+		that.target = ko.observable(null);
+		that.targetIdentifier = ko.observable(null);
+
+		that.properties = ko.observableArray([]);
+		that.property = ko.observable(null);
+
+		that.operator = ko.observable(null);
+		that.operand = ko.observable(null);
+
+		that.modifiers = ko.observableArray([]);
+
+		that.ready = ready;
+
+		that.targets = ko.computed(function () {
+			return targets();
+		});
+		that.operators = ko.computed(function () {
+			var p = that.property();
+			var o = operators() || [];
+
+			var returnRef;
+
+			if (p) {
+				returnRef = utilities.getOperatorsForProperty(o, p);
+			} else {
+				returnRef = [];
+			}
+
+			that.operator(_.first(returnRef) || null);
+
+			return returnRef;
+		});
+		that.qualifiers = ko.computed(function () {
+			var target = that.target();
+
+			var returnRef;
+
+			if (target) {
+				return _.map(target.qualifier_descriptions || [], function (description, index) {
+					var value;
+
+					if (_.isObject(condition) && _.isArray(condition.property.target.qualifiers)) {
+						value = condition.property.target.qualifiers[index];
+					} else {
+						value = null;
+					}
+
+					return new AlertTargetQualifierModel(ready, description, value);
+				});
+			} else {
+				returnRef = [];
+			}
+
+			return returnRef;
+		});
+		that.propertyTree = ko.computed(function () {
+			var target = that.target();
+
+			var targetProperties;
+
+			if (target) {
+				targetProperties = utilities.getPropertiesForTarget(properties(), that.target());
+			} else {
+				targetProperties = [];
+			}
+
+			return utilities.getPropertyTree(targetProperties);
+		});
+
+		that.selectTarget = function (target) {
+			that.target(target);
+
+			that.properties([]);
+			that.properties.push(new AlertConditionTreeModel(that, that.propertyTree(), 'Category', 0));
+
+			that.property(null);
+			that.operator(null);
+		};
+		that.selectPropertyTree = function (tree, index) {
+			if (tree.items) {
+				var next = index + 1;
+
+				that.properties.splice(next);
+				that.properties.push(new AlertConditionTreeModel(that, tree.items, 'Property', next));
+
+				that.property(null);
+				that.operand(null);
+			} else {
+				that.property(tree.item);
+				that.operand(_.first(that.operator().operand_options) || null);
+			}
+		};
+		that.selectOperator = function (operator) {
+			that.operator(operator);
+			that.operand(_.first(that.operator().operand_options) || null);
+
+			that.modifiers([]);
+
+			if (!operator.modifiers.length !== 0) {
+				var all = modifiers();
+
+				var eligible;
+
+				if (all.length > 0 && operator.modifiers.length > 0) {
+					eligible = _.filter(all, function (x) {
+						return _.some(operator.modifiers, function (e) {
+							return x.modifier_id === e;
+						});
+					});
+				} else {
+					eligible = [];
+				}
+
+				that.modifiers.push(new AlertConditionModifierModel(that, eligible));
+			}
+		};
+		that.selectOperand = function (operand) {
+			that.operand(operand);
+		};
+
+		if (_.isObject(condition)) {
+			that.target(_.find(targets(), function (target) {
+				return target.target_id === condition.property.target.target_id;
+			}));
+			that.property(_.find(properties(), function (property) {
+				return property.property_id === condition.property.property_id;
+			}));
+			that.operator(_.find(operators(), function (operator) {
+				return operator.operator_id === condition.operator.operator_id;
+			}));
+
+			that.targetIdentifier(condition.property.target.identifier);
+
+			var operand = condition.operator.operand_display || condition.operator.operand;
+
+			if (_.isArray(operand)) {
+				operand = operand.join(',');
+			}
+
+			var p = that.property();
+
+			if (p && p.type === 'percent') {
+				operand = parseFloat(operand) * 100;
+			}
+
+			that.operand(operand);
+
+			_.forEach(condition.operator.modifiers || [], function (modifier) {
+				that.modifiers.push(new AlertConditionModifierModel(that, [modifier], modifier));
+			});
+
+			var getNode = function getNode(items, description) {
+				return _.find(items, function (item) {
+					return item.description === description;
+				});
+			};
+
+			var node = getNode(that.propertyTree(), condition.property.group);
+			var descriptionPath = [].concat(condition.property.category || []).concat(condition.property.description);
+
+			for (var i = 0; i < descriptionPath.length; i++) {
+				var n = getNode(node.items, descriptionPath[i]);
+
+				that.properties.push(new AlertConditionTreeModel(that, node.items, 'Property', i, n));
+
+				node = n;
+			}
+		} else {
+			that.selectTarget(_.first(that.targets()));
+		}
+	}
+	function AlertConditionModifierModel(parent, eligible, m) {
+		var that = this;
+
+		that.parent = parent;
+
+		that.modifiers = ko.observable(eligible);
+		that.modifier = ko.observable(null);
+		that.value = ko.observable(null);
+
+		if (eligible.length > 0) {
+			that.modifier(eligible[0]);
+		}
+
+		that.selectModifier = function (modifier) {
+			that.modifier(modifier);
+		};
+
+		that.modifierDisplay = ko.computed(function () {
+			var modifier = that.modifier();
+
+			var returnRef;
+
+			if (modifier) {
+				returnRef = modifier.display;
+			} else {
+				returnRef = '--none--';
+			}
+
+			return returnRef;
+		});
+		that.showValue = ko.computed(function () {
+			var modifier = that.modifier();
+
+			return modifier !== null;
+		});
+		that.showPercent = ko.computed(function () {
+			var modifier = that.modifier();
+
+			return modifier !== null && modifier.type === 'percent';
+		});
+
+		if (_.isObject(m) && m.value) {
+			var v = m.value;
+
+			if (m.type === 'percent') {
+				v = parseFloat(v) * 100;
+			}
+
+			that.modifier(m);
+			that.value(v);
+		}
+	}
+	function AlertTargetQualifierModel(ready, description, value) {
+		var that = this;
+
+		that.ready = ready;
+
+		that.qualifierDescription = ko.observable(description);
+		that.qualifierValue = ko.observable(value || null);
+	}
+	function AlertConditionTreeModel(parent, tree, description, index, node) {
+		var that = this;
+
+		that.parent = parent;
+
+		that.tree = ko.observable(tree);
+		that.node = ko.observable(node || null);
+
+		that.description = ko.computed(function () {
+			var property = that.node();
+
+			var returnRef;
+
+			if (property) {
+				returnRef = property.description;
+			} else {
+				returnRef = 'Select ' + description;
+			}
+
+			return returnRef;
+		});
+
+		that.selectTree = function (node) {
+			that.node(node);
+
+			that.parent.selectPropertyTree(node, index);
+		};
+
+		that.showOperator = ko.computed(function () {
+			var node = that.node();
+
+			var property = that.parent.property();
+			var operator = that.parent.operator();
+
+			return _.isObject(node) && _.isObject(node.item) && node.item === property && _.isObject(operator) && operator.operator_type === 'binary';
+		});
+		that.showOptions = ko.computed(function () {
+			var operator = that.parent.operator();
+
+			return _.isObject(operator) && _.isArray(operator.operand_options) && operator.operand_options.length > 0;
+		});
+		that.showModifiers = ko.computed(function () {
+			var node = that.node();
+
+			var property = that.parent.property();
+			var operator = that.parent.operator();
+
+			return _.isObject(node) && _.isObject(node.item) && node.item === property && _.isObject(operator) && operator.modifiers.length > 0;
+		});
+		that.showPercent = ko.computed(function () {
+			var property = that.parent.property();
+
+			return property !== null && property.type === 'percent';
+		});
+	}
+	function AlertPublisherModel(ready, publisher) {
+		var that = this;
+
+		that.publisherTypes = publisherTypes;
+		that.publisherType = ko.observable(_.first(that.publisherTypes()));
+		that.useDefaultRecipient = ko.observable(false);
+		that.recipient = ko.observable();
+		that.format = ko.observable();
+
+		that.ready = ready;
+
+		that.selectPublisherType = function (publisherType) {
+			that.publisherType(publisherType);
+		};
+
+		that.toggleDefaultRecipient = function () {
+			if (!ready() || !_.isString(that.publisherType().default_recipient)) {
+				return;
+			}
+
+			that.useDefaultRecipient(!that.useDefaultRecipient());
+
+			if (that.useDefaultRecipient()) {
+				that.recipient(that.publisherType().default_recipient);
+			} else {
+				that.recipient('');
+			}
+		};
+
+		that.recipientReady = ko.computed(function () {
+			var ready = that.ready();
+			var useDefaultRecipient = that.useDefaultRecipient();
+
+			return ready && !useDefaultRecipient;
+		});
+
+		if (_.isObject(publisher)) {
+			that.publisherType(_.find(publisherTypes(), function (candidate) {
+				return candidate.publisher_type_id === publisher.type.publisher_type_id;
+			}));
+
+			that.useDefaultRecipient(publisher.use_default_recipient);
+			that.recipient(publisher.recipient);
+			that.format(publisher.format);
+		}
+	}
+	function AlertPublisherTypeDefaultsModel(publisherTypeDefaults) {
+		var that = this;
+
+		that.processing = ko.observable(false);
+
+		that.ready = ko.computed(function () {
+			return !that.processing();
+		});
+
+		that.publisherTypeDefaults = ko.observable(_.map(publisherTypeDefaults, function (publisherTypeDefault) {
+			return new AlertPublisherTypeDefaultModel(publisherTypeDefault, that.ready);
+		}));
+
+		that.savePreferences = function () {
+			var defaultPublisherTypes = that.publisherTypeDefaults();
+			var publishersToSave = defaultPublisherTypes.length;
+
+			var checkComplete = function checkComplete() {
+				publishersToSave = publishersToSave - 1;
+
+				if (publishersToSave === 0) {
+					alertManager.getPublisherTypeDefaults({ user_id: userId, alert_system: system }).then(function (pt) {
+						publisherTypes(pt);
+
+						that.processing(false);
+					});
+				}
+			};
+
+			if (publishersToSave.length !== 0) {
+				that.processing(true);
+
+				_.forEach(defaultPublisherTypes, function (defaultPublisherType) {
+					if (_.isString(defaultPublisherType.defaultRecipient())) {
+						var activeAlertTypes = [];
+
+						if (defaultPublisherType.priceActive()) {
+							activeAlertTypes.push('price');
+						}
+
+						if (defaultPublisherType.newsActive()) {
+							activeAlertTypes.push('news');
+						}
+
+						if (defaultPublisherType.matchActive()) {
+							activeAlertTypes.push('match');
+						}
+
+						var ptd = {
+							publisher_type_id: defaultPublisherType.publisherTypeId(),
+							alert_system: system,
+							user_id: userId,
+							default_recipient: defaultPublisherType.defaultRecipient(),
+							allow_window_timezone: defaultPublisherType.allowTimezone() || null,
+							allow_window_start: defaultPublisherType.allowStartTime() || null,
+							allow_window_end: defaultPublisherType.allowEndTime() || null,
+							active_alert_types: activeAlertTypes
+						};
+
+						var hmac = defaultPublisherType.defaultRecipientHmac();
+
+						if (_.isString(hmac) && hmac.length > 0) {
+							ptd.default_recipient_hmac = hmac;
+						}
+
+						alertManager.assignPublisherTypeDefault(ptd).then(function (savedPublisherTypeDefault) {
+							checkComplete();
+						});
+					} else {
+						checkComplete();
+					}
+				});
+			}
+		};
+	}
+	function AlertPublisherTypeDefaultModel(publisherTypeDefault, ready) {
+		var that = this;
+
+		that.ready = ready;
+
+		that.timezones = ko.observable(timezone.getTimezones());
+
+		that.publisherTypeId = ko.observable(publisherTypeDefault.publisher_type_id);
+		that.transport = ko.observable(publisherTypeDefault.transport);
+		that.provider = ko.observable(publisherTypeDefault.provider);
+		that.defaultRecipient = ko.observable(publisherTypeDefault.default_recipient);
+		that.defaultRecipientHmac = ko.observable(publisherTypeDefault.default_recipient_hmac);
+		that.allowTimezone = ko.observable(publisherTypeDefault.allow_window_timezone || timezone.guessTimezone());
+		that.allowStartTime = ko.observable(publisherTypeDefault.allow_window_start);
+		that.allowEndTime = ko.observable(publisherTypeDefault.allow_window_end);
+		that.priceActive = ko.observable(_.includes(publisherTypeDefault.active_alert_types, 'price'));
+		that.newsActive = ko.observable(_.includes(publisherTypeDefault.active_alert_types, 'news'));
+		that.matchActive = ko.observable(_.includes(publisherTypeDefault.active_alert_types, 'match'));
+
+		that.selectTimezone = function (timezone) {
+			that.allowTimezone(timezone);
+		};
+	}
+	function MarketDataConfigurationModel(mdc) {
+		var that = this;
+
+		that.processing = ko.observable(false);
+
+		that.ready = ko.computed(function () {
+			return !that.processing();
+		});
+
+		that.userId = ko.observable(userId);
+		that.systemId = ko.observable(system);
+		that.marketDataId = ko.observable(null);
+
+		that.savePreferences = function () {
+			that.processing(true);
+
+			alertManager.assignMarketDataConfiguration({ user_id: userId, alert_system: system, market_data_id: that.marketDataId() }).then(function (mdc) {
+				marketDataConfiguration(mdc);
+
+				that.processing(false);
+			});
+		};
+
+		if (mdc && mdc.market_data_id) {
+			that.marketDataId(mdc.market_data_id);
+		}
+	}
+
+	var reset = function reset() {
+		ko.cleanNode($('body')[0]);
+
+		alertManager = createAlertManager();
+
+		return createJwtProvider().then(function (jwtProvider) {
+			return alertManager.connect(jwtProvider).then(function () {
+				var pageModel = new PageModel(true);
+
+				alertManager.subscribeAlerts({ user_id: userId, alert_system: system }, function (changedAlert) {
+					pageModel.handleAlertChange(changedAlert);
+				}, function (deletedAlert) {
+					pageModel.handleAlertDelete(deletedAlert);
+				}, function (createdAlert) {
+					pageModel.handleAlertCreate(createdAlert);
+				}, function (triggeredAlert) {
+					pageModel.handleAlertTrigger(triggeredAlert);
+				});
+
+				alertManager.getServerVersion().then(function (version) {
+					pageModel.version({ api: version.semver, client: version });
+				});
+
+				alertManager.getTargets().then(function (t) {
+					targets(t);
+				});
+
+				alertManager.getProperties().then(function (p) {
+					properties(p);
+				});
+
+				alertManager.getOperators().then(function (o) {
+					operators(o);
+				});
+
+				alertManager.getModifiers().then(function (m) {
+					modifiers(m);
+				});
+
+				alertManager.getPublisherTypeDefaults({ user_id: userId, alert_system: system }).then(function (pt) {
+					publisherTypes(pt);
+				});
+
+				alertManager.getMarketDataConfiguration({ user_id: userId, alert_system: system }).then(function (mdc) {
+					marketDataConfiguration(mdc);
+				});
+
+				return pageModel;
+			});
+		}).catch(function (e) {
+			var pageModel = new PageModel(false, e);
+
+			return pageModel;
+		}).then(function (pageModel) {
+			ko.applyBindings(pageModel, $('body')[0]);
+		});
+	};
+
+	$(document).ready(function () {
+		reset();
+	});
+}();
+
+},{"./../../../lib/alerts/AlertManager":2,"./../../../lib/alerts/JwtProvider":3,"./../../../lib/index":13,"@barchart/common-js/api/http/builders/EndpointBuilder":18,"@barchart/common-js/api/http/definitions/ProtocolType":23,"@barchart/common-js/api/http/definitions/VerbType":24,"@barchart/common-js/api/http/interceptors/ResponseInterceptor":30,"@barchart/common-js/lang/timezone":51,"@barchart/tgam-jwt-js/lib/JwtGateway":72}],2:[function(require,module,exports){
 'use strict';
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
@@ -14,7 +1108,8 @@ var array = require('@barchart/common-js/lang/array'),
     is = require('@barchart/common-js/lang/is'),
     connection = require('@barchart/common-js/lang/connection'),
     Disposable = require('@barchart/common-js/lang/Disposable'),
-    Event = require('@barchart/common-js/messaging/Event');
+    Event = require('@barchart/common-js/messaging/Event'),
+    promise = require('@barchart/common-js/lang/promise');
 
 var converter = require('@barchart/marketdata-utilities-js/lib/convert'),
     SearchManager = require('@barchart/instruments-client-js/lib/search/SearchManager'),
@@ -23,7 +1118,8 @@ var converter = require('@barchart/marketdata-utilities-js/lib/convert'),
 
 var validate = require('./validators/validate');
 
-var RestAdapter = require('./adapters/RestAdapter'),
+var JwtProvider = require('./JwtProvider'),
+    RestAdapter = require('./adapters/RestAdapter'),
     SocketAdapter = require('./adapters/SocketAdapter');
 
 module.exports = function () {
@@ -32,13 +1128,13 @@ module.exports = function () {
 	var productionHostExpression = /(prod)/i;
 
 	/**
-  * <p>The entry point for interacting with the alerts system.</p>
+  * The entry point for interacting with the alerts system.
   *
   * @public
-  * @param {String} host - Optional. The name of the remote server.
-  * @param {Number} port - Optional. The TCP port used to connect to the remote server.
-  * @param {String} mode - Optional. The transport abstraction used to exchange data with the remote server. Valid options are "socket.io" or "rest" where the first maintains a websocket connection and the second uses XHR requests and short polling.
-  * @param {Boolean} secure - Optional. If true, the transport layer will use encryption (e.g. HTTPS or WSS).
+  * @param {String=} host - Optional. The name of the remote server.
+  * @param {Number=} port - Optional. The TCP port used to connect to the remote server.
+  * @param {String=} mode - Optional. The transport abstraction used to exchange data with the remote server. Valid options are "socket.io" or "rest" where the first maintains a websocket connection and the second uses XHR requests and short polling.
+  * @param {Boolean=} secure - Optional. If true, the transport layer will use encryption (e.g. HTTPS or WSS).
   */
 
 	var AlertManager = function (_Disposable) {
@@ -69,12 +1165,23 @@ module.exports = function () {
 			return _this;
 		}
 
+		/**
+   * Conntects to the remove server, using the transport mode specified in the constructor.
+   *
+   * @public
+   * @param {JwtProvider=} jwtProvider
+   * @returns {Promise}
+   */
+
+
 		_createClass(AlertManager, [{
 			key: 'connect',
-			value: function connect() {
+			value: function connect(jwtProvider) {
 				var _this2 = this;
 
 				return Promise.resolve().then(function () {
+					assert.argumentIsOptional(jwtProvider, 'jwtProvider', JwtProvider, 'JwtProvider');
+
 					checkDispose(_this2, 'connect');
 				}).then(function () {
 					if (_this2._connectPromise === null) {
@@ -91,7 +1198,7 @@ module.exports = function () {
 								throw new Error('Unable to connect, using unsupported mode (' + mode + ')');
 							}
 
-							return timeout(adapter.connect(), 10000, 'Alert service is temporarily unavailable. Please try again later.');
+							return timeout(adapter.connect(jwtProvider), 10000, 'Alert service is temporarily unavailable. Please try again later.');
 						});
 
 						var searchManagerPromise = Promise.resolve().then(function () {
@@ -759,8 +1866,8 @@ module.exports = function () {
 		}
 	}
 
-	function timeout(promise, duration, description) {
-		return Promise.race([promise, new Promise(function (resolveCallback, rejectCallback) {
+	function timeout(p, duration, description) {
+		return Promise.race([p, promise.build(function (resolveCallback, rejectCallback) {
 			setTimeout(function () {
 				rejectCallback(description);
 			}, duration);
@@ -786,7 +1893,115 @@ module.exports = function () {
 	return AlertManager;
 }();
 
-},{"./adapters/RestAdapter":3,"./adapters/SocketAdapter":4,"./validators/validate":11,"@barchart/common-js/lang/Disposable":20,"@barchart/common-js/lang/array":24,"@barchart/common-js/lang/assert":25,"@barchart/common-js/lang/connection":27,"@barchart/common-js/lang/is":29,"@barchart/common-js/messaging/Event":33,"@barchart/instruments-client-js/lib/search/SearchManager":45,"@barchart/marketdata-utilities-js/lib/convert":49,"@barchart/marketdata-utilities-js/lib/priceFormatter":51,"@barchart/marketdata-utilities-js/lib/priceParser":52}],2:[function(require,module,exports){
+},{"./JwtProvider":3,"./adapters/RestAdapter":5,"./adapters/SocketAdapter":6,"./validators/validate":12,"@barchart/common-js/lang/Disposable":39,"@barchart/common-js/lang/array":43,"@barchart/common-js/lang/assert":44,"@barchart/common-js/lang/connection":46,"@barchart/common-js/lang/is":48,"@barchart/common-js/lang/promise":50,"@barchart/common-js/messaging/Event":52,"@barchart/instruments-client-js/lib/search/SearchManager":64,"@barchart/marketdata-utilities-js/lib/convert":68,"@barchart/marketdata-utilities-js/lib/priceFormatter":70,"@barchart/marketdata-utilities-js/lib/priceParser":71}],3:[function(require,module,exports){
+'use strict';
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
+var assert = require('@barchart/common-js/lang/assert'),
+    Disposable = require('@barchart/common-js/lang/Disposable'),
+    Scheduler = require('@barchart/common-js/timing/Scheduler');
+
+module.exports = function () {
+	'use strict';
+
+	/**
+  * Provides JWT tokens to the adapters (i.e. {@link AdapterBase} implementations).
+  *
+  * @public
+  * @param {JwtProvider~tokenGenerator} callback
+  * @param {Number} interval
+  * @param {String} source
+  */
+
+	var JwtProvider = function (_Disposable) {
+		_inherits(JwtProvider, _Disposable);
+
+		function JwtProvider(generator, interval, source) {
+			_classCallCheck(this, JwtProvider);
+
+			var _this = _possibleConstructorReturn(this, (JwtProvider.__proto__ || Object.getPrototypeOf(JwtProvider)).call(this));
+
+			assert.argumentIsRequired(generator, 'generator', Function);
+			assert.argumentIsRequired(interval, 'interval', Number);
+			assert.argumentIsRequired(source, 'source', String);
+
+			_this._generator = generator;
+			_this._interval = interval;
+			_this._source = source;
+
+			_this._tokenPromise = null;
+			_this._tokenTimestamp = null;
+
+			_this._scheduler = new Scheduler();
+			return _this;
+		}
+
+		_createClass(JwtProvider, [{
+			key: 'getToken',
+
+
+			/**
+    * Reads the current JWT token, refreshing if necessary.
+    *
+    * @public
+    * @return {Promise.<String>}
+    */
+			value: function getToken() {
+				var _this2 = this;
+
+				return Promise.resolve().then(function () {
+					var time = new Date().getTime();
+
+					if (_this2._tokenPromise === null || _this2._timestamp === null || _this2._tokenTimestamp + _this2._interval < time) {
+						_this2._tokenTimestamp = time;
+
+						_this2._tokenPromise = _this2._scheduler.backoff(function () {
+							return _this2._generator();
+						}, 100, 'Read JWT token', 3);
+					}
+
+					return _this2._tokenPromise;
+				});
+			}
+		}, {
+			key: '_onDispose',
+			value: function _onDispose() {
+				this._scheduler.dispose();
+				this._scheduler = null;
+			}
+		}, {
+			key: 'toString',
+			value: function toString() {
+				return '[JwtProvider]';
+			}
+		}, {
+			key: 'source',
+			get: function get() {
+				return this._source;
+			}
+		}]);
+
+		return JwtProvider;
+	}(Disposable);
+
+	/**
+  * A function returns a JWT token (or a promise for a JWT token).
+  *
+  * @callback JwtProvider~tokenGenerator
+  * @returns {String|Promise.<String>}
+  */
+
+	return JwtProvider;
+}();
+
+},{"@barchart/common-js/lang/Disposable":39,"@barchart/common-js/lang/assert":44,"@barchart/common-js/timing/Scheduler":62}],4:[function(require,module,exports){
 'use strict';
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
@@ -825,7 +2040,7 @@ module.exports = function () {
 
 		_createClass(AdapterBase, [{
 			key: 'connect',
-			value: function connect() {
+			value: function connect(jwtProvider) {
 				return Promise.reject();
 			}
 		}, {
@@ -926,7 +2141,7 @@ module.exports = function () {
 	return AdapterBase;
 }();
 
-},{"@barchart/common-js/lang/Disposable":20,"@barchart/common-js/lang/assert":25}],3:[function(require,module,exports){
+},{"@barchart/common-js/lang/Disposable":39,"@barchart/common-js/lang/assert":44}],5:[function(require,module,exports){
 'use strict';
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
@@ -1313,7 +2528,7 @@ module.exports = function () {
 	return RestAdapter;
 }();
 
-},{"./AdapterBase":2,"@barchart/common-js/lang/Disposable":20,"@barchart/common-js/lang/array":24,"@barchart/common-js/lang/assert":25,"@barchart/common-js/network/rest/RestAction":34,"@barchart/common-js/network/rest/RestEndpoint":35,"@barchart/common-js/network/rest/RestProvider":37,"@barchart/common-js/timing/Scheduler":43}],4:[function(require,module,exports){
+},{"./AdapterBase":4,"@barchart/common-js/lang/Disposable":39,"@barchart/common-js/lang/array":43,"@barchart/common-js/lang/assert":44,"@barchart/common-js/network/rest/RestAction":53,"@barchart/common-js/network/rest/RestEndpoint":54,"@barchart/common-js/network/rest/RestProvider":56,"@barchart/common-js/timing/Scheduler":62}],6:[function(require,module,exports){
 'use strict';
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
@@ -1328,9 +2543,11 @@ var io = require('socket.io-client'),
     uuid = require('uuid');
 
 var assert = require('@barchart/common-js/lang/assert'),
-    Disposable = require('@barchart/common-js/lang/Disposable');
+    Disposable = require('@barchart/common-js/lang/Disposable'),
+    promise = require('@barchart/common-js/lang/promise');
 
-var AdapterBase = require('./AdapterBase');
+var AdapterBase = require('./AdapterBase'),
+    JwtProvider = require('./../JwtProvider');
 
 module.exports = function () {
 	'use strict';
@@ -1415,15 +2632,21 @@ module.exports = function () {
 
 			_this._requestMap = {};
 			_this._subscriberMap = {};
+
+			_this._jwtProvider = null;
 			return _this;
 		}
 
 		_createClass(SocketAdapter, [{
 			key: 'connect',
-			value: function connect() {
+			value: function connect(jwtProvider) {
 				var _this2 = this;
 
-				return new Promise(function (resolveCallback, rejectCallback) {
+				return promise.build(function (resolveCallback, rejectCallback) {
+					assert.argumentIsOptional(jwtProvider, 'jwtProvider', JwtProvider, 'JwtProvider');
+
+					_this2._jwtProvider = jwtProvider || null;
+
 					if (_this2._connectionState.getCanConnect()) {
 						var protocol = void 0;
 
@@ -1608,23 +2831,48 @@ module.exports = function () {
 	}(AdapterBase);
 
 	function sendToServer(channel, payload) {
+		var _this4 = this;
+
 		if (this._connectionState.getCanTransmit()) {
-			return Promise.resolve(this._socket.emit(channel, payload));
+			return Promise.resolve().then(function () {
+				var jwtPromise = void 0;
+
+				if (_this4._jwtProvider === null) {
+					jwtPromise = Promise.resolve(null);
+				} else {
+					jwtPromise = _this4._jwtProvider.getToken().then(function (token) {
+						var data = {};
+
+						data.token = token;
+						data.source = _this4._jwtProvider.source;
+
+						return data;
+					});
+				}
+
+				return jwtPromise;
+			}).then(function (jwtData) {
+				if (jwtData !== null) {
+					payload.jwt = jwtData;
+				}
+
+				return _this4._socket.emit(channel, payload);
+			});
 		} else {
 			return Promise.reject('Unable to send data. The socket is not connected.');
 		}
 	}
 
 	function sendRequestToServer(channel, payload) {
-		var _this4 = this;
+		var _this5 = this;
 
-		return new Promise(function (resolveCallback, rejectCallback) {
+		return promise.build(function (resolveCallback, rejectCallback) {
 			var requestId = uuid.v4();
 
-			_this4._requestMap[requestId] = resolveCallback;
+			_this5._requestMap[requestId] = resolveCallback;
 
-			return sendToServer.call(_this4, 'request/' + channel, { requestId: requestId, request: payload }).catch(function (e) {
-				delete _this4._requestMap[requestId];
+			return sendToServer.call(_this5, 'request/' + channel, { requestId: requestId, request: payload }).catch(function (e) {
+				delete _this5._requestMap[requestId];
 
 				throw e;
 			});
@@ -1692,11 +2940,11 @@ module.exports = function () {
 		function AlertSubscriber(parent, query) {
 			_classCallCheck(this, AlertSubscriber);
 
-			var _this5 = _possibleConstructorReturn(this, (AlertSubscriber.__proto__ || Object.getPrototypeOf(AlertSubscriber)).call(this));
+			var _this6 = _possibleConstructorReturn(this, (AlertSubscriber.__proto__ || Object.getPrototypeOf(AlertSubscriber)).call(this));
 
-			_this5._parent = parent;
-			_this5._query = query;
-			return _this5;
+			_this6._parent = parent;
+			_this6._query = query;
+			return _this6;
 		}
 
 		_createClass(AlertSubscriber, [{
@@ -1707,24 +2955,24 @@ module.exports = function () {
 		}, {
 			key: 'subscribe',
 			value: function subscribe() {
-				var _this6 = this;
+				var _this7 = this;
 
 				if (this.getIsDisposed()) {
 					throw new Error('The subscriber has been disposed.');
 				}
 
 				sendSubscriptionToServer.call(this._parent, 'alerts/events', this._query).then(function () {
-					if (_this6.getIsDisposed()) {
+					if (_this7.getIsDisposed()) {
 						return;
 					}
 
-					_this6._parent.retrieveAlerts(_this6._query).then(function (alerts) {
-						if (_this6.getIsDisposed()) {
+					_this7._parent.retrieveAlerts(_this7._query).then(function (alerts) {
+						if (_this7.getIsDisposed()) {
 							return;
 						}
 
 						alerts.forEach(function (alert) {
-							_this6._parent._onAlertMutated(alert);
+							_this7._parent._onAlertMutated(alert);
 						});
 					});
 				});
@@ -1737,24 +2985,7 @@ module.exports = function () {
 	return SocketAdapter;
 }();
 
-},{"./AdapterBase":2,"@barchart/common-js/lang/Disposable":20,"@barchart/common-js/lang/assert":25,"socket.io-client":119,"uuid":140}],5:[function(require,module,exports){
-'use strict';
-
-var AlertManager = require('./AlertManager');
-
-var timezone = require('@barchart/common-js/lang/timezone');
-
-module.exports = function () {
-	'use strict';
-
-	return {
-		AlertManager: AlertManager,
-		timezone: timezone,
-		version: '1.6.10'
-	};
-}();
-
-},{"./AlertManager":1,"@barchart/common-js/lang/timezone":32}],6:[function(require,module,exports){
+},{"./../JwtProvider":3,"./AdapterBase":4,"@barchart/common-js/lang/Disposable":39,"@barchart/common-js/lang/assert":44,"@barchart/common-js/lang/promise":50,"socket.io-client":163,"uuid":184}],7:[function(require,module,exports){
 'use strict';
 
 var assert = require('@barchart/common-js/lang/assert'),
@@ -1818,7 +3049,7 @@ module.exports = function () {
 	return validator;
 }();
 
-},{"./condition":7,"./publisher":9,"@barchart/common-js/lang/assert":25,"@barchart/common-js/lang/is":29}],7:[function(require,module,exports){
+},{"./condition":8,"./publisher":10,"@barchart/common-js/lang/assert":44,"@barchart/common-js/lang/is":48}],8:[function(require,module,exports){
 'use strict';
 
 var assert = require('@barchart/common-js/lang/assert'),
@@ -1866,7 +3097,7 @@ module.exports = function () {
 	return validator;
 }();
 
-},{"@barchart/common-js/lang/assert":25,"@barchart/common-js/lang/is":29}],8:[function(require,module,exports){
+},{"@barchart/common-js/lang/assert":44,"@barchart/common-js/lang/is":48}],9:[function(require,module,exports){
 'use strict';
 
 var assert = require('@barchart/common-js/lang/assert'),
@@ -1892,7 +3123,7 @@ module.exports = function () {
 	return validator;
 }();
 
-},{"@barchart/common-js/lang/assert":25,"@barchart/common-js/lang/is":29}],9:[function(require,module,exports){
+},{"@barchart/common-js/lang/assert":44,"@barchart/common-js/lang/is":48}],10:[function(require,module,exports){
 'use strict';
 
 var assert = require('@barchart/common-js/lang/assert'),
@@ -1936,7 +3167,7 @@ module.exports = function () {
 	return validator;
 }();
 
-},{"@barchart/common-js/lang/assert":25,"@barchart/common-js/lang/is":29}],10:[function(require,module,exports){
+},{"@barchart/common-js/lang/assert":44,"@barchart/common-js/lang/is":48}],11:[function(require,module,exports){
 'use strict';
 
 var assert = require('@barchart/common-js/lang/assert'),
@@ -1993,7 +3224,7 @@ module.exports = function () {
 	return validator;
 }();
 
-},{"@barchart/common-js/lang/assert":25,"@barchart/common-js/lang/is":29}],11:[function(require,module,exports){
+},{"@barchart/common-js/lang/assert":44,"@barchart/common-js/lang/is":48}],12:[function(require,module,exports){
 'use strict';
 
 var alert = require('./alert'),
@@ -2014,18 +3245,2672 @@ module.exports = function () {
 	};
 }();
 
-},{"./alert":6,"./condition":7,"./instrument":8,"./publisher":9,"./publisherTypeDefault":10}],12:[function(require,module,exports){
+},{"./alert":7,"./condition":8,"./instrument":9,"./publisher":10,"./publisherTypeDefault":11}],13:[function(require,module,exports){
 'use strict';
-
-var alerts = require('./alerts/index');
 
 module.exports = function () {
 	'use strict';
 
-	return alerts;
+	return {
+		version: '1.6.10'
+	};
 }();
 
-},{"./alerts/index":5}],13:[function(require,module,exports){
+},{}],14:[function(require,module,exports){
+'use strict';
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+var assert = require('./../../lang/assert'),
+    attributes = require('./../../lang/attributes'),
+    is = require('./../../lang/is');
+
+var FailureReasonItem = require('./FailureReasonItem'),
+    FailureType = require('./FailureType'),
+    Schema = require('./../../serialization/json/Schema'),
+    Tree = require('./../../collections/Tree');
+
+module.exports = function () {
+	'use strict';
+
+	/**
+  * Describes all of the reasons for API failure. Since there can be multiple reasons, the reasons are
+  * stored in a tree structure.
+  *
+  * @public
+  * @param {Object=} data - Data regarding the API request itself, likely independent of the failure data (which is maintained in the tree structure).
+  */
+
+	var FailureReason = function () {
+		function FailureReason(data) {
+			_classCallCheck(this, FailureReason);
+
+			this._data = data || null;
+
+			this._head = new Tree();
+			this._current = this._head;
+		}
+
+		/**
+   * Adds a {@link FailureReasonItem} to the tree of reason(s) at the current node.
+   *
+   * @public
+   * @param {FailureType} type - The failure type.
+   * @param {Object=} data - The data associated with the failure type.
+   * @param {Boolean=} group - The reason is expected to have children; therefore, the current tree node is shifted to the newly added {@link FailureReasonItem}.
+   * @returns {FailureReason} - The current instance, allowing for method chaining.
+   */
+
+
+		_createClass(FailureReason, [{
+			key: 'addItem',
+			value: function addItem(type, data, group) {
+				assert.argumentIsRequired(type, 'type', FailureType, 'FailureType');
+				assert.argumentIsOptional(group, 'group', Boolean);
+
+				var node = this._current.addChild(new FailureReasonItem(type, data));
+
+				if (is.boolean(group) && group) {
+					this._current = node;
+				}
+
+				return this;
+			}
+
+			/**
+    * Resets the current node to the head of the tree.
+    *
+    * @public
+    * @returns {FailureReason} - The current instance, allowing for method chaining.
+    */
+
+		}, {
+			key: 'reset',
+			value: function reset() {
+				this._current = this._head;
+
+				return this;
+			}
+
+			/**
+    * Returns a tree of strings, describing the reason(s) for API failure.
+    *
+    * @public
+    * @returns {Array}
+    */
+
+		}, {
+			key: 'format',
+			value: function format() {
+				var _this = this;
+
+				var reasons = this._head.toJSObj(function (item) {
+					return {
+						code: item ? item.type.code : null,
+						message: item ? item.format(_this._data) : null
+					};
+				});
+
+				return reasons.children;
+			}
+
+			/**
+    * Indicates if the tree of {@link FailureReasonItem} instances contains
+    * at least one item with a matching {@link FailureType}.
+    *
+    * @public
+    * @param {FailureType} type
+    * @returns {Boolean}
+    */
+
+		}, {
+			key: 'hasFailureType',
+			value: function hasFailureType(type) {
+				assert.argumentIsRequired(type, 'type', FailureType, 'FailureType');
+
+				return this._head.search(function (item) {
+					return item.type === type;
+				}, false, false) !== null;
+			}
+		}, {
+			key: 'toJSON',
+			value: function toJSON() {
+				return this.format();
+			}
+
+			/**
+    * Factory function for creating instances of {@link FailureReason}.
+    *
+    * @public
+    * @static
+    * @param data
+    * @returns {FailureReason}
+    */
+
+		}, {
+			key: 'toString',
+			value: function toString() {
+				return '[FailureReason]';
+			}
+		}], [{
+			key: 'forRequest',
+			value: function forRequest(data) {
+				return new FailureReason(data);
+			}
+
+			/**
+    * Returns an HTTP status code that would be suitable for use with the
+    * failure reason.
+    *
+    * @param {FailureReason} reason
+    * @returns {Number}
+    */
+
+		}, {
+			key: 'getHttpStatusCode',
+			value: function getHttpStatusCode(reason) {
+				assert.argumentIsRequired(reason, 'reason', FailureReason, 'FailureReason');
+
+				var returnVal = null;
+
+				reason._head.walk(function (item) {
+					var code = FailureType.getHttpStatusCode(item.type);
+
+					if (returnVal === null || returnVal !== 400) {
+						returnVal = code;
+					}
+				}, false, false);
+
+				return returnVal;
+			}
+
+			/**
+    * Validates that a candidate conforms to a schema
+    * 
+    * @param {Schema} schema
+    * @param {Object} candidate
+    */
+
+		}, {
+			key: 'validateSchema',
+			value: function validateSchema(schema, candidate) {
+				var _this2 = this;
+
+				return Promise.resolve().then(function () {
+					var failure = void 0;
+
+					schema.schema.fields.map(function (field) {
+						if (field.optional) {
+							return;
+						}
+
+						if (!attributes.has(candidate, field.name) || !field.dataType.validator.call(_this2, attributes.read(candidate, field.name))) {
+							if (!failure) {
+								failure = FailureReason.forRequest({ endpoint: { description: 'serialize data into ' + schema } }).addItem(FailureType.REQUEST_INPUT_MALFORMED, {}, true);
+							}
+
+							failure.addItem(FailureType.REQUEST_PARAMETER_MALFORMED, { name: field.name });
+						}
+					});
+
+					if (failure) {
+						return Promise.reject(failure.format());
+					} else {
+						return Promise.resolve(null);
+					}
+				});
+			}
+		}]);
+
+		return FailureReason;
+	}();
+
+	return FailureReason;
+}();
+
+},{"./../../collections/Tree":32,"./../../lang/assert":44,"./../../lang/attributes":45,"./../../lang/is":48,"./../../serialization/json/Schema":61,"./FailureReasonItem":15,"./FailureType":16}],15:[function(require,module,exports){
+'use strict';
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+var assert = require('./../../lang/assert'),
+    attributes = require('./../../lang/attributes');
+
+var FailureType = require('./FailureType');
+
+module.exports = function () {
+	'use strict';
+
+	/**
+  * One of the reason(s) for API failure, including any specific data that
+  * allows a human-readable message to be generated.
+  *
+  * @public
+  * @param {FailureType} type
+  * @param {Object=} data
+  */
+
+	var FailureReasonItem = function () {
+		function FailureReasonItem(type, data) {
+			_classCallCheck(this, FailureReasonItem);
+
+			assert.argumentIsRequired(type, 'type', FailureType, 'FailureType');
+
+			this._type = type;
+			this._data = data || null;
+		}
+
+		/**
+   * The {@link FailureType} of the item.
+   *
+   * @returns {FailureType}
+   */
+
+
+		_createClass(FailureReasonItem, [{
+			key: 'format',
+
+
+			/**
+    * Formats a human-readable message, describing the failure.
+    *
+    * @public
+    * @param {Object=} root - Root data from the {@link FailureReason}.
+    * @returns {String}
+    */
+			value: function format(root) {
+				var _this = this;
+
+				return this._type.template.replace(tokenRegex, function (full, ignored, casing, token) {
+					var tokenToUse = void 0;
+					var dataToRead = void 0;
+
+					if (token.startsWith(rootPrefix)) {
+						tokenToUse = token.slice(rootLength);
+						dataToRead = root;
+					} else {
+						tokenToUse = token;
+						dataToRead = _this._data;
+					}
+
+					var replacement = attributes.read(dataToRead, tokenToUse);
+
+					if (replacement) {
+						if (casing === 'l') {
+							replacement = '' + replacement.slice(0, 1).toLowerCase() + replacement.slice(1);
+						} else if (casing === 'u') {
+							replacement = '' + replacement.slice(0, 1).toUpperCase() + replacement.slice(1);
+						} else if (casing === 'U') {
+							replacement = '' + replacement.toUpperCase();
+						} else if (casing === 'L') {
+							replacement = '' + replacement.toLowerCase();
+						}
+					}
+
+					return replacement;
+				});
+			}
+		}, {
+			key: 'toString',
+			value: function toString() {
+				return '[FailureReasonItem]';
+			}
+		}, {
+			key: 'type',
+			get: function get() {
+				return this._type;
+			}
+		}]);
+
+		return FailureReasonItem;
+	}();
+
+	var tokenRegex = /{(([U|L|l|u])\|)?([a-zA-Z.]*)}/g;
+
+	var rootPrefix = 'root.';
+	var rootLength = rootPrefix.length;
+
+	return FailureReasonItem;
+}();
+
+},{"./../../lang/assert":44,"./../../lang/attributes":45,"./FailureType":16}],16:[function(require,module,exports){
+'use strict';
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
+var assert = require('./../../lang/assert'),
+    Enum = require('./../../lang/Enum');
+
+module.exports = function () {
+	'use strict';
+
+	/**
+  * An enumeration that describes potential reasons for API failure.
+  *
+  * @public
+  * @extends {Enum}
+  * @param {String} code - The enumeration code (and description)
+  * @param {String} template - The template string for formatting human-readable messages.
+  */
+
+	var FailureType = function (_Enum) {
+		_inherits(FailureType, _Enum);
+
+		function FailureType(code, template) {
+			_classCallCheck(this, FailureType);
+
+			var _this = _possibleConstructorReturn(this, (FailureType.__proto__ || Object.getPrototypeOf(FailureType)).call(this, code, code));
+
+			assert.argumentIsRequired(template, 'template', String);
+
+			_this._template = template;
+			return _this;
+		}
+
+		/**
+   * The template string for formatting human-readable messages.
+   *
+   * @public
+   * @returns {String}
+   */
+
+
+		_createClass(FailureType, [{
+			key: 'toString',
+			value: function toString() {
+				return '[FailureType (code=' + this.code + ')]';
+			}
+		}, {
+			key: 'template',
+			get: function get() {
+				return this._template;
+			}
+
+			/**
+    * One or more data points is missing.
+    *
+    * @static
+    * @returns {FailureType}
+    */
+
+		}], [{
+			key: 'getHttpStatusCode',
+
+
+			/**
+    * Returns an HTTP status code that would be suitable for use with the
+    * failure type.
+    *
+    * @param {FailureType} type
+    * @returns {Number}
+    */
+			value: function getHttpStatusCode(type) {
+				assert.argumentIsRequired(type, 'type', FailureType, 'FailureType');
+
+				var returnVal = void 0;
+
+				if (type === FailureType.REQUEST_IDENTITY_FAILURE) {
+					returnVal = 401;
+				} else if (type === FailureType.REQUEST_AUTHORIZATION_FAILURE) {
+					returnVal = 403;
+				} else {
+					returnVal = 400;
+				}
+
+				return returnVal;
+			}
+		}, {
+			key: 'REQUEST_CONSTRUCTION_FAILURE',
+			get: function get() {
+				return requestConstructionFailure;
+			}
+
+			/**
+    * A data point is missing.
+    *
+    * @static
+    * @returns {FailureType}
+    */
+
+		}, {
+			key: 'REQUEST_PARAMETER_MISSING',
+			get: function get() {
+				return requestParameterMissing;
+			}
+
+			/**
+    * A data point is malformed.
+    *
+    * @static
+    * @returns {FailureType}
+    */
+
+		}, {
+			key: 'REQUEST_PARAMETER_MALFORMED',
+			get: function get() {
+				return requestParameterMalformed;
+			}
+
+			/**
+    * User identity could not be determined.
+    *
+    * @static
+    * @returns {FailureType}
+    */
+
+		}, {
+			key: 'REQUEST_IDENTITY_FAILURE',
+			get: function get() {
+				return requestIdentifyFailure;
+			}
+
+			/**
+    * User authorization failed.
+    *
+    * @static
+    * @returns {FailureType}
+    */
+
+		}, {
+			key: 'REQUEST_AUTHORIZATION_FAILURE',
+			get: function get() {
+				return requestAuthorizationFailure;
+			}
+
+			/**
+    * The request data cannot be parsed or interpreted.
+    *
+    * @static
+    * @returns {FailureType}
+    */
+
+		}, {
+			key: 'REQUEST_INPUT_MALFORMED',
+			get: function get() {
+				return requestInputMalformed;
+			}
+
+			/**
+    * The request failed for unspecified reasons.
+    *
+    * @static
+    * @returns {FailureType}
+    */
+
+		}, {
+			key: 'SCHEMA_VALIDATION_FAILURE',
+			get: function get() {
+				return schemaValidationFailure;
+			}
+
+			/**
+    * The request failed for unspecified reasons.
+    *
+    * @static
+    * @returns {FailureType}
+    */
+
+		}, {
+			key: 'REQUEST_GENERAL_FAILURE',
+			get: function get() {
+				return requestGeneralFailure;
+			}
+		}]);
+
+		return FailureType;
+	}(Enum);
+
+	var requestConstructionFailure = new FailureType('REQUEST_CONSTRUCTION_FAILURE', 'An attempt to {L|root.endpoint.description} failed because some required information is missing.');
+	var requestParameterMissing = new FailureType('REQUEST_PARAMETER_MISSING', 'The "{L|name}" field is required.');
+	var requestParameterMalformed = new FailureType('REQUEST_PARAMETER_MALFORMED', 'The "{L|name}" field cannot be interpreted.');
+	var requestIdentifyFailure = new FailureType('REQUEST_IDENTITY_FAILURE', 'An attempt to {L|root.endpoint.description} failed because your identity could not be determined.');
+	var requestAuthorizationFailure = new FailureType('REQUEST_AUTHORIZATION_FAILURE', 'An attempt to {L|root.endpoint.description} failed. You are not authorized to perform this action.');
+	var requestInputMalformed = new FailureType('REQUEST_INPUT_MALFORMED', 'An attempt to {L|root.endpoint.description} failed, the data structure is invalid.');
+	var schemaValidationFailure = new FailureType('SCHEMA_VALIDATION_FAILURE', 'An attempt to read {U|schema} data failed (found "{L|key}" when expecting "{L|name}")');
+	var requestGeneralFailure = new FailureType('REQUEST_GENERAL_FAILURE', 'An attempt to {L|root.endpoint.description} failed for unspecified reason(s).');
+
+	return FailureType;
+}();
+
+},{"./../../lang/Enum":40,"./../../lang/assert":44}],17:[function(require,module,exports){
+'use strict';
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+var axios = require('axios');
+
+var array = require('./../../lang/array'),
+    assert = require('./../../lang/assert'),
+    attributes = require('./../../lang/attributes'),
+    promise = require('./../../lang/promise');
+
+var Endpoint = require('./definitions/Endpoint'),
+    VerbType = require('./definitions/VerbType');
+
+var FailureReason = require('./../failures/FailureReason'),
+    FailureType = require('./../failures/FailureType');
+
+module.exports = function () {
+	'use strict';
+
+	/**
+  * Invokes web service calls using an {@link Endpoint} definition.
+  *
+  * @public
+  */
+
+	var Gateway = function () {
+		function Gateway() {
+			_classCallCheck(this, Gateway);
+		}
+
+		/**
+   * Invokes a web service endpoint, given the payload supplied.
+   *
+   * @public
+   * @static
+   * @param {Endpoint} endpoint
+   * @param {*=} payload
+   * @returns {Promise.<Object>}
+   */
+
+
+		_createClass(Gateway, [{
+			key: 'toString',
+			value: function toString() {
+				return '[Gateway]';
+			}
+		}], [{
+			key: 'invoke',
+			value: function invoke(endpoint, payload) {
+				return Promise.resolve().then(function () {
+					assert.argumentIsRequired(endpoint, 'endpoint', Endpoint, 'Endpoint');
+
+					var pathParameters = endpoint.path.parameters;
+					var headerParameters = endpoint.headers.parameters;
+					var queryParameters = endpoint.query.parameters;
+					var bodyParameters = endpoint.body.parameters;
+
+					var extractParameter = function extractParameter(parameter) {
+						return parameter.extractor(payload).catch(function (e) {
+							return null;
+						});
+					};
+
+					return Promise.all([promise.map(pathParameters, extractParameter), promise.map(headerParameters, extractParameter), promise.map(queryParameters, extractParameter), promise.map(bodyParameters, extractParameter)]).then(function (groups) {
+						var pathValues = groups[0];
+						var headerValues = groups[1];
+						var queryValues = groups[2];
+						var bodyValues = groups[3];
+
+						var parameters = array.flatten([pathParameters, headerParameters, queryParameters, bodyParameters]);
+						var values = array.flatten([pathValues, headerValues, queryValues, bodyValues]);
+
+						var failure = values.reduce(function (accumulator, value, i) {
+							var failure = accumulator;
+
+							var parameter = parameters[i];
+
+							if (value === null && !parameter.optional) {
+								if (accumulator === null) {
+									failure = FailureReason.forRequest({ endpoint: endpoint }).addItem(FailureType.REQUEST_CONSTRUCTION_FAILURE, null, true);
+								}
+
+								failure.addItem(FailureType.REQUEST_PARAMETER_MISSING, { name: parameter.description });
+							}
+
+							return failure;
+						}, null);
+
+						if (failure !== null) {
+							throw failure.format();
+						}
+
+						return Promise.resolve({}).then(function (options) {
+							var url = [];
+
+							url.push(endpoint.protocol.prefix);
+							url.push(endpoint.host);
+
+							if (endpoint.port !== endpoint.protocol.defaultPort) {
+								url.push(':');
+								url.push(endpoint.port);
+							}
+
+							url.push('/');
+
+							return promise.pipeline(pathValues.map(function (value) {
+								return function (previous) {
+									previous.push(value);
+
+									return previous;
+								};
+							}), []).then(function (paths) {
+								url.push(paths.join('/'));
+
+								return url.join('');
+							}).then(function (url) {
+								options.method = verbs.get(endpoint.verb);
+								options.url = url;
+
+								return options;
+							});
+						}).then(function (options) {
+							if (headerParameters.length === 0) {
+								return options;
+							}
+
+							return promise.pipeline(headerValues.map(function (value, i) {
+								return function (accumulator) {
+									var parameter = headerParameters[i];
+
+									accumulator[parameter.key] = value;
+
+									return accumulator;
+								};
+							}), {}).then(function (headers) {
+								if (headers.length !== 0) {
+									options.headers = headers;
+								}
+
+								return options;
+							});
+						}).then(function (options) {
+							if (queryParameters.length === 0) {
+								return options;
+							}
+
+							return promise.pipeline(queryValues.map(function (value, i) {
+								return function (accumulator) {
+									var parameter = queryParameters[i];
+
+									accumulator[parameter.key] = value;
+
+									return accumulator;
+								};
+							}), {}).then(function (query) {
+								if (query.length !== 0) {
+									options.params = query;
+								}
+
+								return options;
+							});
+						}).then(function (options) {
+							if (bodyParameters.length === 0) {
+								return options;
+							}
+
+							return promise.pipeline(bodyValues.map(function (value, i) {
+								return function (accumulator) {
+									var parameter = bodyParameters[i];
+
+									attributes.write(accumulator, parameter.key, value);
+
+									return accumulator;
+								};
+							}), {}).then(function (body) {
+								options.data = body.body;
+
+								return options;
+							});
+						}).then(function (options) {
+							if (endpoint.requestInterceptor) {
+								return endpoint.requestInterceptor.process(options, endpoint);
+							} else {
+								return options;
+							}
+						}).then(function (options) {
+							return axios.request(options).then(function (response) {
+								var responsePromise = void 0;
+
+								if (endpoint.responseInterceptor) {
+									responsePromise = endpoint.responseInterceptor.process(response, endpoint);
+								} else {
+									responsePromise = Promise.resolve(response);
+								}
+
+								return Promise.resolve(responsePromise);
+							}).catch(function (e) {
+								if (endpoint.errorInterceptor) {
+									return endpoint.errorInterceptor.process(e, endpoint);
+								} else {
+									throw e;
+								}
+							});
+						});
+					});
+				});
+			}
+		}]);
+
+		return Gateway;
+	}();
+
+	var verbs = new Map();
+
+	verbs.set(VerbType.GET, 'get');
+	verbs.set(VerbType.DELETE, 'delete');
+	verbs.set(VerbType.POST, 'post');
+	verbs.set(VerbType.PUT, 'put');
+
+	return Gateway;
+}();
+
+},{"./../../lang/array":43,"./../../lang/assert":44,"./../../lang/attributes":45,"./../../lang/promise":50,"./../failures/FailureReason":14,"./../failures/FailureType":16,"./definitions/Endpoint":20,"./definitions/VerbType":24,"axios":76}],18:[function(require,module,exports){
+'use strict';
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+var assert = require('./../../../lang/assert');
+
+var ParametersBuilder = require('./ParametersBuilder');
+
+var Endpoint = require('./../definitions/Endpoint'),
+    Parameters = require('./../definitions/Parameters'),
+    ProtocolType = require('./../definitions/ProtocolType'),
+    VerbType = require('./../definitions/VerbType');
+
+var CompositeErrorInterceptor = require('./../interceptors/CompositeErrorInterceptor'),
+    CompositeResponseInterceptor = require('./../interceptors/CompositeResponseInterceptor'),
+    CompositeRequestInterceptor = require('./../interceptors/CompositeRequestInterceptor'),
+    ErrorInterceptor = require('./../interceptors/ErrorInterceptor'),
+    ResponseInterceptor = require('./../interceptors/ResponseInterceptor'),
+    RequestInterceptor = require('./../interceptors/RequestInterceptor');
+
+module.exports = function () {
+	'use strict';
+
+	/**
+  * Fluent interface for building a {@link Endpoint}.
+  *
+  * @public
+  * @param {string} name
+  */
+
+	var EndpointBuilder = function () {
+		function EndpointBuilder(name, description) {
+			_classCallCheck(this, EndpointBuilder);
+
+			assert.argumentIsRequired(name, 'name', String);
+			assert.argumentIsOptional(description, 'description', String);
+
+			this._endpoint = new Endpoint(name, description);
+		}
+
+		/**
+   * The {@link Endpoint}, given all the information provided thus far.
+   *
+   * @public
+   * @returns {Endpoint}
+   */
+
+
+		_createClass(EndpointBuilder, [{
+			key: 'withVerb',
+
+
+			/**
+    * Sets the verb.
+    *
+    * @public
+    * @param {VerbType} verb
+    * @returns {EndpointBuilder}
+    */
+			value: function withVerb(verb) {
+				assert.argumentIsRequired(verb, 'verb', VerbType, 'VerbType');
+
+				this._endpoint = new Endpoint(this.endpoint.name, this.endpoint.description, verb, this.endpoint.protocol, this.endpoint.host, this.endpoint.port, this.endpoint.path, this.endpoint.query, this.endpoint.headers, this.endpoint.body, this.endpoint.requestInterceptor, this.endpoint.responseInterceptor, this.endpoint.errorInterceptor);
+
+				return this;
+			}
+
+			/**
+    * Sets the host.
+    *
+    * @public
+    * @param {ProtocolType} protocol
+    * @returns {EndpointBuilder}
+    */
+
+		}, {
+			key: 'withProtocol',
+			value: function withProtocol(protocol) {
+				assert.argumentIsRequired(protocol, 'protocol', ProtocolType, 'ProtocolType');
+
+				this._endpoint = new Endpoint(this.endpoint.name, this.endpoint.description, this.endpoint.verb, protocol, this.endpoint.host, this.endpoint.port, this.endpoint.path, this.endpoint.query, this.endpoint.headers, this.endpoint.body, this.endpoint.requestInterceptor, this.endpoint.responseInterceptor, this.endpoint.errorInterceptor);
+
+				return this;
+			}
+
+			/**
+    * Sets the host.
+    *
+    * @public
+    * @param {String} host
+    * @returns {EndpointBuilder}
+    */
+
+		}, {
+			key: 'withHost',
+			value: function withHost(host) {
+				assert.argumentIsRequired(host, 'host', String);
+
+				this._endpoint = new Endpoint(this.endpoint.name, this.endpoint.description, this.endpoint.verb, this.endpoint.protocol, host, this.endpoint.port, this.endpoint.path, this.endpoint.query, this.endpoint.headers, this.endpoint.body, this.endpoint.requestInterceptor, this.endpoint.responseInterceptor, this.endpoint.errorInterceptor);
+
+				return this;
+			}
+
+			/**
+    * Sets the port.
+    *
+    * @public
+    * @param {Number} port
+    * @returns {EndpointBuilder}
+    */
+
+		}, {
+			key: 'withPort',
+			value: function withPort(port) {
+				assert.argumentIsRequired(port, 'port', Number);
+
+				this._endpoint = new Endpoint(this.endpoint.name, this.endpoint.description, this.endpoint.verb, this.endpoint.protocol, this.endpoint.host, port, this.endpoint.path, this.endpoint.query, this.endpoint.headers, this.endpoint.body, this.endpoint.requestInterceptor, this.endpoint.responseInterceptor, this.endpoint.errorInterceptor);
+
+				return this;
+			}
+
+			/**
+    * Adds a {@link Parameters} collection, describing the request headers, using a callback.
+    *
+    * @public
+    * @param {EndpointBuilder~parametersBuilderCallback} callback
+    * @returns {EndpointBuilder}
+    */
+
+		}, {
+			key: 'withHeadersBuilder',
+			value: function withHeadersBuilder(callback) {
+				assert.argumentIsRequired(callback, 'callback', Function);
+
+				var builder = new ParametersBuilder();
+
+				callback(builder);
+
+				var headers = builder.parameters;
+
+				this._endpoint = new Endpoint(this.endpoint.name, this.endpoint.description, this.endpoint.verb, this.endpoint.protocol, this.endpoint.host, this.endpoint.port, this.endpoint.path, this.endpoint.query, headers, this.endpoint.body, this.endpoint.requestInterceptor, this.endpoint.responseInterceptor, this.endpoint.errorInterceptor);
+
+				return this;
+			}
+
+			/**
+    * Adds a {@link Parameters} collection, describing the request path, using a callback.
+    *
+    * @public
+    * @param {EndpointBuilder~parametersBuilderCallback} callback
+    * @returns {EndpointBuilder}
+    */
+
+		}, {
+			key: 'withPathBuilder',
+			value: function withPathBuilder(callback) {
+				assert.argumentIsRequired(callback, 'callback', Function);
+
+				var builder = new ParametersBuilder(true);
+
+				callback(builder);
+
+				var path = builder.parameters;
+
+				this._endpoint = new Endpoint(this.endpoint.name, this.endpoint.description, this.endpoint.verb, this.endpoint.protocol, this.endpoint.host, this.endpoint.port, path, this.endpoint.query, this.endpoint.headers, this.endpoint.body, this.endpoint.requestInterceptor, this.endpoint.responseInterceptor, this.endpoint.errorInterceptor);
+
+				return this;
+			}
+
+			/**
+    * Adds a {@link Parameters} collection, describing the request querystring, using a callback.
+    *
+    * @public
+    * @param {EndpointBuilder~parametersBuilderCallback} callback
+    * @returns {EndpointBuilder}
+    */
+
+		}, {
+			key: 'withQueryBuilder',
+			value: function withQueryBuilder(callback) {
+				assert.argumentIsRequired(callback, 'callback', Function);
+
+				var builder = new ParametersBuilder();
+
+				callback(builder);
+
+				var query = builder.parameters;
+
+				this._endpoint = new Endpoint(this.endpoint.name, this.endpoint.description, this.endpoint.verb, this.endpoint.protocol, this.endpoint.host, this.endpoint.port, this.endpoint.path, query, this.endpoint.headers, this.endpoint.body, this.endpoint.requestInterceptor, this.endpoint.responseInterceptor, this.endpoint.errorInterceptor);
+
+				return this;
+			}
+
+			/**
+    * Adds a {@link Parameters} collection, describing the request body, using a callback.
+    *
+    * @public
+    * @param {EndpointBuilder~parametersBuilderCallback} callback
+    * @returns {EndpointBuilder}
+    */
+
+		}, {
+			key: 'withBodyBuilder',
+			value: function withBodyBuilder(callback) {
+				assert.argumentIsRequired(callback, 'callback', Function);
+
+				var builder = new ParametersBuilder();
+
+				callback(builder);
+
+				var body = builder.parameters;
+
+				this._endpoint = new Endpoint(this.endpoint.name, this.endpoint.description, this.endpoint.verb, this.endpoint.protocol, this.endpoint.host, this.endpoint.port, this.endpoint.path, this.endpoint.query, this.endpoint.headers, body, this.endpoint.requestInterceptor, this.endpoint.responseInterceptor, this.endpoint.errorInterceptor);
+
+				return this;
+			}
+
+			/**
+    * Adds a body to the request.
+    *
+    * @public
+    * @param {String=} description - The human-readable description of the request body.
+    * @returns {EndpointBuilder}
+    */
+
+		}, {
+			key: 'withBody',
+			value: function withBody(description) {
+				assert.argumentIsOptional(description, 'description', String);
+
+				return this.withBodyBuilder(function (bodyBuilder) {
+					bodyBuilder.withDelegateParameter(description || 'request payload', 'body', function (x) {
+						return x;
+					});
+				});
+			}
+
+			/**
+    * Adds a {@link RequestInterceptor}.
+    *
+    * @public
+    * @param {RequestInterceptor} requestInterceptor
+    * @returns {EndpointBuilder}
+    */
+
+		}, {
+			key: 'withRequestInterceptor',
+			value: function withRequestInterceptor(requestInterceptor) {
+				assert.argumentIsRequired(requestInterceptor, 'requestInterceptor', RequestInterceptor, 'RequestInterceptor');
+
+				var existingRequestInterceptor = this.endpoint.requestInterceptor;
+				var updatedRequestInterceptor = void 0;
+
+				if (existingRequestInterceptor && existingRequestInterceptor !== RequestInterceptor.EMPTY) {
+					updatedRequestInterceptor = new CompositeRequestInterceptor(existingRequestInterceptor, requestInterceptor);
+				} else {
+					updatedRequestInterceptor = requestInterceptor;
+				}
+
+				this._endpoint = new Endpoint(this.endpoint.name, this.endpoint.description, this.endpoint.verb, this.endpoint.protocol, this.endpoint.host, this.endpoint.port, this.endpoint.path, this.endpoint.query, this.endpoint.headers, this.endpoint.body, updatedRequestInterceptor, this.endpoint.responseInterceptor, this.endpoint.errorInterceptor);
+
+				return this;
+			}
+
+			/**
+    * Adds a {@link ResponseInterceptor} for successful web service responses.
+    *
+    * @public
+    * @param {ResponseInterceptor} responseInterceptor
+    * @returns {EndpointBuilder}
+    */
+
+		}, {
+			key: 'withResponseInterceptor',
+			value: function withResponseInterceptor(responseInterceptor) {
+				assert.argumentIsRequired(responseInterceptor, 'responseInterceptor', ResponseInterceptor, 'ResponseInterceptor');
+
+				var existingResponseInterceptor = this.endpoint.responseInterceptor;
+				var updatedResponseInterceptor = void 0;
+
+				if (existingResponseInterceptor && existingResponseInterceptor !== ResponseInterceptor.EMPTY) {
+					updatedResponseInterceptor = new CompositeResponseInterceptor(existingResponseInterceptor, responseInterceptor);
+				} else {
+					updatedResponseInterceptor = responseInterceptor;
+				}
+
+				this._endpoint = new Endpoint(this.endpoint.name, this.endpoint.description, this.endpoint.verb, this.endpoint.protocol, this.endpoint.host, this.endpoint.port, this.endpoint.path, this.endpoint.query, this.endpoint.headers, this.endpoint.body, this.endpoint.requestInterceptor, updatedResponseInterceptor, this.endpoint.errorInterceptor);
+
+				return this;
+			}
+
+			/**
+    * Adds a {@link ErrorInterceptor} for handling remote web service errors.
+    *
+    * @public
+    * @param {ErrorInterceptor} responseInterceptor
+    * @returns {EndpointBuilder}
+    */
+
+		}, {
+			key: 'withErrorInterceptor',
+			value: function withErrorInterceptor(errorInterceptor) {
+				assert.argumentIsRequired(errorInterceptor, 'errorInterceptor', ErrorInterceptor, 'ErrorInterceptor');
+
+				var existingErrorInterceptor = this.endpoint.errorInterceptor;
+				var updatedErrorInterceptor = void 0;
+
+				if (existingErrorInterceptor && existingErrorInterceptor !== ErrorInterceptor.EMPTY) {
+					updatedErrorInterceptor = new CompositeErrorInterceptor(existingErrorInterceptor, errorInterceptor);
+				} else {
+					updatedErrorInterceptor = errorInterceptor;
+				}
+
+				this._endpoint = new Endpoint(this.endpoint.name, this.endpoint.description, this.endpoint.verb, this.endpoint.protocol, this.endpoint.host, this.endpoint.port, this.endpoint.path, this.endpoint.query, this.endpoint.headers, this.endpoint.body, this.endpoint.requestInterceptor, this.endpoint.responseInterceptor, updatedErrorInterceptor);
+
+				return this;
+			}
+
+			/**
+    * Factory function for creating an {@link EndpointBuilder} instance.
+    *
+    * @static
+    * @public
+    * @param {String} name
+    * @param {String=} description
+    * @returns {EndpointBuilder}
+    */
+
+		}, {
+			key: 'toString',
+			value: function toString() {
+				return '[EndpointBuilder]';
+			}
+		}, {
+			key: 'endpoint',
+			get: function get() {
+				return this._endpoint;
+			}
+		}], [{
+			key: 'for',
+			value: function _for(name, description) {
+				return new EndpointBuilder(name, description);
+			}
+		}]);
+
+		return EndpointBuilder;
+	}();
+
+	/**
+  * A function that, when passed the request's payload, returns a parameter's value.
+  *
+  * @callback EndpointBuilder~parametersBuilderCallback
+  * @param {ParametersBuilder} parameter
+  */
+
+	return EndpointBuilder;
+}();
+
+},{"./../../../lang/assert":44,"./../definitions/Endpoint":20,"./../definitions/Parameters":22,"./../definitions/ProtocolType":23,"./../definitions/VerbType":24,"./../interceptors/CompositeErrorInterceptor":25,"./../interceptors/CompositeRequestInterceptor":26,"./../interceptors/CompositeResponseInterceptor":27,"./../interceptors/ErrorInterceptor":28,"./../interceptors/RequestInterceptor":29,"./../interceptors/ResponseInterceptor":30,"./ParametersBuilder":19}],19:[function(require,module,exports){
+'use strict';
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+var assert = require('./../../../lang/assert'),
+    attributes = require('./../../../lang/attributes'),
+    is = require('./../../../lang/is');
+
+var Parameter = require('./../definitions/Parameter'),
+    Parameters = require('./../definitions/Parameters');
+
+module.exports = function () {
+	'use strict';
+
+	/**
+  * Fluent interface for building a {@link Parameters} collection.
+  *
+  * @public
+  * @param {Boolean} required - If true, all parameters will be marked as required.
+  */
+
+	var ParametersBuilder = function () {
+		function ParametersBuilder(required) {
+			_classCallCheck(this, ParametersBuilder);
+
+			this._parameters = new Parameters();
+
+			this._required = is.boolean(required) && required;
+		}
+
+		/**
+   * The {@link Parameters} collection, given all the information provided thus far.
+   *
+   * @public
+   * @returns {Parameters}
+   */
+
+
+		_createClass(ParametersBuilder, [{
+			key: 'withDelegateParameter',
+
+
+			/**
+    * Adds a new parameter that extracts its value from a delegate.
+    *
+    * @param {String} description
+    * @param {String} key
+    * @param {Function} delegate
+    * @param (Boolean=} optional
+    * @param {Function=} serializer
+    * @returns {ParametersBuilder}
+    */
+			value: function withDelegateParameter(description, key, delegate, optional, serializer) {
+				addParameter.call(this, new Parameter(description, key, buildDelegateExtractor(delegate, buildSerializer(serializer)), optional || this._required));
+
+				return this;
+			}
+
+			/**
+    * Adds a new parameter with a literal value.
+    *
+    * @param {String} description
+    * @param {String} key
+    * @param {*=} value
+    * @param (Boolean=} optional
+    * @returns {ParametersBuilder}
+    */
+
+		}, {
+			key: 'withLiteralParameter',
+			value: function withLiteralParameter(description, key, value, optional) {
+				addParameter.call(this, new Parameter(description, key, buildLiteralExtractor(value || key), optional || this._required));
+
+				return this;
+			}
+
+			/**
+    * Adds a new parameter that reads its value from the a variable
+    * on the request payload.
+    *
+    * @param {String} description
+    * @param {String} key
+    * @param {String} variable
+    * @param (Boolean=} optional
+    * @param {Function=} serializer
+    * @returns {ParametersBuilder}
+    */
+
+		}, {
+			key: 'withVariableParameter',
+			value: function withVariableParameter(description, key, variable, optional, serializer) {
+				addParameter.call(this, new Parameter(description, key, buildVariableExtractor(variable, buildSerializer(serializer)), optional || this._required));
+
+				return this;
+			}
+		}, {
+			key: 'toString',
+			value: function toString() {
+				return '[ParametersBuilder]';
+			}
+		}, {
+			key: 'parameters',
+			get: function get() {
+				return this._parameters;
+			}
+		}]);
+
+		return ParametersBuilder;
+	}();
+
+	function addParameter(parameter) {
+		var items = this._parameters.parameters.slice(0);
+
+		items.push(parameter);
+
+		this._parameters = new Parameters(items);
+	}
+
+	function buildSerializer(serializer) {
+		var returnRef = void 0;
+
+		if (is.fn(serializer)) {
+			returnRef = serializer;
+		} else {
+			returnRef = function returnRef(x) {
+				return x;
+			};
+		}
+
+		return returnRef;
+	}
+
+	function buildDelegateExtractor(fn, serializer) {
+		assert.argumentIsRequired(fn, 'fn', Function);
+
+		return function (payload) {
+			return Promise.resolve().then(function () {
+				return serializer(fn(payload));
+			});
+		};
+	}
+
+	function buildLiteralExtractor(value) {
+		assert.argumentIsRequired(value, 'value', String);
+
+		return function (payload) {
+			return Promise.resolve(value);
+		};
+	}
+
+	function buildVariableExtractor(variable, serializer) {
+		assert.argumentIsRequired(variable, 'variable', String);
+
+		return buildDelegateExtractor(function (payload) {
+			if (is.object(payload) && attributes.has(payload, variable)) {
+				return attributes.read(payload, variable);
+			} else {
+				return null;
+			}
+		}, serializer);
+	}
+
+	return ParametersBuilder;
+}();
+
+},{"./../../../lang/assert":44,"./../../../lang/attributes":45,"./../../../lang/is":48,"./../definitions/Parameter":21,"./../definitions/Parameters":22}],20:[function(require,module,exports){
+'use strict';
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+var is = require('./../../../lang/is');
+
+var Parameter = require('./Parameter'),
+    Parameters = require('./Parameters'),
+    ProtocolType = require('./ProtocolType'),
+    VerbType = require('./VerbType');
+
+var ErrorInterceptor = require('./../interceptors/ErrorInterceptor'),
+    RequestInterceptor = require('./../interceptors/RequestInterceptor'),
+    ResponseInterceptor = require('./../interceptors/ResponseInterceptor');
+
+module.exports = function () {
+	'use strict';
+
+	/**
+  * The definition of a web service endpoint.
+  *
+  * @public
+  * @param {String=} name
+  * @param {String=} description
+  * @param {VerbType=} verb
+  * @param {ProtocolType=} protocol
+  * @param {String=} host
+  * @param {Number=} port
+  * @param {Parameters=} path
+  * @param {Parameters=} query
+  * @param {Parameters=} headers
+  * @param {Parameters=} body
+  * @param {RequestInterceptor} requestInterceptor
+  * @param {ResponseInterceptor} responseInterceptor
+  * @param {ErrorInterceptor} errorInterceptor
+  */
+
+	var Endpoint = function () {
+		function Endpoint(name, description, verb, protocol, host, port, path, query, headers, body, requestInterceptor, responseInterceptor, errorInterceptor) {
+			_classCallCheck(this, Endpoint);
+
+			this._name = name || null;
+			this._description = description || null;
+			this._verb = verb || VerbType.GET;
+			this._protocol = protocol || ProtocolType.HTTPS;
+			this._host = host || null;
+			this._port = port || this._protocol.defaultPort;
+			this._path = path || new Parameters();
+			this._query = query || new Parameters();
+			this._headers = headers || new Parameters();
+			this._body = body || new Parameters();
+			this._requestInterceptor = requestInterceptor || RequestInterceptor.EMPTY;
+			this._responseInterceptor = responseInterceptor || ResponseInterceptor.EMPTY;
+			this._errorInterceptor = errorInterceptor || ErrorInterceptor.EMPTY;
+		}
+
+		/**
+   * The name of the endpoint (used for internal purposes only).
+   *
+   * @public
+   * @returns {String}
+   */
+
+
+		_createClass(Endpoint, [{
+			key: 'validate',
+
+
+			/**
+    * Throws an {@link Error} if the instance is invalid.
+    *
+    * @public
+    */
+			value: function validate() {
+				if (!(this.protocol instanceof ProtocolType)) {
+					throw new Error('Endpoint protocol must be an instance of ProtocolType.');
+				}
+
+				if (!is.string(this._host) || this._host.length === 0) {
+					throw new Error('Endpoint host is invalid.');
+				}
+
+				if (!is.integer(this._port) || this._port < 0 || this._port > 65535) {
+					throw new Error('Endpoint port range is invalid.');
+				}
+
+				if (!(this.path instanceof Parameters)) {
+					throw new Error('The path must be a Parameters collection.');
+				}
+
+				this.path.validate();
+
+				if (!(this.query instanceof Parameters)) {
+					throw new Error('The query must be a Parameters collection.');
+				}
+
+				this.query.validate();
+
+				if (!(this.headers instanceof Parameters)) {
+					throw new Error('The headers must be a Parameters collection.');
+				}
+
+				this.headers.validate();
+
+				if (!(this.body instanceof Parameters)) {
+					throw new Error('The body must be a Parameters collection.');
+				}
+
+				this.body.validate();
+
+				if (this.requestInterceptor && !(this.requestInterceptor instanceof RequestInterceptor)) {
+					throw new Error('Endpoint request interceptor must be an instance of RequestInterceptor.');
+				}
+
+				if (this.responseInterceptor && !(this.responseInterceptor instanceof ResponseInterceptor)) {
+					throw new Error('Endpoint response interceptor must be an instance of ResponseInterceptor.');
+				}
+
+				if (this.errorInterceptor && !(this.errorInterceptor instanceof ErrorInterceptor)) {
+					throw new Error('Endpoint error interceptor must be an instance of ErrorInterceptor.');
+				}
+			}
+		}, {
+			key: 'toString',
+			value: function toString() {
+				return '[Endpoint (name=' + this._name + ')]';
+			}
+		}, {
+			key: 'name',
+			get: function get() {
+				return this._name;
+			}
+
+			/**
+    * A description of the action performed by the endpoint, suitable for display to users.
+    *
+    * @public
+    * @returns {String}
+    */
+
+		}, {
+			key: 'description',
+			get: function get() {
+				return this._description;
+			}
+
+			/**
+    * The verb to use when making the request.
+    *
+    * @public
+    * @returns {VerbType}
+    */
+
+		}, {
+			key: 'verb',
+			get: function get() {
+				return this._verb;
+			}
+
+			/**
+    * The protocol to use with the endpoint.
+    *
+    * @public
+    * @returns {ProtocolType}
+    */
+
+		}, {
+			key: 'protocol',
+			get: function get() {
+				return this._protocol;
+			}
+
+			/**
+    * The host of the endpoint.
+    *
+    * @public
+    * @returns {String}
+    */
+
+		}, {
+			key: 'host',
+			get: function get() {
+				return this._host;
+			}
+
+			/**
+    * The host of the endpoint.
+    *
+    * @public
+    * @returns {Number}
+    */
+
+		}, {
+			key: 'port',
+			get: function get() {
+				return this._port;
+			}
+
+			/**
+    * The path definition of the endpoint.
+    *
+    * @public
+    * @returns {Parameters}
+    */
+
+		}, {
+			key: 'path',
+			get: function get() {
+				return this._path;
+			}
+
+			/**
+    * The query definition of the endpoint.
+    *
+    * @public
+    * @returns {Parameters}
+    */
+
+		}, {
+			key: 'query',
+			get: function get() {
+				return this._query;
+			}
+
+			/**
+    * The header definition of the endpoint.
+    *
+    * @public
+    * @returns {Parameters}
+    */
+
+		}, {
+			key: 'headers',
+			get: function get() {
+				return this._headers;
+			}
+
+			/**
+    * The body definition of the endpoint.
+    *
+    * @public
+    * @returns {Parameters}
+    */
+
+		}, {
+			key: 'body',
+			get: function get() {
+				return this._body;
+			}
+
+			/**
+    * The request interceptor of the endpoint.
+    *
+    * @public
+    * @returns {RequestInterceptor|null}
+    */
+
+		}, {
+			key: 'requestInterceptor',
+			get: function get() {
+				return this._requestInterceptor;
+			}
+
+			/**
+    * The response interceptor of the endpoint.
+    *
+    * @public
+    * @returns {ResponseInterceptor|null}
+    */
+
+		}, {
+			key: 'responseInterceptor',
+			get: function get() {
+				return this._responseInterceptor;
+			}
+
+			/**
+    * The error interceptor of the endpoint.
+    *
+    * @public
+    * @returns {ErrorInterceptor|null}
+    */
+
+		}, {
+			key: 'errorInterceptor',
+			get: function get() {
+				return this._errorInterceptor;
+			}
+		}]);
+
+		return Endpoint;
+	}();
+
+	return Endpoint;
+}();
+
+},{"./../../../lang/is":48,"./../interceptors/ErrorInterceptor":28,"./../interceptors/RequestInterceptor":29,"./../interceptors/ResponseInterceptor":30,"./Parameter":21,"./Parameters":22,"./ProtocolType":23,"./VerbType":24}],21:[function(require,module,exports){
+'use strict';
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+var is = require('./../../../lang/is');
+
+module.exports = function () {
+	'use strict';
+
+	/**
+  * Encapsulates definition of a parameter -- that is, its name and
+  * its value. Parameters are used in request paths, request bodies,
+  * querystrings, and as request headers.
+  *
+  * @public
+  * @param {String=} description
+  * @param {String=} key
+  * @param {Parameter~parameterValueCallback} value
+  * @param {Boolean=} optional
+  */
+
+	var Parameter = function () {
+		function Parameter(description, key, extractor, optional) {
+			_classCallCheck(this, Parameter);
+
+			this._description = description || null;
+			this._key = key || null;
+			this._extractor = extractor || null;
+			this._optional = is.boolean(optional) && optional;
+		}
+
+		/**
+   * The human-readable description of the parameter.
+   *
+   * @public
+   * @returns {String}
+   */
+
+
+		_createClass(Parameter, [{
+			key: 'validate',
+
+
+			/**
+    * Throws an {@link Error} if the instance is invalid.
+    *
+    * @public
+    */
+			value: function validate() {
+				if (!is.string(this.key) || this.key.length === 0) {
+					throw new Error('Parameter key must be a non-zero length string');
+				}
+
+				if (!is.fn(this._extractor)) {
+					throw new Error('Parameter extractor must be a function.');
+				}
+			}
+		}, {
+			key: 'toString',
+			value: function toString() {
+				return '[Parameter]';
+			}
+		}, {
+			key: 'description',
+			get: function get() {
+				return this._description;
+			}
+
+			/**
+    * The name of the parameter.
+    *
+    * @public
+    * @returns {String}
+    */
+
+		}, {
+			key: 'key',
+			get: function get() {
+				return this._key;
+			}
+
+			/**
+    * A function for extracting the parameter's value.
+    *
+    * @public
+    * @returns {Parameter~parameterValueCallback}
+    */
+
+		}, {
+			key: 'extractor',
+			get: function get() {
+				return this._extractor;
+			}
+
+			/**
+    * Indicates if the parameter is required.
+    *
+    * @public
+    * @returns {Boolean}
+    */
+
+		}, {
+			key: 'optional',
+			get: function get() {
+				return this._optional;
+			}
+		}]);
+
+		return Parameter;
+	}();
+
+	/**
+  * A function that, when passed the request's payload, returns a parameter's value.
+  *
+  * @callback Parameter~parameterValueCallback
+  * @param {Object} payload
+  * @returns {Promise.<String>}
+  */
+
+	return Parameter;
+}();
+
+},{"./../../../lang/is":48}],22:[function(require,module,exports){
+'use strict';
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+var assert = require('./../../../lang/assert'),
+    is = require('./../../../lang/is');
+
+var Parameter = require('./Parameter');
+
+module.exports = function () {
+	'use strict';
+
+	/**
+  * An ordered collection of {@link Parameter} items.
+  *
+  * @public
+  * @param {Parameter[]|undefined} parameters
+  */
+
+	var Parameters = function () {
+		function Parameters(parameters) {
+			_classCallCheck(this, Parameters);
+
+			this._parameters = parameters || [];
+		}
+
+		/**
+   * The list of {@link Parameter} items.
+   *
+   * @public
+   * @returns {Parameter[]}
+   */
+
+
+		_createClass(Parameters, [{
+			key: 'validate',
+
+
+			/**
+    * Throws an {@link Error} if the instance is invalid.
+    *
+    * @public
+    */
+			value: function validate() {
+				if (!is.array(this._parameters)) {
+					throw new Error('Parameters must be an array.');
+				}
+
+				if (this._parameters.some(function (p) {
+					return !(p instanceof Parameter);
+				})) {
+					throw new Error('All parameter items must be instances of Parameters.');
+				}
+
+				this._parameters.forEach(function (p) {
+					return p.validate();
+				});
+			}
+		}, {
+			key: 'toString',
+			value: function toString() {
+				return '[Parameters]';
+			}
+		}, {
+			key: 'parameters',
+			get: function get() {
+				return this._parameters;
+			}
+		}]);
+
+		return Parameters;
+	}();
+
+	return Parameters;
+}();
+
+},{"./../../../lang/assert":44,"./../../../lang/is":48,"./Parameter":21}],23:[function(require,module,exports){
+'use strict';
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
+var assert = require('./../../../lang/assert'),
+    Enum = require('./../../../lang/Enum'),
+    is = require('./../../../lang/is');
+
+module.exports = function () {
+	'use strict';
+
+	/**
+  * Defines the protocol for a web request.
+  *
+  * @public
+  * @extends {Enum}
+  * @param {String} code
+  * @param {Number} defaultPort
+  * @param {String} prefix
+  */
+
+	var ProtocolType = function (_Enum) {
+		_inherits(ProtocolType, _Enum);
+
+		function ProtocolType(code, defaultPort, prefix) {
+			_classCallCheck(this, ProtocolType);
+
+			var _this = _possibleConstructorReturn(this, (ProtocolType.__proto__ || Object.getPrototypeOf(ProtocolType)).call(this, code, code));
+
+			assert.argumentIsRequired(prefix, 'prefix', String);
+			assert.argumentIsValid(defaultPort, 'defaultPort', function (p) {
+				return is.integer(p) && !(p < 0 || p > 65535);
+			});
+
+			_this._defaultPort = defaultPort;
+			_this._prefix = prefix;
+			return _this;
+		}
+
+		/**
+   * Returns the default TCP port used by the protocol.
+   *
+   * @public
+   * @returns {Number}
+   */
+
+
+		_createClass(ProtocolType, [{
+			key: 'toString',
+			value: function toString() {
+				return '[ProtocolType (description=' + this.description + ')]';
+			}
+		}, {
+			key: 'defaultPort',
+			get: function get() {
+				return this._defaultPort;
+			}
+
+			/**
+    * Returns the prefix used to compose a URL.
+    *
+    * @public
+    * @returns {String}
+    */
+
+		}, {
+			key: 'prefix',
+			get: function get() {
+				return this._prefix;
+			}
+
+			/**
+    * HTTP.
+    *
+    * @static
+    * @returns {ProtocolType}
+    */
+
+		}], [{
+			key: 'HTTP',
+			get: function get() {
+				return protocolTypeHttp;
+			}
+
+			/**
+    * HTTPS.
+    *
+    * @static
+    * @returns {ProtocolType}
+    */
+
+		}, {
+			key: 'HTTPS',
+			get: function get() {
+				return protocolTypeHttps;
+			}
+		}]);
+
+		return ProtocolType;
+	}(Enum);
+
+	var protocolTypeHttp = new ProtocolType('HTTP', 80, 'http://');
+	var protocolTypeHttps = new ProtocolType('HTTPS', 443, 'https://');
+
+	return ProtocolType;
+}();
+
+},{"./../../../lang/Enum":40,"./../../../lang/assert":44,"./../../../lang/is":48}],24:[function(require,module,exports){
+'use strict';
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
+var Enum = require('./../../../lang/Enum');
+
+module.exports = function () {
+	'use strict';
+
+	/**
+  * An HTTP verb.
+  *
+  * @public
+  * @extends {Enum}
+  * @param {String} description
+  */
+
+	var VerbType = function (_Enum) {
+		_inherits(VerbType, _Enum);
+
+		function VerbType(description) {
+			_classCallCheck(this, VerbType);
+
+			return _possibleConstructorReturn(this, (VerbType.__proto__ || Object.getPrototypeOf(VerbType)).call(this, description, description));
+		}
+
+		/**
+   * DELETE.
+   *
+   * @static
+   * @returns {VerbType}
+   */
+
+
+		_createClass(VerbType, [{
+			key: 'toString',
+			value: function toString() {
+				return '[VerbType (description=' + this.description + ')]';
+			}
+		}], [{
+			key: 'DELETE',
+			get: function get() {
+				return verbTypeDelete;
+			}
+
+			/**
+    * GET.
+    *
+    * @static
+    * @returns {VerbType}
+    */
+
+		}, {
+			key: 'GET',
+			get: function get() {
+				return verbTypeGet;
+			}
+
+			/**
+    * POST.
+    *
+    * @static
+    * @returns {VerbType}
+    */
+
+		}, {
+			key: 'POST',
+			get: function get() {
+				return verbTypePost;
+			}
+
+			/**
+    * PUT.
+    *
+    * @static
+    * @returns {VerbType}
+    */
+
+		}, {
+			key: 'PUT',
+			get: function get() {
+				return verbTypePut;
+			}
+		}]);
+
+		return VerbType;
+	}(Enum);
+
+	var verbTypeDelete = new VerbType('DELETE');
+	var verbTypeGet = new VerbType('GET');
+	var verbTypePost = new VerbType('POST');
+	var verbTypePut = new VerbType('PUT');
+
+	return VerbType;
+}();
+
+},{"./../../../lang/Enum":40}],25:[function(require,module,exports){
+'use strict';
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
+var assert = require('./../../../lang/assert');
+
+var ErrorInterceptor = require('./ErrorInterceptor');
+
+module.exports = function () {
+	'use strict';
+
+	/**
+  * A {@link ErrorInterceptor} that delegates work to two other instances.
+  *
+  * @public
+  * @extends {ErrorInterceptor}
+  * @param {ErrorInterceptor} a - The first interceptor to process.
+  * @param {ErrorInterceptor} b - The second interceptor to process.
+  */
+
+	var CompositeErrorInterceptor = function (_ErrorInterceptor) {
+		_inherits(CompositeErrorInterceptor, _ErrorInterceptor);
+
+		function CompositeErrorInterceptor(a, b) {
+			_classCallCheck(this, CompositeErrorInterceptor);
+
+			var _this = _possibleConstructorReturn(this, (CompositeErrorInterceptor.__proto__ || Object.getPrototypeOf(CompositeErrorInterceptor)).call(this));
+
+			assert.argumentIsRequired(a, 'a', ErrorInterceptor, 'ErrorInterceptor');
+			assert.argumentIsRequired(b, 'b', ErrorInterceptor, 'ErrorInterceptor');
+
+			_this._a = a;
+			_this._b = b;
+			return _this;
+		}
+
+		_createClass(CompositeErrorInterceptor, [{
+			key: '_onProcess',
+			value: function _onProcess(error, endpoint) {
+				var _this2 = this;
+
+				return this._a.process(error, endpoint).catch(function (adjusted) {
+					return _this2._b.process(adjusted, endpoint);
+				});
+			}
+		}, {
+			key: 'toString',
+			value: function toString() {
+				return '[CompositeErrorInterceptor]';
+			}
+		}]);
+
+		return CompositeErrorInterceptor;
+	}(ErrorInterceptor);
+
+	return CompositeErrorInterceptor;
+}();
+
+},{"./../../../lang/assert":44,"./ErrorInterceptor":28}],26:[function(require,module,exports){
+'use strict';
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
+var assert = require('./../../../lang/assert');
+
+var RequestInterceptor = require('./RequestInterceptor');
+
+module.exports = function () {
+	'use strict';
+
+	/**
+  * A {@link ResponseInterceptor} that delegates work to two other instances.
+  *
+  * @public
+  * @extends {RequestInterceptor}
+  * @param {RequestInterceptor} a - The first interceptor to process.
+  * @param {RequestInterceptor} b - The second interceptor to process.
+  */
+
+	var CompositeRequestInterceptor = function (_RequestInterceptor) {
+		_inherits(CompositeRequestInterceptor, _RequestInterceptor);
+
+		function CompositeRequestInterceptor(a, b) {
+			_classCallCheck(this, CompositeRequestInterceptor);
+
+			var _this = _possibleConstructorReturn(this, (CompositeRequestInterceptor.__proto__ || Object.getPrototypeOf(CompositeRequestInterceptor)).call(this));
+
+			assert.argumentIsRequired(a, 'a', RequestInterceptor, 'RequestInterceptor');
+			assert.argumentIsRequired(b, 'b', RequestInterceptor, 'RequestInterceptor');
+
+			_this._a = a;
+			_this._b = b;
+			return _this;
+		}
+
+		_createClass(CompositeRequestInterceptor, [{
+			key: '_onProcess',
+			value: function _onProcess(request, endpoint) {
+				var _this2 = this;
+
+				return this._a.process(request, endpoint).then(function (adjusted) {
+					return _this2._b.process(adjusted, endpoint);
+				});
+			}
+		}, {
+			key: 'toString',
+			value: function toString() {
+				return '[CompositeRequestInterceptor]';
+			}
+		}]);
+
+		return CompositeRequestInterceptor;
+	}(RequestInterceptor);
+
+	return CompositeRequestInterceptor;
+}();
+
+},{"./../../../lang/assert":44,"./RequestInterceptor":29}],27:[function(require,module,exports){
+'use strict';
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
+var assert = require('./../../../lang/assert');
+
+var ResponseInterceptor = require('./ResponseInterceptor');
+
+module.exports = function () {
+	'use strict';
+
+	/**
+  * A {@link ResponseInterceptor} that delegates work to two other instances.
+  *
+  * @public
+  * @extends {ResponseInterceptor}
+  * @param {ResponseInterceptor} a - The first interceptor to process.
+  * @param {ResponseInterceptor} b - The second interceptor to process.
+  */
+
+	var CompositeResponseInterceptor = function (_ResponseInterceptor) {
+		_inherits(CompositeResponseInterceptor, _ResponseInterceptor);
+
+		function CompositeResponseInterceptor(a, b) {
+			_classCallCheck(this, CompositeResponseInterceptor);
+
+			var _this = _possibleConstructorReturn(this, (CompositeResponseInterceptor.__proto__ || Object.getPrototypeOf(CompositeResponseInterceptor)).call(this));
+
+			assert.argumentIsRequired(a, 'a', ResponseInterceptor, 'ResponseInterceptor');
+			assert.argumentIsRequired(b, 'b', ResponseInterceptor, 'ResponseInterceptor');
+
+			_this._a = a;
+			_this._b = b;
+			return _this;
+		}
+
+		_createClass(CompositeResponseInterceptor, [{
+			key: '_onProcess',
+			value: function _onProcess(response, endpoint) {
+				var _this2 = this;
+
+				return this._a.process(response, endpoint).then(function (adjusted) {
+					return _this2._b.process(adjusted, endpoint);
+				});
+			}
+		}, {
+			key: 'toString',
+			value: function toString() {
+				return '[CompositeResponseInterceptor]';
+			}
+		}]);
+
+		return CompositeResponseInterceptor;
+	}(ResponseInterceptor);
+
+	return CompositeResponseInterceptor;
+}();
+
+},{"./../../../lang/assert":44,"./ResponseInterceptor":30}],28:[function(require,module,exports){
+'use strict';
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+var assert = require('./../../../lang/assert'),
+    is = require('./../../../lang/is');
+
+var FailureReason = require('./../../failures/FailureReason'),
+    FailureType = require('./../../failures/FailureType');
+
+module.exports = function () {
+	'use strict';
+
+	/**
+  * A processor that transforms web service error before passing
+  * it on to the original requestor.
+  *
+  * @public
+  * @interface
+  */
+
+	var ErrorInterceptor = function () {
+		function ErrorInterceptor() {
+			_classCallCheck(this, ErrorInterceptor);
+		}
+
+		/**
+   * Adjusts incoming error before the response is forwarded
+   * back to the original caller.
+   *
+   * @public
+   * @param {Object} error
+   * @param {Endpoint} endpoint - The endpoint which is originating the request.
+   * @returns {Promise.<TResult>}
+   */
+
+
+		_createClass(ErrorInterceptor, [{
+			key: 'process',
+			value: function process(error, endpoint) {
+				var _this = this;
+
+				return Promise.resolve().then(function () {
+					return _this._onProcess(error, endpoint);
+				});
+			}
+		}, {
+			key: '_onProcess',
+			value: function _onProcess(error, endpoint) {
+				return Promise.reject(error);
+			}
+
+			/**
+    * A no-op error interceptor which rejects using raw response data.
+    *
+    * @public
+    * @static
+    * @returns {ErrorInterceptor}
+    */
+
+		}, {
+			key: 'toString',
+			value: function toString() {
+				return '[ErrorInterceptor]';
+			}
+		}], [{
+			key: 'fromDelegate',
+
+
+			/**
+    * Returns a new {@link ErrorInterceptor} which delegates its work to another function.
+    *
+    * @public
+    * @static
+    * @param {Function} delegate
+    * @returns {ErrorInterceptor}
+    */
+			value: function fromDelegate(delegate) {
+				return new DelegateErrorInterceptor(delegate);
+			}
+		}, {
+			key: 'EMPTY',
+			get: function get() {
+				return errorInterceptorEmpty;
+			}
+
+			/**
+    * An error interceptor that handles most server-side issues and rejects
+    * using formatted {@link FailureReasons} when an error is detected.
+    *
+    * @public
+    * @static
+    * @returns {ErrorInterceptor}
+    */
+
+		}, {
+			key: 'GENERAL',
+			get: function get() {
+				return errorInterceptorGeneral;
+			}
+		}]);
+
+		return ErrorInterceptor;
+	}();
+
+	var DelegateErrorInterceptor = function (_ErrorInterceptor) {
+		_inherits(DelegateErrorInterceptor, _ErrorInterceptor);
+
+		function DelegateErrorInterceptor(delegate) {
+			_classCallCheck(this, DelegateErrorInterceptor);
+
+			var _this2 = _possibleConstructorReturn(this, (DelegateErrorInterceptor.__proto__ || Object.getPrototypeOf(DelegateErrorInterceptor)).call(this));
+
+			assert.argumentIsRequired(delegate, 'delegate', Function);
+
+			_this2._delegate = delegate;
+			return _this2;
+		}
+
+		_createClass(DelegateErrorInterceptor, [{
+			key: '_onProcess',
+			value: function _onProcess(response, endpoint) {
+				return this._delegate(response, endpoint);
+			}
+		}, {
+			key: 'toString',
+			value: function toString() {
+				return '[DelegateErrorInterceptor]';
+			}
+		}]);
+
+		return DelegateErrorInterceptor;
+	}(ErrorInterceptor);
+
+	var errorInterceptorEmpty = new ErrorInterceptor();
+
+	var errorInterceptorGeneral = new DelegateErrorInterceptor(function (error, endpoint) {
+		var response = error.response;
+
+		var rejectPromise = void 0;
+
+		if (is.object(response) && is.object(response.headers) && response.headers['content-type'] === 'application/json' && is.object(response.data)) {
+			rejectPromise = Promise.reject(response.data);
+		} else if (is.undefined(response) && error.message === 'Network Error') {
+			rejectPromise = Promise.reject(FailureReason.forRequest({ endpoint: endpoint }).addItem(FailureType.REQUEST_AUTHORIZATION_FAILURE).format());
+		} else {
+			rejectPromise = Promise.reject(FailureReason.forRequest({ endpoint: endpoint }).addItem(FailureType.REQUEST_GENERAL_FAILURE).format());
+		}
+
+		return rejectPromise;
+	});
+
+	return ErrorInterceptor;
+}();
+
+},{"./../../../lang/assert":44,"./../../../lang/is":48,"./../../failures/FailureReason":14,"./../../failures/FailureType":16}],29:[function(require,module,exports){
+'use strict';
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+var assert = require('./../../../lang/assert'),
+    is = require('./../../../lang/is');
+
+module.exports = function () {
+	'use strict';
+
+	/**
+  * A processor that transforms a web service request before it is transmitted.
+  *
+  * @public
+  * @interface
+  */
+
+	var RequestInterceptor = function () {
+		function RequestInterceptor() {
+			_classCallCheck(this, RequestInterceptor);
+		}
+
+		/**
+   * Adjusts outgoing requests data before the request is transmitted.
+   *
+   * @public
+   * @param {Object} request
+   * @param {Endpoint} endpoint - The endpoint which is originating the request.
+   * @returns {Promise.<TResult>}
+   */
+
+
+		_createClass(RequestInterceptor, [{
+			key: 'process',
+			value: function process(request, endpoint) {
+				var _this = this;
+
+				return Promise.resolve().then(function () {
+					return _this._onProcess(request);
+				});
+			}
+		}, {
+			key: '_onProcess',
+			value: function _onProcess(request, endpoint) {
+				return request;
+			}
+
+			/**
+    * A no-op request interceptor.
+    *
+    * @public
+    * @static
+    * @returns {RequestInterceptor}
+    */
+
+		}, {
+			key: 'toString',
+			value: function toString() {
+				return '[RequestInterceptor]';
+			}
+		}], [{
+			key: 'fromDelegate',
+
+
+			/**
+    * Returns a new {@link RequestInterceptor} which delegates its work to another function.
+    *
+    * @public
+    * @static
+    * @param {Function} delegate
+    * @returns {RequestInterceptor}
+    */
+			value: function fromDelegate(delegate) {
+				return new DelegateRequestInterceptor(delegate);
+			}
+
+			/**
+    * A request interceptor that instructs the framework to skip parsing
+    * of the response's data.
+    *
+    * @public
+    * @static
+    * @returns {DelegateRequestInterceptor}
+    */
+
+		}, {
+			key: 'EMPTY',
+			get: function get() {
+				return requestInterceptorEmpty;
+			}
+		}, {
+			key: 'PLAIN_TEXT_RESPONSE',
+			get: function get() {
+				return requestInterceptorPlain;
+			}
+		}]);
+
+		return RequestInterceptor;
+	}();
+
+	var DelegateRequestInterceptor = function (_RequestInterceptor) {
+		_inherits(DelegateRequestInterceptor, _RequestInterceptor);
+
+		function DelegateRequestInterceptor(delegate) {
+			_classCallCheck(this, DelegateRequestInterceptor);
+
+			var _this2 = _possibleConstructorReturn(this, (DelegateRequestInterceptor.__proto__ || Object.getPrototypeOf(DelegateRequestInterceptor)).call(this));
+
+			assert.argumentIsRequired(delegate, 'delegate', Function);
+
+			_this2._delegate = delegate;
+			return _this2;
+		}
+
+		_createClass(DelegateRequestInterceptor, [{
+			key: '_onProcess',
+			value: function _onProcess(request, endpoint) {
+				return this._delegate(request, endpoint);
+			}
+		}, {
+			key: 'toString',
+			value: function toString() {
+				return '[DelegateRequestInterceptor]';
+			}
+		}]);
+
+		return DelegateRequestInterceptor;
+	}(RequestInterceptor);
+
+	var requestInterceptorEmpty = new RequestInterceptor();
+
+	var requestInterceptorPlain = new DelegateRequestInterceptor(function (request) {
+		request.transformResponse = function (data) {
+			return data;
+		};
+
+		return request;
+	});
+
+	return RequestInterceptor;
+}();
+
+},{"./../../../lang/assert":44,"./../../../lang/is":48}],30:[function(require,module,exports){
+'use strict';
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+var assert = require('./../../../lang/assert'),
+    is = require('./../../../lang/is');
+
+module.exports = function () {
+	'use strict';
+
+	/**
+  * A processor that transforms web service response before passing
+  * it on to the original requestor.
+  *
+  * @public
+  * @interface
+  */
+
+	var ResponseInterceptor = function () {
+		function ResponseInterceptor() {
+			_classCallCheck(this, ResponseInterceptor);
+		}
+
+		/**
+   * Adjusts incoming response data before the response is forwarded
+   * back to the original caller.
+   *
+   * @public
+   * @param {Object} request
+   * @param {Endpoint} endpoint - The endpoint which is originating the request.
+   * @returns {Promise.<TResult>}
+   */
+
+
+		_createClass(ResponseInterceptor, [{
+			key: 'process',
+			value: function process(response, endpoint) {
+				var _this = this;
+
+				return Promise.resolve().then(function () {
+					return _this._onProcess(response, endpoint);
+				});
+			}
+		}, {
+			key: '_onProcess',
+			value: function _onProcess(response, endpoint) {
+				return response;
+			}
+
+			/**
+    * A no-op request interceptor (which will return the raw response).
+    *
+    * @public
+    * @static
+    * @returns {ResponseInterceptor}
+    */
+
+		}, {
+			key: 'toString',
+			value: function toString() {
+				return '[ResponseInterceptor]';
+			}
+		}], [{
+			key: 'fromDelegate',
+
+
+			/**
+    * Returns a new {@link ResponseInterceptor} which delegates its work to another function.
+    *
+    * @public
+    * @static
+    * @param {Function} delegate
+    * @returns {ResponseInterceptor}
+    */
+			value: function fromDelegate(delegate) {
+				return new DelegateResponseInterceptor(delegate);
+			}
+		}, {
+			key: 'EMPTY',
+			get: function get() {
+				return responseInterceptorEmpty;
+			}
+
+			/**
+    * A response interceptor returns only the data payload in the format
+    * specified by the response's "content-type" header.
+    *
+    * @public
+    * @static
+    * @returns {ResponseInterceptor}
+    */
+
+		}, {
+			key: 'DATA',
+			get: function get() {
+				return responseInterceptorData;
+			}
+		}]);
+
+		return ResponseInterceptor;
+	}();
+
+	var DelegateResponseInterceptor = function (_ResponseInterceptor) {
+		_inherits(DelegateResponseInterceptor, _ResponseInterceptor);
+
+		function DelegateResponseInterceptor(delegate) {
+			_classCallCheck(this, DelegateResponseInterceptor);
+
+			var _this2 = _possibleConstructorReturn(this, (DelegateResponseInterceptor.__proto__ || Object.getPrototypeOf(DelegateResponseInterceptor)).call(this));
+
+			assert.argumentIsRequired(delegate, 'delegate', Function);
+
+			_this2._delegate = delegate;
+			return _this2;
+		}
+
+		_createClass(DelegateResponseInterceptor, [{
+			key: '_onProcess',
+			value: function _onProcess(response, endpoint) {
+				return this._delegate(response, endpoint);
+			}
+		}, {
+			key: 'toString',
+			value: function toString() {
+				return '[DelegateResponseInterceptor]';
+			}
+		}]);
+
+		return DelegateResponseInterceptor;
+	}(ResponseInterceptor);
+
+	var responseInterceptorEmpty = new ResponseInterceptor();
+
+	var responseInterceptorData = new DelegateResponseInterceptor(function (response, ignored) {
+		return response.data;
+	});
+
+	return ResponseInterceptor;
+}();
+
+},{"./../../../lang/assert":44,"./../../../lang/is":48}],31:[function(require,module,exports){
 'use strict';
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
@@ -2127,12 +6012,14 @@ module.exports = function () {
 	return LinkedList;
 }();
 
-},{}],14:[function(require,module,exports){
+},{}],32:[function(require,module,exports){
 'use strict';
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+var is = require('./../lang/is');
 
 module.exports = function () {
 	'use strict';
@@ -2158,14 +6045,31 @@ module.exports = function () {
 		}
 
 		/**
-   * Returns the parent node. If this is the root node, a null value is returned.
+   * Gets the root node.
    *
    * @public
-   * @returns {Tree|null}
+   * @returns {Tree}
    */
 
 
 		_createClass(Tree, [{
+			key: 'getRoot',
+			value: function getRoot() {
+				if (this.getIsRoot()) {
+					return this;
+				} else {
+					return this._parent.getRoot();
+				}
+			}
+
+			/**
+    * Returns the parent node. If this is the root node, a null value is returned.
+    *
+    * @public
+    * @returns {Tree|null}
+    */
+
+		}, {
 			key: 'getParent',
 			value: function getParent() {
 				return this._parent;
@@ -2267,6 +6171,23 @@ module.exports = function () {
 			}
 
 			/**
+    * Removes the current node from the parent tree. Use on a root node
+    * has no effect.
+    *
+    * @public
+    */
+
+		}, {
+			key: 'sever',
+			value: function sever() {
+				if (this.getIsRoot()) {
+					return;
+				}
+
+				this.getParent().removeChild(this);
+			}
+
+			/**
     * Searches the children nodes for the first child node that matches the
     * predicate.
     *
@@ -2330,7 +6251,7 @@ module.exports = function () {
 			}
 
 			/**
-    * Walks the children of the current node -- current node down to the lead nodes, running an action on each node.
+    * Walks the children of the current node, running an action on each node.
     *
     * @public
     * @param {Tree~nodeAction} walkAction - A action to apply to each node. The action takes two arguments -- the node's value, and the node itself.
@@ -2369,6 +6290,68 @@ module.exports = function () {
 					this._parent.climb(climbAction, true);
 				}
 			}
+
+			/**
+    * Climbs the tree, evaluating each parent until a predicate is matched. Once matched,
+    * the {@link Tree} node is returned. Otherwise, if the predicate cannot be matched,
+    * a null value is returned.
+    *
+    * @public
+    * @param {Tree~nodePredicate} predicate - A predicate that tests each child node. The predicate takes two arguments -- the node's value, and the node itself.
+    * @param {boolean=} includeCurrentNode - If true, the predicate will be applied to the current node.
+    * @returns {Tree|null}
+    */
+
+		}, {
+			key: 'findParent',
+			value: function findParent(predicate, includeCurrentNode) {
+				var returnRef = void 0;
+
+				if (is.boolean(includeCurrentNode) && includeCurrentNode && predicate(this.getValue(), this)) {
+					returnRef = this;
+				} else if (this._parent !== null) {
+					returnRef = this._parent.findParent(predicate, true);
+				} else {
+					returnRef = null;
+				}
+
+				return returnRef;
+			}
+
+			/**
+    * Creates a representation of the tree using JavaScript objects and arrays.
+    *
+    * @public
+    * @param {Function=} valueConverter - An optional function for converting the value of each node.
+    * @param {Boolean=} valueConverter - If true, empty children arrays will be excluded from output.
+    * @returns {Object}
+    */
+
+		}, {
+			key: 'toJSObj',
+			value: function toJSObj(valueConverter, omitEmptyChildren) {
+				var valueConverterToUse = void 0;
+
+				if (is.fn(valueConverter)) {
+					valueConverterToUse = valueConverter;
+				} else {
+					valueConverterToUse = function valueConverterToUse(x) {
+						return x;
+					};
+				}
+
+				var converted = {
+					value: valueConverterToUse(this._value)
+				};
+
+				if (!(is.boolean(omitEmptyChildren) && omitEmptyChildren && this._children.length === 0)) {
+					converted.children = this._children.map(function (child) {
+						return child.toJSObj(valueConverter, omitEmptyChildren);
+					});
+				}
+
+				return converted;
+			}
 		}, {
 			key: 'toString',
 			value: function toString() {
@@ -2399,7 +6382,7 @@ module.exports = function () {
 	return Tree;
 }();
 
-},{}],15:[function(require,module,exports){
+},{"./../lang/is":48}],33:[function(require,module,exports){
 'use strict';
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
@@ -2543,7 +6526,7 @@ module.exports = function () {
 	return ComparatorBuilder;
 }();
 
-},{"./../../lang/assert":25,"./comparators":16}],16:[function(require,module,exports){
+},{"./../../lang/assert":44,"./comparators":34}],34:[function(require,module,exports){
 'use strict';
 
 var assert = require('./../../lang/assert');
@@ -2593,8 +6576,8 @@ module.exports = function () {
    * Compares two strings (in ascending order), using {@link String#localeCompare}.
    *
    * @static
-   * @param {Number} a
-   * @param {Number} b
+   * @param {String} a
+   * @param {String} b
    * @returns {Number}
    */
 		compareStrings: function compareStrings(a, b) {
@@ -2618,7 +6601,93 @@ module.exports = function () {
 	};
 }();
 
-},{"./../../lang/assert":25}],17:[function(require,module,exports){
+},{"./../../lang/assert":44}],35:[function(require,module,exports){
+'use strict';
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+var assert = require('./assert'),
+    is = require('./is');
+
+module.exports = function () {
+	'use strict';
+
+	/**
+  * A serialization container for ad hoc data where internal data is serialized
+  * as an escaped JSON string.
+  *
+  * @public
+  * @param {Object} data
+  */
+
+	var AdHoc = function () {
+		function AdHoc(data) {
+			_classCallCheck(this, AdHoc);
+
+			this._data = data || {};
+		}
+
+		/**
+   * The data.
+   * 
+   * @public
+   * @returns {Object}
+   */
+
+
+		_createClass(AdHoc, [{
+			key: 'toJSON',
+			value: function toJSON() {
+				return JSON.stringify(this._data);
+			}
+
+			/**
+    * Given a code, returns the enumeration item.
+    *
+    * @public
+    * @param {String} code
+    * @returns {AdHoc}
+    */
+
+		}, {
+			key: 'toString',
+			value: function toString() {
+				return '[AdHoc]';
+			}
+		}, {
+			key: 'data',
+			get: function get() {
+				return this._data;
+			}
+
+			/**
+    * The data.
+    *
+    * @public
+    * @param {Object} data
+    */
+			,
+			set: function set(data) {
+				assert.argumentIsRequired(data, 'data', Object);
+
+				this._data = data;
+			}
+		}], [{
+			key: 'parse',
+			value: function parse(serialized) {
+				return new AdHoc(JSON.parse(serialized));
+			}
+		}]);
+
+		return AdHoc;
+	}();
+
+	return AdHoc;
+}();
+
+},{"./assert":44,"./is":48}],36:[function(require,module,exports){
 'use strict';
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
@@ -2649,7 +6718,7 @@ module.exports = function () {
 	var Currency = function (_Enum) {
 		_inherits(Currency, _Enum);
 
-		function Currency(code, description, precision) {
+		function Currency(code, description, precision, alternateDescription) {
 			_classCallCheck(this, Currency);
 
 			var _this = _possibleConstructorReturn(this, (Currency.__proto__ || Object.getPrototypeOf(Currency)).call(this, code, description));
@@ -2657,7 +6726,11 @@ module.exports = function () {
 			assert.argumentIsRequired(precision, 'precision', Number);
 			assert.argumentIsValid(precision, 'precision', is.integer, 'is an integer');
 
+			assert.argumentIsOptional(alternateDescription, 'alternateDescription', String);
+
 			_this._precision = precision;
+
+			_this._alternateDescription = alternateDescription || description;
 			return _this;
 		}
 
@@ -2678,6 +6751,19 @@ module.exports = function () {
 			key: 'precision',
 			get: function get() {
 				return this._precision;
+			}
+
+			/**
+    * An alternate human-readable description.
+    *
+    * @public
+    * @returns {String}
+    */
+
+		}, {
+			key: 'alternateDescription',
+			get: function get() {
+				return this._alternateDescription;
 			}
 
 			/**
@@ -2737,14 +6823,14 @@ module.exports = function () {
 		return Currency;
 	}(Enum);
 
-	var cad = new Currency('CAD', 'Canadian Dollar', 2);
-	var eur = new Currency('EUR', 'Euro', 2);
-	var usd = new Currency('USD', 'US Dollar', 2);
+	var cad = new Currency('CAD', 'Canadian Dollar', 2, 'CAD$');
+	var eur = new Currency('EUR', 'Euro', 2, 'EUR');
+	var usd = new Currency('USD', 'US Dollar', 2, 'US$');
 
 	return Currency;
 }();
 
-},{"./Enum":21,"./assert":25,"./is":29}],18:[function(require,module,exports){
+},{"./Enum":40,"./assert":44,"./is":48}],37:[function(require,module,exports){
 'use strict';
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
@@ -2764,6 +6850,9 @@ module.exports = function () {
   * without consideration for time or timezone.
   *
   * @public
+  * @param {Number} year
+  * @param {Number} month
+  * @param {Number} day
   */
 
 	var Day = function () {
@@ -2796,10 +6885,12 @@ module.exports = function () {
 				assert.argumentIsOptional(inverse, inverse, Boolean);
 				assert.argumentIsValid(days, 'days', is.large, 'is an integer');
 
-				var totalDaysToShift = days;
+				var totalDaysToShift = void 0;
 
-				if (inverse) {
-					totalDaysToShift = totalDaysToShift * -1;
+				if (is.boolean(inverse) && inverse) {
+					totalDaysToShift = days * -1;
+				} else {
+					totalDaysToShift = days;
 				}
 
 				var positive = is.positive(totalDaysToShift);
@@ -2863,6 +6954,121 @@ module.exports = function () {
 			}
 
 			/**
+    * Calculates a new {@link Day} in the future (or past). If the new date is at the end of
+    * the month and the new month has fewer days than the current month, days will be subtracted
+    * as necessary (e.g. adding one month to March 31 will return April 30).
+    *
+    * @public
+    * @param {Number} months - The number of months to add (negative numbers can be used for subtraction).
+    * @param {Boolean=} inverse - If true, the sign of the "days" value will be flipped.
+    * @returns {Day}
+    */
+
+		}, {
+			key: 'addMonths',
+			value: function addMonths(months, inverse) {
+				assert.argumentIsRequired(months, 'months', Number);
+				assert.argumentIsOptional(inverse, inverse, Boolean);
+				assert.argumentIsValid(months, 'months', is.large, 'is an integer');
+
+				var totalMonthsToShift = void 0;
+
+				if (is.boolean(inverse) && inverse) {
+					totalMonthsToShift = months * -1;
+				} else {
+					totalMonthsToShift = months;
+				}
+
+				var monthsToShift = totalMonthsToShift % 12;
+				var yearsToShift = (totalMonthsToShift - monthsToShift) / 12;
+
+				var shiftedYear = this.year + yearsToShift;
+				var shiftedMonth = this.month + monthsToShift;
+				var shiftedDay = this.day;
+
+				if (shiftedMonth > 12) {
+					shiftedYear = shiftedYear + 1;
+					shiftedMonth = shiftedMonth - 12;
+				}
+
+				if (shiftedMonth < 1) {
+					shiftedYear = shiftedYear - 1;
+					shiftedMonth = shiftedMonth + 12;
+				}
+
+				while (!Day.validate(shiftedYear, shiftedMonth, shiftedDay)) {
+					shiftedDay = shiftedDay - 1;
+				}
+
+				return new Day(shiftedYear, shiftedMonth, shiftedDay);
+			}
+
+			/**
+    * Calculates a new {@link Day} in the past (or future).
+    *
+    * @public
+    * @param {Number} months - The number of months to subtract (negative numbers can be used for addition).
+    * @returns {Day}
+    */
+
+		}, {
+			key: 'subtractMonths',
+			value: function subtractMonths(months) {
+				return this.addMonths(months, true);
+			}
+
+			/**
+    * Calculates a new {@link Day} in the future (or past). If the new date is at the end of
+    * the month and the new month has fewer days than the current month, days will be subtracted
+    * as necessary (e.g. adding one year to February 29 will return February 28).
+    *
+    * @public
+    * @param {Number} years - The number of years to add (negative numbers can be used for subtraction).
+    * @param {Boolean=} inverse - If true, the sign of the "days" value will be flipped.
+    * @returns {Day}
+    */
+
+		}, {
+			key: 'addYears',
+			value: function addYears(years, inverse) {
+				assert.argumentIsRequired(years, 'years', Number);
+				assert.argumentIsOptional(inverse, inverse, Boolean);
+				assert.argumentIsValid(years, 'years', is.large, 'is an integer');
+
+				var yearsToShift = void 0;
+
+				if (is.boolean(inverse) && inverse) {
+					yearsToShift = years * -1;
+				} else {
+					yearsToShift = years;
+				}
+
+				var shiftedYear = this.year + yearsToShift;
+				var shiftedMonth = this.month;
+				var shiftedDay = this.day;
+
+				while (!Day.validate(shiftedYear, shiftedMonth, shiftedDay)) {
+					shiftedDay = shiftedDay - 1;
+				}
+
+				return new Day(shiftedYear, shiftedMonth, shiftedDay);
+			}
+
+			/**
+    * Calculates a new {@link Day} in the past (or future).
+    *
+    * @public
+    * @param {Number} years - The number of years to subtract (negative numbers can be used for addition).
+    * @returns {Day}
+    */
+
+		}, {
+			key: 'subtractYears',
+			value: function subtractYears(years) {
+				return this.addYears(years, true);
+			}
+
+			/**
     * Indicates if another {@link Day} occurs before the current instance.
     *
     * @public
@@ -2888,6 +7094,37 @@ module.exports = function () {
 			key: 'getIsAfter',
 			value: function getIsAfter(other) {
 				return Day.compareDays(this, other) > 0;
+			}
+
+			/**
+    * Indicates the current day falls between two other days, inclusive
+    * of the range boundaries.
+    *
+    * @public
+    * @param {Day=} first
+    * @param {Day=} last
+    * @param {boolean=} exclusive
+    * @returns {boolean}
+    */
+
+		}, {
+			key: 'getIsContained',
+			value: function getIsContained(first, last) {
+				assert.argumentIsOptional(first, 'first', Day, 'Day');
+				assert.argumentIsOptional(last, 'last', Day, 'Day');
+
+				var notAfter = void 0;
+				var notBefore = void 0;
+
+				if (first && last && first.getIsAfter(last)) {
+					notBefore = false;
+					notAfter = false;
+				} else {
+					notAfter = !(last instanceof Day) || !this.getIsAfter(last);
+					notBefore = !(first instanceof Day) || !this.getIsBefore(first);
+				}
+
+				return notAfter && notBefore;
 			}
 
 			/**
@@ -2922,7 +7159,7 @@ module.exports = function () {
     * @returns {String}
     */
 			value: function format() {
-				return this._year + '-' + leftPad(this._month) + '-' + leftPad(this._day);
+				return leftPad(this._year, 4, '0') + '-' + leftPad(this._month, 2, '0') + '-' + leftPad(this._day, 2, '0');
 			}
 
 			/**
@@ -2943,6 +7180,7 @@ module.exports = function () {
     * a {@link Day} instance.
     *
     * @public
+    * @static
     * @param {String} value
     * @returns {Day}
     */
@@ -3001,6 +7239,8 @@ module.exports = function () {
     * Creates a {@link Day} from the year, month, and day properties (in local time)
     * of the {@link Date} argument.
     *
+    * @public
+    * @static
     * @param {Date} date
     * @returns {Day}
     */
@@ -3017,6 +7257,8 @@ module.exports = function () {
     * Creates a {@link Day} from the year, month, and day properties (in UTC)
     * of the {@link Date} argument.
     *
+    * @public
+    * @static
     * @param {Date} date
     * @returns {Day}
     */
@@ -3030,9 +7272,24 @@ module.exports = function () {
 			}
 
 			/**
+    * Returns a {@link Day} instance using today's local date.
+    *
+    * @static
+    * @public
+    * @returns {Day}
+    */
+
+		}, {
+			key: 'getToday',
+			value: function getToday() {
+				return Day.fromDate(new Date());
+			}
+
+			/**
     * Returns true if the year, month, and day combination is valid; otherwise false.
     *
     * @public
+    * @static
     * @param {Number} year
     * @param {Number} month
     * @param {Number} day
@@ -3049,6 +7306,7 @@ module.exports = function () {
     * Returns the number of days in a given month.
     *
     * @public
+    * @static
     * @param {number} year - The year number (e.g. 2017)
     * @param {number} month - The month number (e.g. 2 is February)
     */
@@ -3089,6 +7347,7 @@ module.exports = function () {
     * A comparator function for {@link Day} instances.
     *
     * @public
+    * @static
     * @param {Day} a
     * @param {Day} b
     * @returns {Number}
@@ -3107,10 +7366,13 @@ module.exports = function () {
 		return Day;
 	}();
 
-	var dayRegex = /^([0-9]{4}).([0-9]{2}).([0-9]{2})$/;
+	var dayRegex = /^([0-9]{4}).?([0-9]{2}).?([0-9]{2})$/;
 
-	function leftPad(value) {
-		return value < 10 ? '0' + value : '' + value;
+	function leftPad(value, digits, character) {
+		var string = value.toString();
+		var padding = digits - string.length;
+
+		return '' + character.repeat(padding) + string;
 	}
 
 	var comparator = ComparatorBuilder.startWith(function (a, b) {
@@ -3124,7 +7386,7 @@ module.exports = function () {
 	return Day;
 }();
 
-},{"./../collections/sorting/ComparatorBuilder":15,"./../collections/sorting/comparators":16,"./assert":25,"./is":29}],19:[function(require,module,exports){
+},{"./../collections/sorting/ComparatorBuilder":33,"./../collections/sorting/comparators":34,"./assert":44,"./is":48}],38:[function(require,module,exports){
 'use strict';
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
@@ -3328,6 +7590,20 @@ module.exports = function () {
 			}
 
 			/**
+    * Returns true if the current instance is greater than or equal to the value.
+    *
+    * @public
+    * @param {Decimal|Number|String} other - The value to compare.
+    * @returns {Boolean}
+    */
+
+		}, {
+			key: 'getIsGreaterThanOrEqual',
+			value: function getIsGreaterThanOrEqual(other) {
+				return this._big.gte(getBig(other));
+			}
+
+			/**
     * Returns true if the current instance is less than the value.
     *
     * @public
@@ -3339,6 +7615,20 @@ module.exports = function () {
 			key: 'getIsLessThan',
 			value: function getIsLessThan(other) {
 				return this._big.lt(getBig(other));
+			}
+
+			/**
+    * Returns true if the current instance is less than or equal to the value.
+    *
+    * @public
+    * @param {Decimal|Number|String} other - The value to compare.
+    * @returns {Boolean}
+    */
+
+		}, {
+			key: 'getIsLessThanOrEqual',
+			value: function getIsLessThanOrEqual(other) {
+				return this._big.lte(getBig(other));
 			}
 
 			/**
@@ -3437,7 +7727,7 @@ module.exports = function () {
     *
     * @public
     * @param {Decimal} instance
-    * @return {Boolean}
+    * @returns {Boolean}
     */
 			value: function getIsZero(instance) {
 				assert.argumentIsRequired(instance, 'instance', Decimal, 'Decimal');
@@ -3450,7 +7740,7 @@ module.exports = function () {
     *
     * @public
     * @param {Decimal} instance
-    * @return {Boolean}
+    * @returns {Boolean}
     */
 
 		}, {
@@ -3466,7 +7756,7 @@ module.exports = function () {
     *
     * @public
     * @param {Decimal} instance
-    * @return {Boolean}
+    * @returns {Boolean}
     */
 
 		}, {
@@ -3482,7 +7772,7 @@ module.exports = function () {
     *
     * @public
     * @param {Decimal} instance
-    * @return {Boolean}
+    * @returns {Boolean}
     */
 
 		}, {
@@ -3498,7 +7788,7 @@ module.exports = function () {
     *
     * @public
     * @param {Decimal} instance
-    * @return {Boolean}
+    * @returns {Boolean}
     */
 
 		}, {
@@ -3514,7 +7804,7 @@ module.exports = function () {
     *
     * @public
     * @param {Decimal} instance
-    * @return {Boolean}
+    * @returns {Boolean}
     */
 
 		}, {
@@ -3540,9 +7830,9 @@ module.exports = function () {
 				assert.argumentIsRequired(a, 'a', Decimal, 'Decimal');
 				assert.argumentIsRequired(b, 'b', Decimal, 'Decimal');
 
-				if (a._big.gt(b)) {
+				if (a._big.gt(b._big)) {
 					return 1;
-				} else if (a._big.lt(b)) {
+				} else if (a._big.lt(b._big)) {
 					return -1;
 				} else {
 					return 0;
@@ -3704,7 +7994,7 @@ module.exports = function () {
 	return Decimal;
 }();
 
-},{"./Enum":21,"./assert":25,"./is":29,"big.js":58}],20:[function(require,module,exports){
+},{"./Enum":40,"./assert":44,"./is":48,"big.js":104}],39:[function(require,module,exports){
 'use strict';
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
@@ -3853,7 +8143,7 @@ module.exports = function () {
 	return Disposable;
 }();
 
-},{"./assert":25}],21:[function(require,module,exports){
+},{"./assert":44}],40:[function(require,module,exports){
 'use strict';
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
@@ -3874,8 +8164,8 @@ module.exports = function () {
   *
   * @public
   * @interface
-  * @param {String} - The unique code of the enumeration item.
-  * @param {String} - A description of the enumeration item.
+  * @param {String} code - The unique code of the enumeration item.
+  * @param {String} description - A description of the enumeration item.
   */
 
 	var Enum = function () {
@@ -3904,6 +8194,7 @@ module.exports = function () {
 		/**
    * The unique code.
    *
+   * @public
    * @returns {String}
    */
 
@@ -3916,6 +8207,7 @@ module.exports = function () {
     * Returns true if the provided {@link Enum} argument is equal
     * to the instance.
     *
+    * @public
     * @param {Enum} other
     * @returns {boolean}
     */
@@ -3940,6 +8232,7 @@ module.exports = function () {
     * Looks up a enumeration item; given the enumeration type and the enumeration
     * item's value. If no matching item can be found, a null value is returned.
     *
+    * @public
     * @param {Function} type - The enumeration type.
     * @param {String} code - The enumeration item's code.
     * @returns {*|null}
@@ -3959,6 +8252,7 @@ module.exports = function () {
 			/**
     * The description.
     *
+    * @public
     * @returns {String}
     */
 
@@ -3978,6 +8272,7 @@ module.exports = function () {
 			/**
     * Returns all of the enumeration's items (given an enumeration type).
     *
+    * @public
     * @param {Function} type - The enumeration to list.
     * @returns {Array}
     */
@@ -3995,7 +8290,7 @@ module.exports = function () {
 	return Enum;
 }();
 
-},{"./assert":25}],22:[function(require,module,exports){
+},{"./assert":44}],41:[function(require,module,exports){
 'use strict';
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
@@ -4118,7 +8413,7 @@ module.exports = function () {
 	return Money;
 }();
 
-},{"./Currency":17,"./Decimal":19,"./assert":25,"./is":29}],23:[function(require,module,exports){
+},{"./Currency":36,"./Decimal":38,"./assert":44,"./is":48}],42:[function(require,module,exports){
 'use strict';
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
@@ -4180,7 +8475,7 @@ module.exports = function () {
     * Parses the value emitted by {@link Timestamp#toJSON}.
     *
     * @public
-    * @param {String} value
+    * @param {Number} value
     * @returns {Timestamp}
     */
 
@@ -4241,7 +8536,7 @@ module.exports = function () {
 	return Timestamp;
 }();
 
-},{"./assert":25,"./is":29,"moment-timezone":96}],24:[function(require,module,exports){
+},{"./assert":44,"./is":48,"moment-timezone":140}],43:[function(require,module,exports){
 'use strict';
 
 var assert = require('./assert'),
@@ -4269,8 +8564,8 @@ module.exports = function () {
 		unique: function unique(a) {
 			assert.argumentIsArray(a, 'a');
 
-			return a.filter(function (item, index, array) {
-				return array.indexOf(item) === index;
+			return this.uniqueBy(a, function (item) {
+				return item;
 			});
 		},
 
@@ -4281,7 +8576,7 @@ module.exports = function () {
    *
    * @static
    * @param {Array} a
-   * @param {Function} keySelector - The function, when applied to an item yields a unique key.
+   * @param {Function} keySelector - A function that returns a unique key for an item.
    * @returns {Array}
    */
 		uniqueBy: function uniqueBy(a, keySelector) {
@@ -4299,12 +8594,12 @@ module.exports = function () {
 
 		/**
    * Splits array into groups and returns an object (where the properties have
-   * arrays). Unlike the indexBy function, there can be many items
-   * which share the same key.
+   * arrays). Unlike the indexBy function, there can be many items which share
+   * the same key.
    *
    * @static
    * @param {Array} a
-   * @param {Function} keySelector - The function, when applied to an item yields a key.
+   * @param {Function} keySelector - A function that returns a unique key for an item.
    * @returns {Object}
    */
 		groupBy: function groupBy(a, keySelector) {
@@ -4331,7 +8626,7 @@ module.exports = function () {
    *
    * @static
    * @param {Array} a
-   * @param {Function} keySelector - The function, when applied to an item yields a key.
+   * @param {Function} keySelector - A function that returns a unique key for an item.
    * @returns {Array}
    */
 		batchBy: function batchBy(a, keySelector) {
@@ -4360,12 +8655,11 @@ module.exports = function () {
 
 		/**
    * Splits array into groups and returns an object (where the properties are items from the
-   * original array). Unlike the groupBy, Only one item can have a given key
-   * value.
+   * original array). Unlike the groupBy, only one item can have a given key value.
    *
    * @static
    * @param {Array} a
-   * @param {Function} keySelector - The function, when applied to an item yields a unique key.
+   * @param {Function} keySelector - A function that returns a unique key for an item.
    * @returns {Object}
    */
 		indexBy: function indexBy(a, keySelector) {
@@ -4387,6 +8681,26 @@ module.exports = function () {
 
 
 		/**
+   * Returns a new array containing all but the first item.
+   *
+   * @static
+   * @param {Array} a
+   * @returns {Array}
+   */
+		dropLeft: function dropLeft(a) {
+			assert.argumentIsArray(a, 'a');
+
+			var returnRef = Array.from(a);
+
+			if (returnRef.length !== 0) {
+				returnRef.shift();
+			}
+
+			return returnRef;
+		},
+
+
+		/**
    * Returns a new array containing all but the last item.
    *
    * @static
@@ -4400,6 +8714,29 @@ module.exports = function () {
 
 			if (returnRef.length !== 0) {
 				returnRef.pop();
+			}
+
+			return returnRef;
+		},
+
+
+		/**
+   * Returns the first item from an array, or an undefined value, if the
+   * array is empty.
+   *
+   * @static
+   * @param {Array} a
+   * @returns {*|undefined}
+   */
+		first: function first(a) {
+			assert.argumentIsArray(a, 'a');
+
+			var returnRef = void 0;
+
+			if (a.length !== 0) {
+				returnRef = a[0];
+			} else {
+				returnRef = undefined;
 			}
 
 			return returnRef;
@@ -4488,14 +8825,31 @@ module.exports = function () {
    * @returns {Array}
    */
 		difference: function difference(a, b) {
+			return this.differenceBy(a, b, function (item) {
+				return item;
+			});
+		},
+
+
+		/**
+   * Set difference operation, where the uniqueness is determined by a delegate.
+   *
+   * @static
+   * @param {Array} a
+   * @param {Array} b
+   * @param {Function} keySelector - A function that returns a unique key for an item.
+   * @returns {Array}
+   */
+		differenceBy: function differenceBy(a, b, keySelector) {
 			assert.argumentIsArray(a, 'a');
 			assert.argumentIsArray(b, 'b');
+			assert.argumentIsRequired(keySelector, 'keySelector', Function);
 
 			var returnRef = [];
 
 			a.forEach(function (candidate) {
 				var exclude = b.some(function (comparison) {
-					return candidate === comparison;
+					return keySelector(candidate) === keySelector(comparison);
 				});
 
 				if (!exclude) {
@@ -4518,7 +8872,23 @@ module.exports = function () {
    * @returns {Array}
    */
 		differenceSymmetric: function differenceSymmetric(a, b) {
-			return this.union(this.difference(a, b), this.difference(b, a));
+			return this.differenceSymmetricBy(a, b, function (item) {
+				return item;
+			});
+		},
+
+
+		/**
+   * Set symmetric difference operation, where the uniqueness is determined by a delegate.
+   *
+   * @static
+   * @param {Array} a
+   * @param {Array} b
+   * @param {Function} keySelector - A function that returns a unique key for an item.
+   * @returns {Array}
+   */
+		differenceSymmetricBy: function differenceSymmetricBy(a, b, keySelector) {
+			return this.unionBy(this.differenceBy(a, b, keySelector), this.differenceBy(b, a, keySelector), keySelector);
 		},
 
 
@@ -4531,14 +8901,31 @@ module.exports = function () {
    * @returns {Array}
    */
 		union: function union(a, b) {
+			return this.unionBy(a, b, function (item) {
+				return item;
+			});
+		},
+
+
+		/**
+   * Set union operation, where the uniqueness is determined by a delegate.
+   *
+   * @static
+   * @param {Array} a
+   * @param {Array} b
+   * @param {Function} keySelector - A function that returns a unique key for an item.
+   * @returns {Array}
+   */
+		unionBy: function unionBy(a, b, keySelector) {
 			assert.argumentIsArray(a, 'a');
 			assert.argumentIsArray(b, 'b');
+			assert.argumentIsRequired(keySelector, 'keySelector', Function);
 
 			var returnRef = a.slice();
 
 			b.forEach(function (candidate) {
 				var exclude = returnRef.some(function (comparison) {
-					return candidate === comparison;
+					return keySelector(candidate) === keySelector(comparison);
 				});
 
 				if (!exclude) {
@@ -4559,6 +8946,22 @@ module.exports = function () {
    * @returns {Array}
    */
 		intersection: function intersection(a, b) {
+			return this.intersectionBy(a, b, function (item) {
+				return item;
+			});
+		},
+
+
+		/**
+   * Set intersection operation, where the uniqueness is determined by a delegate.
+   *
+   * @static
+   * @param {Array} a
+   * @param {Array} b
+   * @param {Function} keySelector - A function that returns a unique key for an item.
+   * @returns {Array}
+   */
+		intersectionBy: function intersectionBy(a, b, keySelector) {
 			assert.argumentIsArray(a, 'a');
 			assert.argumentIsArray(b, 'b');
 
@@ -4566,7 +8969,7 @@ module.exports = function () {
 
 			a.forEach(function (candidate) {
 				var include = b.some(function (comparison) {
-					return candidate === comparison;
+					return keySelector(candidate) === comparison;
 				});
 
 				if (include) {
@@ -4575,11 +8978,35 @@ module.exports = function () {
 			});
 
 			return returnRef;
+		},
+
+
+		/**
+   * Removes the first item from an array which matches a predicate.
+   *
+   * @static
+   * @public
+   * @param {Array} a
+   * @param {Function} predicate
+   * @returns {Boolean}
+   */
+		remove: function remove(a, predicate) {
+			assert.argumentIsArray(a, 'a');
+			assert.argumentIsRequired(predicate, 'predicate', Function);
+
+			var index = a.findIndex(predicate);
+			var found = !(index < 0);
+
+			if (found) {
+				a.splice(index, 1);
+			}
+
+			return found;
 		}
 	};
 }();
 
-},{"./assert":25,"./is":29}],25:[function(require,module,exports){
+},{"./assert":44,"./is":48}],44:[function(require,module,exports){
 'use strict';
 
 var is = require('./is');
@@ -4684,7 +9111,7 @@ module.exports = function () {
 
 				if (typeof itemConstraint === 'function' && itemConstraint !== Function) {
 					itemValidator = function itemValidator(value, index) {
-						return value instanceof itemConstraint || itemConstraint(value, variableName + '[' + index + ']');
+						return itemConstraint.prototype !== undefined && value instanceof itemConstraint || itemConstraint(value, variableName + '[' + index + ']');
 					};
 				} else {
 					itemValidator = function itemValidator(value, index) {
@@ -4707,7 +9134,7 @@ module.exports = function () {
    * @param {*} variable - The value to check.
    * @param {String} variableName - The name of the value (used for formatting an error message).
    * @param {Function=} predicate - A function used to validate the item (beyond type checking).
-   * @param {Function=} predicateDescription - A description of the assertion made by the predicate (e.g. "is an integer") that is used for formatting an error message.
+   * @param {String=} predicateDescription - A description of the assertion made by the predicate (e.g. "is an integer") that is used for formatting an error message.
    */
 		argumentIsValid: function argumentIsValid(variable, variableName, predicate, predicateDescription) {
 			if (!predicate(variable)) {
@@ -4727,7 +9154,7 @@ module.exports = function () {
 	};
 }();
 
-},{"./is":29}],26:[function(require,module,exports){
+},{"./is":48}],45:[function(require,module,exports){
 'use strict';
 
 var assert = require('./assert'),
@@ -4794,7 +9221,7 @@ module.exports = function () {
    *
    * @static
    * @param {Object} target - The object to check for existence of the property.
-   * @param {String|Array<String>} propertyNames - The property to check -- either a string with separators, or an array of strings (already split by separator).
+   * @param {String|Array.<String>} propertyNames - The property to check -- either a string with separators, or an array of strings (already split by separator).
    * @param {String=} separator - The separator (defaults to a period character).
    * @returns {boolean}
    */
@@ -4820,7 +9247,7 @@ module.exports = function () {
    *
    * @static
    * @param {Object} target - The object to read from.
-   * @param {String|Array<String>} propertyNames - The property to read -- either a string with separators, or an array of strings (already split by separator).
+   * @param {String|Array.<String>} propertyNames - The property to read -- either a string with separators, or an array of strings (already split by separator).
    * @param {String=} separator - The separator (defaults to a period character).
    * @returns {*}
    */
@@ -4855,7 +9282,8 @@ module.exports = function () {
    *
    * @static
    * @param {Object} target - The object to write to.
-   * @param {String|Array<String>} propertyNames - The property to write -- either a string with separators, or an array of strings (already split by separator).
+   * @param {String|Array.<String>} propertyNames - The property to write -- either a string with separators, or an array of strings (already split by separator).
+   * @param {*} value - The value to assign.
    * @param {String=} separator - The separator (defaults to a period character).
    */
 		write: function write(target, propertyNames, value, separator) {
@@ -4881,7 +9309,7 @@ module.exports = function () {
    *
    * @static
    * @param {Object} target - The object to erase a property from.
-   * @param {String|Array<String>} propertyNames - The property to write -- either a string with separators, or an array of strings (already split by separator).
+   * @param {String|Array.<String>} propertyNames - The property to write -- either a string with separators, or an array of strings (already split by separator).
    * @param {String=} separator - The separator (defaults to a period character).
    */
 		erase: function erase(target, propertyNames, separator) {
@@ -4899,7 +9327,7 @@ module.exports = function () {
 	};
 }();
 
-},{"./assert":25,"./is":29}],27:[function(require,module,exports){
+},{"./assert":44,"./is":48}],46:[function(require,module,exports){
 'use strict';
 
 var is = require('./is');
@@ -4928,7 +9356,7 @@ module.exports = function () {
 	};
 }();
 
-},{"./is":29}],28:[function(require,module,exports){
+},{"./is":48}],47:[function(require,module,exports){
 'use strict';
 
 module.exports = function () {
@@ -4972,7 +9400,7 @@ module.exports = function () {
 	};
 }();
 
-},{}],29:[function(require,module,exports){
+},{}],48:[function(require,module,exports){
 'use strict';
 
 var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
@@ -4993,7 +9421,7 @@ module.exports = function () {
    *
    * @static
    * @public
-   * @param candidate {*}
+   * @param {*} candidate {*}
    * @returns {boolean}
    */
 		number: function number(candidate) {
@@ -5046,7 +9474,7 @@ module.exports = function () {
    *
    * @static
    * @public
-   * @param candidate
+   * @param {*} candidate
    * @returns {boolean}
    */
 		positive: function positive(candidate) {
@@ -5059,7 +9487,7 @@ module.exports = function () {
    *
    * @static
    * @public
-   * @param candidate
+   * @param {*} candidate
    * @returns {*|boolean}
    */
 		negative: function negative(candidate) {
@@ -5072,7 +9500,7 @@ module.exports = function () {
    *
    * @static
    * @public
-   * @param candidate
+   * @param {*} candidate
    * @returns {boolean}
    */
 		string: function string(candidate) {
@@ -5085,7 +9513,7 @@ module.exports = function () {
    *
    * @static
    * @public
-   * @param candidate
+   * @param {*} candidate
    * @returns {boolean}
    */
 		date: function date(candidate) {
@@ -5098,7 +9526,7 @@ module.exports = function () {
    *
    * @static
    * @public
-   * @param candidate
+   * @param {*} candidate
    * @returns {boolean}
    */
 		fn: function fn(candidate) {
@@ -5111,7 +9539,7 @@ module.exports = function () {
    *
    * @static
    * @public
-   * @param candidate
+   * @param {*} candidate
    * @returns {boolean}
    */
 		array: function array(candidate) {
@@ -5124,7 +9552,7 @@ module.exports = function () {
    *
    * @static
    * @public
-   * @param candidate
+   * @param {*} candidate
    * @returns {boolean}
    */
 		boolean: function boolean(candidate) {
@@ -5137,7 +9565,7 @@ module.exports = function () {
    *
    * @static
    * @public
-   * @param candidate
+   * @param {*} candidate
    * @returns {boolean}
    */
 		object: function object(candidate) {
@@ -5150,7 +9578,7 @@ module.exports = function () {
    *
    * @static
    * @public
-   * @param candidate
+   * @param {*} candidate
    * @returns {boolean}
    */
 		null: function _null(candidate) {
@@ -5163,7 +9591,7 @@ module.exports = function () {
    *
    * @static
    * @public
-   * @param candidate
+   * @param {*} candidate
    * @returns {boolean}
    */
 		undefined: function (_undefined) {
@@ -5195,7 +9623,7 @@ module.exports = function () {
 	};
 }();
 
-},{}],30:[function(require,module,exports){
+},{}],49:[function(require,module,exports){
 'use strict';
 
 var array = require('./array'),
@@ -5237,15 +9665,19 @@ module.exports = function () {
 					returnVal = false;
 				}
 			} else if (is.object(a) && is.object(b)) {
-				var keysA = object.keys(a);
-				var keysB = object.keys(b);
+				if (is.fn(a.equals) && is.fn(b.equals)) {
+					returnVal = a.equals(b);
+				} else {
+					var keysA = object.keys(a);
+					var keysB = object.keys(b);
 
-				returnVal = array.differenceSymmetric(keysA, keysB).length === 0 && keysA.every(function (key) {
-					var valueA = a[key];
-					var valueB = b[key];
+					returnVal = array.differenceSymmetric(keysA, keysB).length === 0 && keysA.every(function (key) {
+						var valueA = a[key];
+						var valueB = b[key];
 
-					return object.equals(valueA, valueB);
-				});
+						return object.equals(valueA, valueB);
+					});
+				}
 			} else {
 				returnVal = false;
 			}
@@ -5340,7 +9772,7 @@ module.exports = function () {
 	return object;
 }();
 
-},{"./array":24,"./is":29}],31:[function(require,module,exports){
+},{"./array":43,"./is":48}],50:[function(require,module,exports){
 'use strict';
 
 var assert = require('./assert');
@@ -5532,7 +9964,7 @@ module.exports = function () {
 	};
 }();
 
-},{"./assert":25}],32:[function(require,module,exports){
+},{"./assert":44}],51:[function(require,module,exports){
 'use strict';
 
 var moment = require('moment-timezone/builds/moment-timezone-with-data-2010-2020'),
@@ -5545,7 +9977,7 @@ module.exports = function () {
   * Utilities for working with arrays.
   *
   * @public
-  * @module lang/array
+  * @module lang/timezone
   */
 
 	return {
@@ -5588,7 +10020,7 @@ module.exports = function () {
 	};
 }();
 
-},{"./assert":25,"moment-timezone/builds/moment-timezone-with-data-2010-2020":94}],33:[function(require,module,exports){
+},{"./assert":44,"moment-timezone/builds/moment-timezone-with-data-2010-2020":138}],52:[function(require,module,exports){
 'use strict';
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
@@ -5760,7 +10192,7 @@ module.exports = function () {
 	return Event;
 }();
 
-},{"./../lang/Disposable":20,"./../lang/assert":25}],34:[function(require,module,exports){
+},{"./../lang/Disposable":39,"./../lang/assert":44}],53:[function(require,module,exports){
 'use strict';
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
@@ -5981,7 +10413,7 @@ module.exports = function () {
 	return RestAction;
 }();
 
-},{"./../../lang/Enum":21,"./../../lang/assert":25}],35:[function(require,module,exports){
+},{"./../../lang/Enum":40,"./../../lang/assert":44}],54:[function(require,module,exports){
 'use strict';
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
@@ -6159,7 +10591,7 @@ module.exports = function () {
 	return RestEndpoint;
 }();
 
-},{"./../../lang/assert":25,"./../../lang/attributes":26,"./../../lang/is":29,"./RestAction":34,"./RestParser":36}],36:[function(require,module,exports){
+},{"./../../lang/assert":44,"./../../lang/attributes":45,"./../../lang/is":48,"./RestAction":53,"./RestParser":55}],55:[function(require,module,exports){
 'use strict';
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
@@ -6327,7 +10759,7 @@ module.exports = function () {
 	return RestParser;
 }();
 
-},{"./../../lang/assert":25,"./../../serialization/json/Schema":42,"./RestParser":36}],37:[function(require,module,exports){
+},{"./../../lang/assert":44,"./../../serialization/json/Schema":61,"./RestParser":55}],56:[function(require,module,exports){
 'use strict';
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
@@ -6456,7 +10888,7 @@ module.exports = function () {
 	return RestProvider;
 }();
 
-},{"./../../lang/promise":31,"./RestProviderBase":38,"http":129,"https":87,"querystring":106}],38:[function(require,module,exports){
+},{"./../../lang/promise":50,"./RestProviderBase":57,"http":173,"https":131,"querystring":150}],57:[function(require,module,exports){
 'use strict';
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
@@ -6539,7 +10971,7 @@ module.exports = function () {
 	return RestProviderBase;
 }();
 
-},{"./../../lang/assert":25,"./RestEndpoint":35}],39:[function(require,module,exports){
+},{"./../../lang/assert":44,"./RestEndpoint":54}],58:[function(require,module,exports){
 'use strict';
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
@@ -6556,7 +10988,7 @@ module.exports = function () {
 	'use strict';
 
 	/**
-  * A complex field built from many fields.
+  * A complex object built from many {@link Field} instances.
   *
   * @public
   * @param {String} name
@@ -6638,14 +11070,17 @@ module.exports = function () {
 	return Component;
 }();
 
-},{"./../../lang/Currency":17,"./../../lang/Money":22,"./DataType":40,"./Field":41}],40:[function(require,module,exports){
+},{"./../../lang/Currency":36,"./../../lang/Money":41,"./DataType":59,"./Field":60}],59:[function(require,module,exports){
 'use strict';
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
-var assert = require('./../../lang/assert'),
+var moment = require('moment');
+
+var AdHoc = require('./../../lang/AdHoc'),
+    assert = require('./../../lang/assert'),
     Day = require('./../../lang/Day'),
     Decimal = require('./../../lang/Decimal'),
     Enum = require('./../../lang/Enum'),
@@ -6664,12 +11099,15 @@ module.exports = function () {
   */
 
 	var DataType = function () {
-		function DataType(description, enumerationType, reviver) {
+		function DataType(description, enumerationType, reviver, validator, builder) {
 			_classCallCheck(this, DataType);
 
 			assert.argumentIsRequired(description, 'description', String);
 			assert.argumentIsOptional(enumerationType, 'enumerationType', Function);
+
 			assert.argumentIsOptional(reviver, 'reviver', Function);
+			assert.argumentIsOptional(validator, 'validator', Function);
+			assert.argumentIsOptional(builder, 'builder', Function);
 
 			if (enumerationType) {
 				assert.argumentIsValid(enumerationType, 'enumerationType', extendsEnumeration, 'is an enumeration');
@@ -6693,17 +11131,55 @@ module.exports = function () {
 			}
 
 			this._reviver = reviverToUse;
+
+			var validatorToUse = void 0;
+
+			if (validator) {
+				validatorToUse = validator;
+			} else {
+				validatorToUse = function validatorToUse(candidate) {
+					return true;
+				};
+			}
+
+			this._validator = validatorToUse;
+
+			var builderToUse = void 0;
+
+			if (builder) {
+				builderToUse = builder;
+			} else {
+				builderToUse = function builderToUse(data) {
+					return data;
+				};
+			}
+
+			this._builder = builderToUse;
 		}
 
 		/**
-   * Description of the data type.
+   * A function that converts data into the desired format.
    *
    * @public
-   * @returns {String}
+   * @param {*} data
+   * @returns {*}
    */
 
 
 		_createClass(DataType, [{
+			key: 'convert',
+			value: function convert(data) {
+				return this._builder(data);
+			}
+
+			/**
+    * Description of the data type.
+    *
+    * @public
+    * @returns {String}
+    */
+
+		}, {
 			key: 'toString',
 			value: function toString() {
 				return '[DataType (description=' + this._description + ')]';
@@ -6731,13 +11207,26 @@ module.exports = function () {
     * A function which "revives" a value after serialization to JSON.
     *
     * @public
-    * @returns {Function}reviver
+    * @returns {Function}
     */
 
 		}, {
 			key: 'reviver',
 			get: function get() {
 				return this._reviver;
+			}
+
+			/**
+    * A function validates data, returning true or false.
+    *
+    * @public
+    * @returns {Function}
+    */
+
+		}, {
+			key: 'validator',
+			get: function get() {
+				return this._validator;
 			}
 
 			/**
@@ -6752,13 +11241,16 @@ module.exports = function () {
 		}], [{
 			key: 'forEnum',
 			value: function forEnum(enumerationType, description) {
-				return new DataType(description, enumerationType);
+				return new DataType(description, enumerationType, null, function (x) {
+					return x instanceof enumerationType;
+				}, getBuilder(getEnumerationBuilder(enumerationType)));
 			}
 
 			/**
     * References a string.
     *
     * @public
+    * @static
     * @returns {DataType}
     */
 
@@ -6772,6 +11264,7 @@ module.exports = function () {
     * References a number.
     *
     * @public
+    * @static
     * @returns {DataType}
     */
 
@@ -6785,6 +11278,7 @@ module.exports = function () {
     * References a Boolean value.
     *
     * @public
+    * @static
     * @returns {DataType}
     */
 
@@ -6798,6 +11292,7 @@ module.exports = function () {
     * References an object (serialized as JSON).
     *
     * @public
+    * @static
     * @returns {DataType}
     */
 
@@ -6811,6 +11306,7 @@ module.exports = function () {
     * References a {@link Decimal} instance.
     *
     * @public
+    * @static
     * @returns {DataType}
     */
 
@@ -6824,6 +11320,7 @@ module.exports = function () {
     * References a {@link Day} instance.
     *
     * @public
+    * @static
     * @returns {DataType}
     */
 
@@ -6837,6 +11334,7 @@ module.exports = function () {
     * References a {@link Timestamp} instance.
     *
     * @public
+    * @static
     * @returns {DataType}
     */
 
@@ -6844,6 +11342,20 @@ module.exports = function () {
 			key: 'TIMESTAMP',
 			get: function get() {
 				return dataTypeTimestamp;
+			}
+
+			/**
+    * References a {@link Timestamp} instance.
+    *
+    * @public
+    * @static
+    * @returns {DataType}
+    */
+
+		}, {
+			key: 'AD_HOC',
+			get: function get() {
+				return dataTypeAdHoc;
 			}
 		}]);
 
@@ -6854,27 +11366,88 @@ module.exports = function () {
 		return is.extension(Enum, EnumerationType);
 	}
 
-	var dataTypeString = new DataType('String');
-	var dataTypeNumber = new DataType('Number');
-	var dataTypeBoolean = new DataType('Boolean');
-	var dataTypeObject = new DataType('Object');
+	var dataTypeString = new DataType('String', null, null, is.string);
+	var dataTypeNumber = new DataType('Number', null, null, is.number);
+	var dataTypeBoolean = new DataType('Boolean', null, null, is.boolean);
+	var dataTypeObject = new DataType('Object', null, null, is.object);
 
 	var dataTypeDecimal = new DataType('Decimal', null, function (x) {
 		return Decimal.parse(x);
-	});
+	}, function (x) {
+		return x instanceof Decimal;
+	}, getBuilder(buildDecimal));
 	var dataTypeDay = new DataType('Day', null, function (x) {
 		return Day.parse(x);
-	});
+	}, function (x) {
+		return x instanceof Day;
+	}, getBuilder(buildDay));
 	var dataTypeTimestamp = new DataType('Timestamp', null, function (x) {
 		return Timestamp.parse(x);
-	});
+	}, function (x) {
+		return x instanceof Timestamp;
+	}, getBuilder(buildTimestamp));
+	var dataTypeAdHoc = new DataType('AdHoc', null, function (x) {
+		return AdHoc.parse(x);
+	}, function (x) {
+		return x instanceof AdHoc;
+	}, getBuilder(buildAdHoc));
 
-	var dataTypes = [dataTypeString, dataTypeNumber, dataTypeBoolean, dataTypeObject, dataTypeDecimal, dataTypeDay, dataTypeTimestamp];
+	var dataTypes = [dataTypeString, dataTypeNumber, dataTypeBoolean, dataTypeObject, dataTypeDecimal, dataTypeDay, dataTypeTimestamp, dataTypeAdHoc];
+
+	function getBuilder(builder) {
+		return function (data) {
+			try {
+				return builder(data);
+			} catch (e) {
+				return data;
+			}
+		};
+	}
+
+	function buildDecimal(data) {
+		return new Decimal(data);
+	}
+
+	function buildDay(data) {
+		if (data instanceof Day) {
+			return new Day(data.year, data.month, data.day);
+		} else if (is.date(data)) {
+			return Day.fromDate(data);
+		} else if (is.string(data)) {
+			return Day.parse(data);
+		} else if (data instanceof moment) {
+			return new Day(data.year(), data.month() + 1, data.date());
+		} else {
+			return data;
+		}
+	}
+
+	function buildTimestamp(data) {
+		return new Timestamp(data);
+	}
+
+	function buildAdHoc(data) {
+		if (data instanceof AdHoc) {
+			return new AdHoc(data.data);
+		} else if (is.object(data)) {
+			return new AdHoc(data);
+		}
+	}
+
+	function getEnumerationBuilder(enumerationType) {
+		return function (data) {
+			if (is.string(data)) {
+				return Enum.fromCode(enumerationType, data);
+			} else {
+				return data;
+			}
+		};
+	}
 
 	return DataType;
 }();
 
-},{"./../../lang/Day":18,"./../../lang/Decimal":19,"./../../lang/Enum":21,"./../../lang/Timestamp":23,"./../../lang/assert":25,"./../../lang/is":29}],41:[function(require,module,exports){
+},{"./../../lang/AdHoc":35,"./../../lang/Day":37,"./../../lang/Decimal":38,"./../../lang/Enum":40,"./../../lang/Timestamp":42,"./../../lang/assert":44,"./../../lang/is":48,"moment":142}],60:[function(require,module,exports){
 'use strict';
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
@@ -6954,16 +11527,21 @@ module.exports = function () {
 	return Field;
 }();
 
-},{}],42:[function(require,module,exports){
+},{}],61:[function(require,module,exports){
 'use strict';
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
 
 function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr2 = Array(arr.length); i < arr.length; i++) { arr2[i] = arr[i]; } return arr2; } else { return Array.from(arr); } }
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
-var functions = require('./../../lang/functions'),
+var attributes = require('./../../lang/attributes'),
+    functions = require('./../../lang/functions'),
     is = require('./../../lang/is');
 
 var LinkedList = require('./../../collections/LinkedList'),
@@ -7000,14 +11578,41 @@ module.exports = function () {
 		}
 
 		/**
-   * Name of the table.
+   * Accepts data and returns a new object which (should) conform to
+   * the schema.
    *
    * @public
-   * @returns {String}
+   * @param {data} data
+   * @returns {Object}
    */
 
 
 		_createClass(Schema, [{
+			key: 'format',
+			value: function format(data) {
+				var returnRef = {};
+
+				this._fields.forEach(function (field) {
+					formatField(returnRef, field, data);
+				});
+
+				this._components.forEach(function (component) {
+					component.fields.forEach(function (field) {
+						formatField(returnRef, field, data);
+					});
+				});
+
+				return returnRef;
+			}
+
+			/**
+    * Name of the table.
+    *
+    * @public
+    * @returns {String}
+    */
+
+		}, {
 			key: 'validate',
 
 
@@ -7024,7 +11629,7 @@ module.exports = function () {
 			}
 
 			/**
-    * Generates a function suitable for use by JSON.parse.
+    * Generates a function suitable for use by {@link JSON.parse}.
     *
     * @public
     * @returns {Function}
@@ -7051,7 +11656,7 @@ module.exports = function () {
 						} else if (item.optional) {
 							item = advance(key);
 						} else {
-							throw new Error('Schema parsing is using strict mode, unexpected key found [ found: ' + key + ', expected: ' + item.name + ' ]');
+							throw new SchemaError(key, item.name, 'Schema parsing is using strict mode, unexpected key found [ found: ' + key + ', expected: ' + item.name + ' ]');
 						}
 					}
 
@@ -7134,6 +11739,29 @@ module.exports = function () {
 
 		return Schema;
 	}();
+
+	var SchemaError = function (_Error) {
+		_inherits(SchemaError, _Error);
+
+		function SchemaError(key, name, message) {
+			_classCallCheck(this, SchemaError);
+
+			var _this2 = _possibleConstructorReturn(this, (SchemaError.__proto__ || Object.getPrototypeOf(SchemaError)).call(this, message));
+
+			_this2.key = key;
+			_this2.name = name;
+			return _this2;
+		}
+
+		_createClass(SchemaError, [{
+			key: 'toString',
+			value: function toString() {
+				return '[SchemaError]';
+			}
+		}]);
+
+		return SchemaError;
+	}(Error);
 
 	var ReviverItem = function () {
 		function ReviverItem(name, reviver, optional, reset) {
@@ -7254,10 +11882,16 @@ module.exports = function () {
 		return head;
 	}
 
+	function formatField(target, field, data) {
+		if (attributes.has(data, field.name)) {
+			attributes.write(target, field.name, field.dataType.convert(attributes.read(data, field.name)));
+		}
+	}
+
 	return Schema;
 }();
 
-},{"./../../collections/LinkedList":13,"./../../collections/Tree":14,"./../../lang/functions":28,"./../../lang/is":29,"./Component":39,"./Field":41}],43:[function(require,module,exports){
+},{"./../../collections/LinkedList":31,"./../../collections/Tree":32,"./../../lang/attributes":45,"./../../lang/functions":47,"./../../lang/is":48,"./Component":58,"./Field":60}],62:[function(require,module,exports){
 'use strict';
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
@@ -7300,6 +11934,7 @@ module.exports = function () {
 		/**
    * Schedules an action to execute in the future, returning a Promise.
    *
+   * @public
    * @param {Function} actionToSchedule - The action to execute.
    * @param {number} millisecondDelay - Milliseconds before the action can be started.
    * @param {string=} actionDescription - A description of the action, used for logging purposes.
@@ -7379,12 +12014,14 @@ module.exports = function () {
 			/**
     * Attempts an action, repeating if necessary, using an exponential backoff.
     *
+    * @public
     * @param {Function} actionToBackoff - The action to attempt. If it fails -- because an error is thrown, a promise is rejected, or the function returns a falsey value -- the action will be invoked again.
     * @param {number=} millisecondDelay - The amount of time to wait to execute the action. Subsequent failures are multiply this value by 2 ^ [number of failures]. So, a 1000 millisecond backoff would schedule attempts using the following delays: 0, 1000, 2000, 4000, 8000, etc. If not specified, the first attemopt will execute immediately, then a value of 1000 will be used.
     * @param {string=} actionDescription - Description of the action to attempt, used for logging purposes.
     * @param {number=} maximumAttempts - The number of attempts to before giving up.
-    * @param {Function=} maximumAttempts - If provided, will be invoked if a function is considered to be failing.
+    * @param {Function=} failureCallback - If provided, will be invoked if a function is considered to be failing.
     * @param {Object=} failureValue - If provided, will consider the result to have failed, if this value is returned (a deep equality check is used). If not provided, a "falsey" value will trigger a retry.
+    * @returns {Promise}
     */
 
 		}, {
@@ -7403,13 +12040,25 @@ module.exports = function () {
 						throw new Error('The Scheduler has been disposed.');
 					}
 
-					var scheduleBackoff = function scheduleBackoff(failureCount) {
+					var scheduleBackoff = function scheduleBackoff(failureCount, e) {
 						if (failureCount > 0 && is.fn(failureCallback)) {
 							failureCallback(failureCount);
 						}
 
 						if (maximumAttempts > 0 && failureCount > maximumAttempts) {
-							return Promise.reject('Maximum failures reached for ' + actionDescription);
+							var message = 'Maximum failures reached for ' + actionDescription;
+
+							var rejection = void 0;
+
+							if (e) {
+								e.backoff = message;
+
+								rejection = e;
+							} else {
+								rejection = message;
+							}
+
+							return Promise.reject(rejection);
 						}
 
 						var backoffDelay = void 0;
@@ -7439,7 +12088,7 @@ module.exports = function () {
 								return scheduleBackoff(++failureCount);
 							}
 						}).catch(function (e) {
-							return scheduleBackoff(++failureCount);
+							return scheduleBackoff(++failureCount, e);
 						});
 					};
 
@@ -7490,7 +12139,7 @@ module.exports = function () {
 	return Scheduler;
 }();
 
-},{"./../lang/Disposable":20,"./../lang/assert":25,"./../lang/is":29,"./../lang/object":30,"./../lang/promise":31}],44:[function(require,module,exports){
+},{"./../lang/Disposable":39,"./../lang/assert":44,"./../lang/is":48,"./../lang/object":49,"./../lang/promise":50}],63:[function(require,module,exports){
 'use strict';
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
@@ -7564,7 +12213,7 @@ module.exports = function () {
 	return SocketConnectionState;
 }();
 
-},{"@barchart/common-js/lang/assert":25}],45:[function(require,module,exports){
+},{"@barchart/common-js/lang/assert":44}],64:[function(require,module,exports){
 'use strict';
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
@@ -7946,7 +12595,7 @@ module.exports = function () {
 	return SearchManager;
 }();
 
-},{"./adapters/RestAdapter":47,"./adapters/SocketAdapter":48,"@barchart/common-js/lang/Disposable":20,"@barchart/common-js/lang/array":24,"@barchart/common-js/lang/assert":25,"@barchart/common-js/lang/connection":27}],46:[function(require,module,exports){
+},{"./adapters/RestAdapter":66,"./adapters/SocketAdapter":67,"@barchart/common-js/lang/Disposable":39,"@barchart/common-js/lang/array":43,"@barchart/common-js/lang/assert":44,"@barchart/common-js/lang/connection":46}],65:[function(require,module,exports){
 'use strict';
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
@@ -8037,7 +12686,7 @@ module.exports = function () {
 	return InstrumentAdapterBase;
 }();
 
-},{"@barchart/common-js/lang/Disposable":20}],47:[function(require,module,exports){
+},{"@barchart/common-js/lang/Disposable":39}],66:[function(require,module,exports){
 'use strict';
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
@@ -8158,7 +12807,7 @@ module.exports = function () {
 	return RestInstrumentAdapter;
 }();
 
-},{"./BaseAdapter":46,"@barchart/common-js/lang/Disposable":20,"@barchart/common-js/lang/assert":25,"@barchart/common-js/network/rest/RestAction":34,"@barchart/common-js/network/rest/RestEndpoint":35,"@barchart/common-js/network/rest/RestProvider":37}],48:[function(require,module,exports){
+},{"./BaseAdapter":65,"@barchart/common-js/lang/Disposable":39,"@barchart/common-js/lang/assert":44,"@barchart/common-js/network/rest/RestAction":53,"@barchart/common-js/network/rest/RestEndpoint":54,"@barchart/common-js/network/rest/RestProvider":56}],67:[function(require,module,exports){
 'use strict';
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
@@ -8359,7 +13008,7 @@ module.exports = function () {
 	return SocketInstrumentAdapter;
 }();
 
-},{"./../../common/socket/SocketConnectionState":44,"./BaseAdapter":46,"@barchart/common-js/lang/Disposable":20,"@barchart/common-js/lang/assert":25,"@barchart/common-js/lang/promise":31,"socket.io-client":119,"uuid":140}],49:[function(require,module,exports){
+},{"./../../common/socket/SocketConnectionState":63,"./BaseAdapter":65,"@barchart/common-js/lang/Disposable":39,"@barchart/common-js/lang/assert":44,"@barchart/common-js/lang/promise":50,"socket.io-client":163,"uuid":184}],68:[function(require,module,exports){
 'use strict';
 
 module.exports = function () {
@@ -8462,7 +13111,7 @@ module.exports = function () {
 	};
 }();
 
-},{}],50:[function(require,module,exports){
+},{}],69:[function(require,module,exports){
 'use strict';
 
 var lodashIsNaN = require('lodash.isnan');
@@ -8524,7 +13173,7 @@ module.exports = function () {
 	};
 }();
 
-},{"lodash.isnan":93}],51:[function(require,module,exports){
+},{"lodash.isnan":137}],70:[function(require,module,exports){
 'use strict';
 
 var lodashIsNaN = require('lodash.isnan');
@@ -8657,7 +13306,7 @@ module.exports = function () {
 	};
 }();
 
-},{"./decimalFormatter":50,"lodash.isnan":93}],52:[function(require,module,exports){
+},{"./decimalFormatter":69,"lodash.isnan":137}],71:[function(require,module,exports){
 'use strict';
 
 module.exports = function () {
@@ -8733,7 +13382,421 @@ module.exports = function () {
 	};
 }();
 
-},{}],53:[function(require,module,exports){
+},{}],72:[function(require,module,exports){
+'use strict';
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
+var assert = require('@barchart/common-js/lang/assert'),
+    Disposable = require('@barchart/common-js/lang/Disposable'),
+    Enum = require('@barchart/common-js/lang/Enum'),
+    is = require('@barchart/common-js/lang/is'),
+    Scheduler = require('@barchart/common-js/timing/Scheduler');
+
+var EndpointBuilder = require('@barchart/common-js/api/http/builders/EndpointBuilder'),
+    Endpoint = require('@barchart/common-js/api/http/definitions/Endpoint'),
+    FailureReason = require('@barchart/common-js/api/failures/FailureReason'),
+    FailureType = require('@barchart/common-js/api/failures/FailureType'),
+    Gateway = require('@barchart/common-js/api/http/Gateway'),
+    ProtocolType = require('@barchart/common-js/api/http/definitions/ProtocolType'),
+    RequestInterceptor = require('@barchart/common-js/api/http/interceptors/RequestInterceptor'),
+    ResponseInterceptor = require('@barchart/common-js/api/http/interceptors/ResponseInterceptor'),
+    VerbType = require('@barchart/common-js/api/http/definitions/VerbType');
+
+var version = require('./index').version;
+
+module.exports = function () {
+	'use strict';
+
+	var DEFAULT_TOKEN_REFRESH_INTERVAL = 600000;
+
+	/**
+  * Web service gateway for obtaining JWT tokens from TGAM (The Globe and Mail).
+  *
+  * @public
+  * @param {JwtGateway~tokenCallback} tokenDelegate
+  * @param {Number=} refreshInterval - Interval, in milliseconds, which a token refresh should occur. If zero, the token does not need to be refreshed.
+  * @extends {Disposable}
+  */
+
+	var JwtGateway = function (_Disposable) {
+		_inherits(JwtGateway, _Disposable);
+
+		function JwtGateway(tokenDelegate, refreshInterval) {
+			_classCallCheck(this, JwtGateway);
+
+			var _this = _possibleConstructorReturn(this, (JwtGateway.__proto__ || Object.getPrototypeOf(JwtGateway)).call(this));
+
+			assert.argumentIsRequired(tokenDelegate, 'tokenDelegate', Function);
+			assert.argumentIsOptional(refreshInterval, 'refreshInterval', Number);
+
+			_this._started = false;
+			_this._startPromise = null;
+
+			_this._tokenDelegate = tokenDelegate;
+
+			_this._refreshInterval = refreshInterval || 0;
+			_this._refreshJitter = Math.floor(_this._refreshInterval / 10);
+			return _this;
+		}
+
+		/**
+   * Initializes the connection to the remote server and returns a promise
+   * containing the current instance
+   *
+   * @public
+   * @returns {Promise.<JwtGateway>}
+   */
+
+
+		_createClass(JwtGateway, [{
+			key: 'start',
+			value: function start() {
+				var _this2 = this;
+
+				return Promise.resolve().then(function () {
+					if (_this2._startPromise === null) {
+						_this2._startPromise = Promise.resolve().then(function () {
+							_this2._started = true;
+
+							return _this2;
+						}).catch(function (e) {
+							_this2._startPromise = null;
+
+							return Promise.reject(e);
+						});
+					}
+
+					return _this2._startPromise;
+				});
+			}
+
+			/**
+    * Retrieves a JWT token from the remote server.
+    *
+    * @public
+    * @returns {Promise.<String>}
+    */
+
+		}, {
+			key: 'readToken',
+			value: function readToken() {
+				var _this3 = this;
+
+				return Promise.resolve().then(function () {
+					checkStart.call(_this3);
+
+					return _this3._tokenDelegate();
+				}).catch(function (e) {
+					var failure = FailureReason.forRequest({ endpoint: _this3._endpoint }).addItem(FailureType.REQUEST_IDENTITY_FAILURE).format();
+
+					return Promise.reject(failure);
+				});
+			}
+
+			/**
+    * Returns a {@link RequestInterceptor} suitable for use with other API calls.
+    *
+    * @public
+    * @returns {RequestInterceptor}
+    */
+
+		}, {
+			key: 'toRequestInterceptor',
+			value: function toRequestInterceptor() {
+				var _this4 = this;
+
+				var scheduler = new Scheduler();
+
+				var cachePromise = null;
+				var cacheDisposable = null;
+				var cacheTime = null;
+
+				var refreshToken = function refreshToken() {
+					var refreshPromise = scheduler.backoff(function () {
+						return _this4.readToken();
+					}, 100, 'Read JWT token', 3).then(function (token) {
+						if (_this4._refreshInterval > 0) {
+							cachePromise = refreshPromise;
+
+							if (cacheDisposable === null) {
+								cacheDisposable = scheduler.repeat(function () {
+									return refreshToken();
+								}, _this4._refreshInterval, 'Refresh JWT token');
+							}
+						}
+
+						return token;
+					}).then(function (token) {
+						if (_this4._refreshInterval > 0) {
+							cacheTime = getTime();
+						}
+
+						return token;
+					}).catch(function (e) {
+						if (cacheDisposable !== null) {
+							cacheDisposable.dispose();
+
+							cacheDisposable = null;
+							cachePromise = null;
+							cacheTime = null;
+						}
+
+						return Promise.reject(e);
+					});
+
+					return refreshPromise;
+				};
+
+				var delegate = function delegate(options, endpoint) {
+					var tokenPromise = void 0;
+
+					if (cachePromise === null) {
+						tokenPromise = refreshToken();
+					} else {
+						if (cacheTime !== null && getTime() > cacheTime + _this4._refreshInterval + _this4._refreshJitter) {
+							tokenPromise = refreshToken();
+						} else {
+							tokenPromise = cachePromise;
+						}
+					}
+
+					return tokenPromise.then(function (token) {
+						var metadata = (cacheTime ? cacheTime.toString() : 'none') + '-' + getTime().toString() + '-' + version;
+
+						options.headers = options.headers || {};
+						options.headers.Authorization = 'Bearer ' + token + ' Metadata ' + metadata;
+
+						return options;
+					}).catch(function (e) {
+						var failure = FailureReason.forRequest({ endpoint: endpoint }).addItem(FailureType.REQUEST_IDENTITY_FAILURE).format();
+
+						return Promise.reject(failure);
+					});
+				};
+
+				return RequestInterceptor.fromDelegate(delegate);
+			}
+
+			/**
+    * Creates and starts a new {@link JwtGateway} for use in the development environment.
+    *
+    * @public
+    * @static
+    * @param {Promise.<Endpoint>|Endpoint} endpoint - The endpoint which vends JWT tokens.
+    * @returns {Promise.<JwtGateway>}
+    */
+
+		}, {
+			key: '_onDispose',
+			value: function _onDispose() {
+				return;
+			}
+		}, {
+			key: 'toString',
+			value: function toString() {
+				return '[JwtGateway]';
+			}
+		}], [{
+			key: 'forDevelopment',
+			value: function forDevelopment(endpoint) {
+				return Promise.resolve(endpoint).then(function (e) {
+					return start(new JwtGateway(function () {
+						return Gateway.invoke(e);
+					}, 60000));
+				});
+			}
+
+			/**
+    * Creates and starts a new {@link RequestInterceptor} for use in the development environment.
+    *
+    * @public
+    * @static
+    * @param {Promise.<Endpoint>|Endpoint} endpoint - The endpoint which vends JWT tokens.
+    * @returns {Promise.<RequestInterceptor>}
+    */
+
+		}, {
+			key: 'forDevelopmentClient',
+			value: function forDevelopmentClient(endpoint) {
+				return JwtGateway.forDevelopment(endpoint).then(function (jwtGateway) {
+					return jwtGateway.toRequestInterceptor();
+				});
+			}
+
+			/**
+    * Creates and starts a new {@link JwtGateway} for use in the staging environment.
+    *
+    * @public
+    * @static
+    * @returns {Promise.<JwtGateway>}
+    */
+
+		}, {
+			key: 'forStaging',
+			value: function forStaging() {
+				return start(new JwtGateway(_forStaging(), DEFAULT_TOKEN_REFRESH_INTERVAL));
+			}
+
+			/**
+    * Creates and starts a new {@link RequestInterceptor} for use in the staging environment.
+    *
+    * @public
+    * @static
+    * @returns {Promise.<RequestInterceptor>}
+    */
+
+		}, {
+			key: 'forStagingClient',
+			value: function forStagingClient() {
+				return JwtGateway.forStaging().then(function (jwtGateway) {
+					return jwtGateway.toRequestInterceptor();
+				});
+			}
+
+			/**
+    * Creates and starts a new {@link JwtGateway} for use in the production environment.
+    *
+    * @public
+    * @static
+    * @returns {Promise.<JwtGateway>}
+    */
+
+		}, {
+			key: 'forProduction',
+			value: function forProduction() {
+				return start(new JwtGateway(_forProduction(), DEFAULT_TOKEN_REFRESH_INTERVAL));
+			}
+
+			/**
+    * Creates and starts a new {@link RequestInterceptor} for use in the development environment.
+    *
+    * @public
+    * @static
+    * @returns {Promise.<RequestInterceptor>}
+    */
+
+		}, {
+			key: 'forProductionClient',
+			value: function forProductionClient() {
+				return JwtGateway.forProduction().then(function (jwtGateway) {
+					return jwtGateway.toRequestInterceptor();
+				});
+			}
+
+			/**
+    * Creates and starts a new {@link JwtGateway} for use by the "tracker" system.
+    *
+    * @public
+    * @static
+    * @param {Function} tokenDelegate - A function which returns the JWT token.
+    * @returns {Promise.<JwtGateway>}
+    */
+
+		}, {
+			key: 'forTracker',
+			value: function forTracker(tokenDelegate) {
+				return Promise.resolve().then(function () {
+					return start(new JwtGateway(tokenDelegate, 0));
+				});
+			}
+
+			/**
+    * Creates and starts a new {@link RequestInterceptor} for use by "tracker" system.
+    *
+    * @public
+    * @static
+    * @param {JwtGateway~tokenCallback} tokenDelegate - A function which returns the JWT token.
+    * @returns {Promise.<RequestInterceptor>}
+    */
+
+		}, {
+			key: 'forTrackerClient',
+			value: function forTrackerClient(tokenDelegate) {
+				return JwtGateway.forTracker(tokenDelegate).then(function (jwtGateway) {
+					return jwtGateway.toRequestInterceptor();
+				});
+			}
+		}]);
+
+		return JwtGateway;
+	}(Disposable);
+
+	function start(gateway) {
+		return gateway.start().then(function () {
+			return gateway;
+		});
+	}
+
+	function checkStart() {
+		if (this.getIsDisposed()) {
+			throw new Error('Unable to use gateway, the gateway has been disposed.');
+		}
+
+		if (!this._started) {
+			throw new Error('Unable to use gateway, the gateway has not started.');
+		}
+	}
+
+	function _forStaging() {
+		return forTgam('gamservices.stg2.theglobeandmail.com/usermanagement/public/v3/user/sso', '1bcc5c85-e833-4936-9313-abe5dfdcef76', 'staging');
+	}
+
+	function _forProduction() {
+		return forTgam('gamservices.theglobeandmail.com/usermanagement/public/v3/user/sso', '7359a9ae-171b-41a6-af0b-6f2812133516', 'production');
+	}
+
+	function forTgam(host, secret, environment) {
+		var endpoint = EndpointBuilder.for('read-jwt-token-for-' + environment, 'lookup user identity').withVerb(VerbType.GET).withProtocol(ProtocolType.HTTPS).withHeadersBuilder(function (hb) {
+			return hb.withLiteralParameter('X-GAM-CLIENT-APP-ID', 'X-GAM-CLIENT-APP-ID', '1348').withLiteralParameter('X-GAM-CLIENT-APP-SECRET', 'X-GAM-CLIENT-APP-SECRET', secret);
+		}).withHost(host).withRequestInterceptor(RequestInterceptor.fromDelegate(function (request) {
+			request.withCredentials = true;
+
+			return request;
+		})).withResponseInterceptor(ResponseInterceptor.DATA).withResponseInterceptor(ResponseInterceptor.fromDelegate(function (response) {
+			return response.token;
+		})).endpoint;
+
+		return function () {
+			return Gateway.invoke(endpoint);
+		};
+	}
+
+	function getTime() {
+		return new Date().getTime();
+	}
+
+	/**
+  * A function returns a JWT token (or a promise for a JWT token).
+  *
+  * @callback JwtGateway~tokenCallback
+  * @returns {String|Promise.<String>}
+  */
+
+	return JwtGateway;
+}();
+
+},{"./index":73,"@barchart/common-js/api/failures/FailureReason":14,"@barchart/common-js/api/failures/FailureType":16,"@barchart/common-js/api/http/Gateway":17,"@barchart/common-js/api/http/builders/EndpointBuilder":18,"@barchart/common-js/api/http/definitions/Endpoint":20,"@barchart/common-js/api/http/definitions/ProtocolType":23,"@barchart/common-js/api/http/definitions/VerbType":24,"@barchart/common-js/api/http/interceptors/RequestInterceptor":29,"@barchart/common-js/api/http/interceptors/ResponseInterceptor":30,"@barchart/common-js/lang/Disposable":39,"@barchart/common-js/lang/Enum":40,"@barchart/common-js/lang/assert":44,"@barchart/common-js/lang/is":48,"@barchart/common-js/timing/Scheduler":62}],73:[function(require,module,exports){
+'use strict';
+
+var JwtGateway = require('./JwtGateway');
+
+module.exports = function () {
+	'use strict';
+
+	return {
+		JwtGateway: JwtGateway,
+		version: '1.0.40'
+	};
+}();
+
+},{"./JwtGateway":72}],74:[function(require,module,exports){
 module.exports = after
 
 function after(count, callback, err_cb) {
@@ -8763,7 +13826,7 @@ function after(count, callback, err_cb) {
 
 function noop() {}
 
-},{}],54:[function(require,module,exports){
+},{}],75:[function(require,module,exports){
 /**
  * An abstraction for slicing an arraybuffer even when
  * ArrayBuffer.prototype.slice is not supported
@@ -8794,7 +13857,1427 @@ module.exports = function(arraybuffer, start, end) {
   return result.buffer;
 };
 
-},{}],55:[function(require,module,exports){
+},{}],76:[function(require,module,exports){
+module.exports = require('./lib/axios');
+},{"./lib/axios":78}],77:[function(require,module,exports){
+(function (process){
+'use strict';
+
+var utils = require('./../utils');
+var settle = require('./../core/settle');
+var buildURL = require('./../helpers/buildURL');
+var parseHeaders = require('./../helpers/parseHeaders');
+var isURLSameOrigin = require('./../helpers/isURLSameOrigin');
+var createError = require('../core/createError');
+var btoa = (typeof window !== 'undefined' && window.btoa && window.btoa.bind(window)) || require('./../helpers/btoa');
+
+module.exports = function xhrAdapter(config) {
+  return new Promise(function dispatchXhrRequest(resolve, reject) {
+    var requestData = config.data;
+    var requestHeaders = config.headers;
+
+    if (utils.isFormData(requestData)) {
+      delete requestHeaders['Content-Type']; // Let the browser set it
+    }
+
+    var request = new XMLHttpRequest();
+    var loadEvent = 'onreadystatechange';
+    var xDomain = false;
+
+    // For IE 8/9 CORS support
+    // Only supports POST and GET calls and doesn't returns the response headers.
+    // DON'T do this for testing b/c XMLHttpRequest is mocked, not XDomainRequest.
+    if (process.env.NODE_ENV !== 'test' &&
+        typeof window !== 'undefined' &&
+        window.XDomainRequest && !('withCredentials' in request) &&
+        !isURLSameOrigin(config.url)) {
+      request = new window.XDomainRequest();
+      loadEvent = 'onload';
+      xDomain = true;
+      request.onprogress = function handleProgress() {};
+      request.ontimeout = function handleTimeout() {};
+    }
+
+    // HTTP basic authentication
+    if (config.auth) {
+      var username = config.auth.username || '';
+      var password = config.auth.password || '';
+      requestHeaders.Authorization = 'Basic ' + btoa(username + ':' + password);
+    }
+
+    request.open(config.method.toUpperCase(), buildURL(config.url, config.params, config.paramsSerializer), true);
+
+    // Set the request timeout in MS
+    request.timeout = config.timeout;
+
+    // Listen for ready state
+    request[loadEvent] = function handleLoad() {
+      if (!request || (request.readyState !== 4 && !xDomain)) {
+        return;
+      }
+
+      // The request errored out and we didn't get a response, this will be
+      // handled by onerror instead
+      // With one exception: request that using file: protocol, most browsers
+      // will return status as 0 even though it's a successful request
+      if (request.status === 0 && !(request.responseURL && request.responseURL.indexOf('file:') === 0)) {
+        return;
+      }
+
+      // Prepare the response
+      var responseHeaders = 'getAllResponseHeaders' in request ? parseHeaders(request.getAllResponseHeaders()) : null;
+      var responseData = !config.responseType || config.responseType === 'text' ? request.responseText : request.response;
+      var response = {
+        data: responseData,
+        // IE sends 1223 instead of 204 (https://github.com/axios/axios/issues/201)
+        status: request.status === 1223 ? 204 : request.status,
+        statusText: request.status === 1223 ? 'No Content' : request.statusText,
+        headers: responseHeaders,
+        config: config,
+        request: request
+      };
+
+      settle(resolve, reject, response);
+
+      // Clean up request
+      request = null;
+    };
+
+    // Handle low level network errors
+    request.onerror = function handleError() {
+      // Real errors are hidden from us by the browser
+      // onerror should only fire if it's a network error
+      reject(createError('Network Error', config, null, request));
+
+      // Clean up request
+      request = null;
+    };
+
+    // Handle timeout
+    request.ontimeout = function handleTimeout() {
+      reject(createError('timeout of ' + config.timeout + 'ms exceeded', config, 'ECONNABORTED',
+        request));
+
+      // Clean up request
+      request = null;
+    };
+
+    // Add xsrf header
+    // This is only done if running in a standard browser environment.
+    // Specifically not if we're in a web worker, or react-native.
+    if (utils.isStandardBrowserEnv()) {
+      var cookies = require('./../helpers/cookies');
+
+      // Add xsrf header
+      var xsrfValue = (config.withCredentials || isURLSameOrigin(config.url)) && config.xsrfCookieName ?
+          cookies.read(config.xsrfCookieName) :
+          undefined;
+
+      if (xsrfValue) {
+        requestHeaders[config.xsrfHeaderName] = xsrfValue;
+      }
+    }
+
+    // Add headers to the request
+    if ('setRequestHeader' in request) {
+      utils.forEach(requestHeaders, function setRequestHeader(val, key) {
+        if (typeof requestData === 'undefined' && key.toLowerCase() === 'content-type') {
+          // Remove Content-Type if data is undefined
+          delete requestHeaders[key];
+        } else {
+          // Otherwise add header to the request
+          request.setRequestHeader(key, val);
+        }
+      });
+    }
+
+    // Add withCredentials to request if needed
+    if (config.withCredentials) {
+      request.withCredentials = true;
+    }
+
+    // Add responseType to request if needed
+    if (config.responseType) {
+      try {
+        request.responseType = config.responseType;
+      } catch (e) {
+        // Expected DOMException thrown by browsers not compatible XMLHttpRequest Level 2.
+        // But, this can be suppressed for 'json' type as it can be parsed by default 'transformResponse' function.
+        if (config.responseType !== 'json') {
+          throw e;
+        }
+      }
+    }
+
+    // Handle progress if needed
+    if (typeof config.onDownloadProgress === 'function') {
+      request.addEventListener('progress', config.onDownloadProgress);
+    }
+
+    // Not all browsers support upload events
+    if (typeof config.onUploadProgress === 'function' && request.upload) {
+      request.upload.addEventListener('progress', config.onUploadProgress);
+    }
+
+    if (config.cancelToken) {
+      // Handle cancellation
+      config.cancelToken.promise.then(function onCanceled(cancel) {
+        if (!request) {
+          return;
+        }
+
+        request.abort();
+        reject(cancel);
+        // Clean up request
+        request = null;
+      });
+    }
+
+    if (requestData === undefined) {
+      requestData = null;
+    }
+
+    // Send the request
+    request.send(requestData);
+  });
+};
+
+}).call(this,require('_process'))
+},{"../core/createError":84,"./../core/settle":87,"./../helpers/btoa":91,"./../helpers/buildURL":92,"./../helpers/cookies":94,"./../helpers/isURLSameOrigin":96,"./../helpers/parseHeaders":98,"./../utils":100,"_process":107}],78:[function(require,module,exports){
+'use strict';
+
+var utils = require('./utils');
+var bind = require('./helpers/bind');
+var Axios = require('./core/Axios');
+var defaults = require('./defaults');
+
+/**
+ * Create an instance of Axios
+ *
+ * @param {Object} defaultConfig The default config for the instance
+ * @return {Axios} A new instance of Axios
+ */
+function createInstance(defaultConfig) {
+  var context = new Axios(defaultConfig);
+  var instance = bind(Axios.prototype.request, context);
+
+  // Copy axios.prototype to instance
+  utils.extend(instance, Axios.prototype, context);
+
+  // Copy context to instance
+  utils.extend(instance, context);
+
+  return instance;
+}
+
+// Create the default instance to be exported
+var axios = createInstance(defaults);
+
+// Expose Axios class to allow class inheritance
+axios.Axios = Axios;
+
+// Factory for creating new instances
+axios.create = function create(instanceConfig) {
+  return createInstance(utils.merge(defaults, instanceConfig));
+};
+
+// Expose Cancel & CancelToken
+axios.Cancel = require('./cancel/Cancel');
+axios.CancelToken = require('./cancel/CancelToken');
+axios.isCancel = require('./cancel/isCancel');
+
+// Expose all/spread
+axios.all = function all(promises) {
+  return Promise.all(promises);
+};
+axios.spread = require('./helpers/spread');
+
+module.exports = axios;
+
+// Allow use of default import syntax in TypeScript
+module.exports.default = axios;
+
+},{"./cancel/Cancel":79,"./cancel/CancelToken":80,"./cancel/isCancel":81,"./core/Axios":82,"./defaults":89,"./helpers/bind":90,"./helpers/spread":99,"./utils":100}],79:[function(require,module,exports){
+'use strict';
+
+/**
+ * A `Cancel` is an object that is thrown when an operation is canceled.
+ *
+ * @class
+ * @param {string=} message The message.
+ */
+function Cancel(message) {
+  this.message = message;
+}
+
+Cancel.prototype.toString = function toString() {
+  return 'Cancel' + (this.message ? ': ' + this.message : '');
+};
+
+Cancel.prototype.__CANCEL__ = true;
+
+module.exports = Cancel;
+
+},{}],80:[function(require,module,exports){
+'use strict';
+
+var Cancel = require('./Cancel');
+
+/**
+ * A `CancelToken` is an object that can be used to request cancellation of an operation.
+ *
+ * @class
+ * @param {Function} executor The executor function.
+ */
+function CancelToken(executor) {
+  if (typeof executor !== 'function') {
+    throw new TypeError('executor must be a function.');
+  }
+
+  var resolvePromise;
+  this.promise = new Promise(function promiseExecutor(resolve) {
+    resolvePromise = resolve;
+  });
+
+  var token = this;
+  executor(function cancel(message) {
+    if (token.reason) {
+      // Cancellation has already been requested
+      return;
+    }
+
+    token.reason = new Cancel(message);
+    resolvePromise(token.reason);
+  });
+}
+
+/**
+ * Throws a `Cancel` if cancellation has been requested.
+ */
+CancelToken.prototype.throwIfRequested = function throwIfRequested() {
+  if (this.reason) {
+    throw this.reason;
+  }
+};
+
+/**
+ * Returns an object that contains a new `CancelToken` and a function that, when called,
+ * cancels the `CancelToken`.
+ */
+CancelToken.source = function source() {
+  var cancel;
+  var token = new CancelToken(function executor(c) {
+    cancel = c;
+  });
+  return {
+    token: token,
+    cancel: cancel
+  };
+};
+
+module.exports = CancelToken;
+
+},{"./Cancel":79}],81:[function(require,module,exports){
+'use strict';
+
+module.exports = function isCancel(value) {
+  return !!(value && value.__CANCEL__);
+};
+
+},{}],82:[function(require,module,exports){
+'use strict';
+
+var defaults = require('./../defaults');
+var utils = require('./../utils');
+var InterceptorManager = require('./InterceptorManager');
+var dispatchRequest = require('./dispatchRequest');
+
+/**
+ * Create a new instance of Axios
+ *
+ * @param {Object} instanceConfig The default config for the instance
+ */
+function Axios(instanceConfig) {
+  this.defaults = instanceConfig;
+  this.interceptors = {
+    request: new InterceptorManager(),
+    response: new InterceptorManager()
+  };
+}
+
+/**
+ * Dispatch a request
+ *
+ * @param {Object} config The config specific for this request (merged with this.defaults)
+ */
+Axios.prototype.request = function request(config) {
+  /*eslint no-param-reassign:0*/
+  // Allow for axios('example/url'[, config]) a la fetch API
+  if (typeof config === 'string') {
+    config = utils.merge({
+      url: arguments[0]
+    }, arguments[1]);
+  }
+
+  config = utils.merge(defaults, this.defaults, { method: 'get' }, config);
+  config.method = config.method.toLowerCase();
+
+  // Hook up interceptors middleware
+  var chain = [dispatchRequest, undefined];
+  var promise = Promise.resolve(config);
+
+  this.interceptors.request.forEach(function unshiftRequestInterceptors(interceptor) {
+    chain.unshift(interceptor.fulfilled, interceptor.rejected);
+  });
+
+  this.interceptors.response.forEach(function pushResponseInterceptors(interceptor) {
+    chain.push(interceptor.fulfilled, interceptor.rejected);
+  });
+
+  while (chain.length) {
+    promise = promise.then(chain.shift(), chain.shift());
+  }
+
+  return promise;
+};
+
+// Provide aliases for supported request methods
+utils.forEach(['delete', 'get', 'head', 'options'], function forEachMethodNoData(method) {
+  /*eslint func-names:0*/
+  Axios.prototype[method] = function(url, config) {
+    return this.request(utils.merge(config || {}, {
+      method: method,
+      url: url
+    }));
+  };
+});
+
+utils.forEach(['post', 'put', 'patch'], function forEachMethodWithData(method) {
+  /*eslint func-names:0*/
+  Axios.prototype[method] = function(url, data, config) {
+    return this.request(utils.merge(config || {}, {
+      method: method,
+      url: url,
+      data: data
+    }));
+  };
+});
+
+module.exports = Axios;
+
+},{"./../defaults":89,"./../utils":100,"./InterceptorManager":83,"./dispatchRequest":85}],83:[function(require,module,exports){
+'use strict';
+
+var utils = require('./../utils');
+
+function InterceptorManager() {
+  this.handlers = [];
+}
+
+/**
+ * Add a new interceptor to the stack
+ *
+ * @param {Function} fulfilled The function to handle `then` for a `Promise`
+ * @param {Function} rejected The function to handle `reject` for a `Promise`
+ *
+ * @return {Number} An ID used to remove interceptor later
+ */
+InterceptorManager.prototype.use = function use(fulfilled, rejected) {
+  this.handlers.push({
+    fulfilled: fulfilled,
+    rejected: rejected
+  });
+  return this.handlers.length - 1;
+};
+
+/**
+ * Remove an interceptor from the stack
+ *
+ * @param {Number} id The ID that was returned by `use`
+ */
+InterceptorManager.prototype.eject = function eject(id) {
+  if (this.handlers[id]) {
+    this.handlers[id] = null;
+  }
+};
+
+/**
+ * Iterate over all the registered interceptors
+ *
+ * This method is particularly useful for skipping over any
+ * interceptors that may have become `null` calling `eject`.
+ *
+ * @param {Function} fn The function to call for each interceptor
+ */
+InterceptorManager.prototype.forEach = function forEach(fn) {
+  utils.forEach(this.handlers, function forEachHandler(h) {
+    if (h !== null) {
+      fn(h);
+    }
+  });
+};
+
+module.exports = InterceptorManager;
+
+},{"./../utils":100}],84:[function(require,module,exports){
+'use strict';
+
+var enhanceError = require('./enhanceError');
+
+/**
+ * Create an Error with the specified message, config, error code, request and response.
+ *
+ * @param {string} message The error message.
+ * @param {Object} config The config.
+ * @param {string} [code] The error code (for example, 'ECONNABORTED').
+ * @param {Object} [request] The request.
+ * @param {Object} [response] The response.
+ * @returns {Error} The created error.
+ */
+module.exports = function createError(message, config, code, request, response) {
+  var error = new Error(message);
+  return enhanceError(error, config, code, request, response);
+};
+
+},{"./enhanceError":86}],85:[function(require,module,exports){
+'use strict';
+
+var utils = require('./../utils');
+var transformData = require('./transformData');
+var isCancel = require('../cancel/isCancel');
+var defaults = require('../defaults');
+var isAbsoluteURL = require('./../helpers/isAbsoluteURL');
+var combineURLs = require('./../helpers/combineURLs');
+
+/**
+ * Throws a `Cancel` if cancellation has been requested.
+ */
+function throwIfCancellationRequested(config) {
+  if (config.cancelToken) {
+    config.cancelToken.throwIfRequested();
+  }
+}
+
+/**
+ * Dispatch a request to the server using the configured adapter.
+ *
+ * @param {object} config The config that is to be used for the request
+ * @returns {Promise} The Promise to be fulfilled
+ */
+module.exports = function dispatchRequest(config) {
+  throwIfCancellationRequested(config);
+
+  // Support baseURL config
+  if (config.baseURL && !isAbsoluteURL(config.url)) {
+    config.url = combineURLs(config.baseURL, config.url);
+  }
+
+  // Ensure headers exist
+  config.headers = config.headers || {};
+
+  // Transform request data
+  config.data = transformData(
+    config.data,
+    config.headers,
+    config.transformRequest
+  );
+
+  // Flatten headers
+  config.headers = utils.merge(
+    config.headers.common || {},
+    config.headers[config.method] || {},
+    config.headers || {}
+  );
+
+  utils.forEach(
+    ['delete', 'get', 'head', 'post', 'put', 'patch', 'common'],
+    function cleanHeaderConfig(method) {
+      delete config.headers[method];
+    }
+  );
+
+  var adapter = config.adapter || defaults.adapter;
+
+  return adapter(config).then(function onAdapterResolution(response) {
+    throwIfCancellationRequested(config);
+
+    // Transform response data
+    response.data = transformData(
+      response.data,
+      response.headers,
+      config.transformResponse
+    );
+
+    return response;
+  }, function onAdapterRejection(reason) {
+    if (!isCancel(reason)) {
+      throwIfCancellationRequested(config);
+
+      // Transform response data
+      if (reason && reason.response) {
+        reason.response.data = transformData(
+          reason.response.data,
+          reason.response.headers,
+          config.transformResponse
+        );
+      }
+    }
+
+    return Promise.reject(reason);
+  });
+};
+
+},{"../cancel/isCancel":81,"../defaults":89,"./../helpers/combineURLs":93,"./../helpers/isAbsoluteURL":95,"./../utils":100,"./transformData":88}],86:[function(require,module,exports){
+'use strict';
+
+/**
+ * Update an Error with the specified config, error code, and response.
+ *
+ * @param {Error} error The error to update.
+ * @param {Object} config The config.
+ * @param {string} [code] The error code (for example, 'ECONNABORTED').
+ * @param {Object} [request] The request.
+ * @param {Object} [response] The response.
+ * @returns {Error} The error.
+ */
+module.exports = function enhanceError(error, config, code, request, response) {
+  error.config = config;
+  if (code) {
+    error.code = code;
+  }
+  error.request = request;
+  error.response = response;
+  return error;
+};
+
+},{}],87:[function(require,module,exports){
+'use strict';
+
+var createError = require('./createError');
+
+/**
+ * Resolve or reject a Promise based on response status.
+ *
+ * @param {Function} resolve A function that resolves the promise.
+ * @param {Function} reject A function that rejects the promise.
+ * @param {object} response The response.
+ */
+module.exports = function settle(resolve, reject, response) {
+  var validateStatus = response.config.validateStatus;
+  // Note: status is not exposed by XDomainRequest
+  if (!response.status || !validateStatus || validateStatus(response.status)) {
+    resolve(response);
+  } else {
+    reject(createError(
+      'Request failed with status code ' + response.status,
+      response.config,
+      null,
+      response.request,
+      response
+    ));
+  }
+};
+
+},{"./createError":84}],88:[function(require,module,exports){
+'use strict';
+
+var utils = require('./../utils');
+
+/**
+ * Transform the data for a request or a response
+ *
+ * @param {Object|String} data The data to be transformed
+ * @param {Array} headers The headers for the request or response
+ * @param {Array|Function} fns A single function or Array of functions
+ * @returns {*} The resulting transformed data
+ */
+module.exports = function transformData(data, headers, fns) {
+  /*eslint no-param-reassign:0*/
+  utils.forEach(fns, function transform(fn) {
+    data = fn(data, headers);
+  });
+
+  return data;
+};
+
+},{"./../utils":100}],89:[function(require,module,exports){
+(function (process){
+'use strict';
+
+var utils = require('./utils');
+var normalizeHeaderName = require('./helpers/normalizeHeaderName');
+
+var DEFAULT_CONTENT_TYPE = {
+  'Content-Type': 'application/x-www-form-urlencoded'
+};
+
+function setContentTypeIfUnset(headers, value) {
+  if (!utils.isUndefined(headers) && utils.isUndefined(headers['Content-Type'])) {
+    headers['Content-Type'] = value;
+  }
+}
+
+function getDefaultAdapter() {
+  var adapter;
+  if (typeof XMLHttpRequest !== 'undefined') {
+    // For browsers use XHR adapter
+    adapter = require('./adapters/xhr');
+  } else if (typeof process !== 'undefined') {
+    // For node use HTTP adapter
+    adapter = require('./adapters/http');
+  }
+  return adapter;
+}
+
+var defaults = {
+  adapter: getDefaultAdapter(),
+
+  transformRequest: [function transformRequest(data, headers) {
+    normalizeHeaderName(headers, 'Content-Type');
+    if (utils.isFormData(data) ||
+      utils.isArrayBuffer(data) ||
+      utils.isBuffer(data) ||
+      utils.isStream(data) ||
+      utils.isFile(data) ||
+      utils.isBlob(data)
+    ) {
+      return data;
+    }
+    if (utils.isArrayBufferView(data)) {
+      return data.buffer;
+    }
+    if (utils.isURLSearchParams(data)) {
+      setContentTypeIfUnset(headers, 'application/x-www-form-urlencoded;charset=utf-8');
+      return data.toString();
+    }
+    if (utils.isObject(data)) {
+      setContentTypeIfUnset(headers, 'application/json;charset=utf-8');
+      return JSON.stringify(data);
+    }
+    return data;
+  }],
+
+  transformResponse: [function transformResponse(data) {
+    /*eslint no-param-reassign:0*/
+    if (typeof data === 'string') {
+      try {
+        data = JSON.parse(data);
+      } catch (e) { /* Ignore */ }
+    }
+    return data;
+  }],
+
+  timeout: 0,
+
+  xsrfCookieName: 'XSRF-TOKEN',
+  xsrfHeaderName: 'X-XSRF-TOKEN',
+
+  maxContentLength: -1,
+
+  validateStatus: function validateStatus(status) {
+    return status >= 200 && status < 300;
+  }
+};
+
+defaults.headers = {
+  common: {
+    'Accept': 'application/json, text/plain, */*'
+  }
+};
+
+utils.forEach(['delete', 'get', 'head'], function forEachMethodNoData(method) {
+  defaults.headers[method] = {};
+});
+
+utils.forEach(['post', 'put', 'patch'], function forEachMethodWithData(method) {
+  defaults.headers[method] = utils.merge(DEFAULT_CONTENT_TYPE);
+});
+
+module.exports = defaults;
+
+}).call(this,require('_process'))
+},{"./adapters/http":77,"./adapters/xhr":77,"./helpers/normalizeHeaderName":97,"./utils":100,"_process":107}],90:[function(require,module,exports){
+'use strict';
+
+module.exports = function bind(fn, thisArg) {
+  return function wrap() {
+    var args = new Array(arguments.length);
+    for (var i = 0; i < args.length; i++) {
+      args[i] = arguments[i];
+    }
+    return fn.apply(thisArg, args);
+  };
+};
+
+},{}],91:[function(require,module,exports){
+'use strict';
+
+// btoa polyfill for IE<10 courtesy https://github.com/davidchambers/Base64.js
+
+var chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/=';
+
+function E() {
+  this.message = 'String contains an invalid character';
+}
+E.prototype = new Error;
+E.prototype.code = 5;
+E.prototype.name = 'InvalidCharacterError';
+
+function btoa(input) {
+  var str = String(input);
+  var output = '';
+  for (
+    // initialize result and counter
+    var block, charCode, idx = 0, map = chars;
+    // if the next str index does not exist:
+    //   change the mapping table to "="
+    //   check if d has no fractional digits
+    str.charAt(idx | 0) || (map = '=', idx % 1);
+    // "8 - idx % 1 * 8" generates the sequence 2, 4, 6, 8
+    output += map.charAt(63 & block >> 8 - idx % 1 * 8)
+  ) {
+    charCode = str.charCodeAt(idx += 3 / 4);
+    if (charCode > 0xFF) {
+      throw new E();
+    }
+    block = block << 8 | charCode;
+  }
+  return output;
+}
+
+module.exports = btoa;
+
+},{}],92:[function(require,module,exports){
+'use strict';
+
+var utils = require('./../utils');
+
+function encode(val) {
+  return encodeURIComponent(val).
+    replace(/%40/gi, '@').
+    replace(/%3A/gi, ':').
+    replace(/%24/g, '$').
+    replace(/%2C/gi, ',').
+    replace(/%20/g, '+').
+    replace(/%5B/gi, '[').
+    replace(/%5D/gi, ']');
+}
+
+/**
+ * Build a URL by appending params to the end
+ *
+ * @param {string} url The base of the url (e.g., http://www.google.com)
+ * @param {object} [params] The params to be appended
+ * @returns {string} The formatted url
+ */
+module.exports = function buildURL(url, params, paramsSerializer) {
+  /*eslint no-param-reassign:0*/
+  if (!params) {
+    return url;
+  }
+
+  var serializedParams;
+  if (paramsSerializer) {
+    serializedParams = paramsSerializer(params);
+  } else if (utils.isURLSearchParams(params)) {
+    serializedParams = params.toString();
+  } else {
+    var parts = [];
+
+    utils.forEach(params, function serialize(val, key) {
+      if (val === null || typeof val === 'undefined') {
+        return;
+      }
+
+      if (utils.isArray(val)) {
+        key = key + '[]';
+      }
+
+      if (!utils.isArray(val)) {
+        val = [val];
+      }
+
+      utils.forEach(val, function parseValue(v) {
+        if (utils.isDate(v)) {
+          v = v.toISOString();
+        } else if (utils.isObject(v)) {
+          v = JSON.stringify(v);
+        }
+        parts.push(encode(key) + '=' + encode(v));
+      });
+    });
+
+    serializedParams = parts.join('&');
+  }
+
+  if (serializedParams) {
+    url += (url.indexOf('?') === -1 ? '?' : '&') + serializedParams;
+  }
+
+  return url;
+};
+
+},{"./../utils":100}],93:[function(require,module,exports){
+'use strict';
+
+/**
+ * Creates a new URL by combining the specified URLs
+ *
+ * @param {string} baseURL The base URL
+ * @param {string} relativeURL The relative URL
+ * @returns {string} The combined URL
+ */
+module.exports = function combineURLs(baseURL, relativeURL) {
+  return relativeURL
+    ? baseURL.replace(/\/+$/, '') + '/' + relativeURL.replace(/^\/+/, '')
+    : baseURL;
+};
+
+},{}],94:[function(require,module,exports){
+'use strict';
+
+var utils = require('./../utils');
+
+module.exports = (
+  utils.isStandardBrowserEnv() ?
+
+  // Standard browser envs support document.cookie
+  (function standardBrowserEnv() {
+    return {
+      write: function write(name, value, expires, path, domain, secure) {
+        var cookie = [];
+        cookie.push(name + '=' + encodeURIComponent(value));
+
+        if (utils.isNumber(expires)) {
+          cookie.push('expires=' + new Date(expires).toGMTString());
+        }
+
+        if (utils.isString(path)) {
+          cookie.push('path=' + path);
+        }
+
+        if (utils.isString(domain)) {
+          cookie.push('domain=' + domain);
+        }
+
+        if (secure === true) {
+          cookie.push('secure');
+        }
+
+        document.cookie = cookie.join('; ');
+      },
+
+      read: function read(name) {
+        var match = document.cookie.match(new RegExp('(^|;\\s*)(' + name + ')=([^;]*)'));
+        return (match ? decodeURIComponent(match[3]) : null);
+      },
+
+      remove: function remove(name) {
+        this.write(name, '', Date.now() - 86400000);
+      }
+    };
+  })() :
+
+  // Non standard browser env (web workers, react-native) lack needed support.
+  (function nonStandardBrowserEnv() {
+    return {
+      write: function write() {},
+      read: function read() { return null; },
+      remove: function remove() {}
+    };
+  })()
+);
+
+},{"./../utils":100}],95:[function(require,module,exports){
+'use strict';
+
+/**
+ * Determines whether the specified URL is absolute
+ *
+ * @param {string} url The URL to test
+ * @returns {boolean} True if the specified URL is absolute, otherwise false
+ */
+module.exports = function isAbsoluteURL(url) {
+  // A URL is considered absolute if it begins with "<scheme>://" or "//" (protocol-relative URL).
+  // RFC 3986 defines scheme name as a sequence of characters beginning with a letter and followed
+  // by any combination of letters, digits, plus, period, or hyphen.
+  return /^([a-z][a-z\d\+\-\.]*:)?\/\//i.test(url);
+};
+
+},{}],96:[function(require,module,exports){
+'use strict';
+
+var utils = require('./../utils');
+
+module.exports = (
+  utils.isStandardBrowserEnv() ?
+
+  // Standard browser envs have full support of the APIs needed to test
+  // whether the request URL is of the same origin as current location.
+  (function standardBrowserEnv() {
+    var msie = /(msie|trident)/i.test(navigator.userAgent);
+    var urlParsingNode = document.createElement('a');
+    var originURL;
+
+    /**
+    * Parse a URL to discover it's components
+    *
+    * @param {String} url The URL to be parsed
+    * @returns {Object}
+    */
+    function resolveURL(url) {
+      var href = url;
+
+      if (msie) {
+        // IE needs attribute set twice to normalize properties
+        urlParsingNode.setAttribute('href', href);
+        href = urlParsingNode.href;
+      }
+
+      urlParsingNode.setAttribute('href', href);
+
+      // urlParsingNode provides the UrlUtils interface - http://url.spec.whatwg.org/#urlutils
+      return {
+        href: urlParsingNode.href,
+        protocol: urlParsingNode.protocol ? urlParsingNode.protocol.replace(/:$/, '') : '',
+        host: urlParsingNode.host,
+        search: urlParsingNode.search ? urlParsingNode.search.replace(/^\?/, '') : '',
+        hash: urlParsingNode.hash ? urlParsingNode.hash.replace(/^#/, '') : '',
+        hostname: urlParsingNode.hostname,
+        port: urlParsingNode.port,
+        pathname: (urlParsingNode.pathname.charAt(0) === '/') ?
+                  urlParsingNode.pathname :
+                  '/' + urlParsingNode.pathname
+      };
+    }
+
+    originURL = resolveURL(window.location.href);
+
+    /**
+    * Determine if a URL shares the same origin as the current location
+    *
+    * @param {String} requestURL The URL to test
+    * @returns {boolean} True if URL shares the same origin, otherwise false
+    */
+    return function isURLSameOrigin(requestURL) {
+      var parsed = (utils.isString(requestURL)) ? resolveURL(requestURL) : requestURL;
+      return (parsed.protocol === originURL.protocol &&
+            parsed.host === originURL.host);
+    };
+  })() :
+
+  // Non standard browser envs (web workers, react-native) lack needed support.
+  (function nonStandardBrowserEnv() {
+    return function isURLSameOrigin() {
+      return true;
+    };
+  })()
+);
+
+},{"./../utils":100}],97:[function(require,module,exports){
+'use strict';
+
+var utils = require('../utils');
+
+module.exports = function normalizeHeaderName(headers, normalizedName) {
+  utils.forEach(headers, function processHeader(value, name) {
+    if (name !== normalizedName && name.toUpperCase() === normalizedName.toUpperCase()) {
+      headers[normalizedName] = value;
+      delete headers[name];
+    }
+  });
+};
+
+},{"../utils":100}],98:[function(require,module,exports){
+'use strict';
+
+var utils = require('./../utils');
+
+// Headers whose duplicates are ignored by node
+// c.f. https://nodejs.org/api/http.html#http_message_headers
+var ignoreDuplicateOf = [
+  'age', 'authorization', 'content-length', 'content-type', 'etag',
+  'expires', 'from', 'host', 'if-modified-since', 'if-unmodified-since',
+  'last-modified', 'location', 'max-forwards', 'proxy-authorization',
+  'referer', 'retry-after', 'user-agent'
+];
+
+/**
+ * Parse headers into an object
+ *
+ * ```
+ * Date: Wed, 27 Aug 2014 08:58:49 GMT
+ * Content-Type: application/json
+ * Connection: keep-alive
+ * Transfer-Encoding: chunked
+ * ```
+ *
+ * @param {String} headers Headers needing to be parsed
+ * @returns {Object} Headers parsed into an object
+ */
+module.exports = function parseHeaders(headers) {
+  var parsed = {};
+  var key;
+  var val;
+  var i;
+
+  if (!headers) { return parsed; }
+
+  utils.forEach(headers.split('\n'), function parser(line) {
+    i = line.indexOf(':');
+    key = utils.trim(line.substr(0, i)).toLowerCase();
+    val = utils.trim(line.substr(i + 1));
+
+    if (key) {
+      if (parsed[key] && ignoreDuplicateOf.indexOf(key) >= 0) {
+        return;
+      }
+      if (key === 'set-cookie') {
+        parsed[key] = (parsed[key] ? parsed[key] : []).concat([val]);
+      } else {
+        parsed[key] = parsed[key] ? parsed[key] + ', ' + val : val;
+      }
+    }
+  });
+
+  return parsed;
+};
+
+},{"./../utils":100}],99:[function(require,module,exports){
+'use strict';
+
+/**
+ * Syntactic sugar for invoking a function and expanding an array for arguments.
+ *
+ * Common use case would be to use `Function.prototype.apply`.
+ *
+ *  ```js
+ *  function f(x, y, z) {}
+ *  var args = [1, 2, 3];
+ *  f.apply(null, args);
+ *  ```
+ *
+ * With `spread` this example can be re-written.
+ *
+ *  ```js
+ *  spread(function(x, y, z) {})([1, 2, 3]);
+ *  ```
+ *
+ * @param {Function} callback
+ * @returns {Function}
+ */
+module.exports = function spread(callback) {
+  return function wrap(arr) {
+    return callback.apply(null, arr);
+  };
+};
+
+},{}],100:[function(require,module,exports){
+'use strict';
+
+var bind = require('./helpers/bind');
+var isBuffer = require('is-buffer');
+
+/*global toString:true*/
+
+// utils is a library of generic helper functions non-specific to axios
+
+var toString = Object.prototype.toString;
+
+/**
+ * Determine if a value is an Array
+ *
+ * @param {Object} val The value to test
+ * @returns {boolean} True if value is an Array, otherwise false
+ */
+function isArray(val) {
+  return toString.call(val) === '[object Array]';
+}
+
+/**
+ * Determine if a value is an ArrayBuffer
+ *
+ * @param {Object} val The value to test
+ * @returns {boolean} True if value is an ArrayBuffer, otherwise false
+ */
+function isArrayBuffer(val) {
+  return toString.call(val) === '[object ArrayBuffer]';
+}
+
+/**
+ * Determine if a value is a FormData
+ *
+ * @param {Object} val The value to test
+ * @returns {boolean} True if value is an FormData, otherwise false
+ */
+function isFormData(val) {
+  return (typeof FormData !== 'undefined') && (val instanceof FormData);
+}
+
+/**
+ * Determine if a value is a view on an ArrayBuffer
+ *
+ * @param {Object} val The value to test
+ * @returns {boolean} True if value is a view on an ArrayBuffer, otherwise false
+ */
+function isArrayBufferView(val) {
+  var result;
+  if ((typeof ArrayBuffer !== 'undefined') && (ArrayBuffer.isView)) {
+    result = ArrayBuffer.isView(val);
+  } else {
+    result = (val) && (val.buffer) && (val.buffer instanceof ArrayBuffer);
+  }
+  return result;
+}
+
+/**
+ * Determine if a value is a String
+ *
+ * @param {Object} val The value to test
+ * @returns {boolean} True if value is a String, otherwise false
+ */
+function isString(val) {
+  return typeof val === 'string';
+}
+
+/**
+ * Determine if a value is a Number
+ *
+ * @param {Object} val The value to test
+ * @returns {boolean} True if value is a Number, otherwise false
+ */
+function isNumber(val) {
+  return typeof val === 'number';
+}
+
+/**
+ * Determine if a value is undefined
+ *
+ * @param {Object} val The value to test
+ * @returns {boolean} True if the value is undefined, otherwise false
+ */
+function isUndefined(val) {
+  return typeof val === 'undefined';
+}
+
+/**
+ * Determine if a value is an Object
+ *
+ * @param {Object} val The value to test
+ * @returns {boolean} True if value is an Object, otherwise false
+ */
+function isObject(val) {
+  return val !== null && typeof val === 'object';
+}
+
+/**
+ * Determine if a value is a Date
+ *
+ * @param {Object} val The value to test
+ * @returns {boolean} True if value is a Date, otherwise false
+ */
+function isDate(val) {
+  return toString.call(val) === '[object Date]';
+}
+
+/**
+ * Determine if a value is a File
+ *
+ * @param {Object} val The value to test
+ * @returns {boolean} True if value is a File, otherwise false
+ */
+function isFile(val) {
+  return toString.call(val) === '[object File]';
+}
+
+/**
+ * Determine if a value is a Blob
+ *
+ * @param {Object} val The value to test
+ * @returns {boolean} True if value is a Blob, otherwise false
+ */
+function isBlob(val) {
+  return toString.call(val) === '[object Blob]';
+}
+
+/**
+ * Determine if a value is a Function
+ *
+ * @param {Object} val The value to test
+ * @returns {boolean} True if value is a Function, otherwise false
+ */
+function isFunction(val) {
+  return toString.call(val) === '[object Function]';
+}
+
+/**
+ * Determine if a value is a Stream
+ *
+ * @param {Object} val The value to test
+ * @returns {boolean} True if value is a Stream, otherwise false
+ */
+function isStream(val) {
+  return isObject(val) && isFunction(val.pipe);
+}
+
+/**
+ * Determine if a value is a URLSearchParams object
+ *
+ * @param {Object} val The value to test
+ * @returns {boolean} True if value is a URLSearchParams object, otherwise false
+ */
+function isURLSearchParams(val) {
+  return typeof URLSearchParams !== 'undefined' && val instanceof URLSearchParams;
+}
+
+/**
+ * Trim excess whitespace off the beginning and end of a string
+ *
+ * @param {String} str The String to trim
+ * @returns {String} The String freed of excess whitespace
+ */
+function trim(str) {
+  return str.replace(/^\s*/, '').replace(/\s*$/, '');
+}
+
+/**
+ * Determine if we're running in a standard browser environment
+ *
+ * This allows axios to run in a web worker, and react-native.
+ * Both environments support XMLHttpRequest, but not fully standard globals.
+ *
+ * web workers:
+ *  typeof window -> undefined
+ *  typeof document -> undefined
+ *
+ * react-native:
+ *  navigator.product -> 'ReactNative'
+ */
+function isStandardBrowserEnv() {
+  if (typeof navigator !== 'undefined' && navigator.product === 'ReactNative') {
+    return false;
+  }
+  return (
+    typeof window !== 'undefined' &&
+    typeof document !== 'undefined'
+  );
+}
+
+/**
+ * Iterate over an Array or an Object invoking a function for each item.
+ *
+ * If `obj` is an Array callback will be called passing
+ * the value, index, and complete array for each item.
+ *
+ * If 'obj' is an Object callback will be called passing
+ * the value, key, and complete object for each property.
+ *
+ * @param {Object|Array} obj The object to iterate
+ * @param {Function} fn The callback to invoke for each item
+ */
+function forEach(obj, fn) {
+  // Don't bother if no value provided
+  if (obj === null || typeof obj === 'undefined') {
+    return;
+  }
+
+  // Force an array if not already something iterable
+  if (typeof obj !== 'object') {
+    /*eslint no-param-reassign:0*/
+    obj = [obj];
+  }
+
+  if (isArray(obj)) {
+    // Iterate over array values
+    for (var i = 0, l = obj.length; i < l; i++) {
+      fn.call(null, obj[i], i, obj);
+    }
+  } else {
+    // Iterate over object keys
+    for (var key in obj) {
+      if (Object.prototype.hasOwnProperty.call(obj, key)) {
+        fn.call(null, obj[key], key, obj);
+      }
+    }
+  }
+}
+
+/**
+ * Accepts varargs expecting each argument to be an object, then
+ * immutably merges the properties of each object and returns result.
+ *
+ * When multiple objects contain the same key the later object in
+ * the arguments list will take precedence.
+ *
+ * Example:
+ *
+ * ```js
+ * var result = merge({foo: 123}, {foo: 456});
+ * console.log(result.foo); // outputs 456
+ * ```
+ *
+ * @param {Object} obj1 Object to merge
+ * @returns {Object} Result of all merge properties
+ */
+function merge(/* obj1, obj2, obj3, ... */) {
+  var result = {};
+  function assignValue(val, key) {
+    if (typeof result[key] === 'object' && typeof val === 'object') {
+      result[key] = merge(result[key], val);
+    } else {
+      result[key] = val;
+    }
+  }
+
+  for (var i = 0, l = arguments.length; i < l; i++) {
+    forEach(arguments[i], assignValue);
+  }
+  return result;
+}
+
+/**
+ * Extends object a by mutably adding to it the properties of object b.
+ *
+ * @param {Object} a The object to be extended
+ * @param {Object} b The object to copy properties from
+ * @param {Object} thisArg The object to bind function to
+ * @return {Object} The resulting value of object a
+ */
+function extend(a, b, thisArg) {
+  forEach(b, function assignValue(val, key) {
+    if (thisArg && typeof val === 'function') {
+      a[key] = bind(val, thisArg);
+    } else {
+      a[key] = val;
+    }
+  });
+  return a;
+}
+
+module.exports = {
+  isArray: isArray,
+  isArrayBuffer: isArrayBuffer,
+  isBuffer: isBuffer,
+  isFormData: isFormData,
+  isArrayBufferView: isArrayBufferView,
+  isString: isString,
+  isNumber: isNumber,
+  isObject: isObject,
+  isUndefined: isUndefined,
+  isDate: isDate,
+  isFile: isFile,
+  isBlob: isBlob,
+  isFunction: isFunction,
+  isStream: isStream,
+  isURLSearchParams: isURLSearchParams,
+  isStandardBrowserEnv: isStandardBrowserEnv,
+  forEach: forEach,
+  merge: merge,
+  extend: extend,
+  trim: trim
+};
+
+},{"./helpers/bind":90,"is-buffer":135}],101:[function(require,module,exports){
 
 /**
  * Expose `Backoff`.
@@ -8881,7 +15364,7 @@ Backoff.prototype.setJitter = function(jitter){
 };
 
 
-},{}],56:[function(require,module,exports){
+},{}],102:[function(require,module,exports){
 /*
  * base64-arraybuffer
  * https://github.com/niklasvh/base64-arraybuffer
@@ -8950,7 +15433,7 @@ Backoff.prototype.setJitter = function(jitter){
   };
 })();
 
-},{}],57:[function(require,module,exports){
+},{}],103:[function(require,module,exports){
 'use strict'
 
 exports.byteLength = byteLength
@@ -9103,7 +15586,7 @@ function fromByteArray (uint8) {
   return parts.join('')
 }
 
-},{}],58:[function(require,module,exports){
+},{}],104:[function(require,module,exports){
 /*
  *  big.js v5.0.3
  *  A small, fast, easy-to-use library for arbitrary-precision decimal arithmetic.
@@ -10044,7 +16527,7 @@ function fromByteArray (uint8) {
   }
 })(this);
 
-},{}],59:[function(require,module,exports){
+},{}],105:[function(require,module,exports){
 (function (global){
 /**
  * Create a blob builder even when vendor prefixes exist
@@ -10144,9 +16627,9 @@ module.exports = (function() {
 })();
 
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{}],60:[function(require,module,exports){
+},{}],106:[function(require,module,exports){
 
-},{}],61:[function(require,module,exports){
+},{}],107:[function(require,module,exports){
 // shim for using process in browser
 var process = module.exports = {};
 
@@ -10332,7 +16815,7 @@ process.chdir = function (dir) {
 };
 process.umask = function() { return 0; };
 
-},{}],62:[function(require,module,exports){
+},{}],108:[function(require,module,exports){
 /*!
  * The buffer module from node.js, for the browser.
  *
@@ -10389,26 +16872,24 @@ function typedArraySupport () {
 }
 
 Object.defineProperty(Buffer.prototype, 'parent', {
+  enumerable: true,
   get: function () {
-    if (!(this instanceof Buffer)) {
-      return undefined
-    }
+    if (!Buffer.isBuffer(this)) return undefined
     return this.buffer
   }
 })
 
 Object.defineProperty(Buffer.prototype, 'offset', {
+  enumerable: true,
   get: function () {
-    if (!(this instanceof Buffer)) {
-      return undefined
-    }
+    if (!Buffer.isBuffer(this)) return undefined
     return this.byteOffset
   }
 })
 
 function createBuffer (length) {
   if (length > K_MAX_LENGTH) {
-    throw new RangeError('Invalid typed array length')
+    throw new RangeError('The value "' + length + '" is invalid for option "size"')
   }
   // Return an augmented `Uint8Array` instance
   var buf = new Uint8Array(length)
@@ -10430,8 +16911,8 @@ function Buffer (arg, encodingOrOffset, length) {
   // Common case.
   if (typeof arg === 'number') {
     if (typeof encodingOrOffset === 'string') {
-      throw new Error(
-        'If encoding is specified then the first argument must be a string'
+      throw new TypeError(
+        'The "string" argument must be of type string. Received type number'
       )
     }
     return allocUnsafe(arg)
@@ -10440,7 +16921,7 @@ function Buffer (arg, encodingOrOffset, length) {
 }
 
 // Fix subarray() in ES2016. See: https://github.com/feross/buffer/pull/97
-if (typeof Symbol !== 'undefined' && Symbol.species &&
+if (typeof Symbol !== 'undefined' && Symbol.species != null &&
     Buffer[Symbol.species] === Buffer) {
   Object.defineProperty(Buffer, Symbol.species, {
     value: null,
@@ -10453,19 +16934,51 @@ if (typeof Symbol !== 'undefined' && Symbol.species &&
 Buffer.poolSize = 8192 // not used by this implementation
 
 function from (value, encodingOrOffset, length) {
-  if (typeof value === 'number') {
-    throw new TypeError('"value" argument must not be a number')
-  }
-
-  if (isArrayBuffer(value) || (value && isArrayBuffer(value.buffer))) {
-    return fromArrayBuffer(value, encodingOrOffset, length)
-  }
-
   if (typeof value === 'string') {
     return fromString(value, encodingOrOffset)
   }
 
-  return fromObject(value)
+  if (ArrayBuffer.isView(value)) {
+    return fromArrayLike(value)
+  }
+
+  if (value == null) {
+    throw TypeError(
+      'The first argument must be one of type string, Buffer, ArrayBuffer, Array, ' +
+      'or Array-like Object. Received type ' + (typeof value)
+    )
+  }
+
+  if (isInstance(value, ArrayBuffer) ||
+      (value && isInstance(value.buffer, ArrayBuffer))) {
+    return fromArrayBuffer(value, encodingOrOffset, length)
+  }
+
+  if (typeof value === 'number') {
+    throw new TypeError(
+      'The "value" argument must not be of type number. Received type number'
+    )
+  }
+
+  var valueOf = value.valueOf && value.valueOf()
+  if (valueOf != null && valueOf !== value) {
+    return Buffer.from(valueOf, encodingOrOffset, length)
+  }
+
+  var b = fromObject(value)
+  if (b) return b
+
+  if (typeof Symbol !== 'undefined' && Symbol.toPrimitive != null &&
+      typeof value[Symbol.toPrimitive] === 'function') {
+    return Buffer.from(
+      value[Symbol.toPrimitive]('string'), encodingOrOffset, length
+    )
+  }
+
+  throw new TypeError(
+    'The first argument must be one of type string, Buffer, ArrayBuffer, Array, ' +
+    'or Array-like Object. Received type ' + (typeof value)
+  )
 }
 
 /**
@@ -10489,7 +17002,7 @@ function assertSize (size) {
   if (typeof size !== 'number') {
     throw new TypeError('"size" argument must be of type number')
   } else if (size < 0) {
-    throw new RangeError('"size" argument must not be negative')
+    throw new RangeError('The value "' + size + '" is invalid for option "size"')
   }
 }
 
@@ -10604,20 +17117,16 @@ function fromObject (obj) {
     return buf
   }
 
-  if (obj) {
-    if (ArrayBuffer.isView(obj) || 'length' in obj) {
-      if (typeof obj.length !== 'number' || numberIsNaN(obj.length)) {
-        return createBuffer(0)
-      }
-      return fromArrayLike(obj)
+  if (obj.length !== undefined) {
+    if (typeof obj.length !== 'number' || numberIsNaN(obj.length)) {
+      return createBuffer(0)
     }
-
-    if (obj.type === 'Buffer' && Array.isArray(obj.data)) {
-      return fromArrayLike(obj.data)
-    }
+    return fromArrayLike(obj)
   }
 
-  throw new TypeError('The first argument must be one of type string, Buffer, ArrayBuffer, Array, or Array-like Object.')
+  if (obj.type === 'Buffer' && Array.isArray(obj.data)) {
+    return fromArrayLike(obj.data)
+  }
 }
 
 function checked (length) {
@@ -10638,12 +17147,17 @@ function SlowBuffer (length) {
 }
 
 Buffer.isBuffer = function isBuffer (b) {
-  return b != null && b._isBuffer === true
+  return b != null && b._isBuffer === true &&
+    b !== Buffer.prototype // so Buffer.isBuffer(Buffer.prototype) will be false
 }
 
 Buffer.compare = function compare (a, b) {
+  if (isInstance(a, Uint8Array)) a = Buffer.from(a, a.offset, a.byteLength)
+  if (isInstance(b, Uint8Array)) b = Buffer.from(b, b.offset, b.byteLength)
   if (!Buffer.isBuffer(a) || !Buffer.isBuffer(b)) {
-    throw new TypeError('Arguments must be Buffers')
+    throw new TypeError(
+      'The "buf1", "buf2" arguments must be one of type Buffer or Uint8Array'
+    )
   }
 
   if (a === b) return 0
@@ -10704,7 +17218,7 @@ Buffer.concat = function concat (list, length) {
   var pos = 0
   for (i = 0; i < list.length; ++i) {
     var buf = list[i]
-    if (ArrayBuffer.isView(buf)) {
+    if (isInstance(buf, Uint8Array)) {
       buf = Buffer.from(buf)
     }
     if (!Buffer.isBuffer(buf)) {
@@ -10720,15 +17234,19 @@ function byteLength (string, encoding) {
   if (Buffer.isBuffer(string)) {
     return string.length
   }
-  if (ArrayBuffer.isView(string) || isArrayBuffer(string)) {
+  if (ArrayBuffer.isView(string) || isInstance(string, ArrayBuffer)) {
     return string.byteLength
   }
   if (typeof string !== 'string') {
-    string = '' + string
+    throw new TypeError(
+      'The "string" argument must be one of type string, Buffer, or ArrayBuffer. ' +
+      'Received type ' + typeof string
+    )
   }
 
   var len = string.length
-  if (len === 0) return 0
+  var mustMatch = (arguments.length > 2 && arguments[2] === true)
+  if (!mustMatch && len === 0) return 0
 
   // Use a for loop to avoid recursion
   var loweredCase = false
@@ -10740,7 +17258,6 @@ function byteLength (string, encoding) {
         return len
       case 'utf8':
       case 'utf-8':
-      case undefined:
         return utf8ToBytes(string).length
       case 'ucs2':
       case 'ucs-2':
@@ -10752,7 +17269,9 @@ function byteLength (string, encoding) {
       case 'base64':
         return base64ToBytes(string).length
       default:
-        if (loweredCase) return utf8ToBytes(string).length // assume utf8
+        if (loweredCase) {
+          return mustMatch ? -1 : utf8ToBytes(string).length // assume utf8
+        }
         encoding = ('' + encoding).toLowerCase()
         loweredCase = true
     }
@@ -10899,16 +17418,20 @@ Buffer.prototype.equals = function equals (b) {
 Buffer.prototype.inspect = function inspect () {
   var str = ''
   var max = exports.INSPECT_MAX_BYTES
-  if (this.length > 0) {
-    str = this.toString('hex', 0, max).match(/.{2}/g).join(' ')
-    if (this.length > max) str += ' ... '
-  }
+  str = this.toString('hex', 0, max).replace(/(.{2})/g, '$1 ').trim()
+  if (this.length > max) str += ' ... '
   return '<Buffer ' + str + '>'
 }
 
 Buffer.prototype.compare = function compare (target, start, end, thisStart, thisEnd) {
+  if (isInstance(target, Uint8Array)) {
+    target = Buffer.from(target, target.offset, target.byteLength)
+  }
   if (!Buffer.isBuffer(target)) {
-    throw new TypeError('Argument must be a Buffer')
+    throw new TypeError(
+      'The "target" argument must be one of type Buffer or Uint8Array. ' +
+      'Received type ' + (typeof target)
+    )
   }
 
   if (start === undefined) {
@@ -10987,7 +17510,7 @@ function bidirectionalIndexOf (buffer, val, byteOffset, encoding, dir) {
   } else if (byteOffset < -0x80000000) {
     byteOffset = -0x80000000
   }
-  byteOffset = +byteOffset  // Coerce to Number.
+  byteOffset = +byteOffset // Coerce to Number.
   if (numberIsNaN(byteOffset)) {
     // byteOffset: it it's undefined, null, NaN, "foo", etc, search whole buffer
     byteOffset = dir ? 0 : (buffer.length - 1)
@@ -11239,8 +17762,8 @@ function utf8Slice (buf, start, end) {
     var codePoint = null
     var bytesPerSequence = (firstByte > 0xEF) ? 4
       : (firstByte > 0xDF) ? 3
-      : (firstByte > 0xBF) ? 2
-      : 1
+        : (firstByte > 0xBF) ? 2
+          : 1
 
     if (i + bytesPerSequence <= end) {
       var secondByte, thirdByte, fourthByte, tempCodePoint
@@ -11903,7 +18426,7 @@ Buffer.prototype.fill = function fill (val, start, end, encoding) {
   } else {
     var bytes = Buffer.isBuffer(val)
       ? val
-      : new Buffer(val, encoding)
+      : Buffer.from(val, encoding)
     var len = bytes.length
     if (len === 0) {
       throw new TypeError('The value "' + val +
@@ -12058,19 +18581,20 @@ function blitBuffer (src, dst, offset, length) {
   return i
 }
 
-// ArrayBuffers from another context (i.e. an iframe) do not pass the `instanceof` check
-// but they should be treated as valid. See: https://github.com/feross/buffer/issues/166
-function isArrayBuffer (obj) {
-  return obj instanceof ArrayBuffer ||
-    (obj != null && obj.constructor != null && obj.constructor.name === 'ArrayBuffer' &&
-      typeof obj.byteLength === 'number')
+// ArrayBuffer or Uint8Array objects from other contexts (i.e. iframes) do not pass
+// the `instanceof` check but they should be treated as of that type.
+// See: https://github.com/feross/buffer/issues/166
+function isInstance (obj, type) {
+  return obj instanceof type ||
+    (obj != null && obj.constructor != null && obj.constructor.name != null &&
+      obj.constructor.name === type.name)
 }
-
 function numberIsNaN (obj) {
+  // For IE11 support
   return obj !== obj // eslint-disable-line no-self-compare
 }
 
-},{"base64-js":57,"ieee754":88}],63:[function(require,module,exports){
+},{"base64-js":103,"ieee754":132}],109:[function(require,module,exports){
 module.exports = {
   "100": "Continue",
   "101": "Switching Protocols",
@@ -12136,7 +18660,7 @@ module.exports = {
   "511": "Network Authentication Required"
 }
 
-},{}],64:[function(require,module,exports){
+},{}],110:[function(require,module,exports){
 /**
  * Slice reference.
  */
@@ -12161,7 +18685,7 @@ module.exports = function(obj, fn){
   }
 };
 
-},{}],65:[function(require,module,exports){
+},{}],111:[function(require,module,exports){
 
 /**
  * Expose `Emitter`.
@@ -12326,7 +18850,7 @@ Emitter.prototype.hasListeners = function(event){
   return !! this.listeners(event).length;
 };
 
-},{}],66:[function(require,module,exports){
+},{}],112:[function(require,module,exports){
 
 module.exports = function(a, b){
   var fn = function(){};
@@ -12334,7 +18858,7 @@ module.exports = function(a, b){
   a.prototype = new fn;
   a.prototype.constructor = a;
 };
-},{}],67:[function(require,module,exports){
+},{}],113:[function(require,module,exports){
 (function (Buffer){
 // Copyright Joyent, Inc. and other Node contributors.
 //
@@ -12445,7 +18969,7 @@ function objectToString(o) {
 }
 
 }).call(this,{"isBuffer":require("../../is-buffer/index.js")})
-},{"../../is-buffer/index.js":91}],68:[function(require,module,exports){
+},{"../../is-buffer/index.js":135}],114:[function(require,module,exports){
 (function (process){
 /**
  * This is the web browser implementation of `debug()`.
@@ -12469,12 +18993,17 @@ exports.storage = 'undefined' != typeof chrome
  */
 
 exports.colors = [
-  'lightseagreen',
-  'forestgreen',
-  'goldenrod',
-  'dodgerblue',
-  'darkorchid',
-  'crimson'
+  '#0000CC', '#0000FF', '#0033CC', '#0033FF', '#0066CC', '#0066FF', '#0099CC',
+  '#0099FF', '#00CC00', '#00CC33', '#00CC66', '#00CC99', '#00CCCC', '#00CCFF',
+  '#3300CC', '#3300FF', '#3333CC', '#3333FF', '#3366CC', '#3366FF', '#3399CC',
+  '#3399FF', '#33CC00', '#33CC33', '#33CC66', '#33CC99', '#33CCCC', '#33CCFF',
+  '#6600CC', '#6600FF', '#6633CC', '#6633FF', '#66CC00', '#66CC33', '#9900CC',
+  '#9900FF', '#9933CC', '#9933FF', '#99CC00', '#99CC33', '#CC0000', '#CC0033',
+  '#CC0066', '#CC0099', '#CC00CC', '#CC00FF', '#CC3300', '#CC3333', '#CC3366',
+  '#CC3399', '#CC33CC', '#CC33FF', '#CC6600', '#CC6633', '#CC9900', '#CC9933',
+  '#CCCC00', '#CCCC33', '#FF0000', '#FF0033', '#FF0066', '#FF0099', '#FF00CC',
+  '#FF00FF', '#FF3300', '#FF3333', '#FF3366', '#FF3399', '#FF33CC', '#FF33FF',
+  '#FF6600', '#FF6633', '#FF9900', '#FF9933', '#FFCC00', '#FFCC33'
 ];
 
 /**
@@ -12491,6 +19020,11 @@ function useColors() {
   // explicitly
   if (typeof window !== 'undefined' && window.process && window.process.type === 'renderer') {
     return true;
+  }
+
+  // Internet Explorer and Edge do not support colors.
+  if (typeof navigator !== 'undefined' && navigator.userAgent && navigator.userAgent.toLowerCase().match(/(edge|trident)\/(\d+)/)) {
+    return false;
   }
 
   // is webkit? http://stackoverflow.com/a/16459606/376773
@@ -12634,7 +19168,7 @@ function localstorage() {
 }
 
 }).call(this,require('_process'))
-},{"./debug":69,"_process":61}],69:[function(require,module,exports){
+},{"./debug":115,"_process":107}],115:[function(require,module,exports){
 
 /**
  * This is the common logic for both the Node.js and web browser
@@ -12651,6 +19185,11 @@ exports.enabled = enabled;
 exports.humanize = require('ms');
 
 /**
+ * Active `debug` instances.
+ */
+exports.instances = [];
+
+/**
  * The currently active debug mode names, and names to skip.
  */
 
@@ -12664,12 +19203,6 @@ exports.skips = [];
  */
 
 exports.formatters = {};
-
-/**
- * Previous log timestamp.
- */
-
-var prevTime;
 
 /**
  * Select a color.
@@ -12698,6 +19231,8 @@ function selectColor(namespace) {
  */
 
 function createDebug(namespace) {
+
+  var prevTime;
 
   function debug() {
     // disabled?
@@ -12755,13 +19290,26 @@ function createDebug(namespace) {
   debug.enabled = exports.enabled(namespace);
   debug.useColors = exports.useColors();
   debug.color = selectColor(namespace);
+  debug.destroy = destroy;
 
   // env-specific initialization logic for debug instances
   if ('function' === typeof exports.init) {
     exports.init(debug);
   }
 
+  exports.instances.push(debug);
+
   return debug;
+}
+
+function destroy () {
+  var index = exports.instances.indexOf(this);
+  if (index !== -1) {
+    exports.instances.splice(index, 1);
+    return true;
+  } else {
+    return false;
+  }
 }
 
 /**
@@ -12778,10 +19326,11 @@ function enable(namespaces) {
   exports.names = [];
   exports.skips = [];
 
+  var i;
   var split = (typeof namespaces === 'string' ? namespaces : '').split(/[\s,]+/);
   var len = split.length;
 
-  for (var i = 0; i < len; i++) {
+  for (i = 0; i < len; i++) {
     if (!split[i]) continue; // ignore empty strings
     namespaces = split[i].replace(/\*/g, '.*?');
     if (namespaces[0] === '-') {
@@ -12789,6 +19338,11 @@ function enable(namespaces) {
     } else {
       exports.names.push(new RegExp('^' + namespaces + '$'));
     }
+  }
+
+  for (i = 0; i < exports.instances.length; i++) {
+    var instance = exports.instances[i];
+    instance.enabled = exports.enabled(instance.namespace);
   }
 }
 
@@ -12811,6 +19365,9 @@ function disable() {
  */
 
 function enabled(name) {
+  if (name[name.length - 1] === '*') {
+    return true;
+  }
   var i, len;
   for (i = 0, len = exports.skips.length; i < len; i++) {
     if (exports.skips[i].test(name)) {
@@ -12838,7 +19395,7 @@ function coerce(val) {
   return val;
 }
 
-},{"ms":99}],70:[function(require,module,exports){
+},{"ms":143}],116:[function(require,module,exports){
 
 module.exports = require('./socket');
 
@@ -12850,7 +19407,7 @@ module.exports = require('./socket');
  */
 module.exports.parser = require('engine.io-parser');
 
-},{"./socket":71,"engine.io-parser":81}],71:[function(require,module,exports){
+},{"./socket":117,"engine.io-parser":125}],117:[function(require,module,exports){
 (function (global){
 /**
  * Module dependencies.
@@ -13597,7 +20154,7 @@ Socket.prototype.filterUpgrades = function (upgrades) {
 };
 
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{"./transport":72,"./transports/index":73,"component-emitter":65,"debug":79,"engine.io-parser":81,"indexof":89,"parseqs":100,"parseuri":101}],72:[function(require,module,exports){
+},{"./transport":118,"./transports/index":119,"component-emitter":111,"debug":114,"engine.io-parser":125,"indexof":133,"parseqs":144,"parseuri":145}],118:[function(require,module,exports){
 /**
  * Module dependencies.
  */
@@ -13756,7 +20313,7 @@ Transport.prototype.onClose = function () {
   this.emit('close');
 };
 
-},{"component-emitter":65,"engine.io-parser":81}],73:[function(require,module,exports){
+},{"component-emitter":111,"engine.io-parser":125}],119:[function(require,module,exports){
 (function (global){
 /**
  * Module dependencies
@@ -13813,7 +20370,7 @@ function polling (opts) {
 }
 
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{"./polling-jsonp":74,"./polling-xhr":75,"./websocket":77,"xmlhttprequest-ssl":78}],74:[function(require,module,exports){
+},{"./polling-jsonp":120,"./polling-xhr":121,"./websocket":123,"xmlhttprequest-ssl":124}],120:[function(require,module,exports){
 (function (global){
 
 /**
@@ -14048,7 +20605,7 @@ JSONPPolling.prototype.doWrite = function (data, fn) {
 };
 
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{"./polling":76,"component-inherit":66}],75:[function(require,module,exports){
+},{"./polling":122,"component-inherit":112}],121:[function(require,module,exports){
 (function (global){
 /**
  * Module requirements.
@@ -14464,7 +21021,7 @@ function unloadHandler () {
 }
 
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{"./polling":76,"component-emitter":65,"component-inherit":66,"debug":79,"xmlhttprequest-ssl":78}],76:[function(require,module,exports){
+},{"./polling":122,"component-emitter":111,"component-inherit":112,"debug":114,"xmlhttprequest-ssl":124}],122:[function(require,module,exports){
 /**
  * Module dependencies.
  */
@@ -14711,7 +21268,7 @@ Polling.prototype.uri = function () {
   return schema + '://' + (ipv6 ? '[' + this.hostname + ']' : this.hostname) + port + this.path + query;
 };
 
-},{"../transport":72,"component-inherit":66,"debug":79,"engine.io-parser":81,"parseqs":100,"xmlhttprequest-ssl":78,"yeast":146}],77:[function(require,module,exports){
+},{"../transport":118,"component-inherit":112,"debug":114,"engine.io-parser":125,"parseqs":144,"xmlhttprequest-ssl":124,"yeast":190}],123:[function(require,module,exports){
 (function (global){
 /**
  * Module dependencies.
@@ -15001,7 +21558,7 @@ WS.prototype.check = function () {
 };
 
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{"../transport":72,"component-inherit":66,"debug":79,"engine.io-parser":81,"parseqs":100,"ws":60,"yeast":146}],78:[function(require,module,exports){
+},{"../transport":118,"component-inherit":112,"debug":114,"engine.io-parser":125,"parseqs":144,"ws":106,"yeast":190}],124:[function(require,module,exports){
 (function (global){
 // browser shim for xmlhttprequest module
 
@@ -15042,433 +21599,7 @@ module.exports = function (opts) {
 };
 
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{"has-cors":86}],79:[function(require,module,exports){
-(function (process){
-/**
- * This is the web browser implementation of `debug()`.
- *
- * Expose `debug()` as the module.
- */
-
-exports = module.exports = require('./debug');
-exports.log = log;
-exports.formatArgs = formatArgs;
-exports.save = save;
-exports.load = load;
-exports.useColors = useColors;
-exports.storage = 'undefined' != typeof chrome
-               && 'undefined' != typeof chrome.storage
-                  ? chrome.storage.local
-                  : localstorage();
-
-/**
- * Colors.
- */
-
-exports.colors = [
-  '#0000CC', '#0000FF', '#0033CC', '#0033FF', '#0066CC', '#0066FF', '#0099CC',
-  '#0099FF', '#00CC00', '#00CC33', '#00CC66', '#00CC99', '#00CCCC', '#00CCFF',
-  '#3300CC', '#3300FF', '#3333CC', '#3333FF', '#3366CC', '#3366FF', '#3399CC',
-  '#3399FF', '#33CC00', '#33CC33', '#33CC66', '#33CC99', '#33CCCC', '#33CCFF',
-  '#6600CC', '#6600FF', '#6633CC', '#6633FF', '#66CC00', '#66CC33', '#9900CC',
-  '#9900FF', '#9933CC', '#9933FF', '#99CC00', '#99CC33', '#CC0000', '#CC0033',
-  '#CC0066', '#CC0099', '#CC00CC', '#CC00FF', '#CC3300', '#CC3333', '#CC3366',
-  '#CC3399', '#CC33CC', '#CC33FF', '#CC6600', '#CC6633', '#CC9900', '#CC9933',
-  '#CCCC00', '#CCCC33', '#FF0000', '#FF0033', '#FF0066', '#FF0099', '#FF00CC',
-  '#FF00FF', '#FF3300', '#FF3333', '#FF3366', '#FF3399', '#FF33CC', '#FF33FF',
-  '#FF6600', '#FF6633', '#FF9900', '#FF9933', '#FFCC00', '#FFCC33'
-];
-
-/**
- * Currently only WebKit-based Web Inspectors, Firefox >= v31,
- * and the Firebug extension (any Firefox version) are known
- * to support "%c" CSS customizations.
- *
- * TODO: add a `localStorage` variable to explicitly enable/disable colors
- */
-
-function useColors() {
-  // NB: In an Electron preload script, document will be defined but not fully
-  // initialized. Since we know we're in Chrome, we'll just detect this case
-  // explicitly
-  if (typeof window !== 'undefined' && window.process && window.process.type === 'renderer') {
-    return true;
-  }
-
-  // Internet Explorer and Edge do not support colors.
-  if (typeof navigator !== 'undefined' && navigator.userAgent && navigator.userAgent.toLowerCase().match(/(edge|trident)\/(\d+)/)) {
-    return false;
-  }
-
-  // is webkit? http://stackoverflow.com/a/16459606/376773
-  // document is undefined in react-native: https://github.com/facebook/react-native/pull/1632
-  return (typeof document !== 'undefined' && document.documentElement && document.documentElement.style && document.documentElement.style.WebkitAppearance) ||
-    // is firebug? http://stackoverflow.com/a/398120/376773
-    (typeof window !== 'undefined' && window.console && (window.console.firebug || (window.console.exception && window.console.table))) ||
-    // is firefox >= v31?
-    // https://developer.mozilla.org/en-US/docs/Tools/Web_Console#Styling_messages
-    (typeof navigator !== 'undefined' && navigator.userAgent && navigator.userAgent.toLowerCase().match(/firefox\/(\d+)/) && parseInt(RegExp.$1, 10) >= 31) ||
-    // double check webkit in userAgent just in case we are in a worker
-    (typeof navigator !== 'undefined' && navigator.userAgent && navigator.userAgent.toLowerCase().match(/applewebkit\/(\d+)/));
-}
-
-/**
- * Map %j to `JSON.stringify()`, since no Web Inspectors do that by default.
- */
-
-exports.formatters.j = function(v) {
-  try {
-    return JSON.stringify(v);
-  } catch (err) {
-    return '[UnexpectedJSONParseError]: ' + err.message;
-  }
-};
-
-
-/**
- * Colorize log arguments if enabled.
- *
- * @api public
- */
-
-function formatArgs(args) {
-  var useColors = this.useColors;
-
-  args[0] = (useColors ? '%c' : '')
-    + this.namespace
-    + (useColors ? ' %c' : ' ')
-    + args[0]
-    + (useColors ? '%c ' : ' ')
-    + '+' + exports.humanize(this.diff);
-
-  if (!useColors) return;
-
-  var c = 'color: ' + this.color;
-  args.splice(1, 0, c, 'color: inherit')
-
-  // the final "%c" is somewhat tricky, because there could be other
-  // arguments passed either before or after the %c, so we need to
-  // figure out the correct index to insert the CSS into
-  var index = 0;
-  var lastC = 0;
-  args[0].replace(/%[a-zA-Z%]/g, function(match) {
-    if ('%%' === match) return;
-    index++;
-    if ('%c' === match) {
-      // we only are interested in the *last* %c
-      // (the user may have provided their own)
-      lastC = index;
-    }
-  });
-
-  args.splice(lastC, 0, c);
-}
-
-/**
- * Invokes `console.log()` when available.
- * No-op when `console.log` is not a "function".
- *
- * @api public
- */
-
-function log() {
-  // this hackery is required for IE8/9, where
-  // the `console.log` function doesn't have 'apply'
-  return 'object' === typeof console
-    && console.log
-    && Function.prototype.apply.call(console.log, console, arguments);
-}
-
-/**
- * Save `namespaces`.
- *
- * @param {String} namespaces
- * @api private
- */
-
-function save(namespaces) {
-  try {
-    if (null == namespaces) {
-      exports.storage.removeItem('debug');
-    } else {
-      exports.storage.debug = namespaces;
-    }
-  } catch(e) {}
-}
-
-/**
- * Load `namespaces`.
- *
- * @return {String} returns the previously persisted debug modes
- * @api private
- */
-
-function load() {
-  var r;
-  try {
-    r = exports.storage.debug;
-  } catch(e) {}
-
-  // If debug isn't set in LS, and we're in Electron, try to load $DEBUG
-  if (!r && typeof process !== 'undefined' && 'env' in process) {
-    r = process.env.DEBUG;
-  }
-
-  return r;
-}
-
-/**
- * Enable namespaces listed in `localStorage.debug` initially.
- */
-
-exports.enable(load());
-
-/**
- * Localstorage attempts to return the localstorage.
- *
- * This is necessary because safari throws
- * when a user disables cookies/localstorage
- * and you attempt to access it.
- *
- * @return {LocalStorage}
- * @api private
- */
-
-function localstorage() {
-  try {
-    return window.localStorage;
-  } catch (e) {}
-}
-
-}).call(this,require('_process'))
-},{"./debug":80,"_process":61}],80:[function(require,module,exports){
-
-/**
- * This is the common logic for both the Node.js and web browser
- * implementations of `debug()`.
- *
- * Expose `debug()` as the module.
- */
-
-exports = module.exports = createDebug.debug = createDebug['default'] = createDebug;
-exports.coerce = coerce;
-exports.disable = disable;
-exports.enable = enable;
-exports.enabled = enabled;
-exports.humanize = require('ms');
-
-/**
- * Active `debug` instances.
- */
-exports.instances = [];
-
-/**
- * The currently active debug mode names, and names to skip.
- */
-
-exports.names = [];
-exports.skips = [];
-
-/**
- * Map of special "%n" handling functions, for the debug "format" argument.
- *
- * Valid key names are a single, lower or upper-case letter, i.e. "n" and "N".
- */
-
-exports.formatters = {};
-
-/**
- * Select a color.
- * @param {String} namespace
- * @return {Number}
- * @api private
- */
-
-function selectColor(namespace) {
-  var hash = 0, i;
-
-  for (i in namespace) {
-    hash  = ((hash << 5) - hash) + namespace.charCodeAt(i);
-    hash |= 0; // Convert to 32bit integer
-  }
-
-  return exports.colors[Math.abs(hash) % exports.colors.length];
-}
-
-/**
- * Create a debugger with the given `namespace`.
- *
- * @param {String} namespace
- * @return {Function}
- * @api public
- */
-
-function createDebug(namespace) {
-
-  var prevTime;
-
-  function debug() {
-    // disabled?
-    if (!debug.enabled) return;
-
-    var self = debug;
-
-    // set `diff` timestamp
-    var curr = +new Date();
-    var ms = curr - (prevTime || curr);
-    self.diff = ms;
-    self.prev = prevTime;
-    self.curr = curr;
-    prevTime = curr;
-
-    // turn the `arguments` into a proper Array
-    var args = new Array(arguments.length);
-    for (var i = 0; i < args.length; i++) {
-      args[i] = arguments[i];
-    }
-
-    args[0] = exports.coerce(args[0]);
-
-    if ('string' !== typeof args[0]) {
-      // anything else let's inspect with %O
-      args.unshift('%O');
-    }
-
-    // apply any `formatters` transformations
-    var index = 0;
-    args[0] = args[0].replace(/%([a-zA-Z%])/g, function(match, format) {
-      // if we encounter an escaped % then don't increase the array index
-      if (match === '%%') return match;
-      index++;
-      var formatter = exports.formatters[format];
-      if ('function' === typeof formatter) {
-        var val = args[index];
-        match = formatter.call(self, val);
-
-        // now we need to remove `args[index]` since it's inlined in the `format`
-        args.splice(index, 1);
-        index--;
-      }
-      return match;
-    });
-
-    // apply env-specific formatting (colors, etc.)
-    exports.formatArgs.call(self, args);
-
-    var logFn = debug.log || exports.log || console.log.bind(console);
-    logFn.apply(self, args);
-  }
-
-  debug.namespace = namespace;
-  debug.enabled = exports.enabled(namespace);
-  debug.useColors = exports.useColors();
-  debug.color = selectColor(namespace);
-  debug.destroy = destroy;
-
-  // env-specific initialization logic for debug instances
-  if ('function' === typeof exports.init) {
-    exports.init(debug);
-  }
-
-  exports.instances.push(debug);
-
-  return debug;
-}
-
-function destroy () {
-  var index = exports.instances.indexOf(this);
-  if (index !== -1) {
-    exports.instances.splice(index, 1);
-    return true;
-  } else {
-    return false;
-  }
-}
-
-/**
- * Enables a debug mode by namespaces. This can include modes
- * separated by a colon and wildcards.
- *
- * @param {String} namespaces
- * @api public
- */
-
-function enable(namespaces) {
-  exports.save(namespaces);
-
-  exports.names = [];
-  exports.skips = [];
-
-  var i;
-  var split = (typeof namespaces === 'string' ? namespaces : '').split(/[\s,]+/);
-  var len = split.length;
-
-  for (i = 0; i < len; i++) {
-    if (!split[i]) continue; // ignore empty strings
-    namespaces = split[i].replace(/\*/g, '.*?');
-    if (namespaces[0] === '-') {
-      exports.skips.push(new RegExp('^' + namespaces.substr(1) + '$'));
-    } else {
-      exports.names.push(new RegExp('^' + namespaces + '$'));
-    }
-  }
-
-  for (i = 0; i < exports.instances.length; i++) {
-    var instance = exports.instances[i];
-    instance.enabled = exports.enabled(instance.namespace);
-  }
-}
-
-/**
- * Disable debug output.
- *
- * @api public
- */
-
-function disable() {
-  exports.enable('');
-}
-
-/**
- * Returns true if the given mode name is enabled, false otherwise.
- *
- * @param {String} name
- * @return {Boolean}
- * @api public
- */
-
-function enabled(name) {
-  if (name[name.length - 1] === '*') {
-    return true;
-  }
-  var i, len;
-  for (i = 0, len = exports.skips.length; i < len; i++) {
-    if (exports.skips[i].test(name)) {
-      return false;
-    }
-  }
-  for (i = 0, len = exports.names.length; i < len; i++) {
-    if (exports.names[i].test(name)) {
-      return true;
-    }
-  }
-  return false;
-}
-
-/**
- * Coerce `val`.
- *
- * @param {Mixed} val
- * @return {Mixed}
- * @api private
- */
-
-function coerce(val) {
-  if (val instanceof Error) return val.stack || val.message;
-  return val;
-}
-
-},{"ms":99}],81:[function(require,module,exports){
+},{"has-cors":130}],125:[function(require,module,exports){
 (function (global){
 /**
  * Module dependencies.
@@ -16078,7 +22209,7 @@ exports.decodePayloadAsBinary = function (data, binaryType, callback) {
 };
 
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{"./keys":82,"./utf8":83,"after":53,"arraybuffer.slice":54,"base64-arraybuffer":56,"blob":59,"has-binary2":85}],82:[function(require,module,exports){
+},{"./keys":126,"./utf8":127,"after":74,"arraybuffer.slice":75,"base64-arraybuffer":102,"blob":105,"has-binary2":129}],126:[function(require,module,exports){
 
 /**
  * Gets the keys for an object.
@@ -16099,7 +22230,7 @@ module.exports = Object.keys || function keys (obj){
   return arr;
 };
 
-},{}],83:[function(require,module,exports){
+},{}],127:[function(require,module,exports){
 (function (global){
 /*! https://mths.be/utf8js v2.1.2 by @mathias */
 ;(function(root) {
@@ -16358,7 +22489,7 @@ module.exports = Object.keys || function keys (obj){
 }(this));
 
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{}],84:[function(require,module,exports){
+},{}],128:[function(require,module,exports){
 // Copyright Joyent, Inc. and other Node contributors.
 //
 // Permission is hereby granted, free of charge, to any person obtaining a
@@ -16662,7 +22793,7 @@ function isUndefined(arg) {
   return arg === void 0;
 }
 
-},{}],85:[function(require,module,exports){
+},{}],129:[function(require,module,exports){
 (function (Buffer){
 /* global Blob File */
 
@@ -16730,7 +22861,7 @@ function hasBinary (obj) {
 }
 
 }).call(this,require("buffer").Buffer)
-},{"buffer":62,"isarray":92}],86:[function(require,module,exports){
+},{"buffer":108,"isarray":136}],130:[function(require,module,exports){
 
 /**
  * Module exports.
@@ -16749,7 +22880,7 @@ try {
   module.exports = false;
 }
 
-},{}],87:[function(require,module,exports){
+},{}],131:[function(require,module,exports){
 var http = require('http')
 var url = require('url')
 
@@ -16782,7 +22913,7 @@ function validateParams (params) {
   return params
 }
 
-},{"http":129,"url":137}],88:[function(require,module,exports){
+},{"http":173,"url":181}],132:[function(require,module,exports){
 exports.read = function (buffer, offset, isLE, mLen, nBytes) {
   var e, m
   var eLen = (nBytes * 8) - mLen - 1
@@ -16868,7 +22999,7 @@ exports.write = function (buffer, value, offset, isLE, mLen, nBytes) {
   buffer[offset + i - d] |= s * 128
 }
 
-},{}],89:[function(require,module,exports){
+},{}],133:[function(require,module,exports){
 
 var indexOf = [].indexOf;
 
@@ -16879,7 +23010,7 @@ module.exports = function(arr, obj){
   }
   return -1;
 };
-},{}],90:[function(require,module,exports){
+},{}],134:[function(require,module,exports){
 if (typeof Object.create === 'function') {
   // implementation from standard node.js 'util' module
   module.exports = function inherits(ctor, superCtor) {
@@ -16904,7 +23035,7 @@ if (typeof Object.create === 'function') {
   }
 }
 
-},{}],91:[function(require,module,exports){
+},{}],135:[function(require,module,exports){
 /*!
  * Determine if an object is a Buffer
  *
@@ -16927,14 +23058,14 @@ function isSlowBuffer (obj) {
   return typeof obj.readFloatLE === 'function' && typeof obj.slice === 'function' && isBuffer(obj.slice(0, 0))
 }
 
-},{}],92:[function(require,module,exports){
+},{}],136:[function(require,module,exports){
 var toString = {}.toString;
 
 module.exports = Array.isArray || function (arr) {
   return toString.call(arr) == '[object Array]';
 };
 
-},{}],93:[function(require,module,exports){
+},{}],137:[function(require,module,exports){
 /**
  * lodash 3.0.2 (Custom Build) <https://lodash.com/>
  * Build: `lodash modularize exports="npm" -o ./`
@@ -17046,7 +23177,7 @@ function isNumber(value) {
 
 module.exports = isNaN;
 
-},{}],94:[function(require,module,exports){
+},{}],138:[function(require,module,exports){
 //! moment-timezone.js
 //! version : 0.5.11
 //! Copyright (c) JS Foundation and other contributors
@@ -18248,7 +24379,7 @@ module.exports = isNaN;
 	return moment;
 }));
 
-},{"moment":98}],95:[function(require,module,exports){
+},{"moment":142}],139:[function(require,module,exports){
 module.exports={
 	"version": "2016j",
 	"zones": [
@@ -18848,11 +24979,11 @@ module.exports={
 		"Pacific/Pohnpei|Pacific/Ponape"
 	]
 }
-},{}],96:[function(require,module,exports){
+},{}],140:[function(require,module,exports){
 var moment = module.exports = require("./moment-timezone");
 moment.tz.load(require('./data/packed/latest.json'));
 
-},{"./data/packed/latest.json":95,"./moment-timezone":97}],97:[function(require,module,exports){
+},{"./data/packed/latest.json":139,"./moment-timezone":141}],141:[function(require,module,exports){
 //! moment-timezone.js
 //! version : 0.5.11
 //! Copyright (c) JS Foundation and other contributors
@@ -19455,7 +25586,7 @@ moment.tz.load(require('./data/packed/latest.json'));
 	return moment;
 }));
 
-},{"moment":98}],98:[function(require,module,exports){
+},{"moment":142}],142:[function(require,module,exports){
 //! moment.js
 
 ;(function (global, factory) {
@@ -23963,7 +30094,7 @@ moment.tz.load(require('./data/packed/latest.json'));
 
 })));
 
-},{}],99:[function(require,module,exports){
+},{}],143:[function(require,module,exports){
 /**
  * Helpers.
  */
@@ -24117,7 +30248,7 @@ function plural(ms, n, name) {
   return Math.ceil(ms / n) + ' ' + name + 's';
 }
 
-},{}],100:[function(require,module,exports){
+},{}],144:[function(require,module,exports){
 /**
  * Compiles a querystring
  * Returns string representation of the object
@@ -24156,7 +30287,7 @@ exports.decode = function(qs){
   return qry;
 };
 
-},{}],101:[function(require,module,exports){
+},{}],145:[function(require,module,exports){
 /**
  * Parses an URI
  *
@@ -24197,7 +30328,7 @@ module.exports = function parseuri(str) {
     return uri;
 };
 
-},{}],102:[function(require,module,exports){
+},{}],146:[function(require,module,exports){
 (function (process){
 'use strict';
 
@@ -24245,7 +30376,7 @@ function nextTick(fn, arg1, arg2, arg3) {
 
 
 }).call(this,require('_process'))
-},{"_process":61}],103:[function(require,module,exports){
+},{"_process":107}],147:[function(require,module,exports){
 (function (global){
 /*! https://mths.be/punycode v1.4.1 by @mathias */
 ;(function(root) {
@@ -24782,7 +30913,7 @@ function nextTick(fn, arg1, arg2, arg3) {
 }(this));
 
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{}],104:[function(require,module,exports){
+},{}],148:[function(require,module,exports){
 // Copyright Joyent, Inc. and other Node contributors.
 //
 // Permission is hereby granted, free of charge, to any person obtaining a
@@ -24868,7 +30999,7 @@ var isArray = Array.isArray || function (xs) {
   return Object.prototype.toString.call(xs) === '[object Array]';
 };
 
-},{}],105:[function(require,module,exports){
+},{}],149:[function(require,module,exports){
 // Copyright Joyent, Inc. and other Node contributors.
 //
 // Permission is hereby granted, free of charge, to any person obtaining a
@@ -24955,13 +31086,13 @@ var objectKeys = Object.keys || function (obj) {
   return res;
 };
 
-},{}],106:[function(require,module,exports){
+},{}],150:[function(require,module,exports){
 'use strict';
 
 exports.decode = exports.parse = require('./decode');
 exports.encode = exports.stringify = require('./encode');
 
-},{"./decode":104,"./encode":105}],107:[function(require,module,exports){
+},{"./decode":148,"./encode":149}],151:[function(require,module,exports){
 // Copyright Joyent, Inc. and other Node contributors.
 //
 // Permission is hereby granted, free of charge, to any person obtaining a
@@ -25093,7 +31224,7 @@ Duplex.prototype._destroy = function (err, cb) {
 
   pna.nextTick(cb, err);
 };
-},{"./_stream_readable":109,"./_stream_writable":111,"core-util-is":67,"inherits":90,"process-nextick-args":102}],108:[function(require,module,exports){
+},{"./_stream_readable":153,"./_stream_writable":155,"core-util-is":113,"inherits":134,"process-nextick-args":146}],152:[function(require,module,exports){
 // Copyright Joyent, Inc. and other Node contributors.
 //
 // Permission is hereby granted, free of charge, to any person obtaining a
@@ -25141,7 +31272,7 @@ function PassThrough(options) {
 PassThrough.prototype._transform = function (chunk, encoding, cb) {
   cb(null, chunk);
 };
-},{"./_stream_transform":110,"core-util-is":67,"inherits":90}],109:[function(require,module,exports){
+},{"./_stream_transform":154,"core-util-is":113,"inherits":134}],153:[function(require,module,exports){
 (function (process,global){
 // Copyright Joyent, Inc. and other Node contributors.
 //
@@ -26163,7 +32294,7 @@ function indexOf(xs, x) {
   return -1;
 }
 }).call(this,require('_process'),typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{"./_stream_duplex":107,"./internal/streams/BufferList":112,"./internal/streams/destroy":113,"./internal/streams/stream":114,"_process":61,"core-util-is":67,"events":84,"inherits":90,"isarray":115,"process-nextick-args":102,"safe-buffer":118,"string_decoder/":116,"util":60}],110:[function(require,module,exports){
+},{"./_stream_duplex":151,"./internal/streams/BufferList":156,"./internal/streams/destroy":157,"./internal/streams/stream":158,"_process":107,"core-util-is":113,"events":128,"inherits":134,"isarray":159,"process-nextick-args":146,"safe-buffer":162,"string_decoder/":160,"util":106}],154:[function(require,module,exports){
 // Copyright Joyent, Inc. and other Node contributors.
 //
 // Permission is hereby granted, free of charge, to any person obtaining a
@@ -26378,7 +32509,7 @@ function done(stream, er, data) {
 
   return stream.push(null);
 }
-},{"./_stream_duplex":107,"core-util-is":67,"inherits":90}],111:[function(require,module,exports){
+},{"./_stream_duplex":151,"core-util-is":113,"inherits":134}],155:[function(require,module,exports){
 (function (process,global,setImmediate){
 // Copyright Joyent, Inc. and other Node contributors.
 //
@@ -27068,7 +33199,7 @@ Writable.prototype._destroy = function (err, cb) {
   cb(err);
 };
 }).call(this,require('_process'),typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {},require("timers").setImmediate)
-},{"./_stream_duplex":107,"./internal/streams/destroy":113,"./internal/streams/stream":114,"_process":61,"core-util-is":67,"inherits":90,"process-nextick-args":102,"safe-buffer":118,"timers":133,"util-deprecate":139}],112:[function(require,module,exports){
+},{"./_stream_duplex":151,"./internal/streams/destroy":157,"./internal/streams/stream":158,"_process":107,"core-util-is":113,"inherits":134,"process-nextick-args":146,"safe-buffer":162,"timers":177,"util-deprecate":183}],156:[function(require,module,exports){
 'use strict';
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
@@ -27148,7 +33279,7 @@ if (util && util.inspect && util.inspect.custom) {
     return this.constructor.name + ' ' + obj;
   };
 }
-},{"safe-buffer":118,"util":60}],113:[function(require,module,exports){
+},{"safe-buffer":162,"util":106}],157:[function(require,module,exports){
 'use strict';
 
 /*<replacement>*/
@@ -27223,12 +33354,12 @@ module.exports = {
   destroy: destroy,
   undestroy: undestroy
 };
-},{"process-nextick-args":102}],114:[function(require,module,exports){
+},{"process-nextick-args":146}],158:[function(require,module,exports){
 module.exports = require('events').EventEmitter;
 
-},{"events":84}],115:[function(require,module,exports){
-arguments[4][92][0].apply(exports,arguments)
-},{"dup":92}],116:[function(require,module,exports){
+},{"events":128}],159:[function(require,module,exports){
+arguments[4][136][0].apply(exports,arguments)
+},{"dup":136}],160:[function(require,module,exports){
 // Copyright Joyent, Inc. and other Node contributors.
 //
 // Permission is hereby granted, free of charge, to any person obtaining a
@@ -27525,7 +33656,7 @@ function simpleWrite(buf) {
 function simpleEnd(buf) {
   return buf && buf.length ? this.write(buf) : '';
 }
-},{"safe-buffer":118}],117:[function(require,module,exports){
+},{"safe-buffer":162}],161:[function(require,module,exports){
 exports = module.exports = require('./lib/_stream_readable.js');
 exports.Stream = exports;
 exports.Readable = exports;
@@ -27534,7 +33665,7 @@ exports.Duplex = require('./lib/_stream_duplex.js');
 exports.Transform = require('./lib/_stream_transform.js');
 exports.PassThrough = require('./lib/_stream_passthrough.js');
 
-},{"./lib/_stream_duplex.js":107,"./lib/_stream_passthrough.js":108,"./lib/_stream_readable.js":109,"./lib/_stream_transform.js":110,"./lib/_stream_writable.js":111}],118:[function(require,module,exports){
+},{"./lib/_stream_duplex.js":151,"./lib/_stream_passthrough.js":152,"./lib/_stream_readable.js":153,"./lib/_stream_transform.js":154,"./lib/_stream_writable.js":155}],162:[function(require,module,exports){
 /* eslint-disable node/no-deprecated-api */
 var buffer = require('buffer')
 var Buffer = buffer.Buffer
@@ -27598,7 +33729,7 @@ SafeBuffer.allocUnsafeSlow = function (size) {
   return buffer.SlowBuffer(size)
 }
 
-},{"buffer":62}],119:[function(require,module,exports){
+},{"buffer":108}],163:[function(require,module,exports){
 
 /**
  * Module dependencies.
@@ -27694,7 +33825,7 @@ exports.connect = lookup;
 exports.Manager = require('./manager');
 exports.Socket = require('./socket');
 
-},{"./manager":120,"./socket":122,"./url":123,"debug":68,"socket.io-parser":125}],120:[function(require,module,exports){
+},{"./manager":164,"./socket":166,"./url":167,"debug":168,"socket.io-parser":171}],164:[function(require,module,exports){
 
 /**
  * Module dependencies.
@@ -28269,7 +34400,7 @@ Manager.prototype.onreconnect = function () {
   this.emitAll('reconnect', attempt);
 };
 
-},{"./on":121,"./socket":122,"backo2":55,"component-bind":64,"component-emitter":65,"debug":68,"engine.io-client":70,"indexof":89,"socket.io-parser":125}],121:[function(require,module,exports){
+},{"./on":165,"./socket":166,"backo2":101,"component-bind":110,"component-emitter":111,"debug":168,"engine.io-client":116,"indexof":133,"socket.io-parser":171}],165:[function(require,module,exports){
 
 /**
  * Module exports.
@@ -28295,7 +34426,7 @@ function on (obj, ev, fn) {
   };
 }
 
-},{}],122:[function(require,module,exports){
+},{}],166:[function(require,module,exports){
 
 /**
  * Module dependencies.
@@ -28715,7 +34846,7 @@ Socket.prototype.compress = function (compress) {
   return this;
 };
 
-},{"./on":121,"component-bind":64,"component-emitter":65,"debug":68,"parseqs":100,"socket.io-parser":125,"to-array":135}],123:[function(require,module,exports){
+},{"./on":165,"component-bind":110,"component-emitter":111,"debug":168,"parseqs":144,"socket.io-parser":171,"to-array":179}],167:[function(require,module,exports){
 (function (global){
 
 /**
@@ -28794,7 +34925,400 @@ function url (uri, loc) {
 }
 
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{"debug":68,"parseuri":101}],124:[function(require,module,exports){
+},{"debug":168,"parseuri":145}],168:[function(require,module,exports){
+(function (process){
+/**
+ * This is the web browser implementation of `debug()`.
+ *
+ * Expose `debug()` as the module.
+ */
+
+exports = module.exports = require('./debug');
+exports.log = log;
+exports.formatArgs = formatArgs;
+exports.save = save;
+exports.load = load;
+exports.useColors = useColors;
+exports.storage = 'undefined' != typeof chrome
+               && 'undefined' != typeof chrome.storage
+                  ? chrome.storage.local
+                  : localstorage();
+
+/**
+ * Colors.
+ */
+
+exports.colors = [
+  'lightseagreen',
+  'forestgreen',
+  'goldenrod',
+  'dodgerblue',
+  'darkorchid',
+  'crimson'
+];
+
+/**
+ * Currently only WebKit-based Web Inspectors, Firefox >= v31,
+ * and the Firebug extension (any Firefox version) are known
+ * to support "%c" CSS customizations.
+ *
+ * TODO: add a `localStorage` variable to explicitly enable/disable colors
+ */
+
+function useColors() {
+  // NB: In an Electron preload script, document will be defined but not fully
+  // initialized. Since we know we're in Chrome, we'll just detect this case
+  // explicitly
+  if (typeof window !== 'undefined' && window.process && window.process.type === 'renderer') {
+    return true;
+  }
+
+  // is webkit? http://stackoverflow.com/a/16459606/376773
+  // document is undefined in react-native: https://github.com/facebook/react-native/pull/1632
+  return (typeof document !== 'undefined' && document.documentElement && document.documentElement.style && document.documentElement.style.WebkitAppearance) ||
+    // is firebug? http://stackoverflow.com/a/398120/376773
+    (typeof window !== 'undefined' && window.console && (window.console.firebug || (window.console.exception && window.console.table))) ||
+    // is firefox >= v31?
+    // https://developer.mozilla.org/en-US/docs/Tools/Web_Console#Styling_messages
+    (typeof navigator !== 'undefined' && navigator.userAgent && navigator.userAgent.toLowerCase().match(/firefox\/(\d+)/) && parseInt(RegExp.$1, 10) >= 31) ||
+    // double check webkit in userAgent just in case we are in a worker
+    (typeof navigator !== 'undefined' && navigator.userAgent && navigator.userAgent.toLowerCase().match(/applewebkit\/(\d+)/));
+}
+
+/**
+ * Map %j to `JSON.stringify()`, since no Web Inspectors do that by default.
+ */
+
+exports.formatters.j = function(v) {
+  try {
+    return JSON.stringify(v);
+  } catch (err) {
+    return '[UnexpectedJSONParseError]: ' + err.message;
+  }
+};
+
+
+/**
+ * Colorize log arguments if enabled.
+ *
+ * @api public
+ */
+
+function formatArgs(args) {
+  var useColors = this.useColors;
+
+  args[0] = (useColors ? '%c' : '')
+    + this.namespace
+    + (useColors ? ' %c' : ' ')
+    + args[0]
+    + (useColors ? '%c ' : ' ')
+    + '+' + exports.humanize(this.diff);
+
+  if (!useColors) return;
+
+  var c = 'color: ' + this.color;
+  args.splice(1, 0, c, 'color: inherit')
+
+  // the final "%c" is somewhat tricky, because there could be other
+  // arguments passed either before or after the %c, so we need to
+  // figure out the correct index to insert the CSS into
+  var index = 0;
+  var lastC = 0;
+  args[0].replace(/%[a-zA-Z%]/g, function(match) {
+    if ('%%' === match) return;
+    index++;
+    if ('%c' === match) {
+      // we only are interested in the *last* %c
+      // (the user may have provided their own)
+      lastC = index;
+    }
+  });
+
+  args.splice(lastC, 0, c);
+}
+
+/**
+ * Invokes `console.log()` when available.
+ * No-op when `console.log` is not a "function".
+ *
+ * @api public
+ */
+
+function log() {
+  // this hackery is required for IE8/9, where
+  // the `console.log` function doesn't have 'apply'
+  return 'object' === typeof console
+    && console.log
+    && Function.prototype.apply.call(console.log, console, arguments);
+}
+
+/**
+ * Save `namespaces`.
+ *
+ * @param {String} namespaces
+ * @api private
+ */
+
+function save(namespaces) {
+  try {
+    if (null == namespaces) {
+      exports.storage.removeItem('debug');
+    } else {
+      exports.storage.debug = namespaces;
+    }
+  } catch(e) {}
+}
+
+/**
+ * Load `namespaces`.
+ *
+ * @return {String} returns the previously persisted debug modes
+ * @api private
+ */
+
+function load() {
+  var r;
+  try {
+    r = exports.storage.debug;
+  } catch(e) {}
+
+  // If debug isn't set in LS, and we're in Electron, try to load $DEBUG
+  if (!r && typeof process !== 'undefined' && 'env' in process) {
+    r = process.env.DEBUG;
+  }
+
+  return r;
+}
+
+/**
+ * Enable namespaces listed in `localStorage.debug` initially.
+ */
+
+exports.enable(load());
+
+/**
+ * Localstorage attempts to return the localstorage.
+ *
+ * This is necessary because safari throws
+ * when a user disables cookies/localstorage
+ * and you attempt to access it.
+ *
+ * @return {LocalStorage}
+ * @api private
+ */
+
+function localstorage() {
+  try {
+    return window.localStorage;
+  } catch (e) {}
+}
+
+}).call(this,require('_process'))
+},{"./debug":169,"_process":107}],169:[function(require,module,exports){
+
+/**
+ * This is the common logic for both the Node.js and web browser
+ * implementations of `debug()`.
+ *
+ * Expose `debug()` as the module.
+ */
+
+exports = module.exports = createDebug.debug = createDebug['default'] = createDebug;
+exports.coerce = coerce;
+exports.disable = disable;
+exports.enable = enable;
+exports.enabled = enabled;
+exports.humanize = require('ms');
+
+/**
+ * The currently active debug mode names, and names to skip.
+ */
+
+exports.names = [];
+exports.skips = [];
+
+/**
+ * Map of special "%n" handling functions, for the debug "format" argument.
+ *
+ * Valid key names are a single, lower or upper-case letter, i.e. "n" and "N".
+ */
+
+exports.formatters = {};
+
+/**
+ * Previous log timestamp.
+ */
+
+var prevTime;
+
+/**
+ * Select a color.
+ * @param {String} namespace
+ * @return {Number}
+ * @api private
+ */
+
+function selectColor(namespace) {
+  var hash = 0, i;
+
+  for (i in namespace) {
+    hash  = ((hash << 5) - hash) + namespace.charCodeAt(i);
+    hash |= 0; // Convert to 32bit integer
+  }
+
+  return exports.colors[Math.abs(hash) % exports.colors.length];
+}
+
+/**
+ * Create a debugger with the given `namespace`.
+ *
+ * @param {String} namespace
+ * @return {Function}
+ * @api public
+ */
+
+function createDebug(namespace) {
+
+  function debug() {
+    // disabled?
+    if (!debug.enabled) return;
+
+    var self = debug;
+
+    // set `diff` timestamp
+    var curr = +new Date();
+    var ms = curr - (prevTime || curr);
+    self.diff = ms;
+    self.prev = prevTime;
+    self.curr = curr;
+    prevTime = curr;
+
+    // turn the `arguments` into a proper Array
+    var args = new Array(arguments.length);
+    for (var i = 0; i < args.length; i++) {
+      args[i] = arguments[i];
+    }
+
+    args[0] = exports.coerce(args[0]);
+
+    if ('string' !== typeof args[0]) {
+      // anything else let's inspect with %O
+      args.unshift('%O');
+    }
+
+    // apply any `formatters` transformations
+    var index = 0;
+    args[0] = args[0].replace(/%([a-zA-Z%])/g, function(match, format) {
+      // if we encounter an escaped % then don't increase the array index
+      if (match === '%%') return match;
+      index++;
+      var formatter = exports.formatters[format];
+      if ('function' === typeof formatter) {
+        var val = args[index];
+        match = formatter.call(self, val);
+
+        // now we need to remove `args[index]` since it's inlined in the `format`
+        args.splice(index, 1);
+        index--;
+      }
+      return match;
+    });
+
+    // apply env-specific formatting (colors, etc.)
+    exports.formatArgs.call(self, args);
+
+    var logFn = debug.log || exports.log || console.log.bind(console);
+    logFn.apply(self, args);
+  }
+
+  debug.namespace = namespace;
+  debug.enabled = exports.enabled(namespace);
+  debug.useColors = exports.useColors();
+  debug.color = selectColor(namespace);
+
+  // env-specific initialization logic for debug instances
+  if ('function' === typeof exports.init) {
+    exports.init(debug);
+  }
+
+  return debug;
+}
+
+/**
+ * Enables a debug mode by namespaces. This can include modes
+ * separated by a colon and wildcards.
+ *
+ * @param {String} namespaces
+ * @api public
+ */
+
+function enable(namespaces) {
+  exports.save(namespaces);
+
+  exports.names = [];
+  exports.skips = [];
+
+  var split = (typeof namespaces === 'string' ? namespaces : '').split(/[\s,]+/);
+  var len = split.length;
+
+  for (var i = 0; i < len; i++) {
+    if (!split[i]) continue; // ignore empty strings
+    namespaces = split[i].replace(/\*/g, '.*?');
+    if (namespaces[0] === '-') {
+      exports.skips.push(new RegExp('^' + namespaces.substr(1) + '$'));
+    } else {
+      exports.names.push(new RegExp('^' + namespaces + '$'));
+    }
+  }
+}
+
+/**
+ * Disable debug output.
+ *
+ * @api public
+ */
+
+function disable() {
+  exports.enable('');
+}
+
+/**
+ * Returns true if the given mode name is enabled, false otherwise.
+ *
+ * @param {String} name
+ * @return {Boolean}
+ * @api public
+ */
+
+function enabled(name) {
+  var i, len;
+  for (i = 0, len = exports.skips.length; i < len; i++) {
+    if (exports.skips[i].test(name)) {
+      return false;
+    }
+  }
+  for (i = 0, len = exports.names.length; i < len; i++) {
+    if (exports.names[i].test(name)) {
+      return true;
+    }
+  }
+  return false;
+}
+
+/**
+ * Coerce `val`.
+ *
+ * @param {Mixed} val
+ * @return {Mixed}
+ * @api private
+ */
+
+function coerce(val) {
+  if (val instanceof Error) return val.stack || val.message;
+  return val;
+}
+
+},{"ms":143}],170:[function(require,module,exports){
 (function (global){
 /*global Blob,File*/
 
@@ -28939,7 +35463,7 @@ exports.removeBlobs = function(data, callback) {
 };
 
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{"./is-buffer":126,"isarray":92}],125:[function(require,module,exports){
+},{"./is-buffer":172,"isarray":136}],171:[function(require,module,exports){
 
 /**
  * Module dependencies.
@@ -29349,7 +35873,7 @@ function error(msg) {
   };
 }
 
-},{"./binary":124,"./is-buffer":126,"component-emitter":65,"debug":127,"has-binary2":85,"isarray":92}],126:[function(require,module,exports){
+},{"./binary":170,"./is-buffer":172,"component-emitter":111,"debug":114,"has-binary2":129,"isarray":136}],172:[function(require,module,exports){
 (function (global){
 
 module.exports = isBuf;
@@ -29366,11 +35890,7 @@ function isBuf(obj) {
 }
 
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{}],127:[function(require,module,exports){
-arguments[4][79][0].apply(exports,arguments)
-},{"./debug":128,"_process":61,"dup":79}],128:[function(require,module,exports){
-arguments[4][80][0].apply(exports,arguments)
-},{"dup":80,"ms":99}],129:[function(require,module,exports){
+},{}],173:[function(require,module,exports){
 (function (global){
 var ClientRequest = require('./lib/request')
 var response = require('./lib/response')
@@ -29458,7 +35978,7 @@ http.METHODS = [
 	'UNSUBSCRIBE'
 ]
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{"./lib/request":131,"./lib/response":132,"builtin-status-codes":63,"url":137,"xtend":145}],130:[function(require,module,exports){
+},{"./lib/request":175,"./lib/response":176,"builtin-status-codes":109,"url":181,"xtend":189}],174:[function(require,module,exports){
 (function (global){
 exports.fetch = isFunction(global.fetch) && isFunction(global.ReadableStream)
 
@@ -29535,7 +36055,7 @@ function isFunction (value) {
 xhr = null // Help gc
 
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{}],131:[function(require,module,exports){
+},{}],175:[function(require,module,exports){
 (function (process,global,Buffer){
 var capability = require('./capability')
 var inherits = require('inherits')
@@ -29866,7 +36386,7 @@ var unsafeHeaders = [
 ]
 
 }).call(this,require('_process'),typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {},require("buffer").Buffer)
-},{"./capability":130,"./response":132,"_process":61,"buffer":62,"inherits":90,"readable-stream":117,"to-arraybuffer":136}],132:[function(require,module,exports){
+},{"./capability":174,"./response":176,"_process":107,"buffer":108,"inherits":134,"readable-stream":161,"to-arraybuffer":180}],176:[function(require,module,exports){
 (function (process,global,Buffer){
 var capability = require('./capability')
 var inherits = require('inherits')
@@ -30094,7 +36614,7 @@ IncomingMessage.prototype._onXHRProgress = function () {
 }
 
 }).call(this,require('_process'),typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {},require("buffer").Buffer)
-},{"./capability":130,"_process":61,"buffer":62,"inherits":90,"readable-stream":117}],133:[function(require,module,exports){
+},{"./capability":174,"_process":107,"buffer":108,"inherits":134,"readable-stream":161}],177:[function(require,module,exports){
 (function (setImmediate,clearImmediate){
 var nextTick = require('process/browser.js').nextTick;
 var apply = Function.prototype.apply;
@@ -30173,9 +36693,9 @@ exports.clearImmediate = typeof clearImmediate === "function" ? clearImmediate :
   delete immediateIds[id];
 };
 }).call(this,require("timers").setImmediate,require("timers").clearImmediate)
-},{"process/browser.js":134,"timers":133}],134:[function(require,module,exports){
-arguments[4][61][0].apply(exports,arguments)
-},{"dup":61}],135:[function(require,module,exports){
+},{"process/browser.js":178,"timers":177}],178:[function(require,module,exports){
+arguments[4][107][0].apply(exports,arguments)
+},{"dup":107}],179:[function(require,module,exports){
 module.exports = toArray
 
 function toArray(list, index) {
@@ -30190,7 +36710,7 @@ function toArray(list, index) {
     return array
 }
 
-},{}],136:[function(require,module,exports){
+},{}],180:[function(require,module,exports){
 var Buffer = require('buffer').Buffer
 
 module.exports = function (buf) {
@@ -30219,7 +36739,7 @@ module.exports = function (buf) {
 	}
 }
 
-},{"buffer":62}],137:[function(require,module,exports){
+},{"buffer":108}],181:[function(require,module,exports){
 // Copyright Joyent, Inc. and other Node contributors.
 //
 // Permission is hereby granted, free of charge, to any person obtaining a
@@ -30953,7 +37473,7 @@ Url.prototype.parseHost = function() {
   if (host) this.hostname = host;
 };
 
-},{"./util":138,"punycode":103,"querystring":106}],138:[function(require,module,exports){
+},{"./util":182,"punycode":147,"querystring":150}],182:[function(require,module,exports){
 'use strict';
 
 module.exports = {
@@ -30971,7 +37491,7 @@ module.exports = {
   }
 };
 
-},{}],139:[function(require,module,exports){
+},{}],183:[function(require,module,exports){
 (function (global){
 
 /**
@@ -31042,7 +37562,7 @@ function config (name) {
 }
 
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{}],140:[function(require,module,exports){
+},{}],184:[function(require,module,exports){
 var v1 = require('./v1');
 var v4 = require('./v4');
 
@@ -31052,7 +37572,7 @@ uuid.v4 = v4;
 
 module.exports = uuid;
 
-},{"./v1":143,"./v4":144}],141:[function(require,module,exports){
+},{"./v1":187,"./v4":188}],185:[function(require,module,exports){
 /**
  * Convert array of 16 byte values to UUID string format of the form:
  * XXXXXXXX-XXXX-XXXX-XXXX-XXXXXXXXXXXX
@@ -31077,7 +37597,7 @@ function bytesToUuid(buf, offset) {
 
 module.exports = bytesToUuid;
 
-},{}],142:[function(require,module,exports){
+},{}],186:[function(require,module,exports){
 (function (global){
 // Unique ID creation requires a high quality random # generator.  In the
 // browser this is a little complicated due to unknown quality of Math.random()
@@ -31114,7 +37634,7 @@ if (!rng) {
 module.exports = rng;
 
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{}],143:[function(require,module,exports){
+},{}],187:[function(require,module,exports){
 var rng = require('./lib/rng');
 var bytesToUuid = require('./lib/bytesToUuid');
 
@@ -31216,7 +37736,7 @@ function v1(options, buf, offset) {
 
 module.exports = v1;
 
-},{"./lib/bytesToUuid":141,"./lib/rng":142}],144:[function(require,module,exports){
+},{"./lib/bytesToUuid":185,"./lib/rng":186}],188:[function(require,module,exports){
 var rng = require('./lib/rng');
 var bytesToUuid = require('./lib/bytesToUuid');
 
@@ -31247,7 +37767,7 @@ function v4(options, buf, offset) {
 
 module.exports = v4;
 
-},{"./lib/bytesToUuid":141,"./lib/rng":142}],145:[function(require,module,exports){
+},{"./lib/bytesToUuid":185,"./lib/rng":186}],189:[function(require,module,exports){
 module.exports = extend
 
 var hasOwnProperty = Object.prototype.hasOwnProperty;
@@ -31268,7 +37788,7 @@ function extend() {
     return target
 }
 
-},{}],146:[function(require,module,exports){
+},{}],190:[function(require,module,exports){
 'use strict';
 
 var alphabet = '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz-_'.split('')
@@ -31338,5 +37858,4 @@ yeast.encode = encode;
 yeast.decode = decode;
 module.exports = yeast;
 
-},{}]},{},[12])(12)
-});
+},{}]},{},[13,1]);
