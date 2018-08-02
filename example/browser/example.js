@@ -23,7 +23,7 @@ module.exports = function () {
 	//var userId = 'webstation-test-user';
 
 	var system = 'theglobeandmail.com';
-	var userId = '65895092';
+	var userId = '123456789';
 
 	var alertManager;
 
@@ -45,10 +45,10 @@ module.exports = function () {
 		//return new AlertManager();
 
 		//return new AlertManager('localhost', 3000, 'rest');
-		//return new AlertManager('localhost', 3000);
+		return new AlertManager('localhost', 3000);
 
 		//return new AlertManager('alerts-management-stage.barchart.com', 80, 'rest');
-		return new AlertManager('alerts-management-stage.barchart.com');
+		//return new AlertManager('alerts-management-stage.barchart.com');
 	};
 
 	var utilities = AlertManager;
@@ -64,6 +64,7 @@ module.exports = function () {
 		var that = this;
 
 		that.version = ko.observable({});
+		that.authenticatedUser = ko.observable('Unsecure');
 
 		that.connected = ko.observable(connected);
 		that.message = ko.observable(message);
@@ -1048,8 +1049,14 @@ module.exports = function () {
 					pageModel.handleAlertTrigger(triggeredAlert);
 				});
 
-				alertManager.getServerVersion().then(function (version) {
-					pageModel.version({ api: version.semver, client: version });
+				alertManager.getUser().then(function (data) {
+					if (data.user_id && data.alert_system) {
+						pageModel.authenticatedUser(data.user_id + '@' + data.alert_system);
+					}
+				});
+
+				alertManager.getServerVersion().then(function (data) {
+					pageModel.version({ api: data.semver, client: version });
 				});
 
 				alertManager.getTargets().then(function (t) {
@@ -1668,6 +1675,17 @@ module.exports = function () {
 				});
 			}
 		}, {
+			key: 'getUser',
+			value: function getUser() {
+				var _this23 = this;
+
+				return Promise.resolve().then(function () {
+					checkStatus(_this23, 'get authenticated user');
+				}).then(function () {
+					return _this23._adapter.getUser();
+				});
+			}
+		}, {
 			key: '_onDispose',
 			value: function _onDispose() {
 				if (this._adapter) {
@@ -2124,6 +2142,11 @@ module.exports = function () {
 				return null;
 			}
 		}, {
+			key: 'getUser',
+			value: function getUser() {
+				return null;
+			}
+		}, {
 			key: 'getServerVersion',
 			value: function getServerVersion() {
 				return null;
@@ -2194,6 +2217,7 @@ module.exports = function () {
 			_this._assignPublisherTypeDefaultEndpoint = new RestEndpoint(RestAction.Update, ['alert', 'publishers', 'default', 'alert_system', 'user_id', 'publisher_type_id']);
 			_this._retrieveMarketDataConfigurationEndpoint = new RestEndpoint(RestAction.Retrieve, ['alert', 'market', 'configuration', 'alert_system', 'user_id']);
 			_this._assignMarketDataConfigurationEndpoint = new RestEndpoint(RestAction.Update, ['alert', 'market', 'configuration', 'alert_system', 'user_id']);
+			_this._userEndpoint = new RestEndpoint(RestAction.Retrieve, ['user']);
 			_this._versionEndpoint = new RestEndpoint(RestAction.Retrieve, ['server', 'version']);
 
 			_this._scheduler = new Scheduler();
@@ -2315,6 +2339,11 @@ module.exports = function () {
 			key: 'assignMarketDataConfiguration',
 			value: function assignMarketDataConfiguration(marketDataConfiguration) {
 				return this._restProvider.call(this._assignMarketDataConfigurationEndpoint, marketDataConfiguration);
+			}
+		}, {
+			key: 'getUser',
+			value: function getUser() {
+				return this._restProvider.call(this._userEndpoint, {});
 			}
 		}, {
 			key: 'getServerVersion',
@@ -2715,32 +2744,32 @@ module.exports = function () {
 		}, {
 			key: 'createAlert',
 			value: function createAlert(alert) {
-				return sendRequestToServer.call(this, 'alerts/create', alert);
+				return sendRequestToServer.call(this, 'alerts/create', alert, true);
 			}
 		}, {
 			key: 'retrieveAlert',
 			value: function retrieveAlert(alert) {
-				return sendRequestToServer.call(this, 'alerts/retrieve', alert);
+				return sendRequestToServer.call(this, 'alerts/retrieve', alert, true);
 			}
 		}, {
 			key: 'updateAlert',
 			value: function updateAlert(alert) {
-				return sendRequestToServer.call(this, 'alerts/update', alert);
+				return sendRequestToServer.call(this, 'alerts/update', alert, true);
 			}
 		}, {
 			key: 'updateAlertsForUser',
 			value: function updateAlertsForUser(query) {
-				return sendRequestToServer.call(this, 'alerts/update/user', query);
+				return sendRequestToServer.call(this, 'alerts/update/user', query, true);
 			}
 		}, {
 			key: 'deleteAlert',
 			value: function deleteAlert(alert) {
-				return sendRequestToServer.call(this, 'alerts/delete', alert);
+				return sendRequestToServer.call(this, 'alerts/delete', alert, true);
 			}
 		}, {
 			key: 'retrieveAlerts',
 			value: function retrieveAlerts(user) {
-				return sendRequestToServer.call(this, 'alerts/retrieve/user', user);
+				return sendRequestToServer.call(this, 'alerts/retrieve/user', user, true);
 			}
 		}, {
 			key: 'subscribeAlerts',
@@ -2790,22 +2819,27 @@ module.exports = function () {
 		}, {
 			key: 'getPublisherTypeDefaults',
 			value: function getPublisherTypeDefaults(query) {
-				return sendRequestToServer.call(this, 'alert/publishers/default/retrieve', query);
+				return sendRequestToServer.call(this, 'alert/publishers/default/retrieve', query, true);
 			}
 		}, {
 			key: 'assignPublisherTypeDefault',
 			value: function assignPublisherTypeDefault(publisherTypeDefault) {
-				return sendRequestToServer.call(this, 'alert/publishers/default/update', publisherTypeDefault);
+				return sendRequestToServer.call(this, 'alert/publishers/default/update', publisherTypeDefault, true);
 			}
 		}, {
 			key: 'getMarketDataConfiguration',
 			value: function getMarketDataConfiguration(query) {
-				return sendRequestToServer.call(this, 'alert/market/configuration/retrieve', query);
+				return sendRequestToServer.call(this, 'alert/market/configuration/retrieve', query, true);
 			}
 		}, {
 			key: 'assignMarketDataConfiguration',
 			value: function assignMarketDataConfiguration(marketDataConfiguration) {
-				return sendRequestToServer.call(this, 'alert/market/configuration/update', marketDataConfiguration);
+				return sendRequestToServer.call(this, 'alert/market/configuration/update', marketDataConfiguration, true);
+			}
+		}, {
+			key: 'getUser',
+			value: function getUser() {
+				return sendRequestToServer.call(this, 'user/retrieve', {}, true);
 			}
 		}, {
 			key: 'getServerVersion',
@@ -2830,14 +2864,14 @@ module.exports = function () {
 		return SocketAdapter;
 	}(AdapterBase);
 
-	function sendToServer(channel, payload) {
+	function sendToServer(channel, payload, secure) {
 		var _this4 = this;
 
 		if (this._connectionState.getCanTransmit()) {
 			return Promise.resolve().then(function () {
 				var jwtPromise = void 0;
 
-				if (_this4._jwtProvider === null) {
+				if (_this4._jwtProvider === null || !secure) {
 					jwtPromise = Promise.resolve(null);
 				} else {
 					jwtPromise = _this4._jwtProvider.getToken().then(function (token) {
@@ -2853,7 +2887,7 @@ module.exports = function () {
 				return jwtPromise;
 			}).then(function (jwtData) {
 				if (jwtData !== null) {
-					payload.jwt = jwtData;
+					payload.context = jwtData;
 				}
 
 				return _this4._socket.emit(channel, payload);
@@ -2863,7 +2897,7 @@ module.exports = function () {
 		}
 	}
 
-	function sendRequestToServer(channel, payload) {
+	function sendRequestToServer(channel, payload, secure) {
 		var _this5 = this;
 
 		return promise.build(function (resolveCallback, rejectCallback) {
@@ -2871,7 +2905,7 @@ module.exports = function () {
 
 			_this5._requestMap[requestId] = resolveCallback;
 
-			return sendToServer.call(_this5, 'request/' + channel, { requestId: requestId, request: payload }).catch(function (e) {
+			return sendToServer.call(_this5, 'request/' + channel, { requestId: requestId, request: payload }, secure).catch(function (e) {
 				delete _this5._requestMap[requestId];
 
 				throw e;
@@ -2879,8 +2913,8 @@ module.exports = function () {
 		});
 	}
 
-	function sendSubscriptionToServer(channel, payload) {
-		return sendToServer.call(this, 'subscribe/' + channel, payload);
+	function sendSubscriptionToServer(channel, payload, secure) {
+		return sendToServer.call(this, 'subscribe/' + channel, payload, secure);
 	}
 
 	function changeConnectionState(connectionState) {
@@ -2961,7 +2995,7 @@ module.exports = function () {
 					throw new Error('The subscriber has been disposed.');
 				}
 
-				sendSubscriptionToServer.call(this._parent, 'alerts/events', this._query).then(function () {
+				sendSubscriptionToServer.call(this._parent, 'alerts/events', this._query, true).then(function () {
 					if (_this7.getIsDisposed()) {
 						return;
 					}
@@ -3033,8 +3067,8 @@ module.exports = function () {
 			var d = getDescription(description);
 
 			assert.argumentIsRequired(alert, d, Object);
-			assert.argumentIsRequired(alert.user_id, d + '.user_id', String);
-			assert.argumentIsRequired(alert.alert_system, d + '.alert_system', String);
+			assert.argumentIsOptional(alert.user_id, d + '.user_id', String);
+			assert.argumentIsOptional(alert.alert_system, d + '.alert_system', String);
 		}
 	};
 
@@ -3208,8 +3242,8 @@ module.exports = function () {
 			var d = getDescription(description);
 
 			assert.argumentIsRequired(ptd, d, Object);
-			assert.argumentIsRequired(ptd.user_id, d + '.user_id', String);
-			assert.argumentIsRequired(ptd.alert_system, d + '.alert_system', String);
+			assert.argumentIsOptional(ptd.user_id, d + '.user_id', String);
+			assert.argumentIsOptional(ptd.alert_system, d + '.alert_system', String);
 		}
 	};
 
