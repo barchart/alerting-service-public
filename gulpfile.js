@@ -55,6 +55,7 @@ gulp.task('embed-version', function () {
 
 	return gulp.src(['./lib/index.js'])
 		.pipe(replace(/(version:\s*')([0-9]+\.[0-9]+\.[0-9]+)(')/g, '$1' + version + '$3'))
+		.pipe(gulp.dest('./lib/'))
 		.pipe(gulp.dest('./lib/alerts/'));
 });
 
