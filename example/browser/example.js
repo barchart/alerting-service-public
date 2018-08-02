@@ -3286,7 +3286,7 @@ module.exports = function () {
 	'use strict';
 
 	return {
-		version: '1.6.11'
+		version: '1.6.13'
 	};
 }();
 
