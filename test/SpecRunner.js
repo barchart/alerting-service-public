@@ -46,8 +46,8 @@ module.exports = function () {
 			var d = getDescription(description);
 
 			assert.argumentIsRequired(alert, d, Object);
-			assert.argumentIsRequired(alert.user_id, d + '.user_id', String);
-			assert.argumentIsRequired(alert.alert_system, d + '.alert_system', String);
+			assert.argumentIsOptional(alert.user_id, d + '.user_id', String);
+			assert.argumentIsOptional(alert.alert_system, d + '.alert_system', String);
 		}
 	};
 
@@ -532,20 +532,6 @@ var alert = require('./../../../../lib/alerts/validators/alert');
 
 describe('When validating an alert object', function () {
 	'use strict';
-
-	describe('for the purpose of a user query', function () {
-		it('will throw an exception if the user "user_id" property is missing', function () {
-			expect(function () {
-				return alert.forUser({ alert_system: 'barchart.com' });
-			}).toThrow();
-		});
-
-		it('will throw an exception if the user "alert_system" property is missing', function () {
-			expect(function () {
-				return alert.forUser({ user_id: '123456' });
-			}).toThrow();
-		});
-	});
 });
 
 },{"./../../../../lib/alerts/validators/alert":1}]},{},[6]);
