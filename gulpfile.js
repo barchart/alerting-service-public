@@ -59,7 +59,7 @@ gulp.task('embed-version', function () {
 });
 
 gulp.task('commit-changes', function () {
-	return gulp.src(['./', './package.json', './lib/alerts/index.js', './example/browser/example.js'])
+	return gulp.src(['./', './package.json', './lib/index.js', './lib/alerts/index.js', './example/browser/example.js'])
 		.pipe(git.add())
 		.pipe(git.commit('Release. Bump version number'));
 });
