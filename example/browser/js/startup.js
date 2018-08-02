@@ -20,7 +20,7 @@ module.exports = (() => {
 	//var userId = 'webstation-test-user';
 
 	var system = 'theglobeandmail.com';
-	var userId = '65895092';
+	var userId = '123456789';
 
 	var alertManager;
 
@@ -51,10 +51,10 @@ module.exports = (() => {
 		//return new AlertManager();
 
 		//return new AlertManager('localhost', 3000, 'rest');
-		//return new AlertManager('localhost', 3000);
+		return new AlertManager('localhost', 3000);
 
 		//return new AlertManager('alerts-management-stage.barchart.com', 80, 'rest');
-		return new AlertManager('alerts-management-stage.barchart.com');
+		//return new AlertManager('alerts-management-stage.barchart.com');
 	};
 
 	var utilities = AlertManager;
@@ -70,6 +70,7 @@ module.exports = (() => {
 		var that = this;
 
 		that.version = ko.observable({ });
+		that.authenticatedUser = ko.observable('Unsecure');
 
 		that.connected = ko.observable(connected);
 		that.message = ko.observable(message);
@@ -1070,9 +1071,16 @@ module.exports = (() => {
 							}
 						);
 
+						alertManager.getUser()
+							.then(function(data) {
+								if (data.user_id && data.alert_system) {
+									pageModel.authenticatedUser(`${data.user_id}@${data.alert_system}`);
+								}
+							});
+
 						alertManager.getServerVersion()
-							.then(function(version) {
-								pageModel.version({ api: version.semver, client: version });
+							.then(function(data) {
+								pageModel.version({ api: data.semver, client: version });
 							});
 
 						alertManager.getTargets()
