@@ -3100,6 +3100,8 @@ module.exports = function () {
 			assert.argumentIsRequired(condition.property.property_id, d + '.property.property_id', Number);
 			assert.argumentIsRequired(condition.property.target, d + '.property.target', Object);
 			assert.argumentIsRequired(condition.property.target.identifier, d + '.property.target.identifier', String);
+			assert.argumentIsOptional(condition.property.target.display, d + '.property.target.display', String);
+			assert.argumentIsOptional(condition.property.target.kind, d + '.property.target.kind', String);
 			assert.argumentIsRequired(condition.operator, d + '.operator', Object);
 			assert.argumentIsRequired(condition.operator.operator_id, d + '.operator.operator_id', Number);
 
@@ -3112,9 +3114,6 @@ module.exports = function () {
 			if (condition.operator.modifiers) {
 				assert.argumentIsArray(condition.operator.modifiers, d + '.operator.modifiers', validateModifier);
 			}
-
-			assert.argumentIsRequired(condition.property.target.display, d + '.property.target.display', String);
-			assert.argumentIsRequired(condition.property.target.kind, d + '.property.target.kind', String);
 		}
 	};
 
@@ -3289,7 +3288,7 @@ module.exports = function () {
 	'use strict';
 
 	return {
-		version: '1.6.15'
+		version: '1.6.16'
 	};
 }();
 
