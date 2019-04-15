@@ -19,8 +19,11 @@ module.exports = (() => {
 	//var system = 'webstation.barchart.com';
 	//var userId = 'webstation-test-user';
 
-	var system = 'theglobeandmail.com';
-	var userId = '123456789';
+	//var system = 'theglobeandmail.com';
+	//var userId = '123456789';
+
+	var system = 'barchart.com';
+	var userId = '99999999';
 
 	var alertManager;
 
@@ -55,6 +58,8 @@ module.exports = (() => {
 
 		//return new AlertManager('alerts-management-stage.barchart.com', 80, 'rest');
 		//return new AlertManager('alerts-management-stage.barchart.com');
+
+		//return new AlertManager('alerts-management-stage.barchart.com', 443, 'socket.io', true);
 	};
 
 	var utilities = AlertManager;
@@ -657,7 +662,7 @@ module.exports = (() => {
 			that.target(target);
 
 			that.properties([]);
-			that.properties.push(new AlertConditionTreeModel(that, that.propertyTree(), 'Category', 0));
+			that.properties.push(new AlertConditionTreeModel(that, that.propertyTree(), 'Property', 0));
 
 			that.property(null);
 			that.operator(null);
@@ -741,7 +746,7 @@ module.exports = (() => {
 				});
 			};
 
-			var node = getNode(that.propertyTree(), condition.property.group);
+			var node = { items: that.propertyTree() };
 			var descriptionPath = ([ ]).concat(condition.property.category || [ ]).concat(condition.property.description);
 
 			for (var i = 0; i < descriptionPath.length; i++) {
@@ -1050,9 +1055,10 @@ module.exports = (() => {
 
 		alertManager = createAlertManager();
 
-		return createJwtProvider()
-			.then((jwtProvider) => {
-				return alertManager.connect(jwtProvider)
+		//return createJwtProvider()
+		//	.then((jwtProvider) => {
+		//		return alertManager.connect(jwtProvider)
+				return alertManager.connect(null)
 					.then(function() {
 						var pageModel = new PageModel(true);
 
@@ -1114,7 +1120,7 @@ module.exports = (() => {
 							});
 
 						return pageModel;
-			});
+			//});
 		}).catch(function(e) {
 			var pageModel = new PageModel(false, e);
 
