@@ -346,15 +346,19 @@ module.exports = (() => {
 					var operator = condition.operator();
 					var operand = condition.operand();
 
-					if (operator.operand_type === 'Array' && _.isString(operand)) {
-						operand = _.map(operand.split(','), function(item) {
-							return _.trim(item);
-						});
-					}
+					if (operator.operand_literal) {
+						operand = condition.operand();
 
-					if (property.type === 'percent') {
-						operand = parseFloat(operand) / 100;
-						operand = operand.toString();
+						if (operator.operand_type === 'Array' && _.isString(operand)) {
+							operand = _.map(operand.split(','), function(item) {
+								return _.trim(item);
+							});
+						}
+
+						if (property.type === 'percent') {
+							operand = parseFloat(operand) / 100;
+							operand = operand.toString();
+						}
 					}
 
 					var conditionData = {
