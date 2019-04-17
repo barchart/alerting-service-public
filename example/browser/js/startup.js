@@ -54,12 +54,12 @@ module.exports = (() => {
 		//return new AlertManager();
 
 		//return new AlertManager('localhost', 3000, 'rest');
-		return new AlertManager('localhost', 3000);
+		//return new AlertManager('localhost', 3000);
 
 		//return new AlertManager('alerts-management-stage.barchart.com', 80, 'rest');
 		//return new AlertManager('alerts-management-stage.barchart.com');
 
-		//return new AlertManager('alerts-management-stage.barchart.com', 443, 'socket.io', true);
+		return new AlertManager('alerts-management-stage.barchart.com', 443, 'socket.io', true);
 	};
 
 	var utilities = AlertManager;
