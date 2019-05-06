@@ -347,10 +347,10 @@ defines the parameters for the market data feed which will be used
 to evaluate conditions (for a given user).
 
     {
-        "configuration_id": "71193b92-fe99-4ab7-a83a-92465bec88e2",
+		"configuration_id": "71193b92-fe99-4ab7-a83a-92465bec88e2",
 		"alert_system": "barchart.com",
 		"user_id": "barchart-test-user",
-        "market_data_id": "my-fancy-market-data-user-id"
+		"market_data_id": "my-fancy-market-data-user-id"
     }
 
 
