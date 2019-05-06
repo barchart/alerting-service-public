@@ -95,7 +95,7 @@ And, finally, call the connect method before invoking any other operations:
 Once you have finished using the AlertManager, please call the "dispose" function, as follows:
 
 
-    alertManager.dispose()
+	alertManager.dispose()
 
 
 This will release connections to the server. After dispose has been called, you will
@@ -128,12 +128,12 @@ The following data structures are important:
 
 A "target" refers to a type of object that can be observed.
 
-    {
-        "target_id": 1,
-        "description": "equity",
-        "identifier_type": "symbol",
-        "identifier_description": "symbol"
-    }
+	{
+		"target_id": 1,
+		"description": "equity",
+		"identifier_type": "symbol",
+		"identifier_description": "symbol"
+	}
 
 
 ### Property
@@ -141,29 +141,29 @@ A "target" refers to a type of object that can be observed.
 A "property" refers to an attribute of a target. The value of
 a "property" can be checked using an "operator" object.
 
-    {
-        "property_id": 18,
-        "type": "number",
-        "description": [
-            "Average Volume",
-            "200 Day"
-        ],
-        "descriptionShort": [
-            "Average Volume",
-            "200 Day"
-        ],
-        "group": "Technical",
-        "category": [ "Liquidity" ],
-        "target": {
-            "target_id": 1,
-            "description": "equity",
-            "identifier_description": "symbol"
-        },
-        "valid_operators": [
-            2,
-            3
-        ]
-    }
+	{
+		"property_id": 18,
+		"type": "number",
+		"description": [
+			"Average Volume",
+			"200 Day"
+		],
+		"descriptionShort": [
+			"Average Volume",
+			"200 Day"
+		],
+		"group": "Technical",
+		"category": [ "Liquidity" ],
+		"target": {
+			"target_id": 1,
+			"description": "equity",
+			"identifier_description": "symbol"
+		},
+		"valid_operators": [
+			2,
+			3
+		]
+	}
 
 * The "valid_operators" array references the "operator" objects
 that can be used in conjunction with this "property" to
@@ -184,22 +184,22 @@ even a complex object.
 A comparison operation that can be applied to the "property" value
 of a "target" object.
 
-    {
-        "operator_id": 4,
-        "operator_type": "binary",
-        "operator_name": "is-indicator",
-        "display": {
-            "short": "=",
-            "long": "is"
-        },
-        "operand_type": "string",
-        "operand_options": [
-            "Buy",
-            "Sell",
-            "Hold"
-        ],
-        "operand_literal": true
-    }
+	{
+		"operator_id": 4,
+		"operator_type": "binary",
+		"operator_name": "is-indicator",
+		"display": {
+			"short": "=",
+			"long": "is"
+		},
+		"operand_type": "string",
+		"operand_options": [
+			"Buy",
+			"Sell",
+			"Hold"
+		],
+		"operand_literal": true
+	}
 
 The operator.operand_options lists the possible values which can be used
 as an "operand" when using the operator. If operator.operand_options has
@@ -212,60 +212,60 @@ A "condition" is the comparison between a "property" value using an "operator" o
 The "target" of the "property" must include an "identifier" and the "operator" must
 include an "operand" value. Alerts can have multiple conditions.
 
-    {
-        "condition_id": "0ce4e213-8fbf-442a-a3f5-2356a5eca09f",
-        "property": {
-            "property_id": 10,
-            "description": [
-                "Moving Average",
-                "50 Day"
-            ],
-            "descriptionShort": [
-                "Moving Average",
-                "50 Day"
-            ],
-            "group": "Technical",
-            "target": {
-                    "target_id": 1,
-                    "description": "equity",
-                    "identifier_description": "symbol",
-                    "identifier": "TSLA"
-            }
-        },
-        "operator": {
-            "operator_id": 2,
-            "operator_type": "binary",
-            "operator_name": "greater-than",
-            "display": {
-                "short": ">",
-                "long": "greater than"
-            },
-            "operand_type": "number",
-            "operand": "200.00",
-            "operand_display": "200.00"
-        }
-    }
+	{
+		"condition_id": "0ce4e213-8fbf-442a-a3f5-2356a5eca09f",
+		"property": {
+			"property_id": 10,
+			"description": [
+				"Moving Average",
+				"50 Day"
+			],
+			"descriptionShort": [
+				"Moving Average",
+				"50 Day"
+			],
+			"group": "Technical",
+			"target": {
+					"target_id": 1,
+					"description": "equity",
+					"identifier_description": "symbol",
+					"identifier": "TSLA"
+			}
+		},
+		"operator": {
+			"operator_id": 2,
+			"operator_type": "binary",
+			"operator_name": "greater-than",
+			"display": {
+				"short": ">",
+				"long": "greater than"
+			},
+			"operand_type": "number",
+			"operand": "200.00",
+			"operand_display": "200.00"
+		}
+	}
 
 
 ### PublisherType
 
 A "publisher type" defines a mechanism for notifying users.
 
-    {
-        "publisher_type_id": 1,
-        "transport": "sms",
-        "provider": "twilio"
-    }
+	{
+		"publisher_type_id": 1,
+		"transport": "sms",
+		"provider": "twilio"
+	}
 
 
 ### PublisherTypeDefault
 
 A "publisher type" that includes the default recipient for a user.
 
-    {
-        "publisher_type_id": 1,
-        "transport": "sms",
-        "provider": "twilio",
+	{
+		"publisher_type_id": 1,
+		"transport": "sms",
+		"provider": "twilio",
 		"alert_system": "barchart.com",
 		"user_id": "barchart-test-user",
 		"default_recipient": "123-456-7890",
@@ -274,7 +274,7 @@ A "publisher type" that includes the default recipient for a user.
 			"price",
 			"news"
 		]
-    }
+	}
 
 Presence of the "default_recipient_hmac" field indicates that the recipient has been "verified."
 
@@ -284,17 +284,17 @@ Presence of the "default_recipient_hmac" field indicates that the recipient has 
 A "publisher" defines the rules for notification of an end user. An
 alert can have multiple publishers.
 
-    {
-        "publisher_id": "9c864a19-ce77-4a87-8cd6-e0810ecb120e",
-        "use_default_recipient" false,
-        "recipient": "123-456-7890",
-        "format": "It is a good time to buy Telsa stock.",
-        "type": {
-            "publisher_type_id": 1,
-            "transport": "sms",
-            "provider": "twilio"
-        }
-    }
+	{
+		"publisher_id": "9c864a19-ce77-4a87-8cd6-e0810ecb120e",
+		"use_default_recipient" false,
+		"recipient": "123-456-7890",
+		"format": "It is a good time to buy Telsa stock.",
+		"type": {
+			"publisher_type_id": 1,
+			"transport": "sms",
+			"provider": "twilio"
+		}
+	}
 
 
 ### Alert
@@ -302,22 +302,22 @@ alert can have multiple publishers.
 An "alert" consists of one or more "condition" objects and one or more
 "publisher" objects.
 
-    {
-        "alert_id": "39b633bf-8993-491d-b544-bdc9deed60be",
-        "alert_state": "Inactive",
-        "alert_system": "barchart.com",
-        "user_id": "barchart-test-user",
-        "alert_type": "price",
-        "alert_behavior": "Terminate",
-        "name": "Buy TSLA",
-        "user_notes": "Time to buy Tesla Motors stock",
-        "automatic_reset": true,
-        "create_date": "1453673000873",
-        "last_trigger_date": "145367399999",
-        "conditions": [ ],
-        "publishers": [ ],
-        "schedules": [ ]
-    }
+	{
+		"alert_id": "39b633bf-8993-491d-b544-bdc9deed60be",
+		"alert_state": "Inactive",
+		"alert_system": "barchart.com",
+		"user_id": "barchart-test-user",
+		"alert_type": "price",
+		"alert_behavior": "Terminate",
+		"name": "Buy TSLA",
+		"user_notes": "Time to buy Tesla Motors stock",
+		"automatic_reset": true,
+		"create_date": "1453673000873",
+		"last_trigger_date": "145367399999",
+		"conditions": [ ],
+		"publishers": [ ],
+		"schedules": [ ]
+	}
 
 * If the alert has never been triggered, the "last_trigger_date" property will be omitted.
 * The "alert_type" is an optional field that is used to classify the alert. It is used to decide "default" publishing rules (if no publishers have been specified). This happens by matching the "active_alert_type" property of a PublisherTypeDefault object.
@@ -329,13 +329,13 @@ An "alert" consists of one or more "condition" objects and one or more
 If an alert is configured to use the "Schedule" behavior, this object
 defines a time for the alert to resume processing.
 
-    {
-        "alert_id": "39b633bf-8993-491d-b544-bdc9deed60be",
-        "schedule_id": "14179194-f00a-4372-9fe7-32d5e300e574",
-        "time": "14:30"
-        "day": "Wednesday"
-        "timezone": "America/Chicago"
-    }
+	{
+		"alert_id": "39b633bf-8993-491d-b544-bdc9deed60be",
+		"schedule_id": "14179194-f00a-4372-9fe7-32d5e300e574",
+		"time": "14:30"
+		"day": "Wednesday"
+		"timezone": "America/Chicago"
+	}
 
 * The "timezone" property refers to a timezone name according to the Moment.js[http://momentjs.com/timezone/docs/#/data-loading/getting-zone-names/]. If omitted, this property will default to "America/Chicago"
 
@@ -346,12 +346,12 @@ Many alert conditions depend on market data feeds. This data structure
 defines the parameters for the market data feed which will be used
 to evaluate conditions (for a given user).
 
-    {
+	{
 		"configuration_id": "71193b92-fe99-4ab7-a83a-92465bec88e2",
 		"alert_system": "barchart.com",
 		"user_id": "barchart-test-user",
 		"market_data_id": "my-fancy-market-data-user-id"
-    }
+	}
 
 
 ## Data (Enumerations)
@@ -461,8 +461,8 @@ Returns an array of "PublisherTypeDefault" objects.
 JSON-in:
 
 	{
-	    "user_id": "barchart-test-user",
-	    "alert_system": "barchart.com"
+		"user_id": "barchart-test-user",
+		"alert_system": "barchart.com"
 	}
 
 JSON-out:
@@ -524,8 +524,8 @@ Returns a "MarketDataConfiguration" object, for the specified user.
 JSON-in:
 
 	{
-	    "user_id": "barchart-test-user",
-	    "alert_system": "barchart.com"
+		"user_id": "barchart-test-user",
+		"alert_system": "barchart.com"
 	}
 
 JSON-out:
@@ -558,62 +558,62 @@ simplified version of the "Alert" object.
 JSON-in (example 1, required properties):
 
 	{
-	    "name": "My First Alert",
-	    "user_id": "barchart-test-user",
-	    "alert_system": "barchart.com",
-	    "automatic_reset": false,
-	    "alert_type": "price",
-	    "user_notes": "This alert was created for fun and profit."
-	    "conditions": [ {
-	        "property": {
-	            "property_id": 1,
-	            "target":{
-	                "identifier": "AAPL"
-                }
-            },
-            "operator":{
-                "operator_id": 3,
-                "operand": "99"
-            }
-        } ],
-        "publishers":[ {
-            "type": {
-                "publisher_type_id": 1
-            },
-            "use_default_recipient": false,
-            "recipient": "123-456-7890",
-            "format": "Apple stock is falling"
-        	}, {
+		"name": "My First Alert",
+		"user_id": "barchart-test-user",
+		"alert_system": "barchart.com",
+		"automatic_reset": false,
+		"alert_type": "price",
+		"user_notes": "This alert was created for fun and profit."
+		"conditions": [ {
+			"property": {
+				"property_id": 1,
+				"target":{
+					"identifier": "AAPL"
+				}
+			},
+			"operator":{
+				"operator_id": 3,
+				"operand": "99"
+			}
+		} ],
+		"publishers":[ {
+			"type": {
+				"publisher_type_id": 1
+			},
+			"use_default_recipient": false,
+			"recipient": "123-456-7890",
+			"format": "Apple stock is falling"
+			}, {
 		   "type": {
 			   "publisher_type_id": 1
 		   },
 		   "use_default_recipient": true,
 		   "format": "Apple stock is falling"
 	   } ]
-    }
+	}
 
 JSON-in (example 1, with reset schedule, Monday-Friday at 5:30 PM):
 
 	{
-	    "name": "My Scheduled Alert",
-	    "user_id": "barchart-test-user",
-	    "alert_system": "barchart.com",
-	    "automatic_reset": false,
-	    "alert_type": "price",
-	    "alert_behavior": "schedule",
-	    "user_notes": "This alert was created for repeated fun and profit."
-	    "conditions": [ {
-	        "property": {
-	            "property_id": 1,
-	            "target":{
-	                "identifier": "AAPL"
-                }
-            },
-            "operator":{
-                "operator_id": 3,
-                "operand": "99"
-            }
-        } ],
+		"name": "My Scheduled Alert",
+		"user_id": "barchart-test-user",
+		"alert_system": "barchart.com",
+		"automatic_reset": false,
+		"alert_type": "price",
+		"alert_behavior": "schedule",
+		"user_notes": "This alert was created for repeated fun and profit."
+		"conditions": [ {
+			"property": {
+				"property_id": 1,
+				"target":{
+					"identifier": "AAPL"
+				}
+			},
+			"operator":{
+				"operator_id": 3,
+				"operand": "99"
+			}
+		} ],
 		"schedules": [
 			{
 				"time": "17:30",
@@ -637,7 +637,7 @@ JSON-in (example 1, with reset schedule, Monday-Friday at 5:30 PM):
 				"timezone": "America/Chicago"
 			}
 		]
-    }
+	}
 
 JSON-out:
 
@@ -651,7 +651,7 @@ Gets a single "Alert" object, using its identifier:
 JSON-in:
 
 	{
-	    "alert_id": "59ddfd0b-89db-4886-85c3-eb8e7a289390"
+		"alert_id": "59ddfd0b-89db-4886-85c3-eb8e7a289390"
 	}
 
 JSON-out:
@@ -680,7 +680,7 @@ Notifications will be sent as soon as the alert conditions are matched.
 JSON-in:
 
 	{
-	    "alert_id": "59ddfd0b-89db-4886-85c3-eb8e7a289390"
+		"alert_id": "59ddfd0b-89db-4886-85c3-eb8e7a289390"
 	}
 
 JSON-out:
@@ -695,7 +695,7 @@ Stops an "Alert" object from processing. No notifications will be sent.
 JSON-in:
 
 	{
-	    "alert_id": "59ddfd0b-89db-4886-85c3-eb8e7a289390"
+		"alert_id": "59ddfd0b-89db-4886-85c3-eb8e7a289390"
 	}
 
 JSON-out:
@@ -710,7 +710,7 @@ Deletes a single "Alert" object, using its identifier:
 JSON-in:
 
 	{
-	    "alert_id": "59ddfd0b-89db-4886-85c3-eb8e7a289390"
+		"alert_id": "59ddfd0b-89db-4886-85c3-eb8e7a289390"
 	}
 
 JSON-out:
@@ -725,8 +725,8 @@ Retrieves all the "Alert" objects for a user account:
 JSON-in (example 1, required properties):
 
 	{
-	    "user_id": "barchart-test-user",
-	    "alert_system": "barchart.com"
+		"user_id": "barchart-test-user",
+		"alert_system": "barchart.com"
 	}
 
 JSON-in (example 2, optional filter, only "price" alerts):
@@ -790,8 +790,8 @@ connection to the server, each pre-existing alert will be sent to the changeCall
 JSON-in (the "query" parameter):
 
 	{
-        "alert_system": "barchart.com",
-        "user_id": "barchart-test-user"
+		"alert_system": "barchart.com",
+		"user_id": "barchart-test-user"
 	}
 
 JSON-out:
