@@ -542,7 +542,7 @@ JSON-in:
 	{
 		"user_id": "barchart-test-user",
 		"alert_system": "barchart.com",
-        "market_data_id": "my-fancy-market-data-user-id"
+		"market_data_id": "my-fancy-market-data-user-id"
 	}
 
 JSON-out:
