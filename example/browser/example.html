@@ -287,10 +287,10 @@
         <td class="col-md-2">
             <div class="dropdown">
                 <button class="btn btn-default dropdown-toggle" type="button" data-bind="enable: parent.ready" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
-                    <span data-bind="text: parent.operator().display.short"></span>
+                    <span data-bind="text: parent.operator().display.compound"></span>
                 </button>
                 <ul class="dropdown-menu" data-bind="foreach: parent.operators">
-                    <li class="center"><a href="#" data-bind="text: display.short, click: function() { $parent.parent.selectOperator($data); }"></a></li>
+                    <li class="center"><a href="#" data-bind="text: display.compound, click: function() { $parent.parent.selectOperator($data); }"></a></li>
                 </ul>
             </div>
         </td>

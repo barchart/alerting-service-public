@@ -57,9 +57,9 @@ module.exports = (() => {
 		//return new AlertManager('localhost', 3000);
 
 		//return new AlertManager('alerts-management-stage.barchart.com', 80, 'rest');
-		//return new AlertManager('alerts-management-stage.barchart.com');
+		return new AlertManager('alerts-management-stage.barchart.com');
 
-		return new AlertManager('alerts-management-stage.barchart.com', 443, 'socket.io', true);
+		//return new AlertManager('alerts-management-stage.barchart.com', 443, 'socket.io', true);
 	};
 
 	var utilities = AlertManager;
@@ -1105,6 +1105,18 @@ module.exports = (() => {
 
 						alertManager.getOperators()
 							.then(function(o) {
+								o.forEach((item) => {
+									item.display.compound = item.display.short;
+
+									if (item.operator_type === 'binary') {
+										if (item.operand_literal) {
+											item.display.compound = item.display.compound + ' [ value ]';
+										} else {
+											item.display.compound = item.display.compound + ' [ field ]';
+										}
+									}
+								});
+
 								operators(o);
 							});
 
