@@ -22,8 +22,11 @@ module.exports = function () {
 	//var system = 'webstation.barchart.com';
 	//var userId = 'webstation-test-user';
 
-	var system = 'theglobeandmail.com';
-	var userId = '123456789';
+	//var system = 'theglobeandmail.com';
+	//var userId = '123456789';
+
+	var system = 'barchart.com';
+	var userId = '99999999';
 
 	var alertManager;
 
@@ -45,10 +48,12 @@ module.exports = function () {
 		//return new AlertManager();
 
 		//return new AlertManager('localhost', 3000, 'rest');
-		return new AlertManager('localhost', 3000);
+		//return new AlertManager('localhost', 3000);
 
 		//return new AlertManager('alerts-management-stage.barchart.com', 80, 'rest');
-		//return new AlertManager('alerts-management-stage.barchart.com');
+		return new AlertManager('alerts-management-stage.barchart.com');
+
+		//return new AlertManager('alerts-management-stage.barchart.com', 443, 'socket.io', true);
 	};
 
 	var utilities = AlertManager;
@@ -333,15 +338,19 @@ module.exports = function () {
 					var operator = condition.operator();
 					var operand = condition.operand();
 
-					if (operator.operand_type === 'Array' && _.isString(operand)) {
-						operand = _.map(operand.split(','), function (item) {
-							return _.trim(item);
-						});
-					}
+					if (operator.operand_literal) {
+						operand = condition.operand();
 
-					if (property.type === 'percent') {
-						operand = parseFloat(operand) / 100;
-						operand = operand.toString();
+						if (operator.operand_type === 'Array' && _.isString(operand)) {
+							operand = _.map(operand.split(','), function (item) {
+								return _.trim(item);
+							});
+						}
+
+						if (property.type === 'percent') {
+							operand = parseFloat(operand) / 100;
+							operand = operand.toString();
+						}
 					}
 
 					var conditionData = {
@@ -645,7 +654,7 @@ module.exports = function () {
 			that.target(target);
 
 			that.properties([]);
-			that.properties.push(new AlertConditionTreeModel(that, that.propertyTree(), 'Category', 0));
+			that.properties.push(new AlertConditionTreeModel(that, that.propertyTree(), 'Property', 0));
 
 			that.property(null);
 			that.operator(null);
@@ -729,7 +738,7 @@ module.exports = function () {
 				});
 			};
 
-			var node = getNode(that.propertyTree(), condition.property.group);
+			var node = { items: that.propertyTree() };
 			var descriptionPath = [].concat(condition.property.category || []).concat(condition.property.description);
 
 			for (var i = 0; i < descriptionPath.length; i++) {
@@ -1035,56 +1044,70 @@ module.exports = function () {
 
 		alertManager = createAlertManager();
 
-		return createJwtProvider().then(function (jwtProvider) {
-			return alertManager.connect(jwtProvider).then(function () {
-				var pageModel = new PageModel(true);
+		//return createJwtProvider()
+		//	.then((jwtProvider) => {
+		//		return alertManager.connect(jwtProvider)
+		return alertManager.connect(null).then(function () {
+			var pageModel = new PageModel(true);
 
-				alertManager.subscribeAlerts({ user_id: userId, alert_system: system }, function (changedAlert) {
-					pageModel.handleAlertChange(changedAlert);
-				}, function (deletedAlert) {
-					pageModel.handleAlertDelete(deletedAlert);
-				}, function (createdAlert) {
-					pageModel.handleAlertCreate(createdAlert);
-				}, function (triggeredAlert) {
-					pageModel.handleAlertTrigger(triggeredAlert);
-				});
+			alertManager.subscribeAlerts({ user_id: userId, alert_system: system }, function (changedAlert) {
+				pageModel.handleAlertChange(changedAlert);
+			}, function (deletedAlert) {
+				pageModel.handleAlertDelete(deletedAlert);
+			}, function (createdAlert) {
+				pageModel.handleAlertCreate(createdAlert);
+			}, function (triggeredAlert) {
+				pageModel.handleAlertTrigger(triggeredAlert);
+			});
 
-				alertManager.getUser().then(function (data) {
-					if (data.user_id && data.alert_system) {
-						pageModel.authenticatedUser(data.user_id + '@' + data.alert_system);
+			alertManager.getUser().then(function (data) {
+				if (data.user_id && data.alert_system) {
+					pageModel.authenticatedUser(data.user_id + '@' + data.alert_system);
+				}
+			});
+
+			alertManager.getServerVersion().then(function (data) {
+				pageModel.version({ api: data.semver, client: version });
+			});
+
+			alertManager.getTargets().then(function (t) {
+				targets(t);
+			});
+
+			alertManager.getProperties().then(function (p) {
+				properties(p);
+			});
+
+			alertManager.getOperators().then(function (o) {
+				o.forEach(function (item) {
+					item.display.compound = item.display.short;
+
+					if (item.operator_type === 'binary') {
+						if (item.operand_literal) {
+							item.display.compound = item.display.compound + ' [ value ]';
+						} else {
+							item.display.compound = item.display.compound + ' [ field ]';
+						}
 					}
 				});
 
-				alertManager.getServerVersion().then(function (data) {
-					pageModel.version({ api: data.semver, client: version });
-				});
-
-				alertManager.getTargets().then(function (t) {
-					targets(t);
-				});
-
-				alertManager.getProperties().then(function (p) {
-					properties(p);
-				});
-
-				alertManager.getOperators().then(function (o) {
-					operators(o);
-				});
-
-				alertManager.getModifiers().then(function (m) {
-					modifiers(m);
-				});
-
-				alertManager.getPublisherTypeDefaults({ user_id: userId, alert_system: system }).then(function (pt) {
-					publisherTypes(pt);
-				});
-
-				alertManager.getMarketDataConfiguration({ user_id: userId, alert_system: system }).then(function (mdc) {
-					marketDataConfiguration(mdc);
-				});
-
-				return pageModel;
+				operators(o);
 			});
+
+			alertManager.getModifiers().then(function (m) {
+				modifiers(m);
+			});
+
+			alertManager.getPublisherTypeDefaults({ user_id: userId, alert_system: system }).then(function (pt) {
+				publisherTypes(pt);
+			});
+
+			alertManager.getMarketDataConfiguration({ user_id: userId, alert_system: system }).then(function (mdc) {
+				marketDataConfiguration(mdc);
+			});
+
+			return pageModel;
+			//});
 		}).catch(function (e) {
 			var pageModel = new PageModel(false, e);
 
@@ -1725,7 +1748,7 @@ module.exports = function () {
 			key: 'getPropertyTree',
 			value: function getPropertyTree(properties) {
 				var root = properties.reduce(function (tree, property) {
-					var descriptionPath = [property.group].concat(property.category || []).concat(property.description || []);
+					var descriptionPath = (property.category || []).concat(property.description || []);
 					var descriptionPathLast = descriptionPath.length - 1;
 
 					var node = tree;
@@ -3288,7 +3311,7 @@ module.exports = function () {
 	'use strict';
 
 	return {
-		version: '1.6.16'
+		version: '1.7.2'
 	};
 }();
 
@@ -5067,6 +5090,15 @@ module.exports = function () {
 			key: 'parameters',
 			get: function get() {
 				return this._parameters;
+			}
+		}], [{
+			key: 'merge',
+			value: function merge(a, b) {
+				return new Parameters(a.parameters.slice(0).concat(b.parameters.filter(function (candidate) {
+					return !a.parameters.some(function (existing) {
+						return existing.key === candidate.key;
+					});
+				})));
 			}
 		}]);
 
@@ -7212,12 +7244,11 @@ module.exports = function () {
 			}
 
 			/**
-    * Converts a string (which matches the output of {@link Day#format} into
-    * a {@link Day} instance.
+    * Clones a {@link Day} instance.
     *
     * @public
     * @static
-    * @param {String} value
+    * @param {Day} value
     * @returns {Day}
     */
 
@@ -7258,6 +7289,24 @@ module.exports = function () {
 				return this._day;
 			}
 		}], [{
+			key: 'clone',
+			value: function clone(value) {
+				assert.argumentIsRequired(value, 'value', Day, 'Day');
+
+				return new Day(value.year, value.month, value.day);
+			}
+
+			/**
+    * Converts a string (which matches the output of {@link Day#format} into
+    * a {@link Day} instance.
+    *
+    * @public
+    * @static
+    * @param {String} value
+    * @returns {Day}
+    */
+
+		}, {
 			key: 'parse',
 			value: function parse(value) {
 				assert.argumentIsRequired(value, 'value', String);
@@ -7574,15 +7623,17 @@ module.exports = function () {
     *
     * @public
     * @param {Boolean=} approximate
+    * @param {Number=} places
     * @returns {Boolean}
     */
 
 		}, {
 			key: 'getIsZero',
-			value: function getIsZero(approximate) {
+			value: function getIsZero(approximate, places) {
 				assert.argumentIsOptional(approximate, 'approximate', Boolean);
+				assert.argumentIsOptional(places, 'places', Number);
 
-				return this._big.eq(zero) || is.boolean(approximate) && approximate && this.round(20, RoundingMode.NORMAL).getIsZero();
+				return this._big.eq(zero) || is.boolean(approximate) && approximate && this.round(places || Big.DP, RoundingMode.NORMAL).getIsZero();
 			}
 
 			/**
@@ -7682,6 +7733,43 @@ module.exports = function () {
 			}
 
 			/**
+    * Returns true if the current instance is an integer (i.e. has no decimal
+    * component).
+    *
+    * @public
+    * @return {Boolean}
+    */
+
+		}, {
+			key: 'getIsInteger',
+			value: function getIsInteger() {
+				return this.getIsEqual(this.round(0));
+			}
+
+			/**
+    * Returns the number of decimal places used.
+    *
+    * @public
+    * @returns {Number}
+    */
+
+		}, {
+			key: 'getDecimalPlaces',
+			value: function getDecimalPlaces() {
+				var matches = this.toFixed().match(/-?\d*\.(\d*)/);
+
+				var returnVal = void 0;
+
+				if (matches === null) {
+					returnVal = 0;
+				} else {
+					returnVal = matches[1].length;
+				}
+
+				return returnVal;
+			}
+
+			/**
     * Emits a floating point value that approximates the value of the current
     * instance.
     *
@@ -7729,10 +7817,11 @@ module.exports = function () {
 			}
 
 			/**
-    * Parses the value emitted by {@link Decimal#toJSON}.
+    * Clones a {@link Decimal} instance.
     *
     * @public
-    * @param {String} value
+    * @static
+    * @param {Decimal} value
     * @returns {Decimal}
     */
 
@@ -7742,6 +7831,22 @@ module.exports = function () {
 				return '[Decimal]';
 			}
 		}], [{
+			key: 'clone',
+			value: function clone(value) {
+				assert.argumentIsRequired(value, 'value', Decimal, 'Decimal');
+
+				return new Decimal(value._big);
+			}
+
+			/**
+    * Parses the value emitted by {@link Decimal#toJSON}.
+    *
+    * @public
+    * @param {String} value
+    * @returns {Decimal}
+    */
+
+		}, {
 			key: 'parse',
 			value: function parse(value) {
 				return new Decimal(value);
@@ -8508,10 +8613,11 @@ module.exports = function () {
 			}
 
 			/**
-    * Parses the value emitted by {@link Timestamp#toJSON}.
+    * Clones a {@link Timestamp} instance.
     *
     * @public
-    * @param {Number} value
+    * @static
+    * @param {Timestamp} value
     * @returns {Timestamp}
     */
 
@@ -8547,6 +8653,22 @@ module.exports = function () {
 				return this._moment;
 			}
 		}], [{
+			key: 'clone',
+			value: function clone(value) {
+				assert.argumentIsRequired(value, 'value', Timestamp, 'Timestamp');
+
+				return new Timestamp(value._timestamp, value._timezone);
+			}
+
+			/**
+    * Parses the value emitted by {@link Timestamp#toJSON}.
+    *
+    * @public
+    * @param {Number} value
+    * @returns {Timestamp}
+    */
+
+		}, {
 			key: 'parse',
 			value: function parse(value) {
 				return new Timestamp(value);
@@ -9727,18 +9849,22 @@ module.exports = function () {
    *
    * @static
    * @param {Object} source - The object to copy.
+   * @param {Function=} canExtract - An optional function which indicates if the "extractor" can be used.
+   * @param {Function=} extractor - An optional function which returns a cloned value for a property for assignment to the cloned object.
    * @returns {Object}
    */
-		clone: function clone(source) {
+		clone: function clone(source, canExtract, extractor) {
 			var c = void 0;
 
-			if (is.array(source)) {
+			if (is.fn(canExtract) && canExtract(source)) {
+				c = extractor(source);
+			} else if (is.array(source)) {
 				c = source.map(function (sourceItem) {
-					return object.clone(sourceItem);
+					return object.clone(sourceItem, canExtract, extractor);
 				});
 			} else if (is.object(source)) {
 				c = object.keys(source).reduce(function (accumulator, key) {
-					accumulator[key] = object.clone(source[key]);
+					accumulator[key] = object.clone(source[key], canExtract, extractor);
 
 					return accumulator;
 				}, {});
@@ -11618,7 +11744,7 @@ module.exports = function () {
    * the schema.
    *
    * @public
-   * @param {data} data
+   * @param {Object} data
    * @returns {Object}
    */
 
@@ -11700,7 +11826,13 @@ module.exports = function () {
 				};
 
 				return function (key, value) {
-					return advance(key).reviver(value);
+					var item = advance(key);
+
+					if (key === '') {
+						return value;
+					} else {
+						return item.reviver(value);
+					}
 				};
 			}
 
@@ -13431,8 +13563,6 @@ function _inherits(subClass, superClass) { if (typeof superClass !== "function" 
 
 var assert = require('@barchart/common-js/lang/assert'),
     Disposable = require('@barchart/common-js/lang/Disposable'),
-    Enum = require('@barchart/common-js/lang/Enum'),
-    is = require('@barchart/common-js/lang/is'),
     Scheduler = require('@barchart/common-js/timing/Scheduler');
 
 var EndpointBuilder = require('@barchart/common-js/api/http/builders/EndpointBuilder'),
@@ -13456,7 +13586,7 @@ module.exports = function () {
   * Web service gateway for obtaining JWT tokens from TGAM (The Globe and Mail).
   *
   * @public
-  * @param {JwtGateway~tokenCallback} tokenDelegate
+  * @param {JwtGateway~tokenGenerator} tokenGenerator
   * @param {Number=} refreshInterval - Interval, in milliseconds, which a token refresh should occur. If zero, the token does not need to be refreshed.
   * @extends {Disposable}
   */
@@ -13464,18 +13594,18 @@ module.exports = function () {
 	var JwtGateway = function (_Disposable) {
 		_inherits(JwtGateway, _Disposable);
 
-		function JwtGateway(tokenDelegate, refreshInterval) {
+		function JwtGateway(tokenGenerator, refreshInterval) {
 			_classCallCheck(this, JwtGateway);
 
 			var _this = _possibleConstructorReturn(this, (JwtGateway.__proto__ || Object.getPrototypeOf(JwtGateway)).call(this));
 
-			assert.argumentIsRequired(tokenDelegate, 'tokenDelegate', Function);
+			assert.argumentIsRequired(tokenGenerator, 'tokenGenerator', Function);
 			assert.argumentIsOptional(refreshInterval, 'refreshInterval', Number);
 
 			_this._started = false;
 			_this._startPromise = null;
 
-			_this._tokenDelegate = tokenDelegate;
+			_this._tokenGenerator = tokenGenerator;
 
 			_this._refreshInterval = refreshInterval || 0;
 			_this._refreshJitter = Math.floor(_this._refreshInterval / 10);
@@ -13528,7 +13658,7 @@ module.exports = function () {
 				return Promise.resolve().then(function () {
 					checkStart.call(_this3);
 
-					return _this3._tokenDelegate();
+					return _this3._tokenGenerator();
 				}).catch(function (e) {
 					var failure = FailureReason.forRequest({ endpoint: _this3._endpoint }).addItem(FailureType.REQUEST_IDENTITY_FAILURE).format();
 
@@ -13731,15 +13861,15 @@ module.exports = function () {
     *
     * @public
     * @static
-    * @param {Function} tokenDelegate - A function which returns the JWT token.
+    * @param {Function} tokenGenerator - A function which returns the JWT token.
     * @returns {Promise.<JwtGateway>}
     */
 
 		}, {
 			key: 'forTracker',
-			value: function forTracker(tokenDelegate) {
+			value: function forTracker(tokenGenerator) {
 				return Promise.resolve().then(function () {
-					return start(new JwtGateway(tokenDelegate, 0));
+					return start(new JwtGateway(tokenGenerator, 0));
 				});
 			}
 
@@ -13748,14 +13878,14 @@ module.exports = function () {
     *
     * @public
     * @static
-    * @param {JwtGateway~tokenCallback} tokenDelegate - A function which returns the JWT token.
+    * @param {JwtGateway~tokenGenerator} tokenGenerator - A function which returns the JWT token.
     * @returns {Promise.<RequestInterceptor>}
     */
 
 		}, {
 			key: 'forTrackerClient',
-			value: function forTrackerClient(tokenDelegate) {
-				return JwtGateway.forTracker(tokenDelegate).then(function (jwtGateway) {
+			value: function forTrackerClient(tokenGenerator) {
+				return JwtGateway.forTracker(tokenGenerator).then(function (jwtGateway) {
 					return jwtGateway.toRequestInterceptor();
 				});
 			}
@@ -13811,28 +13941,25 @@ module.exports = function () {
 	/**
   * A function returns a JWT token (or a promise for a JWT token).
   *
-  * @callback JwtGateway~tokenCallback
+  * @callback JwtGateway~tokenGenerator
   * @returns {String|Promise.<String>}
   */
 
 	return JwtGateway;
 }();
 
-},{"./index":73,"@barchart/common-js/api/failures/FailureReason":14,"@barchart/common-js/api/failures/FailureType":16,"@barchart/common-js/api/http/Gateway":17,"@barchart/common-js/api/http/builders/EndpointBuilder":18,"@barchart/common-js/api/http/definitions/Endpoint":20,"@barchart/common-js/api/http/definitions/ProtocolType":23,"@barchart/common-js/api/http/definitions/VerbType":24,"@barchart/common-js/api/http/interceptors/RequestInterceptor":29,"@barchart/common-js/api/http/interceptors/ResponseInterceptor":30,"@barchart/common-js/lang/Disposable":39,"@barchart/common-js/lang/Enum":40,"@barchart/common-js/lang/assert":44,"@barchart/common-js/lang/is":48,"@barchart/common-js/timing/Scheduler":62}],73:[function(require,module,exports){
+},{"./index":73,"@barchart/common-js/api/failures/FailureReason":14,"@barchart/common-js/api/failures/FailureType":16,"@barchart/common-js/api/http/Gateway":17,"@barchart/common-js/api/http/builders/EndpointBuilder":18,"@barchart/common-js/api/http/definitions/Endpoint":20,"@barchart/common-js/api/http/definitions/ProtocolType":23,"@barchart/common-js/api/http/definitions/VerbType":24,"@barchart/common-js/api/http/interceptors/RequestInterceptor":29,"@barchart/common-js/api/http/interceptors/ResponseInterceptor":30,"@barchart/common-js/lang/Disposable":39,"@barchart/common-js/lang/assert":44,"@barchart/common-js/timing/Scheduler":62}],73:[function(require,module,exports){
 'use strict';
-
-var JwtGateway = require('./JwtGateway');
 
 module.exports = function () {
 	'use strict';
 
 	return {
-		JwtGateway: JwtGateway,
-		version: '1.0.40'
+		version: '1.0.42'
 	};
 }();
 
-},{"./JwtGateway":72}],74:[function(require,module,exports){
+},{}],74:[function(require,module,exports){
 module.exports = after
 
 function after(count, callback, err_cb) {
@@ -16564,15 +16691,15 @@ function fromByteArray (uint8) {
 })(this);
 
 },{}],105:[function(require,module,exports){
-(function (global){
 /**
  * Create a blob builder even when vendor prefixes exist
  */
 
-var BlobBuilder = global.BlobBuilder
-  || global.WebKitBlobBuilder
-  || global.MSBlobBuilder
-  || global.MozBlobBuilder;
+var BlobBuilder = typeof BlobBuilder !== 'undefined' ? BlobBuilder :
+  typeof WebKitBlobBuilder !== 'undefined' ? WebKitBlobBuilder :
+  typeof MSBlobBuilder !== 'undefined' ? MSBlobBuilder :
+  typeof MozBlobBuilder !== 'undefined' ? MozBlobBuilder : 
+  false;
 
 /**
  * Check if Blob constructor is supported
@@ -16616,8 +16743,7 @@ var blobBuilderSupported = BlobBuilder
  */
 
 function mapArrayBufferViews(ary) {
-  for (var i = 0; i < ary.length; i++) {
-    var chunk = ary[i];
+  return ary.map(function(chunk) {
     if (chunk.buffer instanceof ArrayBuffer) {
       var buf = chunk.buffer;
 
@@ -16629,32 +16755,36 @@ function mapArrayBufferViews(ary) {
         buf = copy.buffer;
       }
 
-      ary[i] = buf;
+      return buf;
     }
-  }
+
+    return chunk;
+  });
 }
 
 function BlobBuilderConstructor(ary, options) {
   options = options || {};
 
   var bb = new BlobBuilder();
-  mapArrayBufferViews(ary);
-
-  for (var i = 0; i < ary.length; i++) {
-    bb.append(ary[i]);
-  }
+  mapArrayBufferViews(ary).forEach(function(part) {
+    bb.append(part);
+  });
 
   return (options.type) ? bb.getBlob(options.type) : bb.getBlob();
 };
 
 function BlobConstructor(ary, options) {
-  mapArrayBufferViews(ary);
-  return new Blob(ary, options || {});
+  return new Blob(mapArrayBufferViews(ary), options || {});
 };
+
+if (typeof Blob !== 'undefined') {
+  BlobBuilderConstructor.prototype = Blob.prototype;
+  BlobConstructor.prototype = Blob.prototype;
+}
 
 module.exports = (function() {
   if (blobSupported) {
-    return blobSupportsArrayBufferView ? global.Blob : BlobConstructor;
+    return blobSupportsArrayBufferView ? Blob : BlobConstructor;
   } else if (blobBuilderSupported) {
     return BlobBuilderConstructor;
   } else {
@@ -16662,7 +16792,6 @@ module.exports = (function() {
   }
 })();
 
-}).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
 },{}],106:[function(require,module,exports){
 
 },{}],107:[function(require,module,exports){
@@ -16900,7 +17029,7 @@ function typedArraySupport () {
   // Can typed array instances can be augmented?
   try {
     var arr = new Uint8Array(1)
-    arr.__proto__ = {__proto__: Uint8Array.prototype, foo: function () { return 42 }}
+    arr.__proto__ = { __proto__: Uint8Array.prototype, foo: function () { return 42 } }
     return arr.foo() === 42
   } catch (e) {
     return false
@@ -21636,7 +21765,6 @@ module.exports = function (opts) {
 
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
 },{"has-cors":130}],125:[function(require,module,exports){
-(function (global){
 /**
  * Module dependencies.
  */
@@ -21648,7 +21776,7 @@ var after = require('after');
 var utf8 = require('./utf8');
 
 var base64encoder;
-if (global && global.ArrayBuffer) {
+if (typeof ArrayBuffer !== 'undefined') {
   base64encoder = require('base64-arraybuffer');
 }
 
@@ -21740,9 +21868,9 @@ exports.encodePacket = function (packet, supportsBinary, utf8encode, callback) {
     ? undefined
     : packet.data.buffer || packet.data;
 
-  if (global.ArrayBuffer && data instanceof ArrayBuffer) {
+  if (typeof ArrayBuffer !== 'undefined' && data instanceof ArrayBuffer) {
     return encodeArrayBuffer(packet, supportsBinary, callback);
-  } else if (Blob && data instanceof global.Blob) {
+  } else if (typeof Blob !== 'undefined' && data instanceof Blob) {
     return encodeBlob(packet, supportsBinary, callback);
   }
 
@@ -21797,8 +21925,7 @@ function encodeBlobAsArrayBuffer(packet, supportsBinary, callback) {
 
   var fr = new FileReader();
   fr.onload = function() {
-    packet.data = fr.result;
-    exports.encodePacket(packet, supportsBinary, true, callback);
+    exports.encodePacket({ type: packet.type, data: fr.result }, supportsBinary, true, callback);
   };
   return fr.readAsArrayBuffer(packet.data);
 }
@@ -21828,7 +21955,7 @@ function encodeBlob(packet, supportsBinary, callback) {
 
 exports.encodeBase64Packet = function(packet, callback) {
   var message = 'b' + exports.packets[packet.type];
-  if (Blob && packet.data instanceof global.Blob) {
+  if (typeof Blob !== 'undefined' && packet.data instanceof Blob) {
     var fr = new FileReader();
     fr.onload = function() {
       var b64 = fr.result.split(',')[1];
@@ -21849,7 +21976,7 @@ exports.encodeBase64Packet = function(packet, callback) {
     }
     b64data = String.fromCharCode.apply(null, basic);
   }
-  message += global.btoa(b64data);
+  message += btoa(b64data);
   return callback(message);
 };
 
@@ -22244,7 +22371,6 @@ exports.decodePayloadAsBinary = function (data, binaryType, callback) {
   });
 };
 
-}).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
 },{"./keys":126,"./utf8":127,"after":74,"arraybuffer.slice":75,"base64-arraybuffer":102,"blob":105,"has-binary2":129}],126:[function(require,module,exports){
 
 /**
@@ -22267,264 +22393,217 @@ module.exports = Object.keys || function keys (obj){
 };
 
 },{}],127:[function(require,module,exports){
-(function (global){
 /*! https://mths.be/utf8js v2.1.2 by @mathias */
-;(function(root) {
 
-	// Detect free variables `exports`
-	var freeExports = typeof exports == 'object' && exports;
+var stringFromCharCode = String.fromCharCode;
 
-	// Detect free variable `module`
-	var freeModule = typeof module == 'object' && module &&
-		module.exports == freeExports && module;
-
-	// Detect free variable `global`, from Node.js or Browserified code,
-	// and use it as `root`
-	var freeGlobal = typeof global == 'object' && global;
-	if (freeGlobal.global === freeGlobal || freeGlobal.window === freeGlobal) {
-		root = freeGlobal;
-	}
-
-	/*--------------------------------------------------------------------------*/
-
-	var stringFromCharCode = String.fromCharCode;
-
-	// Taken from https://mths.be/punycode
-	function ucs2decode(string) {
-		var output = [];
-		var counter = 0;
-		var length = string.length;
-		var value;
-		var extra;
-		while (counter < length) {
-			value = string.charCodeAt(counter++);
-			if (value >= 0xD800 && value <= 0xDBFF && counter < length) {
-				// high surrogate, and there is a next character
-				extra = string.charCodeAt(counter++);
-				if ((extra & 0xFC00) == 0xDC00) { // low surrogate
-					output.push(((value & 0x3FF) << 10) + (extra & 0x3FF) + 0x10000);
-				} else {
-					// unmatched surrogate; only append this code unit, in case the next
-					// code unit is the high surrogate of a surrogate pair
-					output.push(value);
-					counter--;
-				}
+// Taken from https://mths.be/punycode
+function ucs2decode(string) {
+	var output = [];
+	var counter = 0;
+	var length = string.length;
+	var value;
+	var extra;
+	while (counter < length) {
+		value = string.charCodeAt(counter++);
+		if (value >= 0xD800 && value <= 0xDBFF && counter < length) {
+			// high surrogate, and there is a next character
+			extra = string.charCodeAt(counter++);
+			if ((extra & 0xFC00) == 0xDC00) { // low surrogate
+				output.push(((value & 0x3FF) << 10) + (extra & 0x3FF) + 0x10000);
 			} else {
+				// unmatched surrogate; only append this code unit, in case the next
+				// code unit is the high surrogate of a surrogate pair
 				output.push(value);
+				counter--;
 			}
+		} else {
+			output.push(value);
 		}
-		return output;
+	}
+	return output;
+}
+
+// Taken from https://mths.be/punycode
+function ucs2encode(array) {
+	var length = array.length;
+	var index = -1;
+	var value;
+	var output = '';
+	while (++index < length) {
+		value = array[index];
+		if (value > 0xFFFF) {
+			value -= 0x10000;
+			output += stringFromCharCode(value >>> 10 & 0x3FF | 0xD800);
+			value = 0xDC00 | value & 0x3FF;
+		}
+		output += stringFromCharCode(value);
+	}
+	return output;
+}
+
+function checkScalarValue(codePoint, strict) {
+	if (codePoint >= 0xD800 && codePoint <= 0xDFFF) {
+		if (strict) {
+			throw Error(
+				'Lone surrogate U+' + codePoint.toString(16).toUpperCase() +
+				' is not a scalar value'
+			);
+		}
+		return false;
+	}
+	return true;
+}
+/*--------------------------------------------------------------------------*/
+
+function createByte(codePoint, shift) {
+	return stringFromCharCode(((codePoint >> shift) & 0x3F) | 0x80);
+}
+
+function encodeCodePoint(codePoint, strict) {
+	if ((codePoint & 0xFFFFFF80) == 0) { // 1-byte sequence
+		return stringFromCharCode(codePoint);
+	}
+	var symbol = '';
+	if ((codePoint & 0xFFFFF800) == 0) { // 2-byte sequence
+		symbol = stringFromCharCode(((codePoint >> 6) & 0x1F) | 0xC0);
+	}
+	else if ((codePoint & 0xFFFF0000) == 0) { // 3-byte sequence
+		if (!checkScalarValue(codePoint, strict)) {
+			codePoint = 0xFFFD;
+		}
+		symbol = stringFromCharCode(((codePoint >> 12) & 0x0F) | 0xE0);
+		symbol += createByte(codePoint, 6);
+	}
+	else if ((codePoint & 0xFFE00000) == 0) { // 4-byte sequence
+		symbol = stringFromCharCode(((codePoint >> 18) & 0x07) | 0xF0);
+		symbol += createByte(codePoint, 12);
+		symbol += createByte(codePoint, 6);
+	}
+	symbol += stringFromCharCode((codePoint & 0x3F) | 0x80);
+	return symbol;
+}
+
+function utf8encode(string, opts) {
+	opts = opts || {};
+	var strict = false !== opts.strict;
+
+	var codePoints = ucs2decode(string);
+	var length = codePoints.length;
+	var index = -1;
+	var codePoint;
+	var byteString = '';
+	while (++index < length) {
+		codePoint = codePoints[index];
+		byteString += encodeCodePoint(codePoint, strict);
+	}
+	return byteString;
+}
+
+/*--------------------------------------------------------------------------*/
+
+function readContinuationByte() {
+	if (byteIndex >= byteCount) {
+		throw Error('Invalid byte index');
 	}
 
-	// Taken from https://mths.be/punycode
-	function ucs2encode(array) {
-		var length = array.length;
-		var index = -1;
-		var value;
-		var output = '';
-		while (++index < length) {
-			value = array[index];
-			if (value > 0xFFFF) {
-				value -= 0x10000;
-				output += stringFromCharCode(value >>> 10 & 0x3FF | 0xD800);
-				value = 0xDC00 | value & 0x3FF;
-			}
-			output += stringFromCharCode(value);
-		}
-		return output;
+	var continuationByte = byteArray[byteIndex] & 0xFF;
+	byteIndex++;
+
+	if ((continuationByte & 0xC0) == 0x80) {
+		return continuationByte & 0x3F;
 	}
 
-	function checkScalarValue(codePoint, strict) {
-		if (codePoint >= 0xD800 && codePoint <= 0xDFFF) {
-			if (strict) {
-				throw Error(
-					'Lone surrogate U+' + codePoint.toString(16).toUpperCase() +
-					' is not a scalar value'
-				);
-			}
-			return false;
-		}
-		return true;
-	}
-	/*--------------------------------------------------------------------------*/
+	// If we end up here, it’s not a continuation byte
+	throw Error('Invalid continuation byte');
+}
 
-	function createByte(codePoint, shift) {
-		return stringFromCharCode(((codePoint >> shift) & 0x3F) | 0x80);
+function decodeSymbol(strict) {
+	var byte1;
+	var byte2;
+	var byte3;
+	var byte4;
+	var codePoint;
+
+	if (byteIndex > byteCount) {
+		throw Error('Invalid byte index');
 	}
 
-	function encodeCodePoint(codePoint, strict) {
-		if ((codePoint & 0xFFFFFF80) == 0) { // 1-byte sequence
-			return stringFromCharCode(codePoint);
-		}
-		var symbol = '';
-		if ((codePoint & 0xFFFFF800) == 0) { // 2-byte sequence
-			symbol = stringFromCharCode(((codePoint >> 6) & 0x1F) | 0xC0);
-		}
-		else if ((codePoint & 0xFFFF0000) == 0) { // 3-byte sequence
-			if (!checkScalarValue(codePoint, strict)) {
-				codePoint = 0xFFFD;
-			}
-			symbol = stringFromCharCode(((codePoint >> 12) & 0x0F) | 0xE0);
-			symbol += createByte(codePoint, 6);
-		}
-		else if ((codePoint & 0xFFE00000) == 0) { // 4-byte sequence
-			symbol = stringFromCharCode(((codePoint >> 18) & 0x07) | 0xF0);
-			symbol += createByte(codePoint, 12);
-			symbol += createByte(codePoint, 6);
-		}
-		symbol += stringFromCharCode((codePoint & 0x3F) | 0x80);
-		return symbol;
+	if (byteIndex == byteCount) {
+		return false;
 	}
 
-	function utf8encode(string, opts) {
-		opts = opts || {};
-		var strict = false !== opts.strict;
+	// Read first byte
+	byte1 = byteArray[byteIndex] & 0xFF;
+	byteIndex++;
 
-		var codePoints = ucs2decode(string);
-		var length = codePoints.length;
-		var index = -1;
-		var codePoint;
-		var byteString = '';
-		while (++index < length) {
-			codePoint = codePoints[index];
-			byteString += encodeCodePoint(codePoint, strict);
-		}
-		return byteString;
+	// 1-byte sequence (no continuation bytes)
+	if ((byte1 & 0x80) == 0) {
+		return byte1;
 	}
 
-	/*--------------------------------------------------------------------------*/
-
-	function readContinuationByte() {
-		if (byteIndex >= byteCount) {
-			throw Error('Invalid byte index');
+	// 2-byte sequence
+	if ((byte1 & 0xE0) == 0xC0) {
+		byte2 = readContinuationByte();
+		codePoint = ((byte1 & 0x1F) << 6) | byte2;
+		if (codePoint >= 0x80) {
+			return codePoint;
+		} else {
+			throw Error('Invalid continuation byte');
 		}
-
-		var continuationByte = byteArray[byteIndex] & 0xFF;
-		byteIndex++;
-
-		if ((continuationByte & 0xC0) == 0x80) {
-			return continuationByte & 0x3F;
-		}
-
-		// If we end up here, it’s not a continuation byte
-		throw Error('Invalid continuation byte');
 	}
 
-	function decodeSymbol(strict) {
-		var byte1;
-		var byte2;
-		var byte3;
-		var byte4;
-		var codePoint;
-
-		if (byteIndex > byteCount) {
-			throw Error('Invalid byte index');
+	// 3-byte sequence (may include unpaired surrogates)
+	if ((byte1 & 0xF0) == 0xE0) {
+		byte2 = readContinuationByte();
+		byte3 = readContinuationByte();
+		codePoint = ((byte1 & 0x0F) << 12) | (byte2 << 6) | byte3;
+		if (codePoint >= 0x0800) {
+			return checkScalarValue(codePoint, strict) ? codePoint : 0xFFFD;
+		} else {
+			throw Error('Invalid continuation byte');
 		}
-
-		if (byteIndex == byteCount) {
-			return false;
-		}
-
-		// Read first byte
-		byte1 = byteArray[byteIndex] & 0xFF;
-		byteIndex++;
-
-		// 1-byte sequence (no continuation bytes)
-		if ((byte1 & 0x80) == 0) {
-			return byte1;
-		}
-
-		// 2-byte sequence
-		if ((byte1 & 0xE0) == 0xC0) {
-			byte2 = readContinuationByte();
-			codePoint = ((byte1 & 0x1F) << 6) | byte2;
-			if (codePoint >= 0x80) {
-				return codePoint;
-			} else {
-				throw Error('Invalid continuation byte');
-			}
-		}
-
-		// 3-byte sequence (may include unpaired surrogates)
-		if ((byte1 & 0xF0) == 0xE0) {
-			byte2 = readContinuationByte();
-			byte3 = readContinuationByte();
-			codePoint = ((byte1 & 0x0F) << 12) | (byte2 << 6) | byte3;
-			if (codePoint >= 0x0800) {
-				return checkScalarValue(codePoint, strict) ? codePoint : 0xFFFD;
-			} else {
-				throw Error('Invalid continuation byte');
-			}
-		}
-
-		// 4-byte sequence
-		if ((byte1 & 0xF8) == 0xF0) {
-			byte2 = readContinuationByte();
-			byte3 = readContinuationByte();
-			byte4 = readContinuationByte();
-			codePoint = ((byte1 & 0x07) << 0x12) | (byte2 << 0x0C) |
-				(byte3 << 0x06) | byte4;
-			if (codePoint >= 0x010000 && codePoint <= 0x10FFFF) {
-				return codePoint;
-			}
-		}
-
-		throw Error('Invalid UTF-8 detected');
 	}
 
-	var byteArray;
-	var byteCount;
-	var byteIndex;
-	function utf8decode(byteString, opts) {
-		opts = opts || {};
-		var strict = false !== opts.strict;
-
-		byteArray = ucs2decode(byteString);
-		byteCount = byteArray.length;
-		byteIndex = 0;
-		var codePoints = [];
-		var tmp;
-		while ((tmp = decodeSymbol(strict)) !== false) {
-			codePoints.push(tmp);
+	// 4-byte sequence
+	if ((byte1 & 0xF8) == 0xF0) {
+		byte2 = readContinuationByte();
+		byte3 = readContinuationByte();
+		byte4 = readContinuationByte();
+		codePoint = ((byte1 & 0x07) << 0x12) | (byte2 << 0x0C) |
+			(byte3 << 0x06) | byte4;
+		if (codePoint >= 0x010000 && codePoint <= 0x10FFFF) {
+			return codePoint;
 		}
-		return ucs2encode(codePoints);
 	}
 
-	/*--------------------------------------------------------------------------*/
+	throw Error('Invalid UTF-8 detected');
+}
 
-	var utf8 = {
-		'version': '2.1.2',
-		'encode': utf8encode,
-		'decode': utf8decode
-	};
+var byteArray;
+var byteCount;
+var byteIndex;
+function utf8decode(byteString, opts) {
+	opts = opts || {};
+	var strict = false !== opts.strict;
 
-	// Some AMD build optimizers, like r.js, check for specific condition patterns
-	// like the following:
-	if (
-		typeof define == 'function' &&
-		typeof define.amd == 'object' &&
-		define.amd
-	) {
-		define(function() {
-			return utf8;
-		});
-	}	else if (freeExports && !freeExports.nodeType) {
-		if (freeModule) { // in Node.js or RingoJS v0.8.0+
-			freeModule.exports = utf8;
-		} else { // in Narwhal or RingoJS v0.7.0-
-			var object = {};
-			var hasOwnProperty = object.hasOwnProperty;
-			for (var key in utf8) {
-				hasOwnProperty.call(utf8, key) && (freeExports[key] = utf8[key]);
-			}
-		}
-	} else { // in Rhino or a web browser
-		root.utf8 = utf8;
+	byteArray = ucs2decode(byteString);
+	byteCount = byteArray.length;
+	byteIndex = 0;
+	var codePoints = [];
+	var tmp;
+	while ((tmp = decodeSymbol(strict)) !== false) {
+		codePoints.push(tmp);
 	}
+	return ucs2encode(codePoints);
+}
 
-}(this));
+module.exports = {
+	version: '2.1.2',
+	encode: utf8encode,
+	decode: utf8decode
+};
 
-}).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
 },{}],128:[function(require,module,exports){
 // Copyright Joyent, Inc. and other Node contributors.
 //
