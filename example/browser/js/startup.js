@@ -23,7 +23,7 @@ module.exports = (() => {
 	//var userId = '123456789';
 
 	var system = 'barchart.com';
-	var userId = '99999999';
+	var userId = '000000';
 
 	var alertManager;
 
@@ -53,11 +53,11 @@ module.exports = (() => {
 	var createAlertManager = function() {
 		//return new AlertManager();
 
-		//return new AlertManager('localhost', 3000, 'rest');
+		return new AlertManager('localhost', 3000, 'rest');
 		//return new AlertManager('localhost', 3000);
 
 		//return new AlertManager('alerts-management-stage.barchart.com', 80, 'rest');
-		return new AlertManager('alerts-management-stage.barchart.com');
+		//return new AlertManager('alerts-management-stage.barchart.com');
 
 		//return new AlertManager('alerts-management-stage.barchart.com', 443, 'socket.io', true);
 	};
