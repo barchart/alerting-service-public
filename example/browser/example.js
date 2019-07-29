@@ -47,11 +47,11 @@ module.exports = function () {
 	var createAlertManager = function createAlertManager() {
 		//return new AlertManager();
 
-		return new AlertManager('localhost', 3000, 'rest');
+		//return new AlertManager('localhost', 3000, 'rest');
 		//return new AlertManager('localhost', 3000);
 
 		//return new AlertManager('alerts-management-stage.barchart.com', 80, 'rest');
-		//return new AlertManager('alerts-management-stage.barchart.com');
+		return new AlertManager('alerts-management-stage.barchart.com');
 
 		//return new AlertManager('alerts-management-stage.barchart.com', 443, 'socket.io', true);
 	};
@@ -3311,7 +3311,7 @@ module.exports = function () {
 	'use strict';
 
 	return {
-		version: '1.7.2'
+		version: '1.7.3'
 	};
 }();
 
