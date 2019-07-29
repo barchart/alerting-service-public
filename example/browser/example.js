@@ -51,9 +51,9 @@ module.exports = function () {
 		//return new AlertManager('localhost', 3000);
 
 		//return new AlertManager('alerts-management-stage.barchart.com', 80, 'rest');
-		return new AlertManager('alerts-management-stage.barchart.com');
+		//return new AlertManager('alerts-management-stage.barchart.com');
 
-		//return new AlertManager('alerts-management-stage.barchart.com', 443, 'socket.io', true);
+		return new AlertManager('alerts-management-stage.barchart.com', 443, 'socket.io', true);
 	};
 
 	var utilities = AlertManager;
@@ -3311,7 +3311,7 @@ module.exports = function () {
 	'use strict';
 
 	return {
-		version: '1.7.3'
+		version: '1.7.4'
 	};
 }();
 
