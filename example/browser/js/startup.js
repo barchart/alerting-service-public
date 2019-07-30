@@ -659,7 +659,7 @@ module.exports = (() => {
 				targetProperties = [ ];
 			}
 
-			return utilities.getPropertyTree(targetProperties);
+			return utilities.getPropertyTree(targetProperties, true);
 		});
 
 		that.selectTarget = function(target) {
