@@ -647,7 +647,7 @@ module.exports = function () {
 				targetProperties = [];
 			}
 
-			return utilities.getPropertyTree(targetProperties);
+			return utilities.getPropertyTree(targetProperties, true);
 		});
 
 		that.selectTarget = function (target) {
@@ -1746,9 +1746,21 @@ module.exports = function () {
 			}
 		}, {
 			key: 'getPropertyTree',
-			value: function getPropertyTree(properties) {
+			value: function getPropertyTree(properties, short) {
+				var descriptionSelector = void 0;
+
+				if (is.boolean(short) && short) {
+					descriptionSelector = function descriptionSelector(p) {
+						return p.descriptionShort;
+					};
+				} else {
+					descriptionSelector = function descriptionSelector(p) {
+						return p.description;
+					};
+				}
+
 				var root = properties.reduce(function (tree, property) {
-					var descriptionPath = (property.category || []).concat(property.description || []);
+					var descriptionPath = (property.category || []).concat(descriptionSelector(property) || []);
 					var descriptionPathLast = descriptionPath.length - 1;
 
 					var node = tree;
@@ -3311,7 +3323,7 @@ module.exports = function () {
 	'use strict';
 
 	return {
-		version: '1.7.4'
+		version: '1.7.5'
 	};
 }();
 
