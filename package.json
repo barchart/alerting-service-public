@@ -1,7 +1,7 @@
 {
   "name": "@barchart/alerts-client-js",
   "version": "3.3.1",
-  "description": "JavaScript library for managing Barchart alerts",
+  "description": "JavaScript SDK for interacting with Barchart Alert Service",
   "author": {
     "name": "Bryan Ingle",
     "email": "bryan.ingle@barchart.com",
@@ -17,7 +17,7 @@
   "dependencies": {
     "@barchart/common-js": "~3.3.0",
     "@barchart/instruments-client-js": "~3.3.0",
-    "@barchart/marketdata-utilities-js": "~3.0.0",
+    "@barchart/marketdata-api-js": "~4.0.0",
     "socket.io-client": "2.1.1",
     "uuid": "3.1.0"
   },
