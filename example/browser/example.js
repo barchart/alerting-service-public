@@ -1022,7 +1022,7 @@ module.exports = (() => {
       if (alertManager) {
         pageModel.connecting(true);
         initializePromise = alertManager.connect(null).then(function () {
-          if (!(system === 'barchart.com' || system === 'grains.com' || system === 'webstation.barchart.com' || system === 'gos.agricharts.com ' || system === 'gbemembers.com')) {
+          if (!(system === 'barchart.com' || system === 'grains.com' || system === 'webstation.barchart.com' || system === 'gos.agricharts.com' || system === 'gbemembers.com')) {
             throw 'Invalid system, please re-enter...';
           }
 
@@ -2869,7 +2869,7 @@ module.exports = (() => {
   'use strict';
 
   return {
-    version: '3.3.2'
+    version: '3.3.3'
   };
 })();
 
