@@ -23,27 +23,40 @@
 	        <h4 class="pull-left header-text barchart-logo"><span>[Alerts Example]</span></h4>
 
             <div class="header-action-buttons pull-right">
-                <span class="text-button glyphicon glyphicon-th-list" data-bind="click: changeToGrid"></span>
-                <span class="text-button glyphicon glyphicon-plus" data-bind="click: changeToCreate"></span>
-                <span class="text-button glyphicon glyphicon-user" data-bind="click: changeToPreferences"></span>
+                <span class="text-button glyphicon glyphicon-th-list" data-bind="click: changeToGrid, visible: canDisconnect"></span>
+                <span class="text-button glyphicon glyphicon-plus" data-bind="click: changeToCreate, visible: canDisconnect"></span>
+                <span class="text-button glyphicon glyphicon-user" data-bind="click: changeToPreferences, visible: canDisconnect"></span>
                 <span class="text-button glyphicon glyphicon-remove" data-bind="click: disconnect, visible: canDisconnect"></span>
-                <span class="text-button glyphicon glyphicon-earphone" data-bind="click: connect, visible: canConnect"></span>
             </div>
         </div>
     </script>
 
-    <script type="text/html" id="alert-disconnected">
-        <div class="container-center-outer">
-            <div class="container-center-inner">
-                <h2 class="center">Disconnected</h2>
-                <!-- ko if: message -->
-                <h5 class="center" data-bind="text: message"></h5>
-                <!-- /ko -->
-            </div>
-        </div>
-    </script>
+	<script type="text/html" id="alert-disconnected">
+		<div class="container-center-outer">
+			<div class="container-center-inner">
+				<form class="form-horizontal login">
+					<div class="form-group" data-bind="css: { 'has-error': host().length === 0 }">
+						<label class="pull-left">Host</label>
+						<input class="form-control" data-bind="textInput: host" type="text">
+					</div>
+					<div class="form-group" data-bind="css: { 'has-error': system().length === 0 }">
+						<label class="pull-left">System</label>
+						<input class="form-control" data-bind="textInput: system" type="text"">
+					</div>
+					<div class="form-group" data-bind="css: { 'has-error': userId().length === 0 }, event: { keypress: handleConnectKeypress }">
+						<label class="pull-left">User ID</label>
+						<input class="form-control" data-bind="textInput: userId, hasFocus: true">
+					</div>
+					<div class="form-group buttons">
+						<button class="form-control btn btn-primary" type="button" data-bind="click: connect, enable: canConnect">Connect</button>
+					</div>
+				</form>
+			</div>
+		</div>
+	</script>
 
-    <script type="text/html" id="alert-grid-template">
+
+	<script type="text/html" id="alert-grid-template">
         <table class="table table-striped small">
             <thead>
                 <th class="center col-md-1"></th>
@@ -496,7 +509,12 @@
     <div class="header" data-bind="template: { name: 'alert-header-template' }"></div>
     <div class="main" data-bind="template: { name: activeTemplate }"></div>
     <div class="footer">
-        <h4 class="pull-left" data-bind="text: providerDescription"></h4>
+        <h4 class="pull-left">
+	        <span data-bind="providerDescription"></span>
+	        <span data-bind="visible: connected">
+		        <span data-bind="text: userId"></span>@<span data-bind="text: host"></span>
+	        </span>
+        </h4>
         <h4 class="pull-right">API Version <span data-bind="text: version().api"></span>, Client Version: <span data-bind="text: version().client"></span>, Authenticated User: <span data-bind="text: authenticatedUser"></span></h4>
     </div>
 </body>

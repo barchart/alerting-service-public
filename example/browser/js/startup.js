@@ -13,20 +13,9 @@ const JwtGateway = require('@barchart/tgam-jwt-js/lib/JwtGateway');
 module.exports = (() => {
 	'use strict';
 
-	//var system = 'grains.com';
-	//var userId = '108265';
-
-	//var system = 'webstation.barchart.com';
-	//var userId = 'webstation-test-user';
-
-	//var system = 'theglobeandmail.com';
-	//var userId = '123456789';
-
-	var system = 'barchart.com';
-	var userId = '000000';
-
 	var alertManager;
 
+	/*
 	var createJwtProvider = function() {
 		var endpoint = EndpointBuilder.for('JwtTokenGenerator', 'Jwt Token Generator')
 			.withVerb(VerbType.GET)
@@ -49,18 +38,7 @@ module.exports = (() => {
 				return new JwtProvider(() => gateway.readToken(), 60000, 'TGAM');
 			});
 	};
-
-	var createAlertManager = function() {
-		//return new AlertManager();
-
-		//return new AlertManager('localhost', 3000, 'rest');
-		//return new AlertManager('localhost', 3000);
-
-		//return new AlertManager('alerts-management-stage.barchart.com', 80, 'rest');
-		//return new AlertManager('alerts-management-stage.barchart.com');
-
-		return new AlertManager('alerts-management-stage.barchart.com', 443, 'socket.io', true);
-	};
+	*/
 
 	var utilities = AlertManager;
 
@@ -71,20 +49,31 @@ module.exports = (() => {
 	var publisherTypes = ko.observable();
 	var marketDataConfiguration = ko.observable();
 
-	function PageModel(connected, message) {
+	var currentSystem = null;
+	var currentUserId = null;
+
+	function PageModel(host, system, userId) {
 		var that = this;
+
+		that.host = ko.observable(host || 'alerts-management-stage.barchart.com');
+		that.system = ko.observable(system || 'barchart.com');
+		that.userId = ko.observable(userId || '000000');
+
+		currentSystem = system;
+		currentUserId = userId;
 
 		that.version = ko.observable({ });
 		that.authenticatedUser = ko.observable('Unsecure');
 
-		that.connected = ko.observable(connected);
-		that.message = ko.observable(message);
+		that.connected = ko.observable(alertManager !== null);
+		that.message = ko.observable('');
 
 		that.alert = ko.observable();
 		that.alerts = ko.observableArray([ ]);
 		that.publisherSettings = ko.observable();
 		that.marketDataSettings = ko.observable();
-		that.providerDescription = ko.observable(alertManager.toString());
+		that.providerDescription = ko.observable(alertManager !== null ? alertManager.toString() : '');
+
 		that.activeTemplate = ko.observable();
 
 		var getModel = function(alert) {
@@ -98,16 +87,31 @@ module.exports = (() => {
 			});
 		};
 
+		that.canConnect = ko.computed(function() {
+			return !that.connected();
+		});
+
+		that.handleConnectKeypress = function(d, e) {
+			if (e.keyCode === 13 && !that.connected()) {
+				that.connect();
+			}
+
+			return true;
+		};
+
 		that.connect = function() {
 			if (!that.connected()) {
 				that.message('Attempting to connect...');
 
-				reset();
+				reset(that.host(), that.system(), that.userId());
 			}
 		};
 		that.disconnect = function() {
 			if (that.connected()) {
 				that.activeTemplate('alert-disconnected');
+
+				currentSystem = null;
+				currentUserId = null;
 
 				that.connected(false);
 				that.alerts([ ]);
@@ -160,10 +164,10 @@ module.exports = (() => {
 				});
 		};
 		that.enableAlerts = function() {
-			alertManager.enableAlerts({ alert_system: system , user_id: userId });
+			alertManager.enableAlerts({ alert_system: currentSystem , user_id: currentUserId });
 		};
 		that.disableAlerts = function() {
-			alertManager.disableAlerts({ alert_system: system , user_id: userId });
+			alertManager.disableAlerts({ alert_system: currentSystem , user_id: currentUserId });
 		};
 
 		that.handleAlertCreate = function(createdAlert) {
@@ -338,8 +342,8 @@ module.exports = (() => {
 			var alert = {
 				alert_type: alertType,
 				user_notes: that.userNotes() || null,
-				user_id: userId,
-				alert_system: system,
+				user_id: currentUserId,
+				alert_system: currentSystem,
 				automatic_reset: that.automaticReset(),
 				conditions: _.map(that.conditions(), function(condition) {
 					var property = condition.property();
@@ -946,7 +950,7 @@ module.exports = (() => {
 				publishersToSave = publishersToSave - 1;
 
 				if (publishersToSave === 0) {
-					alertManager.getPublisherTypeDefaults({ user_id: userId, alert_system: system })
+					alertManager.getPublisherTypeDefaults({ user_id: currentUserId, alert_system: currentSystem })
 						.then(function(pt) {
 							publisherTypes(pt);
 
@@ -976,8 +980,8 @@ module.exports = (() => {
 
 						var ptd = {
 							publisher_type_id: defaultPublisherType.publisherTypeId(),
-							alert_system: system,
-							user_id: userId,
+							alert_system: currentSystem,
+							user_id: currentUserId,
 							default_recipient: defaultPublisherType.defaultRecipient(),
 							allow_window_timezone: defaultPublisherType.allowTimezone() || null,
 							allow_window_start: defaultPublisherType.allowStartTime() || null,
@@ -1034,14 +1038,14 @@ module.exports = (() => {
 			return !that.processing();
 		});
 
-		that.userId = ko.observable(userId);
-		that.systemId = ko.observable(system);
+		that.userId = ko.observable(currentUserId);
+		that.systemId = ko.observable(currentSystem);
 		that.marketDataId = ko.observable(null);
 
 		that.savePreferences = function() {
 			that.processing(true);
 
-			alertManager.assignMarketDataConfiguration({ user_id: userId, alert_system: system, market_data_id: that.marketDataId() })
+			alertManager.assignMarketDataConfiguration({ user_id: currentUserId, alert_system: currentSystem, market_data_id: that.marketDataId() })
 				.then(function(mdc) {
 					marketDataConfiguration(mdc);
 
@@ -1054,99 +1058,128 @@ module.exports = (() => {
 		}
 	}
 
-	var reset = function() {
+	var reset = function(host, system, userId) {
 		ko.cleanNode($('body')[0]);
-
-		alertManager = createAlertManager();
 
 		//return createJwtProvider()
 		//	.then((jwtProvider) => {
 		//		return alertManager.connect(jwtProvider)
-				return alertManager.connect(null)
-					.then(function() {
-						var pageModel = new PageModel(true);
 
-						alertManager.subscribeAlerts({ user_id: userId, alert_system: system },
-							function(changedAlert) {
-								pageModel.handleAlertChange(changedAlert);
-							},
-							function(deletedAlert) {
-								pageModel.handleAlertDelete(deletedAlert);
-							},
-							function(createdAlert) {
-								pageModel.handleAlertCreate(createdAlert);
-							},
-							function(triggeredAlert) {
-								pageModel.handleAlertTrigger(triggeredAlert);
-							}
-						);
+		return Promise.resolve()
+			.then(() => {
+				if (host && system && userId) {
+					alertManager = new AlertManager(host, 443, 'socket.io', true);
+				} else {
+					alertManager = null;
+				}
+			}).then(() => {
+				var pageModel = new PageModel(host, system, userId);
 
-						alertManager.getUser()
-							.then(function(data) {
-								if (data.user_id && data.alert_system) {
-									pageModel.authenticatedUser(`${data.user_id}@${data.alert_system}`);
+				var initializePromise;
+
+				if (alertManager) {
+					initializePromise = alertManager.connect(null)
+						.then(function() {
+							var startupPromises = [ ];
+
+							alertManager.subscribeAlerts({ user_id: userId, alert_system: system },
+								function(changedAlert) {
+									pageModel.handleAlertChange(changedAlert);
+								},
+								function(deletedAlert) {
+									pageModel.handleAlertDelete(deletedAlert);
+								},
+								function(createdAlert) {
+									pageModel.handleAlertCreate(createdAlert);
+								},
+								function(triggeredAlert) {
+									pageModel.handleAlertTrigger(triggeredAlert);
 								}
-							});
+							);
 
-						alertManager.getServerVersion()
-							.then(function(data) {
-								pageModel.version({ api: data.semver, client: version });
-							});
-
-						alertManager.getTargets()
-							.then(function(t) {
-								targets(t);
-							});
-
-						alertManager.getProperties()
-							.then(function(p) {
-								properties(p);
-							});
-
-						alertManager.getOperators()
-							.then(function(o) {
-								o.forEach((item) => {
-									item.display.compound = item.display.short;
-
-									if (item.operator_type === 'binary') {
-										if (item.operand_literal) {
-											item.display.compound = item.display.compound + ' [ value ]';
-										} else {
-											item.display.compound = item.display.compound + ' [ field ]';
+							startupPromises.push(
+								alertManager.getUser()
+									.then(function(data) {
+										if (data.user_id && data.alert_system) {
+											pageModel.authenticatedUser(`${data.user_id}@${data.alert_system}`);
 										}
-									}
-								});
+									})
+							);
 
-								operators(o);
-							});
+							startupPromises.push(
+								alertManager.getServerVersion()
+									.then(function(data) {
+										pageModel.version({ api: data.semver, client: version });
+									})
+							);
 
-						alertManager.getModifiers()
-							.then(function(m) {
-								modifiers(m);
-							});
+							startupPromises.push(
+								alertManager.getTargets()
+									.then(function(t) {
+										targets(t);
+									})
+							);
 
-						alertManager.getPublisherTypeDefaults({ user_id: userId, alert_system: system })
-							.then(function(pt) {
-								publisherTypes(pt);
-							});
+							startupPromises.push(
+								alertManager.getProperties()
+									.then(function(p) {
+										properties(p);
+									})
+							);
 
-						alertManager.getMarketDataConfiguration({ user_id: userId, alert_system: system })
-							.then(function(mdc) {
-								marketDataConfiguration(mdc);
-							});
+							startupPromises.push(
+								alertManager.getOperators()
+									.then(function(o) {
+										o.forEach((item) => {
+											item.display.compound = item.display.short;
 
-						return pageModel;
-			//});
-		}).catch(function(e) {
-			var pageModel = new PageModel(false, e);
+											if (item.operator_type === 'binary') {
+												if (item.operand_literal) {
+													item.display.compound = item.display.compound + ' [ value ]';
+												} else {
+													item.display.compound = item.display.compound + ' [ field ]';
+												}
+											}
+										});
 
-			return pageModel;
-		}).then(function(pageModel) {
-			ko.applyBindings(pageModel, $('body')[0]);
-		});
+										operators(o);
+									})
+							);
+
+							startupPromises.push(
+								alertManager.getModifiers()
+									.then(function(m) {
+										modifiers(m);
+									})
+							);
+
+							startupPromises.push(
+								alertManager.getPublisherTypeDefaults({ user_id: userId, alert_system: system })
+									.then(function(pt) {
+										publisherTypes(pt);
+									})
+							);
+
+							startupPromises.push(
+								alertManager.getMarketDataConfiguration({ user_id: userId, alert_system: system })
+									.then(function(mdc) {
+										marketDataConfiguration(mdc);
+									})
+							);
+
+							return Promise.all(startupPromises);
+						});
+				} else {
+					initializePromise = Promise.resolve();
+				}
+
+				return initializePromise.then(() => {
+					ko.applyBindings(pageModel, $('body')[0]);
+				});
+			})
 	};
 
 	$(document).ready(function() {
-		reset();
+		reset(null, null, null);
 	});
 })();

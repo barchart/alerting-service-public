@@ -59,6 +59,12 @@ h4 {
     padding-right: 20px;
 }
 
+.main .login {
+    margin: auto;
+    width: 300px;
+}
+
+
 .footer {
     position: absolute;
     bottom: 0px;
