@@ -1063,7 +1063,9 @@ module.exports = (() => {
 
 		return Promise.resolve()
 			.then(() => {
-				if (host && system && userId) {
+				if (host && host === 'localhost') {
+					alertManager = new AlertManager('localhost', 3000, 'socket.io', false);
+				} else if (host) {
 					alertManager = new AlertManager(host, 443, 'socket.io', true);
 				} else {
 					alertManager = null;
@@ -1078,6 +1080,14 @@ module.exports = (() => {
 
 					initializePromise = alertManager.connect(null)
 						.then(function() {
+							if (!(system === 'barchart.com' || system === 'grains.com' || system === 'webstation.barchart.com' || system === 'gos.agricharts.com ' || system === 'gbemembers.com')) {
+								throw 'Invalid system, please re-enter...';
+							}
+
+							if (!userId) {
+								throw 'Invalid user, please re-enter...';
+							}
+
 							var startupPromises = [ ];
 
 							alertManager.subscribeAlerts({ user_id: userId, alert_system: system },
@@ -1171,13 +1181,21 @@ module.exports = (() => {
 									pageModel.changeToGrid();
 								});
 						}).catch((e) => {
+							console.log(e);
+
 							alertManager.dispose();
 							alertManager = null;
 
 							pageModel.connected(false);
 							pageModel.activeTemplate('alert-disconnected');
 
-							pageModel.message('Unable to connect. Try again.');
+						console.log(e);
+
+							if (typeof e === 'string') {
+								pageModel.message(e);
+							} else {
+								pageModel.message('Unable to connect. Try again...');
+							}
 						}).then(() => {
 							pageModel.connecting(false);
 						});
