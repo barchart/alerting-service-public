@@ -145,18 +145,18 @@ td .dropdown ul {
 }
 
 .panel-info {
-    border-color: #29506D;
+    border-color: rgb(0,79,136);
 }
 .panel-info > .panel-heading {
     color: #FFFFFF;
-    background-color: #29506D;
-    border-color: #29506D;
+    background-color: rgb(0,79,136);
+    border-color: rgb(0,79,136);
 }
 .panel-info > .panel-heading {
-    background-image: -webkit-linear-gradient(top,#29506D 0,#29506D 100%);
-    background-image: -o-linear-gradient(top,#29506D 0,#29506D 100%);
-    background-image: -webkit-gradient(linear,left top,left bottom,from(#29506D),to(#29506D));
-    background-image: linear-gradient(to bottom,#29506D 0,#29506D 100%);
+    background-image: -webkit-linear-gradient(top,rgb(0,79,136) 0,rgb(0,79,136) 100%);
+    background-image: -o-linear-gradient(top,rgb(0,79,136) 0,rgb(0,79,136) 100%);
+    background-image: -webkit-gradient(linear,left top,left bottom,from(rgb(0,79,136)),to(rgb(0,79,136)));
+    background-image: linear-gradient(to bottom,rgb(0,79,136) 0,rgb(0,79,136) 100%);
     background-repeat: repeat-x;
 }
 
