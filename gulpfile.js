@@ -13,6 +13,7 @@ const AWS = require('aws-sdk'),
 	jasmine = require('gulp-jasmine'),
 	jsdoc = require('gulp-jsdoc3'),
 	jshint = require('gulp-jshint'),
+	rename = require('gulp-rename'),
 	replace = require('gulp-replace'),
 	source = require('vinyl-source-stream');
 
@@ -28,7 +29,7 @@ gulp.task('document', (cb) => {
 	};
 
 	gulp.src([ 'README.md', './lib/**/*.js' ], {read: false})
-	.pipe(jsdoc(config, cb));
+		.pipe(jsdoc(config, cb));
 });
 
 gulp.task('ensure-clean-working-directory', (cb) => {
@@ -79,7 +80,7 @@ gulp.task('create-tag', (cb) => {
 });
 
 gulp.task('build-example-bundle', () => {
-	return browserify(['./lib/index.js', './example/browser/js/startup.js'])
+	return browserify(['./example/browser/js/startup.js'])
 		.bundle()
 		.pipe(source('example.js'))
 		.pipe(buffer())
