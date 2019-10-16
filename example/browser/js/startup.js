@@ -65,8 +65,10 @@ module.exports = (() => {
 		that.version = ko.observable({ });
 		that.authenticatedUser = ko.observable('Unsecure');
 
-		that.connected = ko.observable(alertManager !== null);
-		that.message = ko.observable('');
+		that.connecting = ko.observable(false);
+		that.connected = ko.observable(false);
+
+		that.message = ko.observable('Waiting to connect...');
 
 		that.alert = ko.observable();
 		that.alerts = ko.observableArray([ ]);
@@ -74,7 +76,7 @@ module.exports = (() => {
 		that.marketDataSettings = ko.observable();
 		that.providerDescription = ko.observable(alertManager !== null ? alertManager.toString() : '');
 
-		that.activeTemplate = ko.observable();
+		that.activeTemplate = ko.observable('alert-disconnected');
 
 		var getModel = function(alert) {
 			return _.find(that.alerts(), function(model) {
@@ -88,7 +90,7 @@ module.exports = (() => {
 		};
 
 		that.canConnect = ko.computed(function() {
-			return !that.connected();
+			return !that.connecting() && !that.connected();
 		});
 
 		that.handleConnectKeypress = function(d, e) {
@@ -100,7 +102,7 @@ module.exports = (() => {
 		};
 
 		that.connect = function() {
-			if (!that.connected()) {
+			if (!that.connected() && !that.connecting()) {
 				that.message('Attempting to connect...');
 
 				reset(that.host(), that.system(), that.userId());
@@ -207,12 +209,6 @@ module.exports = (() => {
 		that.canDisconnect = ko.computed(function() {
 			return that.connected();
 		});
-
-		if (that.connected()) {
-			that.changeToGrid();
-		} else {
-			that.activeTemplate('alert-disconnected');
-		}
 	}
 	function AlertDisplayModel(alert) {
 		var that = this;
@@ -1078,6 +1074,8 @@ module.exports = (() => {
 				var initializePromise;
 
 				if (alertManager) {
+					pageModel.connecting(true);
+
 					initializePromise = alertManager.connect(null)
 						.then(function() {
 							var startupPromises = [ ];
@@ -1167,7 +1165,21 @@ module.exports = (() => {
 									})
 							);
 
-							return Promise.all(startupPromises);
+							return Promise.all(startupPromises)
+								.then(() => {
+									pageModel.connected(true);
+									pageModel.changeToGrid();
+								});
+						}).catch((e) => {
+							alertManager.dispose();
+							alertManager = null;
+
+							pageModel.connected(false);
+							pageModel.activeTemplate('alert-disconnected');
+
+							pageModel.message('Unable to connect. Try again.');
+						}).then(() => {
+							pageModel.connecting(false);
 						});
 				} else {
 					initializePromise = Promise.resolve();

@@ -50,6 +50,7 @@
 					<div class="form-group buttons">
 						<button class="form-control btn btn-primary" type="button" data-bind="click: connect, enable: canConnect">Connect</button>
 					</div>
+					<div data-bind="text: message, visible: message"></div>
 				</form>
 			</div>
 		</div>
@@ -515,7 +516,11 @@
 		        <span data-bind="text: userId"></span>@<span data-bind="text: host"></span>
 	        </span>
         </h4>
-        <h4 class="pull-right">API Version <span data-bind="text: version().api"></span>, Client Version: <span data-bind="text: version().client"></span>, Authenticated User: <span data-bind="text: authenticatedUser"></span></h4>
+        <h4 class="pull-right">
+	        <span data-bind="visible: connected">Client Version: <span data-bind="text: version().client"></span></span>
+	        <span data-bind="visible: connected">, API Version <span data-bind="text: version().api"></span>,</span>
+	        <span data-bind="visible: connected">, Authenticated User: <span data-bind="text: authenticatedUser"></span></span>
+        </h4>
     </div>
 </body>
 </html>
