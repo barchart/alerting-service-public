@@ -147,6 +147,10 @@ gulp.task('release', gulp.series(
 	'create-tag'
 ));
 
+gulp.task('watch', () => {
+	gulp.watch('./lib/**/*.js', gulp.series('build-example-bundles'));
+});
+
 gulp.task('lint', () => {
 	return gulp.src(['./lib/**/*.js', './test/specs/**/*.js'])
 		.pipe(jshint({'esversion': 6}))

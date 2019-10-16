@@ -8,7 +8,10 @@
     "url": "http://www.barchart.com"
   },
   "main": "./lib/index.js",
-  "scripts": {},
+  "scripts": {
+    "test": "gulp test",
+    "watch": "gulp watch"
+  },
   "repository": {
     "type": "git",
     "url": "git+ssh://github.com/barchart/alerts-client-js"
