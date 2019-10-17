@@ -2869,7 +2869,7 @@ module.exports = (() => {
   'use strict';
 
   return {
-    version: '3.3.3'
+    version: '3.3.5'
   };
 })();
 
@@ -11705,7 +11705,7 @@ module.exports = (() => {
    * Parses DDF price.
    *
    * @function
-   * @param {String} bytes
+   * @param {String} str
    * @param {String} unitcode
    * @param {String=} thousandsSeparator
    * @returns {Number}
