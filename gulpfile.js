@@ -118,6 +118,8 @@ gulp.task('upload-example-to-S3', () => {
 		.pipe(awspublish.reporter());
 });
 
+gulp.task('upload', gulp.series('upload-example-to-S3'));
+
 gulp.task('execute-browser-tests', () => {
 	return gulp.src('test/SpecRunner.js')
 		.pipe(jasmine());
