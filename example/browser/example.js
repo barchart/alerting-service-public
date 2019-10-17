@@ -1214,9 +1214,7 @@ module.exports = (() => {
               host = 'instruments-stage.aws.barchart.com';
             }
 
-            const secure = this._secure;
-            const port = getPort(this._secure);
-            const manager = new SearchManager(host, port, 'rest', secure);
+            const manager = new SearchManager(host, 443, 'rest', true);
             return timeout(manager.connect(), 10000, 'Search service is temporarily unavailable. Please try again later.');
           });
           this._connectPromise = Promise.all([alertAdapterPromise, searchManagerPromise]).then(results => {
@@ -2869,7 +2867,7 @@ module.exports = (() => {
   'use strict';
 
   return {
-    version: '3.3.5'
+    version: '3.3.6'
   };
 })();
 
@@ -11705,7 +11703,7 @@ module.exports = (() => {
    * Parses DDF price.
    *
    * @function
-   * @param {String} str
+   * @param {String} bytes
    * @param {String} unitcode
    * @param {String=} thousandsSeparator
    * @returns {Number}
