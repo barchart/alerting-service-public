@@ -64,6 +64,9 @@ h4 {
     width: 300px;
 }
 
+.main .login .dropdown-toggle {
+    text-align: left;
+}
 
 .footer {
     position: absolute;
