@@ -54,6 +54,7 @@ module.exports = (() => {
     that.host = ko.observable(host || 'alerts-management-stage.barchart.com');
     that.system = ko.observable(system || 'barchart.com');
     that.userId = ko.observable(userId || '000000');
+    that.mode = ko.observable('socket.io');
     currentSystem = system;
     currentUserId = userId;
     that.version = ko.observable({});
@@ -83,6 +84,17 @@ module.exports = (() => {
     that.canConnect = ko.computed(function () {
       return !that.connecting() && !that.connected();
     });
+    that.canDisconnect = ko.computed(function () {
+      return that.connected();
+    });
+
+    that.setSocketTransport = () => {
+      that.mode('socket.io');
+    };
+
+    that.setRestTransport = () => {
+      that.mode('rest');
+    };
 
     that.handleConnectKeypress = function (d, e) {
       if (e.keyCode === 13 && !that.connected()) {
@@ -95,7 +107,7 @@ module.exports = (() => {
     that.connect = function () {
       if (!that.connected() && !that.connecting()) {
         that.message('Attempting to connect...');
-        reset(that.host(), that.system(), that.userId());
+        reset(that.host(), that.system(), that.userId(), that.mode());
       }
     };
 
@@ -197,13 +209,6 @@ module.exports = (() => {
       var modelToRemove = getModel(deletedAlert);
       that.alerts.remove(modelToRemove);
     };
-
-    that.canConnect = ko.computed(function () {
-      return !that.connected();
-    });
-    that.canDisconnect = ko.computed(function () {
-      return that.connected();
-    });
   }
 
   function AlertDisplayModel(alert) {
@@ -1002,16 +1007,16 @@ module.exports = (() => {
     }
   }
 
-  var reset = function (host, system, userId) {
+  var reset = function (host, system, userId, mode) {
     ko.cleanNode($('body')[0]); //return createJwtProvider()
     //	.then((jwtProvider) => {
     //		return alertManager.connect(jwtProvider)
 
     return Promise.resolve().then(() => {
       if (host && host === 'localhost') {
-        alertManager = new AlertManager('localhost', 3000, 'socket.io', false);
+        alertManager = new AlertManager('localhost', 3000, mode, false);
       } else if (host) {
-        alertManager = new AlertManager(host, 443, 'socket.io', true);
+        alertManager = new AlertManager(host, 443, mode, true);
       } else {
         alertManager = null;
       }
@@ -1120,7 +1125,7 @@ module.exports = (() => {
   };
 
   $(document).ready(function () {
-    reset(null, null, null);
+    reset(null, null, null, null);
   });
 })();
 
@@ -2231,23 +2236,15 @@ module.exports = (() => {
 
       this._started = true;
 
-      const poll = () => {
-        return this._parent.retrieveAlerts(this._query).then(alerts => {
-          return true;
-        });
+      const poll = delay => {
+        this._parent._scheduler.schedule(() => {
+          return this._parent.retrieveAlerts(this._query).catch(e => {}).then(() => {
+            poll(delay || 5000);
+          });
+        }, delay);
       };
 
-      const repeat = delay => {
-        this._parent._scheduler.backoff(poll, delay, 'alert poll', 7).then(() => {
-          if (this.getIsDisposed()) {
-            return;
-          }
-
-          repeat(5000);
-        });
-      };
-
-      repeat(0);
+      poll(0);
     }
 
   }
@@ -2867,7 +2864,7 @@ module.exports = (() => {
   'use strict';
 
   return {
-    version: '3.3.6'
+    version: '3.3.7'
   };
 })();
 
