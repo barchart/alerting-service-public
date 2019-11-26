@@ -35,6 +35,19 @@
 		<div class="container-center-outer">
 			<div class="container-center-inner">
 				<form class="form-horizontal login">
+					<div class="form-group">
+						<label class="pull-left">Transport</label>
+						<div class="dropdown refresh">
+							<button class="btn btn-default dropdown-toggle form-control" type="button" data-toggle="dropdown">
+								<span data-bind="text: mode"></span>
+								<span class="caret pull-right"></span>
+							</button>
+							<ul class="dropdown-menu">
+								<li><a href="#" data-bind="click: setSocketTransport">socket.io</a></li>
+								<li><a href="#" data-bind="click: setRestTransport">rest</a></li>
+							</ul>
+						</div>
+					</div>
 					<div class="form-group" data-bind="css: { 'has-error': host().length === 0 }, event: { keypress: handleConnectKeypress }">
 						<label class="pull-left">Host</label>
 						<input class="form-control" data-bind="textInput: host" type="text">

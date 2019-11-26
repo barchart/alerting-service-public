@@ -58,6 +58,7 @@ module.exports = (() => {
 		that.host = ko.observable(host || 'alerts-management-stage.barchart.com');
 		that.system = ko.observable(system || 'barchart.com');
 		that.userId = ko.observable(userId || '000000');
+		that.mode = ko.observable('socket.io');
 
 		currentSystem = system;
 		currentUserId = userId;
@@ -92,6 +93,17 @@ module.exports = (() => {
 		that.canConnect = ko.computed(function() {
 			return !that.connecting() && !that.connected();
 		});
+		that.canDisconnect = ko.computed(function() {
+			return that.connected();
+		});
+
+
+		that.setSocketTransport = () => {
+			that.mode('socket.io');
+		};
+		that.setRestTransport = () => {
+			that.mode('rest');
+		};
 
 		that.handleConnectKeypress = function(d, e) {
 			if (e.keyCode === 13 && !that.connected()) {
@@ -100,12 +112,11 @@ module.exports = (() => {
 
 			return true;
 		};
-
 		that.connect = function() {
 			if (!that.connected() && !that.connecting()) {
 				that.message('Attempting to connect...');
 
-				reset(that.host(), that.system(), that.userId());
+				reset(that.host(), that.system(), that.userId(), that.mode());
 			}
 		};
 		that.disconnect = function() {
@@ -122,6 +133,7 @@ module.exports = (() => {
 				alertManager = null;
 			}
 		};
+
 		that.changeToGrid = function() {
 			if (!that.connected()) {
 				return;
@@ -157,6 +169,7 @@ module.exports = (() => {
 
 			that.activeTemplate('alert-preferences-template');
 		};
+
 		that.deleteAlert = function(alertDisplayModel) {
 			alertDisplayModel.processing(true);
 
@@ -202,13 +215,6 @@ module.exports = (() => {
 
 			that.alerts.remove(modelToRemove);
 		};
-
-		that.canConnect = ko.computed(function() {
-			return !that.connected();
-		});
-		that.canDisconnect = ko.computed(function() {
-			return that.connected();
-		});
 	}
 	function AlertDisplayModel(alert) {
 		var that = this;
@@ -1054,7 +1060,7 @@ module.exports = (() => {
 		}
 	}
 
-	var reset = function(host, system, userId) {
+	var reset = function(host, system, userId, mode) {
 		ko.cleanNode($('body')[0]);
 
 		//return createJwtProvider()
@@ -1064,9 +1070,9 @@ module.exports = (() => {
 		return Promise.resolve()
 			.then(() => {
 				if (host && host === 'localhost') {
-					alertManager = new AlertManager('localhost', 3000, 'socket.io', false);
+					alertManager = new AlertManager('localhost', 3000, mode, false);
 				} else if (host) {
-					alertManager = new AlertManager(host, 443, 'socket.io', true);
+					alertManager = new AlertManager(host, 443, mode, true);
 				} else {
 					alertManager = null;
 				}
@@ -1210,6 +1216,6 @@ module.exports = (() => {
 	};
 
 	$(document).ready(function() {
-		reset(null, null, null);
+		reset(null, null, null, null);
 	});
 })();
