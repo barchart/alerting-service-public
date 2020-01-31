@@ -1086,7 +1086,7 @@ module.exports = (() => {
 
 					initializePromise = alertManager.connect(null)
 						.then(function() {
-							if (!(system === 'barchart.com' || system === 'grains.com' || system === 'webstation.barchart.com' || system === 'gos.agricharts.com' || system === 'gbemembers.com')) {
+							if (!(system === 'barchart.com' || system === 'grains.com' || system === 'webstation.barchart.com' || system === 'gos.agricharts.com' || system === 'gbemembers.com' || system === 'cmdtymarketplace.com')) {
 								throw 'Invalid system, please re-enter...';
 							}
 
