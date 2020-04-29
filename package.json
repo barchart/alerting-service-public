@@ -9,6 +9,7 @@
   },
   "main": "./lib/index.js",
   "scripts": {
+	"docs": "docsify serve ./docs",
     "test": "gulp test",
     "watch": "gulp watch"
   },
