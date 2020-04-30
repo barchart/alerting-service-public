@@ -1,7 +1,7 @@
 const AlertManager = require('./../../../lib/alerts/AlertManager'),
 	JwtProvider = require('./../../../lib/alerts/JwtProvider'),
 	timezone = require('@barchart/common-js/lang/timezone'),
-	version = require('./../../../lib/index').version;
+	version = require('./../../../lib/meta').version;
 
 const EndpointBuilder = require('@barchart/common-js/api/http/builders/EndpointBuilder'),
 	ProtocolType = require('@barchart/common-js/api/http/definitions/ProtocolType'),

@@ -1,13 +1,12 @@
 {
   "name": "@barchart/alerts-client-js",
-  "version": "3.3.9",
+  "version": "4.0.0",
   "description": "JavaScript SDK for Barchart Alert Service",
   "author": {
     "name": "Bryan Ingle",
     "email": "bryan.ingle@barchart.com",
     "url": "http://www.barchart.com"
   },
-  "main": "./lib/index.js",
   "scripts": {
 	"docs": "docsify serve ./docs",
     "test": "gulp test",
