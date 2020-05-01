@@ -409,12 +409,14 @@ paths:
       description: "Retrieves all alerts for a single user."
       parameters:
         - name: user_id
+          required: true
           in: path
           description: "The unique identifier of the user (in the :alert_system)"
           schema:
             type: string
 
         - name: alert_system
+          required: true
           in: path
           description: The name of the user's system (e.g. "barchart.com" or "grains.com")
           schema:
