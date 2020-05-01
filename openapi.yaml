@@ -1,0 +1,441 @@
+openapi: 3.0.0
+
+info:
+  title: "Alert Management"
+  description: ""
+  version: 3.1.37
+
+components:
+  schemas:
+    Alert:
+      type: object
+      properties:
+        alert_id:
+          type: string
+          format: uuid
+          example: "39b633bf-8993-491d-b544-bdc9deed60be"
+        alert_state:
+          type: string
+          example: "Inactive"
+        alert_system:
+          type: string
+          example: "barchart.com"
+        alert_state_key:
+          type: string
+          nullable: true
+          example: "abcdef"
+        alert_type:
+          type: string
+          nullable: true
+          example: "price"
+        alert_behavior:
+          type: string
+          example: "Terminate"
+        user_id:
+          type: string
+          example: "barchart-test-user"
+        name:
+          type: string
+          example: "Buy TSLA"
+        user_notes:
+          type: string
+          nullable: true
+          example: "Time to buy Tesla Motors stock"
+        system_notes:
+          type: object
+          example: {}
+        automatic_reset:
+          type: boolean
+          example: true
+        create_date:
+          type: string
+          example: "1453673000873"
+        last_trigger_date:
+          type: string
+          nullable: true
+          example: "145367399999"
+        last_start_date:
+          type: string
+          nullable: true
+          example: "145367399999"
+        conditions:
+          type: array
+          items:
+            $ref: '#/components/schemas/Condition'
+        publishers:
+          type: array
+          items:
+            $ref: '#/components/schemas/Publisher'
+        tracking_server_id:
+          type: integer # ???
+          nullable: true
+        schedules: # ???
+          type: array
+          items:
+            additionalProperties: {}
+            example: []
+        effectivePublishers:
+          type: array
+          items:
+            $ref: '#/components/schemas/Publisher'
+              
+    
+    Publisher:
+      type: object
+      description: A "publisher" defines the rules for notification once an alert has been triggered. An alert can have multiple publishers.
+      properties:
+        publisher_id:
+          type: string
+          format: uuid
+          example: "9c864a19-ce77-4a87-8cd6-e0810ecb120e"
+        use_default_recipient:
+          type: boolean
+          example: false
+        recipient:
+          type: string
+          example: "123-456-7890"
+        format:
+          type: string
+          example: "It is a good time to buy Telsa stock."
+        timing:
+          type: object
+          properties:
+            timezon:
+              type: string
+              example: "America/Chicago"
+        type:
+          type: object
+          properties:
+            publisher_type_id:
+              type: integer
+              example: 1
+            transport:
+              type: string
+              example: "sms"
+            provider:
+              type: string
+              example: "twilio"
+
+    Operator:
+      type: object
+      properties:
+        operator_id:
+          type: integer
+          example: 4
+        operator_type:
+          type: string
+          example: binary
+        operator_name:
+          type: string
+          example: is-indicator
+        operand_options:
+          type: array
+          items:
+            type: string
+            example: ["Buy", "Sell", "Hold"]
+        operand_literal:
+          type: boolean
+          example: true
+        operand_display:
+          type: string
+          example: "10"
+        operand:
+          type: string
+          example: "10"
+        display:
+          type: object
+          properties:
+            short:
+              type: string
+              example: ">"
+            medium:
+              type: string
+              example: "greater than"
+            long:
+              type: string
+              example: "greater than"
+        modifiers:
+          type: array
+          items:
+            additionalProperties: {}
+          example: []
+
+    Condition:
+      type: object
+      properties:
+        condition_id:
+          type: string
+          format: uuid
+          example: "38a3f731-0f87-40b7-a33b-dd9c792998e2"
+        name:
+          type: string
+          example: "Gap Down is greater than 10.00"
+        operator:
+          $ref: '#/components/schemas/Operator'
+        property:
+          description: A "property" refers to an attribute of a target. The value of a "property" can be checked using an "operator" object.
+          type: object
+          properties:
+            property_id:
+              type: integer
+              example: 18
+            type:
+              type: string
+              example: number
+            format:
+              type: string
+              example: "0,0.00"
+            group:
+              type: string
+              example: "Technical"
+            accessor:
+              type: array
+              items:
+                type: string
+                example: "gapDown"
+            category:
+              type: array
+              items:
+                type: string
+                example: "Gap & Range Change"
+            description:
+              type: array
+              items:
+                type: string
+                example: "Gap Down"
+            descriptionShort:
+              type: array
+              items:
+                type: string
+                example: "Gap Down"
+            target:
+              type: object
+              description: A "target" refers to a type of object which can be observed. Each target has one or more properties.
+              properties:
+                description:
+                  type: string
+                  example: "basic"
+                display:
+                  type: string # ???
+                  nullable: true
+                identifier:
+                  type: string
+                  example: "TSLA"
+                identifier_description:
+                  type: string
+                  example: "symbol"
+                kind: 
+                  type: string # ???
+                  nullable: true
+                target_id: 
+                  type: integer
+                  example: 1
+                type:
+                  type: string
+                  example: "symbol"
+        templates:
+          type: object
+          properties:
+            condition:
+              type: string
+              example: "Gap Down is greater than {{{operator.format.operand}}}"
+            trigger:
+              type: object
+              properties:
+                email:
+                  type: string
+                  example: "Gap Down is {{{event.format.gapDown}}}"
+                sms:
+                  type: string
+                  example: "Gap Down for {{{property.target.identifier}}} is {{{event.format.gapDown}}}"
+
+paths:
+  /server/version:
+    get:
+      summary: Get Server Version.
+      description: Retrieves the current server version.
+      responses:
+        '200':
+          description: A JSON document, containing a single attribute called semver.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  semver:
+                    type: string
+                    example: "3.1.37"
+
+  /alerts:
+    post:
+      summary: Create Alert.
+      description: Creates a new alert.
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                  example: "Buy TSLA"
+                alert_behavior:
+                  type: string
+                  example: "Terminate"
+                user_id:
+                  type: string
+                  example: "barchart-test-user"
+                alert_system:
+                  type: string
+                  example: "barchart.com"
+                alert_type:
+                  type: string
+                  example: "price"
+                user_notes:
+                  type: string
+                  example: "Time to buy Tesla Motors stock"
+                automatic_reset:
+                  type: boolean
+                  example: true
+                conditions:
+                  type: object
+                  properties:
+                    property:
+                      type: object
+                      properties:
+                        property_id:
+                          type: integer
+                          example: 1
+                        target:
+                          type: object
+                          properties:
+                            identifier:
+                              type: string
+                              example: AAPL
+                    operator:
+                      type: object
+                      properties:
+                        operator_id:
+                          type: integer
+                          example: 3
+                        operand:
+                          type: string
+                          example: "99"
+                publishers:
+                  type: array
+                  items:
+                    type: object
+                    properties:
+                      publisher_id:
+                        type: string
+                        format: uuid
+                        example: "9c864a19-ce77-4a87-8cd6-e0810ecb120e"
+                      use_default_recipient:
+                        type: boolean
+                        example: false
+                      recipient:
+                        type: string
+                        example: "123-456-7890"
+                      format:
+                        type: string
+                        example: "It is a good time to buy Telsa stock."
+                      type:
+                        type: object
+                        properties:
+                          publisher_type_id:
+                            type: integer
+                            example: 1
+                schedules:
+                  type: array
+                  items:
+                    additionalProperties: {}
+                  example: []
+      responses:
+        '200':
+          description: A JSON document, conforming to the alert schema, representing the newly created alert.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Alert'
+
+        '500':
+          description: The reason for the failure, which is typically caused by POST data that does not conform the the alert schema.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "The argument [ query.user_id ] must be a [ string ]"
+      
+  
+  /alerts/{alert_id}:
+    get:
+      summary: Retrieve Alert.
+      description: Retrieves an existing alert.
+      parameters:
+        - name: alert_id
+          description: The UUID for the alert.
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+            example: "6bc32e9d-50ba-4f26-a633-a3cb3884b504"
+      responses:
+        '200':
+          description: "A JSON document, conforming to the alert schema, representing requested alert."
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Alert'
+                
+        
+        '404':
+          description: "The alert does not exist."
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "no data"
+                
+  /alerts/users/{alert_system}/{user_id}:
+    get:
+      summary: "Retrieve Alerts For User."
+      description: "Retrieves all alerts for a single user."
+      parameters:
+        - name: user_id
+          in: path
+          description: "The unique identifier of the user (in the :alert_system)"
+          schema:
+            type: string
+
+        - name: alert_system
+          in: path
+          description: The name of the user's system (e.g. "barchart.com" or "grains.com")
+          schema:
+            type: string
+      responses:
+        '200':
+          description: A JSON document, containing an array of alert objects.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Alert'
+        
+        '500':
+          description: A JSON document, containing an error.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string   
+    
