@@ -2,8 +2,13 @@ openapi: 3.0.0
 
 info:
   title: "Alert Management"
-  description: ""
+  description: "The Node.js server that exposes client interfaces creating, starting, and stopping alerts."
   version: 3.1.37
+
+
+servers:
+  - description: Stage server
+    url: "http://alerts-management-stage.barchart.com"
 
 components:
   schemas:
@@ -78,8 +83,8 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/Publisher'
-              
-    
+
+
     Publisher:
       type: object
       description: A "publisher" defines the rules for notification once an alert has been triggered. An alert can have multiple publishers.
@@ -157,8 +162,8 @@ components:
         modifiers:
           type: array
           items:
-            additionalProperties: {}
-          example: []
+            type: integer
+          example: [1,2,3]
 
     Condition:
       type: object
@@ -173,66 +178,7 @@ components:
         operator:
           $ref: '#/components/schemas/Operator'
         property:
-          description: A "property" refers to an attribute of a target. The value of a "property" can be checked using an "operator" object.
-          type: object
-          properties:
-            property_id:
-              type: integer
-              example: 18
-            type:
-              type: string
-              example: number
-            format:
-              type: string
-              example: "0,0.00"
-            group:
-              type: string
-              example: "Technical"
-            accessor:
-              type: array
-              items:
-                type: string
-                example: "gapDown"
-            category:
-              type: array
-              items:
-                type: string
-                example: "Gap & Range Change"
-            description:
-              type: array
-              items:
-                type: string
-                example: "Gap Down"
-            descriptionShort:
-              type: array
-              items:
-                type: string
-                example: "Gap Down"
-            target:
-              type: object
-              description: A "target" refers to a type of object which can be observed. Each target has one or more properties.
-              properties:
-                description:
-                  type: string
-                  example: "basic"
-                display:
-                  type: string # ???
-                  nullable: true
-                identifier:
-                  type: string
-                  example: "TSLA"
-                identifier_description:
-                  type: string
-                  example: "symbol"
-                kind: 
-                  type: string # ???
-                  nullable: true
-                target_id: 
-                  type: integer
-                  example: 1
-                type:
-                  type: string
-                  example: "symbol"
+          $ref: '#/components/schemas/Property'
         templates:
           type: object
           properties:
@@ -248,6 +194,89 @@ components:
                 sms:
                   type: string
                   example: "Gap Down for {{{property.target.identifier}}} is {{{event.format.gapDown}}}"
+
+    Property:
+      description: A "property" refers to an attribute of a target. The value of a "property" can be checked using an "operator" object.
+      type: object
+      properties:
+        property_id:
+          type: integer
+          example: 18
+        type:
+          type: string
+          example: number
+        format:
+          type: string
+          example: "0,0.00"
+        group:
+          type: string
+          example: "Technical"
+        accessor:
+          type: array
+          items:
+            type: string
+            example: "gapDown"
+        category:
+          type: array
+          items:
+            type: string
+            example: "Gap & Range Change"
+        description:
+          type: array
+          items:
+            type: string
+            example: "Gap Down"
+        descriptionShort:
+          type: array
+          items:
+            type: string
+            example: "Gap Down"
+        target:
+          $ref: '#/components/schemas/Target'
+        valid_operators:
+          type: array
+          items:
+            type: integer
+            example: 44
+        sortOrder:
+          type: integer
+          example: 912
+
+    Target:
+      type: object
+      description: A "target" refers to a type of object which can be observed. Each target has one or more properties.
+      required:
+        - type
+        - description
+        - target_id
+        - identifier_description
+      properties:
+        description:
+          type: string
+          example: "basic"
+        display:
+          type: string # ???
+          nullable: true
+        identifier:
+          type: string
+          example: "TSLA"
+        identifier_description:
+          type: string
+          example: "symbol"
+        qualifier_descriptions:
+          type: array
+          items:
+            type: string
+            example: ["location", "delivery date"]
+        kind:
+          type: string # ???
+          nullable: true
+        target_id:
+          type: integer
+          example: 1
+        type:
+          type: string
+          example: "symbol"
 
 paths:
   /server/version:
@@ -368,8 +397,8 @@ paths:
                   message:
                     type: string
                     example: "The argument [ query.user_id ] must be a [ string ]"
-      
-  
+
+
   /alerts/{alert_id}:
     get:
       summary: Retrieve Alert.
@@ -390,8 +419,7 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Alert'
-                
-        
+
         '404':
           description: "The alert does not exist."
           content:
@@ -402,7 +430,95 @@ paths:
                   message:
                     type: string
                     example: "no data"
-                
+
+
+    delete:
+      summary: "Delete Alert"
+      description: "Deletes an existing alert, stopping it, if necessary."
+      parameters:
+        - name: alert_id
+          in: path
+          description: "The UUID for the alert"
+          required: true
+          schema:
+            type: string
+            format: uuid
+            example: "6bc32e9d-50ba-4f26-a633-a3cb3884b504"
+      responses:
+        200:
+          description: "A JSON document, conforming to the alert schema, representing the deleted alert."
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Alert'
+
+        '404':
+          description: "The alert does not exist."
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "no data"
+
+
+
+    put:
+      summary: "Start/Stop Alert."
+      description: "Starts or stops an alert."
+      parameters:
+        - name: alert_id
+          in: path
+          required: true
+          description: "The UUID for the alert"
+          schema:
+            type: string
+            format: uuid
+            example: "6bc32e9d-50ba-4f26-a633-a3cb3884b504"
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                alert_id:
+                  type: string
+                  format: uuid
+                  example: "6bc32e9d-50ba-4f26-a633-a3cb3884b504"
+                alert_state:
+                  type: string
+                  example: "Starting"
+      responses:
+        '200':
+          description: "A JSON document, conforming to the alert schema. The response will not be returned until the alert has started (or stopped)."
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Alert'
+
+        '404':
+          description: "The alert does not exist."
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "no data"
+
+        '500':
+          description: "The alert cannot be started (e.g. you are attempting to start an alert that has already been started)."
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+
   /alerts/users/{alert_system}/{user_id}:
     get:
       summary: "Retrieve Alerts For User."
@@ -430,7 +546,7 @@ paths:
                 type: array
                 items:
                   $ref: '#/components/schemas/Alert'
-        
+
         '500':
           description: A JSON document, containing an error.
           content:
@@ -439,5 +555,414 @@ paths:
                 type: object
                 properties:
                   message:
-                    type: string   
-    
+                    type: string
+
+    put:
+      summary: "Start/Stop Multiple Alerts For User"
+      description: "Starts or stops an zero to many alerts for a single user."
+      parameters:
+        - name: user_id
+          required: true
+          in: path
+          description: "The unique identifier of the user (in the :alert_system)"
+          schema:
+            type: string
+
+        - name: alert_system
+          required: true
+          in: path
+          description: The name of the user's system (e.g. "barchart.com" or "grains.com")
+          schema:
+            type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                alert_id:
+                  type: string
+                  format: uuid
+                  example: "6bc32e9d-50ba-4f26-a633-a3cb3884b504"
+                alert_state:
+                  type: string
+                  example: "Starting"
+                user_id:
+                  type: string
+                  format: uuid
+                  example: "6bc32e9d-50ba-4f26-a633-a3cb3884b504"
+      responses:
+        '200':
+          description: A JSON document, containing an array of alert objects.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Alert'
+
+        '500':
+          description: A JSON document, containing an error.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+
+  /alerts/users/{alert_system}/{user_id}/{alert_system_key}:
+    get:
+      summary: "Retrieve Alerts By Remote System Key"
+      description: Retrieves all alerts, for a single user, which have a specific "alert_system_key" property value.
+      parameters:
+        - name: user_id
+          in: path
+          required: true
+          description: "The unique identifier of the user (in the :alert_system)"
+          schema:
+            type: string
+
+        - name: alert_system
+          in: path
+          required: true
+          description: The name of the user's system (e.g. "barchart.com" or "grains.com")
+          schema:
+            type: string
+
+        - name: alert_system_key
+          in: path
+          required: true
+          description: "The key (specified by the remote system at creation) to match"
+          schema:
+            type: string
+
+      responses:
+        '200':
+          description: "A JSON document, containing an array of alert objects."
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Alert'
+        '500':
+          description: A JSON document, containing an error.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+
+
+  /alert/market/configuration/{alert_system}/{user_id}:
+    get:
+      summary: "Retrieve Market Data Configuration For User"
+      description: "Retrieves default publishing information for a single user."
+      parameters:
+        - name: alert_system
+          in: path
+          required: true
+          description: The name of the user's system (e.g. "barchart.com" or "grains.com")
+          schema:
+            type: string
+
+        - name: user_id
+          in: path
+          required: true
+          description: "The unique identifier of the user (in the :alert_system)"
+          schema:
+            type: string
+      responses:
+        200:
+          description: "A JSON document that conforms to the market-data-configuration schema."
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                  - user_id
+                  - alert_system
+                properties:
+                  alert_system:
+                    type: string
+                    example: "barchart.com"
+                  user_id:
+                    type: string
+                  configuration_id:
+                    type: string
+                    format: uuid
+                    example: "6bc32e9d-50ba-4f26-a633-a3cb3884b504"
+                  market_data_id:
+                    type: string
+                    example: "bri"
+
+
+  /alert/targets:
+    get:
+      summary: "Retrieve Targets"
+      description: "Retrieves a list of valid targets."
+      responses:
+        200:
+          description: "A JSON document containing an array of targets, conforming to the target schema."
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Target'
+
+  /alert/targets/properties:
+    get:
+      summary: "Retrieve Properties"
+      description: "Retrieves a list of valid properties (of targets)."
+      responses:
+        200:
+          description: "A JSON document containing an array of properties, conforming to the property schema."
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Property'
+
+  /alert/operators:
+    get:
+      summary: "Retrieve Operators"
+      description: "Retrieves a list of operators (for use in conjunction with properties)."
+      responses:
+        200:
+          description: "A JSON document containing an array of operators, conforming to the operator schema."
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Operator'
+
+
+
+
+  /alert/modifiers:
+    get:
+      summary: "Retrieve Modifiers"
+      description: "Retrieves a list of modifiers (for use in conjunction with properties)."
+      responses:
+        200:
+          description: "A JSON document containing an array of modifiers, conforming to the modifier schema."
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  modifier_id:
+                    type: string
+                    example: 3
+                  name:
+                    type: string
+                    example: "convert-price-currency"
+                  display:
+                    type: string
+                    example: "convert price currency"
+                  display_short:
+                    type: string
+                    example: "convert price currency"
+                  type:
+                    type: string
+                    example: "string"
+                  format:
+                    type: string
+                    nullable: true
+                    example: "0.00%"
+                  operand_index:
+                    type: integer
+                    example: 0
+                  target_types:
+                    type: array
+                    items:
+                      type: string
+                    example: ["number", "percent"]
+
+  /alert/publishers:
+    get:
+      summary: "Retrieve Publisher Types"
+      description: "Retrieves a list of publishers."
+      responses:
+        200:
+          description: "A JSON document containing an array of publisher types, conforming to the publisher-type schema."
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  publisher_type_id:
+                    type: integer
+                    example: 1
+                  transport:
+                    type: string
+                    example: "sms"
+                  provider:
+                    type: string
+                    example: "twilio"
+
+  /alert/publishers/default/{alert_system}/{user_id}:
+    get:
+      summary: "Retrieve Publisher Type Defaults For User"
+      description: "Retrieves default publishing information for a single user."
+      parameters:
+        - name: alert_system
+          in: path
+          required: true
+          description: The name of the user's system (e.g. "barchart.com" or "grains.com")
+          schema:
+            type: string
+
+        - name: user_id
+          in: path
+          required: true
+          description: The unique identifier of the user (in the :alert_system)
+          schema:
+            type: string
+
+      responses:
+        200:
+          description: "A JSON document, containing an array of publisher-type-default objects."
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  publisher_type_id:
+                    type: integer
+                    example: 1
+                  transport:
+                    type: string
+                    example: "sms"
+                  provider:
+                    type: string
+                    example: "twilio"
+                  user_id:
+                    type: string
+                  alert_system:
+                    type: string
+                    example: "barchart.com"
+                  default_recipient:
+                    type: string
+                    example: "2489539701"
+                  default_recipient_hmac:
+                    type: string # ???
+                  allow_window_timezone:
+                    type: string
+                    example: "America/Chicago"
+                  allow_window_start:
+                    type: string # ???
+                    nullable: true
+                  allow_window_end:
+                    type: string # ???
+                    nullable: true
+                  active_alert_types:
+                    type: array
+                    example: ["price"]
+                    items:
+                      type: string
+
+  /alert/publishers/default/{alert_system}/{user_id}/{publisher_type_id}:
+    put:
+      summary: "Save Publisher Type Defaults For User"
+      description: "Updates default publishing information for a single user."
+      parameters:
+        - name: user_id
+          in: path
+          required: true
+          description: "The unique identifier of the user (in the :alert_system)"
+          schema:
+            type: string
+
+        - name: alert_system
+          in: path
+          required: true
+          description: The name of the user's system (e.g. "barchart.com" or "grains.com")
+          schema:
+            type: string
+
+        - name: publisher_type_id
+          in: path
+          required: true
+          description: "The publisher type to change."
+          schema:
+            type: integer
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                publisher_type_id:
+                  type: integer
+                  example: 1
+                user_id:
+                  type: string
+                alert_system:
+                  type: string
+                  example: "barchart.com"
+                default_recipient:
+                  type: string
+                  example: "2489539701"
+                allow_window_timezone:
+                  type: string
+                  example: "America/Chicago"
+                allow_window_start:
+                  type: string # ???
+                  nullable: true
+                allow_window_end:
+                  type: string # ???
+                  nullable: true
+                active_alert_types:
+                  type: array
+                  example: ["price"]
+                  items:
+                    type: string
+
+      responses:
+        200:
+          description: A JSON document, containing the updated publisher-type-default
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    publisher_type_id:
+                      type: integer
+                      example: 1
+                    transport:
+                      type: string
+                      example: "sms"
+                    provider:
+                      type: string
+                      example: "twilio"
+                    user_id:
+                      type: string
+                    alert_system:
+                      type: string
+                      example: "barchart.com"
+                    default_recipient:
+                      type: string
+                      example: "2489539701"
+                    default_recipient_hmac:
+                      type: string # ???
+                    allow_window_timezone:
+                      type: string
+                      example: "America/Chicago"
+                    allow_window_start:
+                      type: string # ???
+                      nullable: true
+                    allow_window_end:
+                      type: string # ???
+                      nullable: true
+                    active_alert_types:
+                      type: array
+                      example: ["price"]
+                      items:
+                        type: string
