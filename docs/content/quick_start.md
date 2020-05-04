@@ -69,7 +69,7 @@ Once connected, we could create a new alert as follows:
 
 ## Demos
 
-A prebuilt, single-page web application is included with the SDK. It should provide some insight into the features and usage of the SDK.
+A prebuilt, single-page web application was built with this SDK. It could provide some insight into the features and usage of the SDK.
 
 You can find the source code here:
 
