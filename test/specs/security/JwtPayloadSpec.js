@@ -20,7 +20,7 @@ describe('When constructing a JwtPayload', () => {
 		expect(payload.alertSystem).toEqual(alertSystem);
 	});
 
-	describe('When serialized for signing purposes', () => {
+	describe('and serialized the instance for signing purposes', () => {
 		let serialized;
 
 		beforeEach(() => {
@@ -39,11 +39,11 @@ describe('When constructing a JwtPayload', () => {
 			expect(serialized.hasOwnProperty('alert_system')).toEqual(true);
 		});
 
-		it('the result "user_id" property should have the same value as the "userId" property', () => {
+		it('the result\'s "user_id" property should have the same value as the "userId" property', () => {
 			expect(serialized.user_id).toEqual(payload.userId);
 		});
 
-		it('the result "alert_system" property should have the same value as the "alertSystem" property', () => {
+		it('the result\'s "alert_system" property should have the same value as the "alertSystem" property', () => {
 			expect(serialized.alert_system).toEqual(payload.alertSystem);
 		});
 	});

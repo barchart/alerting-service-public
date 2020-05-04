@@ -33,7 +33,7 @@ describe('When building a jwtGenerator function for the demo environment', () =>
 			expect(signed.length > 0).toEqual(true);
 		});
 
-		describe('When decoding the JWT token for the demo environment', () => {
+		describe('and decoding the JWT token for the demo environment', () => {
 			let decoded;
 
 			beforeEach(() => {
@@ -44,11 +44,11 @@ describe('When building a jwtGenerator function for the demo environment', () =>
 				expect(typeof decoded).toEqual('object');
 			});
 
-			it('the result should a "user_id" property', () => {
+			it('the result should have a "user_id" property', () => {
 				expect(decoded.hasOwnProperty('user_id')).toEqual(true);
 			});
 
-			it('the result should an "alert_system" property', () => {
+			it('the result should have an "alert_system" property', () => {
 				expect(decoded.hasOwnProperty('alert_system')).toEqual(true);
 			});
 

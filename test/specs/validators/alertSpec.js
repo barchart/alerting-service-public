@@ -12,7 +12,7 @@ describe('When validating an alert object', () => {
 			alert.alert_id = 'id';
 		});
 
-		it('an object with only a string "alert_id" property should be valid', () => {
+		it('an object having an "alert_id" property with a string value should be valid', () => {
 			expect(() => validator.forQuery(alert)).not.toThrow();
 		});
 	});

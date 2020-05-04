@@ -16057,30 +16057,36 @@ utils.intFromLE = intFromLE;
 
 },{"bn.js":23,"minimalistic-assert":153,"minimalistic-crypto-utils":154}],93:[function(require,module,exports){
 module.exports={
-  "_from": "elliptic@^6.0.0",
+  "_args": [
+    [
+      "elliptic@6.5.2",
+      "/Users/bryan/Documents/git/alerts-client-js"
+    ]
+  ],
+  "_development": true,
+  "_from": "elliptic@6.5.2",
   "_id": "elliptic@6.5.2",
   "_inBundle": false,
   "_integrity": "sha512-f4x70okzZbIQl/NSRLkI/+tteV/9WqL98zx+SQ69KbXxmVrmjwsNUPn/gYJJ0sHvEak24cZgHIPegRePAtA/xw==",
   "_location": "/elliptic",
   "_phantomChildren": {},
   "_requested": {
-    "type": "range",
+    "type": "version",
     "registry": true,
-    "raw": "elliptic@^6.0.0",
+    "raw": "elliptic@6.5.2",
     "name": "elliptic",
     "escapedName": "elliptic",
-    "rawSpec": "^6.0.0",
+    "rawSpec": "6.5.2",
     "saveSpec": null,
-    "fetchSpec": "^6.0.0"
+    "fetchSpec": "6.5.2"
   },
   "_requiredBy": [
     "/browserify-sign",
     "/create-ecdh"
   ],
   "_resolved": "https://registry.npmjs.org/elliptic/-/elliptic-6.5.2.tgz",
-  "_shasum": "05c5678d7173c049d8ca433552224a495d0e3762",
-  "_spec": "elliptic@^6.0.0",
-  "_where": "/Users/bryan/Documents/git/alerts-client-js/node_modules/browserify-sign",
+  "_spec": "6.5.2",
+  "_where": "/Users/bryan/Documents/git/alerts-client-js",
   "author": {
     "name": "Fedor Indutny",
     "email": "fedor@indutny.com"
@@ -16088,7 +16094,6 @@ module.exports={
   "bugs": {
     "url": "https://github.com/indutny/elliptic/issues"
   },
-  "bundleDependencies": false,
   "dependencies": {
     "bn.js": "^4.4.0",
     "brorand": "^1.0.1",
@@ -16098,7 +16103,6 @@ module.exports={
     "minimalistic-assert": "^1.0.0",
     "minimalistic-crypto-utils": "^1.0.0"
   },
-  "deprecated": false,
   "description": "EC cryptography",
   "devDependencies": {
     "brfs": "^1.4.3",
@@ -31552,7 +31556,7 @@ describe('When constructing a JwtPayload', () => {
   it('the "alertSystem" property should equal the value passed to the constructor', () => {
     expect(payload.alertSystem).toEqual(alertSystem);
   });
-  describe('When serialized for signing purposes', () => {
+  describe('and serialized the instance for signing purposes', () => {
     let serialized;
     beforeEach(() => {
       serialized = payload.forSigning();
@@ -31566,10 +31570,10 @@ describe('When constructing a JwtPayload', () => {
     it('the result should have a "alert_system" property', () => {
       expect(serialized.hasOwnProperty('alert_system')).toEqual(true);
     });
-    it('the result "user_id" property should have the same value as the "userId" property', () => {
+    it('the result\'s "user_id" property should have the same value as the "userId" property', () => {
       expect(serialized.user_id).toEqual(payload.userId);
     });
-    it('the result "alert_system" property should have the same value as the "alertSystem" property', () => {
+    it('the result\'s "alert_system" property should have the same value as the "alertSystem" property', () => {
       expect(serialized.alert_system).toEqual(payload.alertSystem);
     });
   });
@@ -31603,7 +31607,7 @@ describe('When building a jwtGenerator function for the demo environment', () =>
     it('the result should contain more than one character', () => {
       expect(signed.length > 0).toEqual(true);
     });
-    describe('When decoding the JWT token for the demo environment', () => {
+    describe('and decoding the JWT token for the demo environment', () => {
       let decoded;
       beforeEach(() => {
         decoded = jwt.decode(signed);
@@ -31611,10 +31615,10 @@ describe('When building a jwtGenerator function for the demo environment', () =>
       it('the result should be on object', () => {
         expect(typeof decoded).toEqual('object');
       });
-      it('the result should a "user_id" property', () => {
+      it('the result should have a "user_id" property', () => {
         expect(decoded.hasOwnProperty('user_id')).toEqual(true);
       });
-      it('the result should an "alert_system" property', () => {
+      it('the result should have an "alert_system" property', () => {
         expect(decoded.hasOwnProperty('alert_system')).toEqual(true);
       });
       it('the result\'s "user_id" property value should match original value', () => {
@@ -31639,7 +31643,7 @@ describe('When validating an alert object', () => {
       alert = {};
       alert.alert_id = 'id';
     });
-    it('an object with only a string "alert_id" property should be valid', () => {
+    it('an object having an "alert_id" property with a string value should be valid', () => {
       expect(() => validator.forQuery(alert)).not.toThrow();
     });
   });
