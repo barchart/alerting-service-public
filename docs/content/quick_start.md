@@ -67,6 +67,19 @@ Once connected, we could create a new alert as follows:
 
 ### Using the API
 
+## Demos
+
+A prebuilt, single-page web application is included with the SDK. It should provide some insight into the features and usage of the SDK.
+
+You can find the source code here:
+
+* /example/browser/example.html
+* /example/browser/js/startup.js
+
+The application is also hosted at:
+
+https://examples.aws.barchart.com/alerts-client-js/example.html
+
 
 
 
