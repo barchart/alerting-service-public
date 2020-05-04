@@ -1669,7 +1669,7 @@ module.exports = (() => {
      */
 
 
-    static version() {
+    static get version() {
       return version;
     }
 
