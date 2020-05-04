@@ -10,7 +10,14 @@
 
 * [Callbacks](#Callbacks) 
 
-## AdapterBase :id=adapterbase
+## AdapterBase :id=AdapterBase
+>The abstract definition for a transport strategy between the [AlertManager](/content/sdk/lib?id=undefined) and
+the backend. As a consumer of the SDK, it is unlikely you will need to implement this
+class. However, you will need to select an existing implementation and pass it to your
+[AlertManager](/content/sdk/lib?id=undefined) instance. Two existing implementations are included in the SDK.
+One uses pure HTTP requests. The other uses the [Socket.IO](https://socket.io/docs/)
+library.
+
 **Kind**: global abstract class  
 **Extends**: <code>Disposable</code>  
 **Access**: public  
@@ -18,59 +25,68 @@
 **File**: /lib/adapters/AdapterBase.js  
 **See**
 
-- [AdapterForHttp](/content/sdk/lib-adapters?id=adapterforhttp)
-- [AdapterForSocketIo](/content/sdk/lib-adapters?id=adapterforsocketio)
-
->The abstract definition for a transport strategy between the [AlertManager](/content/sdk/lib?id=alertmanager) and
-the backend. As a consumer of the SDK, it is unlikely you will need to implement this
-class. However, you will need to select an existing implementation and pass it to your
-[AlertManager](/content/sdk/lib?id=alertmanager) instance. Two existing implementations are included in the SDK.
-One uses pure HTTP requests. The other uses the [Socket.IO](https://socket.io/docs/)
-library.
+- [AdapterForHttp](/content/sdk/lib-adapters?id=undefined)
+- [AdapterForSocketIo](/content/sdk/lib-adapters?id=undefined)
 
 
 * * *
 
-## AdapterForHttp :id=adapterforhttp
+### new AdapterBase(host, port, secure, onAlertCreated, onAlertMutated, onAlertDeleted, onAlertTriggered) :id=new_AdapterBase_new
+**Kind**: constructor of <code>AdapterBase</code>  
+
+| Param | Type |
+| --- | --- |
+| host | <code>String</code> | 
+| port | <code>Number</code> | 
+| secure | <code>Boolean</code> | 
+| onAlertCreated | [<code>AlertCreatedCallback</code>](#CallbacksAlertCreatedCallback) | 
+| onAlertMutated | [<code>AlertMutatedCallback</code>](#CallbacksAlertMutatedCallback) | 
+| onAlertDeleted | [<code>AlertDeletedCallback</code>](#CallbacksAlertDeletedCallback) | 
+| onAlertTriggered | [<code>AlertTriggeredCallback</code>](#CallbacksAlertTriggeredCallback) | 
+
+
+* * *
+
+## AdapterForHttp :id=AdapterForHttp
+>A backend communication strategy implemented with HTTP requests. Commands
+to the backend are issued via HTTP requests. Data feeds from the server are
+handled via simple short polling.
+
 **Kind**: global class  
 **Extends**: <code>AdapterBase</code>  
 **Access**: public  
 **Import**: @barchart/alerts-client-js/lib/adapters/AdapterForHttp  
 **File**: /lib/adapters/AdapterForHttp.js  
->A backend communication strategy implemented with HTTP requests. Commands
-to the backend are issued via HTTP requests. Data feeds from the server are
-handled via simple short polling.
-
 
 * * *
 
-## AdapterForSocketIo :id=adapterforsocketio
+## AdapterForSocketIo :id=AdapterForSocketIo
+>A backend communication strategy implemented with the [Socket.IO](https://socket.io/docs/) library.
+The Socket.IO will use a WebSocket in modern browsers.
+
 **Kind**: global class  
 **Extends**: <code>AdapterBase</code>  
 **Access**: public  
 **Import**: @barchart/alerts-client-js/lib/adapters/AdapterForSocketIo  
 **File**: /lib/adapters/AdapterForSocketIo.js  
->A backend communication strategy implemented with the [Socket.IO](https://socket.io/docs/) library.
-The Socket.IO will use a WebSocket in modern browsers.
-
 
 * * *
 
-## AdapterForWebSockets :id=adapterforwebsockets
+## AdapterForWebSockets :id=AdapterForWebSockets
+>A backend communication adapter implemented with WebSockets. Coming in version 4.1.0.
+
 **Kind**: global class  
 **Extends**: <code>AdapterBase</code>  
 **Access**: public  
 **Import**: @barchart/alerts-client-js/lib/adapters/AdapterForWebSockets  
 **File**: /lib/adapters/AdapterForWebSockets.js  
->A backend communication adapter implemented with WebSockets. Coming in version 4.1.0.
-
 
 * * *
 
-## Callbacks :id=callbacks
-**Kind**: global namespace  
+## Callbacks :id=Callbacks
 >A meta namespace containing signatures of anonymous functions.
 
+**Kind**: global namespace  
 
 * [Callbacks](#Callbacks) : <code>object</code>
     * [.AlertCreatedCallback](#CallbacksAlertCreatedCallback) ⇒ <code>Object</code>
@@ -81,43 +97,43 @@ The Socket.IO will use a WebSocket in modern browsers.
 
 * * *
 
-### Callbacks.AlertCreatedCallback :id=callbacksalertcreatedcallback
-**Kind**: static typedef of <code>Callbacks</code>  
-**Returns**: <code>Object</code>  
-**Access**: public  
->The function signature for a callback which notifies the [AlertManager](/content/sdk/lib?id=alertmanager)
+### Callbacks.AlertCreatedCallback :id=Callbacks.AlertCreatedCallback
+>The function signature for a callback which notifies the [AlertManager](/content/sdk/lib?id=undefined)
 after a new alert has been created.
 
-
-* * *
-
-### Callbacks.AlertMutatedCallback :id=callbacksalertmutatedcallback
 **Kind**: static typedef of <code>Callbacks</code>  
 **Returns**: <code>Object</code>  
 **Access**: public  
->The function signature for a callback which notifies the [AlertManager](/content/sdk/lib?id=alertmanager)
+
+* * *
+
+### Callbacks.AlertMutatedCallback :id=Callbacks.AlertMutatedCallback
+>The function signature for a callback which notifies the [AlertManager](/content/sdk/lib?id=undefined)
 after an alert mutates (e.g. its stage changes).
 
-
-* * *
-
-### Callbacks.AlertDeletedCallback :id=callbacksalertdeletedcallback
 **Kind**: static typedef of <code>Callbacks</code>  
 **Returns**: <code>Object</code>  
 **Access**: public  
->The function signature for a callback which notifies the [AlertManager](/content/sdk/lib?id=alertmanager)
+
+* * *
+
+### Callbacks.AlertDeletedCallback :id=Callbacks.AlertDeletedCallback
+>The function signature for a callback which notifies the [AlertManager](/content/sdk/lib?id=undefined)
 after an alert has been deleted.
 
-
-* * *
-
-### Callbacks.AlertTriggeredCallback :id=callbacksalerttriggeredcallback
 **Kind**: static typedef of <code>Callbacks</code>  
 **Returns**: <code>Object</code>  
 **Access**: public  
->The function signature for a callback which notifies the [AlertManager](/content/sdk/lib?id=alertmanager)
+
+* * *
+
+### Callbacks.AlertTriggeredCallback :id=Callbacks.AlertTriggeredCallback
+>The function signature for a callback which notifies the [AlertManager](/content/sdk/lib?id=undefined)
 after an alert has been triggered.
 
+**Kind**: static typedef of <code>Callbacks</code>  
+**Returns**: <code>Object</code>  
+**Access**: public  
 
 * * *
 

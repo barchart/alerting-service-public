@@ -1,11 +1,14 @@
-## Schema :id=schema
-**Kind**: global namespace  
+## Schema :id=Schema
 >A meta namespace containing structural contracts of anonymous objects.
 
+**Kind**: global namespace  
 
 * * *
 
-### Schema.Alert :id=schemaalert
+### Schema.Alert :id=Schema.Alert
+>An "alert" consists of one or more [Condition](Condition) objects and one or more
+[Publisher](Publisher) objects.
+
 **Kind**: static typedef of <code>Schema</code>  
 **Properties**
 
@@ -29,9 +32,6 @@
 | publishers | <code>Array.&lt;Publisher&gt;</code> |  |
 | schedules | <code>Array.&lt;AlertResetSchedule&gt;</code> |  |
 | tracking_server_id | <code>String</code> |  |
-
->An "alert" consists of one or more [Condition](Condition) objects and one or more
-[Publisher](Publisher) objects.
 
 
 * * *

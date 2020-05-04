@@ -6,83 +6,112 @@
 
 * [Callbacks](#Callbacks) 
 
-## JwtPayload :id=jwtpayload
+## JwtPayload :id=JwtPayload
+>A simple object which contains properties that must be included in a JWT token.
+
 **Kind**: global class  
 **Access**: public  
 **Import**: @barchart/alerts-client-js/lib/security/JwtPayload  
 **File**: /lib/security/JwtPayload.js  
->A simple object which contains properties that must be included in a JWT token.
-
 
 * [JwtPayload](#JwtPayload)
     * [.userId](#JwtPayloaduserId) ⇒ <code>String</code>
     * [.alertSystem](#JwtPayloadalertSystem) ⇒ <code>String</code>
     * [.forSigning()](#JwtPayloadforSigning) ⇒ <code>String</code>
+    * [new JwtPayload(userId, alertSystem)](#new_JwtPayload_new)
 
 
 * * *
 
-### jwtPayload.userId :id=jwtpayloaduserid
-**Kind**: instance property of <code>JwtPayload</code>  
-**Returns**: <code>String</code>  
-**Access**: public  
+### jwtPayload.userId :id=JwtPayload#userId
 >The unique identifier of the authenticated user. This value must match
 the [Schema.Alert#user_id](Schema.Alert#user_id) of any alert you attempt to create, edit, or delete.
 
-
-* * *
-
-### jwtPayload.alertSystem :id=jwtpayloadalertsystem
 **Kind**: instance property of <code>JwtPayload</code>  
 **Returns**: <code>String</code>  
 **Access**: public  
+
+* * *
+
+### jwtPayload.alertSystem :id=JwtPayload#alertSystem
 >The authenticated user's domain. In the demo environment, use your company name. This value must
 match the [Schema.Alert#alert_system](Schema.Alert#alert_system) of any alert you attempt to create, edit, or delete.
 
+**Kind**: instance property of <code>JwtPayload</code>  
+**Returns**: <code>String</code>  
+**Access**: public  
 
 * * *
 
-### jwtPayload.forSigning() :id=jwtpayloadforsigning
+### jwtPayload.forSigning() :id=JwtPayload#forSigning
+>Returns the simple object representation, used for signing a token.
+
 **Kind**: instance method of <code>JwtPayload</code>  
 **Returns**: <code>String</code>  
 **Access**: public  
->Returns the simple object representation, used for signing a token.
+
+* * *
+
+### new JwtPayload(userId, alertSystem) :id=new_JwtPayload_new
+**Kind**: constructor of <code>JwtPayload</code>  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| userId | <code>String</code> | The unique identifier of the authenticated user. |
+| alertSystem | <code>String</code> | The authenticated user's domain. In the demo environment, use your company name. In the production environment, Barchart will assign a value to use. |
 
 
 * * *
 
-## JwtProvider :id=jwtprovider
+## JwtProvider :id=JwtProvider
+>Provides JWT tokens to the adapters (i.e. [AdapterBase](/content/sdk/lib-adapters?id=undefined) implementations).
+
 **Kind**: global class  
 **Access**: public  
 **Import**: @barchart/alerts-client-js/lib/security/JwtProvider  
 **File**: /lib/security/JwtProvider.js  
->Provides JWT tokens to the adapters (i.e. [AdapterBase](/content/sdk/lib-adapters?id=adapterbase) implementations).
+
+* [JwtProvider](#JwtProvider)
+    * [.getToken()](#JwtProvidergetToken) ⇒ <code>Promise.&lt;String&gt;</code>
+    * [new JwtProvider(generator, interval, source)](#new_JwtProvider_new)
 
 
 * * *
 
-### jwtProvider.getToken() :id=jwtprovidergettoken
+### jwtProvider.getToken() :id=JwtProvider#getToken
+>Reads the current JWT token, refreshing if necessary.
+
 **Kind**: instance method of <code>JwtProvider</code>  
 **Returns**: <code>Promise.&lt;String&gt;</code>  
 **Access**: public  
->Reads the current JWT token, refreshing if necessary.
+
+* * *
+
+### new JwtProvider(generator, interval, source) :id=new_JwtProvider_new
+**Kind**: constructor of <code>JwtProvider</code>  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| generator | [<code>JwtTokenGenerator</code>](#CallbacksJwtTokenGenerator) | An anonymous function which returns a signed JWT token. |
+| interval | <code>Number</code> | The number of milliseconds which must pass before a new JWT token is generated. |
+| source | <code>String</code> | Your company name. |
 
 
 * * *
 
-## Callbacks :id=callbacks
-**Kind**: global namespace  
+## Callbacks :id=Callbacks
 >A meta namespace containing signatures of anonymous functions.
 
+**Kind**: global namespace  
 
 * * *
 
-### Callbacks.JwtTokenGenerator :id=callbacksjwttokengenerator
+### Callbacks.JwtTokenGenerator :id=Callbacks.JwtTokenGenerator
+>The signature for a function which generates signs a JWT token.
+
 **Kind**: static typedef of <code>Callbacks</code>  
 **Returns**: <code>String</code> \| <code>Promise.&lt;String&gt;</code>  
 **Access**: public  
->The signature for a function which generates signs a JWT token.
-
 
 * * *
 
