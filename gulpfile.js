@@ -131,7 +131,7 @@ gulp.task('execute-browser-tests', () => {
 });
 
 gulp.task('execute-node-tests', () => {
-	return gulp.src(['lib/index.js', 'test/specs/**/*.js'])
+	return gulp.src(['test/specs/**/*.js'])
 		.pipe(jasmine());
 });
 

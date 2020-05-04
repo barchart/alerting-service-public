@@ -1,44 +1,17 @@
-const AlertManager = require('./../../../lib/alerts/AlertManager'),
-	JwtProvider = require('./../../../lib/alerts/JwtProvider'),
-	timezone = require('@barchart/common-js/lang/timezone'),
-	version = require('./../../../lib/meta').version;
+const AlertManager = require('../../../lib/AlertManager');
 
-const EndpointBuilder = require('@barchart/common-js/api/http/builders/EndpointBuilder'),
-	ProtocolType = require('@barchart/common-js/api/http/definitions/ProtocolType'),
-	ResponseInterceptor = require('@barchart/common-js/api/http/interceptors/ResponseInterceptor'),
-	VerbType = require('@barchart/common-js/api/http/definitions/VerbType');
+const AdapterForHttp = require('../../../lib/adapters/AdapterForHttp'),
+	AdapterForSocketIo = require('../../../lib/adapters/AdapterForSocketIo');
 
-const JwtGateway = require('@barchart/tgam-jwt-js/lib/JwtGateway');
+const JwtProvider = require('../../../lib/security/JwtProvider'),
+	getJwtGenerator = require('../../../lib/security/demo/getJwtGenerator');
+
+const timezone = require('@barchart/common-js/lang/timezone');
 
 module.exports = (() => {
 	'use strict';
 
 	var alertManager;
-
-	/*
-	var createJwtProvider = function() {
-		var endpoint = EndpointBuilder.for('JwtTokenGenerator', 'Jwt Token Generator')
-			.withVerb(VerbType.GET)
-			.withProtocol(ProtocolType.HTTPS)
-			.withHost('y0glq1g3x7.execute-api.us-east-1.amazonaws.com')
-			.withPathBuilder((pb) => {
-				pb.withLiteralParameter('dev', 'dev')
-					.withLiteralParameter('token', 'token')
-					.withLiteralParameter('barchart', 'barchart')
-					.withLiteralParameter('generator', 'generator')
-			})
-			.withQueryBuilder((qb) => {
-				qb.withLiteralParameter('userId', 'userId', '123456789')
-			})
-			.withResponseInterceptor(ResponseInterceptor.DATA)
-			.endpoint;
-
-		return JwtGateway.forDevelopment(endpoint)
-			.then((gateway) => {
-				return new JwtProvider(() => gateway.readToken(), 60000, 'TGAM');
-			});
-	};
-	*/
 
 	var utilities = AlertManager;
 
@@ -55,7 +28,7 @@ module.exports = (() => {
 	function PageModel(host, system, userId) {
 		var that = this;
 
-		that.host = ko.observable(host || 'alerts-management-stage.barchart.com');
+		that.host = ko.observable(host || 'alerts-management-test.barchart.com');
 		that.system = ko.observable(system || 'barchart.com');
 		that.userId = ko.observable(userId || '000000');
 		that.mode = ko.observable('socket.io');
@@ -1063,16 +1036,29 @@ module.exports = (() => {
 	var reset = function(host, system, userId, mode) {
 		ko.cleanNode($('body')[0]);
 
-		//return createJwtProvider()
-		//	.then((jwtProvider) => {
-		//		return alertManager.connect(jwtProvider)
-
 		return Promise.resolve()
 			.then(() => {
+				let port;
+				let secure;
+
 				if (host && host === 'localhost') {
-					alertManager = new AlertManager('localhost', 3000, mode, false);
-				} else if (host) {
-					alertManager = new AlertManager(host, 443, mode, true);
+					port = 3000;
+					secure = false;
+				} else {
+					port = 443;
+					secure = true;
+				}
+
+				let adapterClazz;
+
+				if (mode === 'socket.io') {
+					adapterClazz = AdapterForSocketIo;
+				} else {
+					adapterClazz = AdapterForHttp;
+				}
+
+				if (host) {
+					alertManager = new AlertManager(host, port, secure, adapterClazz);
 				} else {
 					alertManager = null;
 				}
@@ -1084,7 +1070,10 @@ module.exports = (() => {
 				if (alertManager) {
 					pageModel.connecting(true);
 
-					initializePromise = alertManager.connect(null)
+					var jwtGenerator = getJwtGenerator(userId, system);
+					var jwtpPovider = new JwtProvider(jwtGenerator, 60000, 'demo');
+
+					initializePromise = alertManager.connect(jwtpPovider)
 						.then(function() {
 							if (!(system === 'barchart.com' || system === 'grains.com' || system === 'webstation.barchart.com' || system === 'gos.agricharts.com' || system === 'gbemembers.com' || system === 'cmdtymarketplace.com')) {
 								throw 'Invalid system, please re-enter...';
@@ -1123,7 +1112,7 @@ module.exports = (() => {
 							startupPromises.push(
 								alertManager.getServerVersion()
 									.then(function(data) {
-										pageModel.version({ api: data.semver, client: version });
+										pageModel.version({ api: data.semver, sdk: AlertManager.version });
 									})
 							);
 
@@ -1187,6 +1176,8 @@ module.exports = (() => {
 									pageModel.changeToGrid();
 								});
 						}).catch((e) => {
+							debugger;
+
 							console.log(e);
 
 							alertManager.dispose();
@@ -1194,8 +1185,6 @@ module.exports = (() => {
 
 							pageModel.connected(false);
 							pageModel.activeTemplate('alert-disconnected');
-
-						console.log(e);
 
 							if (typeof e === 'string') {
 								pageModel.message(e);
