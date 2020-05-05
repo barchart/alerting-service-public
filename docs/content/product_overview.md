@@ -1,23 +1,22 @@
 ## Purpose
 
-**This SDK enables your JavaScript applications to setup alert notifications based on [Barchart's](https://www.barchart.com/solutions/) streaming data sources.**
+**This SDK connects you to the _Barchart Alert Service_, enabling you to define alert conditions and receive instantaneous notifications when conditions are met.**
 
 Here's how it works:
 
-* You choose notification mechanism(s):
+* You _choose_ notification mechanism(s):
 	* Receive notifications via email
 	* Receive notifications via SMS messages
 	* Receive notifications to your web service, via HTTP POST
 	* Receive push notifications to your mobile applications (coming soon)
-* You define an alert:
-	* Add at least one conditional provision, for example:
+* You _define_ an alert:
+	* Add at least one condition, for example:
 		* Apple common stock trades over $500.00 per share
 		* Apple common stock achieves a new 30 high
 		* A news article, mentioning Apple common stock, was just published
-		* Thousands more possibilities
-* Start your alert:
-	* While active, Barchart's Alert Service will continuously monitor your alert's conditions
-	* Once your alert's conditions have been met, you will be notified.
+* You _start_ the alert:
+	* Barchart's Alert Service will continuously monitor your conditions
+	* Once your conditions are met, notifications are sent
 
 ## Streaming Data Catalog
 
