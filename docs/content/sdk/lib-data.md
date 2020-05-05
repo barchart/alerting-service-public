@@ -4,8 +4,9 @@
 **Kind**: global namespace  
 
 * [Schema](#Schema) : <code>object</code>
-    * [.AlertFilter](#SchemaAlertFilter) : <code>Object</code>
-    * [.Alert](#SchemaAlert) : <code>Object</code>
+    * _static_
+        * [.AlertFilter](#SchemaAlertFilter) : <code>Object</code>
+        * [.Alert](#SchemaAlert) : <code>Object</code>
 
 
 * * *

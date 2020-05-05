@@ -18,10 +18,12 @@
 **File**: /lib/security/JwtPayload.js  
 
 * [JwtPayload](#JwtPayload)
-    * [.userId](#JwtPayloaduserId) ⇒ <code>String</code>
-    * [.alertSystem](#JwtPayloadalertSystem) ⇒ <code>String</code>
-    * [.forSigning()](#JwtPayloadforSigning) ⇒ <code>String</code>
-    * [new JwtPayload(userId, alertSystem)](#new_JwtPayload_new)
+    * _instance_
+        * [.userId](#JwtPayloaduserId) ⇒ <code>String</code>
+        * [.alertSystem](#JwtPayloadalertSystem) ⇒ <code>String</code>
+        * [.forSigning()](#JwtPayloadforSigning) ⇒ <code>String</code>
+    * _constructor_
+        * [new JwtPayload(userId, alertSystem)](#new_JwtPayload_new)
 
 
 * * *
@@ -75,8 +77,10 @@ match the [Schema.Alert#alert_system](Schema.Alert#alert_system) of any alert yo
 **File**: /lib/security/JwtProvider.js  
 
 * [JwtProvider](#JwtProvider)
-    * [.getToken()](#JwtProvidergetToken) ⇒ <code>Promise.&lt;String&gt;</code>
-    * [new JwtProvider(generator, interval, source)](#new_JwtProvider_new)
+    * _instance_
+        * [.getToken()](#JwtProvidergetToken) ⇒ <code>Promise.&lt;String&gt;</code>
+    * _constructor_
+        * [new JwtProvider(generator, interval, source)](#new_JwtProvider_new)
 
 
 * * *

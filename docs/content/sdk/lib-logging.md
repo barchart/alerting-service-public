@@ -21,12 +21,13 @@ class is returned by [LoggerProvider.getLogger](LoggerProvider.getLogger).
 **File**: /lib/logging/Logger.js  
 
 * *[Logger](#Logger)*
-    * **[.log()](#Loggerlog)**
-    * **[.trace()](#Loggertrace)**
-    * **[.debug()](#Loggerdebug)**
-    * **[.info()](#Loggerinfo)**
-    * **[.warn()](#Loggerwarn)**
-    * **[.error()](#Loggererror)**
+    * _instance_
+        * **[.log()](#Loggerlog)**
+        * **[.trace()](#Loggertrace)**
+        * **[.debug()](#Loggerdebug)**
+        * **[.info()](#Loggerinfo)**
+        * **[.warn()](#Loggerwarn)**
+        * **[.error()](#Loggererror)**
 
 
 * * *
@@ -118,10 +119,11 @@ class is returned by [LoggerProvider.getLogger](LoggerProvider.getLogger).
 **File**: /lib/logging/LoggerFactory.js  
 
 * [LoggerFactory](#LoggerFactory)
-    * [.configureForConsole()](#LoggerFactoryconfigureForConsole)
-    * [.configureForSilence()](#LoggerFactoryconfigureForSilence)
-    * [.configure(provider)](#LoggerFactoryconfigure)
-    * [.getLogger(category)](#LoggerFactorygetLogger) ⇒ <code>Logger</code>
+    * _static_
+        * [.configureForConsole()](#LoggerFactoryconfigureForConsole)
+        * [.configureForSilence()](#LoggerFactoryconfigureForSilence)
+        * [.configure(provider)](#LoggerFactoryconfigure)
+        * [.getLogger(category)](#LoggerFactorygetLogger) ⇒ <code>Logger</code>
 
 
 * * *

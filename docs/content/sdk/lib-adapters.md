@@ -92,10 +92,11 @@ The Socket.IO will use a WebSocket in modern browsers.
 **Kind**: global namespace  
 
 * [Callbacks](#Callbacks) : <code>object</code>
-    * [.AlertCreatedCallback](#CallbacksAlertCreatedCallback) ⇒ <code>Object</code>
-    * [.AlertMutatedCallback](#CallbacksAlertMutatedCallback) ⇒ <code>Object</code>
-    * [.AlertDeletedCallback](#CallbacksAlertDeletedCallback) ⇒ <code>Object</code>
-    * [.AlertTriggeredCallback](#CallbacksAlertTriggeredCallback) ⇒ <code>Object</code>
+    * _static_
+        * [.AlertCreatedCallback](#CallbacksAlertCreatedCallback) ⇒ <code>Object</code>
+        * [.AlertMutatedCallback](#CallbacksAlertMutatedCallback) ⇒ <code>Object</code>
+        * [.AlertDeletedCallback](#CallbacksAlertDeletedCallback) ⇒ <code>Object</code>
+        * [.AlertTriggeredCallback](#CallbacksAlertTriggeredCallback) ⇒ <code>Object</code>
 
 
 * * *
