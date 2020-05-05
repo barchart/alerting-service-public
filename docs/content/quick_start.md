@@ -58,11 +58,13 @@ alertManager.connect(jwtGeneratorFactory('me', 'example.com'))
 Once connected, we can request a list of alerts (belonging to me@example.com) as follows:
 
 ```js
+
 ```
 
 Once connected, we could create a new alert as follows:
 
 ```js
+
 ```
 
 ### Using the API

@@ -43,6 +43,7 @@
 		"gulp-replace": "^0.5.4",
 		"jsdoc": "^3.5.5",
 		"jshint": "2.9.5",
+		"log4js": "^4.4.0",
 		"vinyl-buffer": "^1.0.1",
 		"vinyl-source-stream": "^2.0.0"
 	},

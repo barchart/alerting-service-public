@@ -1,10 +1,10 @@
-const AlertManager = require('../../../lib/AlertManager');
+const AlertManager = require('./../../../lib/AlertManager');
 
-const AdapterForHttp = require('../../../lib/adapters/AdapterForHttp'),
-	AdapterForSocketIo = require('../../../lib/adapters/AdapterForSocketIo');
+const AdapterForHttp = require('./../../../lib/adapters/AdapterForHttp'),
+	AdapterForSocketIo = require('./../../../lib/adapters/AdapterForSocketIo');
 
-const JwtProvider = require('../../../lib/security/JwtProvider'),
-	getJwtGenerator = require('../../../lib/security/demo/getJwtGenerator');
+const JwtProvider = require('./../../../lib/security/JwtProvider'),
+	getJwtGenerator = require('./../../../lib/security/demo/getJwtGenerator');
 
 const timezone = require('@barchart/common-js/lang/timezone');
 
@@ -1071,9 +1071,9 @@ module.exports = (() => {
 					pageModel.connecting(true);
 
 					var jwtGenerator = getJwtGenerator(userId, system);
-					var jwtpPovider = new JwtProvider(jwtGenerator, 60000, 'demo');
+					var jwtPovider = new JwtProvider(jwtGenerator, 60000, 'demo');
 
-					initializePromise = alertManager.connect(jwtpPovider)
+					initializePromise = alertManager.connect(jwtPovider)
 						.then(function() {
 							if (!(system === 'barchart.com' || system === 'grains.com' || system === 'webstation.barchart.com' || system === 'gos.agricharts.com' || system === 'gbemembers.com' || system === 'cmdtymarketplace.com')) {
 								throw 'Invalid system, please re-enter...';
