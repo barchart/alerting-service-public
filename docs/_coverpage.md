@@ -1,6 +1,6 @@
-# @barchart/alerts-client-js <small>4.0.0</small>
+# Barchart Alert Service SDK <small>4.0.0</small>
 
-> JavaScript SDK for Barchart Alert Service
+> Track market conditions and receive notifications
 
 [Product Overview](/content/product_overview)
 [Quick Start](/content/quick_start)
