@@ -1,0 +1,215 @@
+## Contents {docsify-ignore}
+
+* [Logger](#Logger) 
+
+* [LoggerFactory](#LoggerFactory) 
+
+* [LoggerProvider](#LoggerProvider) 
+
+* [Schema](#Schema) 
+
+
+* * *
+
+## Logger :id=logger
+>An interface for writing log messages. An implementation of this
+class is returned by [LoggerProvider.getLogger](LoggerProvider.getLogger).
+
+**Kind**: global abstract class  
+**Access**: public  
+**Import**: @barchart/alerts-client-js/lib/logging/Logger  
+**File**: /lib/logging/Logger.js  
+
+* *[Logger](#Logger)*
+    * **[.log()](#Loggerlog)**
+    * **[.trace()](#Loggertrace)**
+    * **[.debug()](#Loggerdebug)**
+    * **[.info()](#Loggerinfo)**
+    * **[.warn()](#Loggerwarn)**
+    * **[.error()](#Loggererror)**
+
+
+* * *
+
+### logger.log() :id=loggerlog
+>Writes a log message.
+
+**Kind**: instance abstract method of <code>Logger</code>  
+**Access**: public  
+
+| Param | Type |
+| --- | --- |
+| ... | [<code>Loggable</code>](#SchemaLoggable) | 
+
+
+* * *
+
+### logger.trace() :id=loggertrace
+>Writes a log message at "trace" level.
+
+**Kind**: instance abstract method of <code>Logger</code>  
+**Access**: public  
+
+| Param | Type |
+| --- | --- |
+| ... | [<code>Loggable</code>](#SchemaLoggable) | 
+
+
+* * *
+
+### logger.debug() :id=loggerdebug
+>Writes a log message at "debug" level.
+
+**Kind**: instance abstract method of <code>Logger</code>  
+**Access**: public  
+
+| Param | Type |
+| --- | --- |
+| ... | [<code>Loggable</code>](#SchemaLoggable) | 
+
+
+* * *
+
+### logger.info() :id=loggerinfo
+>Writes a log message at "info" level.
+
+**Kind**: instance abstract method of <code>Logger</code>  
+**Access**: public  
+
+| Param | Type |
+| --- | --- |
+| ... | [<code>Loggable</code>](#SchemaLoggable) | 
+
+
+* * *
+
+### logger.warn() :id=loggerwarn
+>Writes a log message at "warn" level.
+
+**Kind**: instance abstract method of <code>Logger</code>  
+**Access**: public  
+
+| Param | Type |
+| --- | --- |
+| ... | [<code>Loggable</code>](#SchemaLoggable) | 
+
+
+* * *
+
+### logger.error() :id=loggererror
+>Writes a log message at "error" level.
+
+**Kind**: instance abstract method of <code>Logger</code>  
+**Access**: public  
+
+| Param | Type |
+| --- | --- |
+| ... | [<code>Loggable</code>](#SchemaLoggable) | 
+
+
+* * *
+
+## LoggerFactory :id=loggerfactory
+>Container for static functions which control logging within the SDK.
+
+**Kind**: global class  
+**Access**: public  
+**Import**: @barchart/alerts-client-js/lib/logging/LoggerFactory  
+**File**: /lib/logging/LoggerFactory.js  
+
+* [LoggerFactory](#LoggerFactory)
+    * [.configureForConsole()](#LoggerFactoryconfigureForConsole)
+    * [.configureForSilence()](#LoggerFactoryconfigureForSilence)
+    * [.configure(provider)](#LoggerFactoryconfigure)
+    * [.getLogger(category)](#LoggerFactorygetLogger) ⇒ <code>Logger</code>
+
+
+* * *
+
+### LoggerFactory.configureForConsole() :id=loggerfactoryconfigureforconsole
+>Configures the SDK to write log messages to the console.
+
+**Kind**: static method of <code>LoggerFactory</code>  
+**Access**: public  
+
+* * *
+
+### LoggerFactory.configureForSilence() :id=loggerfactoryconfigureforsilence
+>Configures the SDK to mute all log messages.
+
+**Kind**: static method of <code>LoggerFactory</code>  
+**Access**: public  
+
+* * *
+
+### LoggerFactory.configure(provider) :id=loggerfactoryconfigure
+>Configures the library to delegate any log messages to a custom
+implementation of the [LoggerProvider](/content/sdk/lib-logging?id=loggerprovider) class.
+
+**Kind**: static method of <code>LoggerFactory</code>  
+**Access**: public  
+
+| Param | Type |
+| --- | --- |
+| provider | <code>LoggerProvider</code> | 
+
+
+* * *
+
+### LoggerFactory.getLogger(category) :id=loggerfactorygetlogger
+>Returns an instance of [Logger](/content/sdk/lib-logging?id=logger) for a specific category.
+
+**Kind**: static method of <code>LoggerFactory</code>  
+**Returns**: <code>Logger</code>  
+**Access**: public  
+
+| Param | Type |
+| --- | --- |
+| category | <code>String</code> | 
+
+
+* * *
+
+## LoggerProvider :id=loggerprovider
+>A contract for generating [Logger](/content/sdk/lib-logging?id=logger) instances. For custom logging
+the SDK consumer should implement this class and pass it to the
+[configure](#LoggerFactoryconfigure) function.
+
+**Kind**: global abstract class  
+**Access**: public  
+**Import**: @barchart/alerts-client-js/lib/logging/LoggerProvider  
+**File**: /lib/logging/LoggerProvider.js  
+
+* * *
+
+### loggerProvider.getLogger(category) :id=loggerprovidergetlogger
+>Returns an instance of [Logger](/content/sdk/lib-logging?id=logger).
+
+**Kind**: instance method of <code>LoggerProvider</code>  
+**Returns**: <code>Logger</code>  
+**Access**: public  
+
+| Param | Type |
+| --- | --- |
+| category | <code>String</code> | 
+
+
+* * *
+
+## Schema :id=schema
+>A meta namespace containing structural contracts of anonymous objects.
+
+**Kind**: global namespace  
+
+* * *
+
+### Schema.Loggable :id=schemaloggable
+>Something which can be logged (e.g. ```String```, ```Number```, or ```Object```). Ultimately,
+the [Logger](/content/sdk/lib-logging?id=logger) implementation will determine the method (e.g. using ```JSON.stringify``` or
+```toString```).
+
+**Kind**: static typedef of <code>Schema</code>  
+**Access**: public  
+
+* * *
+
