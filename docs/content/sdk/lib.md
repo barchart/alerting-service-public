@@ -1,5 +1,6 @@
 ## AlertManager :id=alertmanager
->The entry point for interacting with the Barchart's Alert Service.
+>The **central component of the SDK**. It is responsible for connecting to Barchart's
+Alert Service, querying existing alerts, creating new alerts, and monitoring alert status.
 
 **Kind**: global class  
 **Extends**: <code>Disposable</code>  
@@ -10,9 +11,9 @@
 * [AlertManager](#AlertManager) ⇐ <code>Disposable</code>
     * _instance_
         * [.connect(jwtProvider)](#AlertManagerconnect) ⇒ <code>Promise.&lt;AlertManager&gt;</code>
-        * [.checkSymbol(symbol)](#AlertManagercheckSymbol) ⇒ <code>Promise.&lt;String&gt;</code>
         * [.createAlert(alert)](#AlertManagercreateAlert) ⇒ <code>Promise.&lt;Array.&lt;any&gt;&gt;</code>
         * [.retrieveAlerts(query)](#AlertManagerretrieveAlerts) ⇒ <code>Promise.&lt;Array.&lt;Alert&gt;&gt;</code>
+        * [.checkSymbol(symbol)](#AlertManagercheckSymbol) ⇒ <code>Promise.&lt;String&gt;</code>
     * _static_
         * [.version](#AlertManagerversion) ⇒ <code>String</code>
     * _constructor_
@@ -22,8 +23,9 @@
 * * *
 
 ### alertManager.connect(jwtProvider) :id=alertmanagerconnect
->Establishes a connection to Barchart's Alert Service. Invoke this function (and wait for
-the resulting promise to resolve) before attempting to use other instance functions.
+>Attempts to establish a connection to the backend. This function should be invoked
+immediately following instantiation. Once the resulting promise resolves, a
+connection has been established and other instance methods can be used.
 
 **Kind**: instance method of <code>AlertManager</code>  
 **Returns**: <code>Promise.&lt;AlertManager&gt;</code>  
@@ -31,7 +33,35 @@ the resulting promise to resolve) before attempting to use other instance functi
 
 | Param | Type | Description |
 | --- | --- | --- |
-| jwtProvider | <code>JwtProvider</code> | An implementation of [JwtProvider](/content/sdk/lib-security?id=jwtprovider) used to supply JWT tokens. |
+| jwtProvider | <code>JwtProvider</code> | Your implementation of [JwtProvider](/content/sdk/lib-security?id=jwtprovider). |
+
+
+* * *
+
+### alertManager.createAlert(alert) :id=alertmanagercreatealert
+>Creates a new alert.
+
+**Kind**: instance method of <code>AlertManager</code>  
+**Returns**: <code>Promise.&lt;Array.&lt;any&gt;&gt;</code>  
+
+| Param | Type |
+| --- | --- |
+| alert | <code>Schema.Alert</code> | 
+
+
+* * *
+
+### alertManager.retrieveAlerts(query) :id=alertmanagerretrievealerts
+>Returns [Alert](Alert) objects for the current user. Optional filtering
+can be applied.
+
+**Kind**: instance method of <code>AlertManager</code>  
+**Returns**: <code>Promise.&lt;Array.&lt;Alert&gt;&gt;</code>  
+**Access**: public  
+
+| Param | Type |
+| --- | --- |
+| query | <code>Schema.AlertFilter</code> | 
 
 
 * * *
@@ -53,32 +83,6 @@ used.
 
 * * *
 
-### alertManager.createAlert(alert) :id=alertmanagercreatealert
-**Kind**: instance method of <code>AlertManager</code>  
-**Returns**: <code>Promise.&lt;Array.&lt;any&gt;&gt;</code>  
-
-| Param |
-| --- |
-| alert | 
-
-
-* * *
-
-### alertManager.retrieveAlerts(query) :id=alertmanagerretrievealerts
->Returns [Alert](Alert) objects for the current user. Optional filtering
-can be applied.
-
-**Kind**: instance method of <code>AlertManager</code>  
-**Returns**: <code>Promise.&lt;Array.&lt;Alert&gt;&gt;</code>  
-**Access**: public  
-
-| Param | Type |
-| --- | --- |
-| query | <code>AlertFilter</code> | 
-
-
-* * *
-
 ### AlertManager.version :id=alertmanagerversion
 >Returns the version of the SDK.
 
@@ -93,10 +97,10 @@ can be applied.
 
 | Param | Type | Description |
 | --- | --- | --- |
-| host | <code>String</code> | The host name of Barchart's Alert Service. |
-| port | <code>Number</code> | The TCP port used to connect to the Alert Service. |
+| host | <code>String</code> | The host name of the Alert Service. |
+| port | <code>Number</code> | The TCP port of the Alert Service. |
 | secure | <code>Boolean</code> | If true, the transport layer will use encryption (e.g. HTTPS, WSS, etc). |
-| adapterClazz | <code>function</code> | The constructor (function) for a class extending [AdapterBase](/content/sdk/lib-adapters?id=adapterbase). This defines the transport strategy. |
+| adapterClazz | <code>function</code> | The transport strategy. Specifically, the constructor function for a class extending [AdapterBase](/content/sdk/lib-adapters?id=adapterbase). |
 
 
 * * *

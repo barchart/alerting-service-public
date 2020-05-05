@@ -26,7 +26,7 @@ const startup = (() => {
 	let alertManager = null;
 
 	process.on('SIGINT', () => {
-		__logger.log('\nExample: Processing SIGINT');
+		__logger.log('Example: Processing SIGINT');
 
 		if (alertManager !== null) {
 			alertManager.dispose();
