@@ -36,7 +36,7 @@ In general, to connect to the Barchart Alert Service, you need:
 
 The SDK provides an easy-to-use, promise-based mechanism for sending (and receiving) data. It does not require you to have knowledge of the transport layer.
 
-We connect, using HTTP transport, as follows:
+We connect, using the adapter for HTTP transport, as follows:
 
 ```js
 const AlertManager = require('@barchart/alert-client-js/lib/AlertManager'),
