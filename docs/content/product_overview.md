@@ -1,3 +1,5 @@
+## Purpose
+
 **This SDK enables your JavaScript applications to setup alert notifications based on [Barchart's](https://www.barchart.com/solutions/) streaming data sources.**
 
 Here's how it works:
@@ -21,10 +23,9 @@ Here's how it works:
 
 Any data which is available within the Barchart ecosystem can be used to build alert conditions.
 
-Barchart offers an exhaustive array of market data for multiple asset classes from exchanges around the world. Consult our website for more information.
+Barchart offers an exhaustive array of market data for multiple asset classes from exchanges around the world. Consult our website for more information:
 
 * [Barchart Market Data](https://www.barchart.com/solutions/data/market)
-* [Barchart Streaming Services](https://www.barchart.com/solutions/services/stream)
 
 Here are some examples:
 

@@ -1,11 +1,30 @@
-## Schema :id=Schema
+## Schema :id=schema
 >A meta namespace containing structural contracts of anonymous objects.
 
 **Kind**: global namespace  
 
+* [Schema](#Schema) : <code>object</code>
+    * [.AlertFilter](#SchemaAlertFilter) : <code>Object</code>
+    * [.Alert](#SchemaAlert) : <code>Object</code>
+
+
 * * *
 
-### Schema.Alert :id=Schema.Alert
+### Schema.AlertFilter :id=schemaalertfilter
+>The arguments which can be used with [AlertManager#retrieveAlert](AlertManager#retrieveAlert).
+
+**Kind**: static typedef of <code>Schema</code>  
+**Properties**
+
+| Name | Type | Description |
+| --- | --- | --- |
+| [user_id] | <code>String</code> | The identifier of the authenticated user. |
+| [alert_system] | <code>String</code> | The domain of the authenticated user. |
+
+
+* * *
+
+### Schema.Alert :id=schemaalert
 >An "alert" consists of one or more [Condition](Condition) objects and one or more
 [Publisher](Publisher) objects.
 

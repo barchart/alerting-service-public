@@ -10,11 +10,14 @@
 
 * [Callbacks](#Callbacks) 
 
-## AdapterBase :id=AdapterBase
->The abstract definition for a transport strategy between the [AlertManager](/content/sdk/lib?id=undefined) and
+
+* * *
+
+## AdapterBase :id=adapterbase
+>The abstract definition for a transport strategy between the [AlertManager](/content/sdk/lib?id=alertmanager) and
 the backend. As a consumer of the SDK, it is unlikely you will need to implement this
 class. However, you will need to select an existing implementation and pass it to your
-[AlertManager](/content/sdk/lib?id=undefined) instance. Two existing implementations are included in the SDK.
+[AlertManager](/content/sdk/lib?id=alertmanager) instance. Two existing implementations are included in the SDK.
 One uses pure HTTP requests. The other uses the [Socket.IO](https://socket.io/docs/)
 library.
 
@@ -25,13 +28,13 @@ library.
 **File**: /lib/adapters/AdapterBase.js  
 **See**
 
-- [AdapterForHttp](/content/sdk/lib-adapters?id=undefined)
-- [AdapterForSocketIo](/content/sdk/lib-adapters?id=undefined)
+- [AdapterForHttp](/content/sdk/lib-adapters?id=adapterforhttp)
+- [AdapterForSocketIo](/content/sdk/lib-adapters?id=adapterforsocketio)
 
 
 * * *
 
-### new AdapterBase(host, port, secure, onAlertCreated, onAlertMutated, onAlertDeleted, onAlertTriggered) :id=new_AdapterBase_new
+### new AdapterBase(host, port, secure, onAlertCreated, onAlertMutated, onAlertDeleted, onAlertTriggered) :id=new_adapterbase_new
 **Kind**: constructor of <code>AdapterBase</code>  
 
 | Param | Type |
@@ -47,7 +50,7 @@ library.
 
 * * *
 
-## AdapterForHttp :id=AdapterForHttp
+## AdapterForHttp :id=adapterforhttp
 >A backend communication strategy implemented with HTTP requests. Commands
 to the backend are issued via HTTP requests. Data feeds from the server are
 handled via simple short polling.
@@ -60,7 +63,7 @@ handled via simple short polling.
 
 * * *
 
-## AdapterForSocketIo :id=AdapterForSocketIo
+## AdapterForSocketIo :id=adapterforsocketio
 >A backend communication strategy implemented with the [Socket.IO](https://socket.io/docs/) library.
 The Socket.IO will use a WebSocket in modern browsers.
 
@@ -72,7 +75,7 @@ The Socket.IO will use a WebSocket in modern browsers.
 
 * * *
 
-## AdapterForWebSockets :id=AdapterForWebSockets
+## AdapterForWebSockets :id=adapterforwebsockets
 >A backend communication adapter implemented with WebSockets. Coming in version 4.1.0.
 
 **Kind**: global class  
@@ -83,7 +86,7 @@ The Socket.IO will use a WebSocket in modern browsers.
 
 * * *
 
-## Callbacks :id=Callbacks
+## Callbacks :id=callbacks
 >A meta namespace containing signatures of anonymous functions.
 
 **Kind**: global namespace  
@@ -97,8 +100,8 @@ The Socket.IO will use a WebSocket in modern browsers.
 
 * * *
 
-### Callbacks.AlertCreatedCallback :id=Callbacks.AlertCreatedCallback
->The function signature for a callback which notifies the [AlertManager](/content/sdk/lib?id=undefined)
+### Callbacks.AlertCreatedCallback :id=callbacksalertcreatedcallback
+>The function signature for a callback which notifies the [AlertManager](/content/sdk/lib?id=alertmanager)
 after a new alert has been created.
 
 **Kind**: static typedef of <code>Callbacks</code>  
@@ -107,8 +110,8 @@ after a new alert has been created.
 
 * * *
 
-### Callbacks.AlertMutatedCallback :id=Callbacks.AlertMutatedCallback
->The function signature for a callback which notifies the [AlertManager](/content/sdk/lib?id=undefined)
+### Callbacks.AlertMutatedCallback :id=callbacksalertmutatedcallback
+>The function signature for a callback which notifies the [AlertManager](/content/sdk/lib?id=alertmanager)
 after an alert mutates (e.g. its stage changes).
 
 **Kind**: static typedef of <code>Callbacks</code>  
@@ -117,8 +120,8 @@ after an alert mutates (e.g. its stage changes).
 
 * * *
 
-### Callbacks.AlertDeletedCallback :id=Callbacks.AlertDeletedCallback
->The function signature for a callback which notifies the [AlertManager](/content/sdk/lib?id=undefined)
+### Callbacks.AlertDeletedCallback :id=callbacksalertdeletedcallback
+>The function signature for a callback which notifies the [AlertManager](/content/sdk/lib?id=alertmanager)
 after an alert has been deleted.
 
 **Kind**: static typedef of <code>Callbacks</code>  
@@ -127,8 +130,8 @@ after an alert has been deleted.
 
 * * *
 
-### Callbacks.AlertTriggeredCallback :id=Callbacks.AlertTriggeredCallback
->The function signature for a callback which notifies the [AlertManager](/content/sdk/lib?id=undefined)
+### Callbacks.AlertTriggeredCallback :id=callbacksalerttriggeredcallback
+>The function signature for a callback which notifies the [AlertManager](/content/sdk/lib?id=alertmanager)
 after an alert has been triggered.
 
 **Kind**: static typedef of <code>Callbacks</code>  

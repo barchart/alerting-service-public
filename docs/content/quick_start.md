@@ -14,14 +14,14 @@ The _production_ environment does not permit anonymous connections. **Contact Ba
 
 However, you can use our _test_ environment for evaluation purposes. The _test_ environment has two significant limitations:
 
-* all data saved in the environment is purged each night, and
-* all data saved in the environment can be accessed by anyone on the Internet.
+* data saved in the _test_ environment is purged nightly, and
+* data saved in the _test_ environment is accessible to anyone (on the Internet).
 
 ### JWT
 
 The Barchart Alert Service uses [JWT](https://en.wikipedia.org/wiki/JSON_Web_Token) for authentication and authorization.
 
-When connecting to the _test_ environment, a simple tool (included in the SDK) can be used to create tokens.
+When connecting to the _test_ environment, a simple tool (included in the SDK) can be used to create tokens. Since these tokens can be created by anyone, there is no expectation of privacy in the _test_ environment.
 
 When connecting to the _production_ environment, you will need to generate and sign a token. The process is surprisingly simple and more detail can be found in the [Key Concepts: Security](/content/concepts/security) section.
 

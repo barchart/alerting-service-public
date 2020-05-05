@@ -6,7 +6,10 @@
 
 * [Callbacks](#Callbacks) 
 
-## JwtPayload :id=JwtPayload
+
+* * *
+
+## JwtPayload :id=jwtpayload
 >A simple object which contains properties that must be included in a JWT token.
 
 **Kind**: global class  
@@ -23,7 +26,7 @@
 
 * * *
 
-### jwtPayload.userId :id=JwtPayload#userId
+### jwtPayload.userId :id=jwtpayloaduserid
 >The unique identifier of the authenticated user. This value must match
 the [Schema.Alert#user_id](Schema.Alert#user_id) of any alert you attempt to create, edit, or delete.
 
@@ -33,7 +36,7 @@ the [Schema.Alert#user_id](Schema.Alert#user_id) of any alert you attempt to cre
 
 * * *
 
-### jwtPayload.alertSystem :id=JwtPayload#alertSystem
+### jwtPayload.alertSystem :id=jwtpayloadalertsystem
 >The authenticated user's domain. In the demo environment, use your company name. This value must
 match the [Schema.Alert#alert_system](Schema.Alert#alert_system) of any alert you attempt to create, edit, or delete.
 
@@ -43,7 +46,7 @@ match the [Schema.Alert#alert_system](Schema.Alert#alert_system) of any alert yo
 
 * * *
 
-### jwtPayload.forSigning() :id=JwtPayload#forSigning
+### jwtPayload.forSigning() :id=jwtpayloadforsigning
 >Returns the simple object representation, used for signing a token.
 
 **Kind**: instance method of <code>JwtPayload</code>  
@@ -52,7 +55,7 @@ match the [Schema.Alert#alert_system](Schema.Alert#alert_system) of any alert yo
 
 * * *
 
-### new JwtPayload(userId, alertSystem) :id=new_JwtPayload_new
+### new JwtPayload(userId, alertSystem) :id=new_jwtpayload_new
 **Kind**: constructor of <code>JwtPayload</code>  
 
 | Param | Type | Description |
@@ -63,8 +66,8 @@ match the [Schema.Alert#alert_system](Schema.Alert#alert_system) of any alert yo
 
 * * *
 
-## JwtProvider :id=JwtProvider
->Provides JWT tokens to the adapters (i.e. [AdapterBase](/content/sdk/lib-adapters?id=undefined) implementations).
+## JwtProvider :id=jwtprovider
+>Provides JWT tokens to the adapters (i.e. [AdapterBase](/content/sdk/lib-adapters?id=adapterbase) implementations).
 
 **Kind**: global class  
 **Access**: public  
@@ -78,7 +81,7 @@ match the [Schema.Alert#alert_system](Schema.Alert#alert_system) of any alert yo
 
 * * *
 
-### jwtProvider.getToken() :id=JwtProvider#getToken
+### jwtProvider.getToken() :id=jwtprovidergettoken
 >Reads the current JWT token, refreshing if necessary.
 
 **Kind**: instance method of <code>JwtProvider</code>  
@@ -87,7 +90,7 @@ match the [Schema.Alert#alert_system](Schema.Alert#alert_system) of any alert yo
 
 * * *
 
-### new JwtProvider(generator, interval, source) :id=new_JwtProvider_new
+### new JwtProvider(generator, interval, source) :id=new_jwtprovider_new
 **Kind**: constructor of <code>JwtProvider</code>  
 
 | Param | Type | Description |
@@ -99,14 +102,14 @@ match the [Schema.Alert#alert_system](Schema.Alert#alert_system) of any alert yo
 
 * * *
 
-## Callbacks :id=Callbacks
+## Callbacks :id=callbacks
 >A meta namespace containing signatures of anonymous functions.
 
 **Kind**: global namespace  
 
 * * *
 
-### Callbacks.JwtTokenGenerator :id=Callbacks.JwtTokenGenerator
+### Callbacks.JwtTokenGenerator :id=callbacksjwttokengenerator
 >The signature for a function which generates signs a JWT token.
 
 **Kind**: static typedef of <code>Callbacks</code>  
