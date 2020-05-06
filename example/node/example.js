@@ -21,30 +21,28 @@ const startup = (() => {
 
 	const __logger = LoggerFactory.getLogger('@barchart/example');
 
-	__logger.log(`Example: Node.js example script started, SDK version [ ${AlertManager.version} ]`);
+	__logger.info(`Example: Node.js example script started, SDK version [ ${AlertManager.version} ]`);
 
 	let alertManager = null;
 
 	process.on('SIGINT', () => {
-		__logger.log('Example: Processing SIGINT');
+		__logger.info('Example: Processing SIGINT');
 
 		if (alertManager !== null) {
 			alertManager.dispose();
 		}
 
-		__logger.log('Example: Node.js example script ending');
+		__logger.info('Example: Node.js example script ending');
 
 		process.exit();
 	});
 
 	process.on('unhandledRejection', (error) => {
 		__logger.error('Unhandled Promise Rejection', error);
-		__logger.trace();
 	});
 
 	process.on('uncaughtException', (error) => {
 		__logger.error('Unhandled Error', error);
-		__logger.trace();
 	});
 
 	const userId = process.argv[2];
@@ -73,24 +71,28 @@ const startup = (() => {
 	const port = 3000;
 	const secure = false;
 
-	__logger.log(`Example: Created AlertManager for [ ${host}:${port} ] using [ ${adapterDescription} ] mode`);
+	__logger.info(`Example: Created AlertManager for [ ${host}:${port} ] using [ ${adapterDescription} ] mode`);
 
 	alertManager = new AlertManager(host, port, secure, adapterClazz);
 
-	__logger.log(`Example: Configuring JWT generator to impersonate [ ${userId}@${alertSystem} ]`);
+	__logger.info(`Example: Configuring JWT generator to impersonate [ ${userId}@${alertSystem} ]`);
 
 	const jwtGenerator = getJwtGenerator(userId, alertSystem);
 	const jwtProvider = new JwtProvider(jwtGenerator, 60000, 'demo');
 
-	__logger.log(`Example: Connecting to Barchart\'s Alert Service`);
+	__logger.info(`Example: Connecting to Barchart\'s Alert Service`);
 
 	alertManager.connect(jwtProvider)
 		.then(() => {
-			__logger.log(`Example: Connected to Barchart\'s Alert Service`);
+			__logger.info(`Example: Connected to Barchart\'s Alert Service`);
+
+			__logger.info(`Example: Retrieving a list of alerts for [ ${userId}@${alertSystem} ]`);
 
 			alertManager.retrieveAlerts({ })
 				.then((alerts) => {
-					console.log(alerts);
+					__logger.info(`Example: Retrieved alerts [ ${alerts.length} ] for [ ${userId}@${alertSystem} ]`);
+
+					alertManager.dispose();
 				});
 		});
 })();
