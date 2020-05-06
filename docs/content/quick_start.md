@@ -49,13 +49,13 @@ const secure = true;
 
 const alertManager = new AlertManager(host, port, secure, AdapterForHttp);
 
-alertManager.connect(jwtGeneratorFactory('me', 'example.com'))
+alertManager.connect(jwtGeneratorFactory('me', 'barchart.com'))
 	.then(() => {
 		// connected ...
 	});
 ```
 
-Once connected, we can request a list of alerts (belonging to me@example.com) as follows:
+Once connected, we can request a list of alerts belonging to me@barchart.com:
 
 ```js
 
