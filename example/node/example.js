@@ -38,7 +38,7 @@ const startup = (() => {
 	});
 
 	process.on('unhandledRejection', (error) => {
-		__logger.error('Unhandled Promise Rejection');
+		__logger.error('Unhandled Promise Rejection', error);
 		__logger.trace();
 	});
 
@@ -63,11 +63,17 @@ const startup = (() => {
 		adapterDescription = 'Socket.IO';
 	}
 
+	/*
 	const host = 'alerts-management-stage.barchart.com';
 	const port = 443;
 	const secure = true;
+	*/
 
-	__logger.log(`Example: Instantiating AlertManager for [ ${host}:${port} ] using [ ${adapterDescription} ] mode`);
+	const host = 'localhost';
+	const port = 3000;
+	const secure = false;
+
+	__logger.log(`Example: Created AlertManager for [ ${host}:${port} ] using [ ${adapterDescription} ] mode`);
 
 	alertManager = new AlertManager(host, port, secure, adapterClazz);
 
@@ -81,5 +87,10 @@ const startup = (() => {
 	alertManager.connect(jwtProvider)
 		.then(() => {
 			__logger.log(`Example: Connected to Barchart\'s Alert Service`);
+
+			alertManager.retrieveAlerts({ })
+				.then((alerts) => {
+					console.log(alerts);
+				});
 		});
 })();
