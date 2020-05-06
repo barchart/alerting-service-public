@@ -18,16 +18,16 @@
 	},
 	"keywords": [],
 	"dependencies": {
-		"@barchart/common-js": "^3.3.0",
+		"@barchart/common-js": "^3.4.2",
 		"@barchart/instruments-client-js": "^3.3.2",
-		"@barchart/marketdata-api-js": "^4.1.1",
+		"@barchart/marketdata-api-js": "^5.0.3",
 		"jsonwebtoken": "^8.5.1",
 		"socket.io-client": "^2.3.0",
 		"uuid": "^3.4.0"
 	},
 	"devDependencies": {
 		"@babel/core": "^7.6.2",
-		"aws-sdk": "^2.546.0",
+		"aws-sdk": "^2.671.0",
 		"babelify": "^10.0.0",
 		"browserify": "^16.5.0",
 		"git-get-status": "^1.0.5",
