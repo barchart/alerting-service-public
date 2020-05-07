@@ -88,11 +88,18 @@ const startup = (() => {
 
 			__logger.info(`Example: Retrieving a list of alerts for [ ${userId}@${alertSystem} ]`);
 
-			alertManager.retrieveAlerts({ })
+			return alertManager.retrieveAlerts({ })
 				.then((alerts) => {
 					__logger.info(`Example: Retrieved alerts [ ${alerts.length} ] for [ ${userId}@${alertSystem} ]`);
 
-					alertManager.dispose();
-				});
+				}).catch((e) => {
+					__logger.warn(`Example: Failed to retrieve alerts for [ ${userId}@${alertSystem} ]`);
+				})
+		}).catch((e) => {
+			__logger.warn(`Example: Failed to connect to Barchart\'s Alert Service`);
+		}).then(() => {
+			__logger.info(`Example: Disposing AlertManager`);
+
+			alertManager.dispose();
 		});
 })();
