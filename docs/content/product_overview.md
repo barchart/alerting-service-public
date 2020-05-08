@@ -9,11 +9,10 @@ Here's how it works:
 	* Receive notifications via SMS messages
 	* Receive notifications to your web service, via HTTP POST
 	* Receive push notifications to your mobile applications (coming soon)
-* You _define_ an alert:
-	* Add at least one condition, for example:
-		* Apple common stock trades over $500.00 per share
-		* Apple common stock achieves a new 30 high
-		* A news article, mentioning Apple common stock, was just published
+* You _define_ an alert, with at least one condition, for example:
+	* Apple common stock trades over $500.00 per share
+	* Apple common stock achieves a new 30 high
+	* A news article, mentioning Apple common stock, was just published
 * You _start_ the alert:
 	* Barchart's Alert Service will continuously monitor your conditions
 	* Once your conditions are met, notifications are sent
