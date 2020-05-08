@@ -21,9 +21,7 @@ Here's how it works:
 
 Any data which is available within the Barchart ecosystem can be used to build alert conditions.
 
-Barchart offers an exhaustive array of market data for multiple asset classes from exchanges around the world. Consult our website for more information:
-
-* [Barchart Market Data](https://www.barchart.com/solutions/data/market)
+Barchart offers an exhaustive array of market data for multiple asset classes trading on exchanges around the world. Consult our [website](https://www.barchart.com/solutions/data/market) for more information.
 
 Here are some examples:
 
