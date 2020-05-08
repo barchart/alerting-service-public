@@ -69,7 +69,7 @@ match the [Schema.Alert#alert_system](Schema.Alert#alert_system) of any alert yo
 * * *
 
 ## JwtProvider :id=jwtprovider
->Provides JWT tokens to the adapters (i.e. [AdapterBase](/content/sdk/lib-adapters?id=adapterbase) implementations).
+>Provides JWT tokens to the adapters (i.e. [AdapterBase](/content/sdk/lib-adapters?id=/content/sdk/lib-adapters?id=adapterbase) implementations).
 
 **Kind**: global class  
 **Access**: public  
@@ -80,7 +80,7 @@ match the [Schema.Alert#alert_system](Schema.Alert#alert_system) of any alert yo
     * _instance_
         * [.getToken()](#JwtProvidergetToken) ⇒ <code>Promise.&lt;String&gt;</code>
     * _constructor_
-        * [new JwtProvider(generator, interval, source)](#new_JwtProvider_new)
+        * [new JwtProvider(generator, interval)](#new_JwtProvider_new)
 
 
 * * *
@@ -94,14 +94,13 @@ match the [Schema.Alert#alert_system](Schema.Alert#alert_system) of any alert yo
 
 * * *
 
-### new JwtProvider(generator, interval, source) :id=new_jwtprovider_new
+### new JwtProvider(generator, interval) :id=new_jwtprovider_new
 **Kind**: constructor of <code>JwtProvider</code>  
 
 | Param | Type | Description |
 | --- | --- | --- |
 | generator | [<code>JwtTokenGenerator</code>](#CallbacksJwtTokenGenerator) | An anonymous function which returns a signed JWT token. |
 | interval | <code>Number</code> | The number of milliseconds which must pass before a new JWT token is generated. |
-| source | <code>String</code> | Your company name. |
 
 
 * * *

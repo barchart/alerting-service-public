@@ -33,7 +33,7 @@ connection has been established and other instance methods can be used.
 
 | Param | Type | Description |
 | --- | --- | --- |
-| jwtProvider | <code>JwtProvider</code> | Your implementation of [JwtProvider](/content/sdk/lib-security?id=jwtprovider). |
+| jwtProvider | [<code>JwtProvider</code>](/content/sdk/lib-security?id=jwtprovider) | Your implementation of [JwtProvider](/content/sdk/lib-security?id=/content/sdk/lib-security?id=jwtprovider). |
 
 
 * * *
@@ -46,7 +46,7 @@ connection has been established and other instance methods can be used.
 
 | Param | Type |
 | --- | --- |
-| alert | <code>Schema.Alert</code> | 
+| alert | [<code>Schema.Alert</code>](/content/sdk/lib-data?id=schema.alert) | 
 
 
 * * *
@@ -61,7 +61,7 @@ can be applied.
 
 | Param | Type |
 | --- | --- |
-| query | <code>Schema.AlertFilter</code> | 
+| query | [<code>Schema.AlertFilter</code>](/content/sdk/lib-data?id=schema.alertfilter) | 
 
 
 * * *
@@ -100,7 +100,7 @@ used.
 | host | <code>String</code> | The host name of the Alert Service. |
 | port | <code>Number</code> | The TCP port of the Alert Service. |
 | secure | <code>Boolean</code> | If true, the transport layer will use encryption (e.g. HTTPS, WSS, etc). |
-| adapterClazz | <code>function</code> | The transport strategy. Specifically, the constructor function for a class extending [AdapterBase](/content/sdk/lib-adapters?id=adapterbase). |
+| adapterClazz | <code>function</code> | The transport strategy. Specifically, the constructor function for a class extending [AdapterBase](/content/sdk/lib-adapters?id=/content/sdk/lib-adapters?id=adapterbase). |
 
 
 * * *

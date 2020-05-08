@@ -12,7 +12,7 @@
 * * *
 
 ### Schema.AlertFilter :id=schemaalertfilter
->The arguments which can be used with [AlertManager](/content/sdk/lib?id=alertmanager).
+>The arguments which can be used with [AlertManager](/content/sdk/lib?id=/content/sdk/lib?id=alertmanager).
 
 **Kind**: static typedef of <code>Schema</code>  
 **Properties**
