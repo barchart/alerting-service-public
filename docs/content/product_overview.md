@@ -1,6 +1,6 @@
 ## Purpose
 
-**This SDK connects you to the _Barchart Alert Service_. You can define alert conditions, ask our remote service to track those conditions on your behalf, and receive instantaneous notifications when those conditions are met.**
+**This SDK connects you to the _Barchart Alert Service_. You can define alert conditions, ask our remote service to track those conditions on your behalf, and receive immediate notifications when those conditions are met.**
 
 Here's how it works:
 
@@ -15,7 +15,7 @@ Here's how it works:
 	* A news article, mentioning Apple common stock, was just published
 * You _start_ the alert:
 	* Barchart's Alert Service will continuously monitor your conditions
-	* Once your conditions are met, notifications are sent
+	* Once your conditions are met, notifications are dispatched
 
 ## Streaming Data Catalog
 
