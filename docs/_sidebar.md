@@ -8,6 +8,6 @@
 <!-- sdk_open -->
 * [SDK Reference](/content/sdk_reference)
 <!-- sdk_close -->
-* [API Reference](/content/api)
+* [API Reference](/content/api_reference)
 * [Release Notes](/content/release_notes)
 

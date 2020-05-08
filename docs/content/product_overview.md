@@ -59,7 +59,7 @@ Node.js is fully-supported.
 
 #### Other
 
-The Barchart Alert Service implements an HTTP interface. You may choose to interact with the HTTP interface directly. An [OpenAPI](https://www.openapis.org/) specification of the HTTP interface can be found in the [API Reference](/content/api) section.
+The Barchart Alert Service implements a REST interface. You may choose to interact with the REST interface directly. An [OpenAPI](https://www.openapis.org/) specification of the REST interface can be found in the [API Reference](/content/api) section.
 
 
 

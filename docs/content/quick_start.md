@@ -32,6 +32,10 @@ In general, to connect to the Barchart Alert Service, you need:
 * a mechanism to generate JWT tokens, and
 * a mechanism to send (and receive) data to (and from) the backend.
 
+### Using the API
+
+If you bypass this SDK entirely and work with the REST interface directly, you don't need to perform a "connect" action. Each HTTP request is independently authorized by the backend. You simply need to include a JWT token in the _Authorization_ header of each request.
+
 ### Using the SDK
 
 The SDK provides an easy-to-use, promise-based mechanism for sending (and receiving) data. It does not require you to have knowledge of the transport layer.
@@ -55,19 +59,69 @@ alertManager.connect(jwtGeneratorFactory('me', 'barchart.com'))
 	});
 ```
 
-Once connected, we can request a list of alerts belonging to me@barchart.com:
+## Defining an Alert
 
-```js
+To create an alert, we must define an must construct an object which conforms to the ```Alert``` schema. To accommodate a wide variety of features, this schema is non-trivial. An in-depth discussion of the schema found in the [Key Concepts: Data Structures](/content/concepts/data_structures) section of the documentation.
 
+For now, here is an object, representing an alert with condition -- Apple stock trades over $600 per share:
+
+```json
+{
+	"user_id": "me",
+	"alert_system": "barchart.com",
+	"automatic_reset": false,
+	"alert_behavior": "terminate"
+	"conditions": [
+		{
+			"property": {
+				"property_id": 1,
+				"target": {
+					"identifier": "AAPL"
+				}
+			},
+			"operator": {
+				"operator_id": 2,
+				"operand": "600"
+			}
+		}
+	]
+}
 ```
 
-Once connected, we could create a new alert as follows:
-
-```js
-
-```
+## Creating an Alert
 
 ### Using the API
+
+### Using the SDK
+
+Once connected, we can request a list of alerts, as follows:
+
+```js
+alertManager.retrieveAlerts({ user_id: 'me', alert_system: 'barchart.com' })
+	.then((alerts) => {
+		// process alerts ...
+	});
+```
+
+Now, let's create a new alert.
+
+Once we have our data object, we simply call ```AlertManager.createAlert```, as follows:
+
+```js
+alertManager.createAlert(alertToCreate)
+	.then((alert) => {
+		console.log(`A new alert was created, the alert's ID is: [ ${alert.alert_id} ].`);
+	});
+```
+
+Finally, we can instruct the backend to begin tracking this alert, as follows:
+
+```js
+alertManager.enableAlert(alert)
+	.then(() => {
+		// Alert tracking is starting ...
+	});
+```
 
 ## Demos
 
