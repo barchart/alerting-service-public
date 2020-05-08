@@ -10,7 +10,7 @@
 * * *
 
 ## JwtPayload :id=jwtpayload
->A simple object which contains properties that must be included in a JWT token.
+>An object which contains the required assertions for a token.
 
 **Kind**: global class  
 **Access**: public  
@@ -69,7 +69,9 @@ match the [Schema.Alert#alert_system](Schema.Alert#alert_system) of any alert yo
 * * *
 
 ## JwtProvider :id=jwtprovider
->Provides JWT tokens to the adapters (i.e. [AdapterBase](/content/sdk/lib-adapters?id=/content/sdk/lib-adapters?id=adapterbase) implementations).
+>Generates and caches a signed token (using a delegate). The cached token
+is refreshed periodically. An instance of this class is required by
+the [AdapterBase](/content/sdk/lib-adapters?id=/content/sdk/lib-adapters?id=adapterbase) implementations.
 
 **Kind**: global class  
 **Access**: public  
@@ -86,7 +88,7 @@ match the [Schema.Alert#alert_system](Schema.Alert#alert_system) of any alert yo
 * * *
 
 ### jwtProvider.getToken() :id=jwtprovidergettoken
->Reads the current JWT token, refreshing if necessary.
+>Reads the current token, refreshing if necessary.
 
 **Kind**: instance method of <code>JwtProvider</code>  
 **Returns**: <code>Promise.&lt;String&gt;</code>  
@@ -113,7 +115,7 @@ match the [Schema.Alert#alert_system](Schema.Alert#alert_system) of any alert yo
 * * *
 
 ### Callbacks.JwtTokenGenerator :id=callbacksjwttokengenerator
->The signature for a function which generates signs a JWT token.
+>A function which returns a signed token.
 
 **Kind**: static typedef of <code>Callbacks</code>  
 **Returns**: <code>String</code> \| <code>Promise.&lt;String&gt;</code>  
