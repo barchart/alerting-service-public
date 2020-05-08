@@ -75,7 +75,7 @@ Two sample applications were built with this SDK. They could provide some insigh
 
 ### Web Browsers
 
-A single-page HTML application allows users to configure, start, stop, edit, delete, and monitor alerts.
+A single-page HTML application allows you to configure, start, stop, edit, delete, and monitor alerts.
 
 You can find the source code here:
 
