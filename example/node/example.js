@@ -45,8 +45,8 @@ const startup = (() => {
 		__logger.error('Unhandled Error', error);
 	});
 
-	const userId = process.argv[2];
-	const alertSystem = 'barchart.com';
+	const user_id = process.argv[2];
+	const alert_system = 'barchart.com';
 
 	const mode = process.argv[3];
 
@@ -75,9 +75,9 @@ const startup = (() => {
 
 	alertManager = new AlertManager(host, port, secure, adapterClazz);
 
-	__logger.info(`Example: Configuring JWT generator to impersonate [ ${userId}@${alertSystem} ]`);
+	__logger.info(`Example: Configuring JWT generator to impersonate [ ${user_id}@${alert_system} ]`);
 
-	const jwtGenerator = getJwtGenerator(userId, alertSystem);
+	const jwtGenerator = getJwtGenerator(user_id, alert_system);
 	const jwtProvider = new JwtProvider(jwtGenerator, 60000, 'demo');
 
 	__logger.info(`Example: Connecting to Barchart\'s Alert Service`);
@@ -86,13 +86,18 @@ const startup = (() => {
 		.then(() => {
 			__logger.info(`Example: Connected to Barchart\'s Alert Service`);
 
-			__logger.info(`Example: Retrieving a list of alerts for [ ${userId}@${alertSystem} ]`);
+			__logger.info(`Example: Retrieving a list of alerts for [ ${user_id}@${alert_system} ]`);
 
-			return alertManager.retrieveAlerts({ })
+			const payload = { };
+			
+			payload.user_id = user_id;
+			payload.alert_system = alert_system;
+
+			return alertManager.retrieveAlerts(payload)
 				.then((alerts) => {
-					__logger.info(`Example: Retrieved alerts [ ${alerts.length} ] for [ ${userId}@${alertSystem} ]`);
+					__logger.info(`Example: Retrieved alerts [ ${alerts.length} ] for [ ${user_id}@${alert_system} ]`);
 				}).catch((e) => {
-					__logger.warn(`Example: Failed to retrieve alerts for [ ${userId}@${alertSystem} ]`);
+					__logger.warn(`Example: Failed to retrieve alerts for [ ${user_id}@${alert_system} ]`);
 				})
 		}).catch((e) => {
 			__logger.warn(`Example: Failed to connect to Barchart\'s Alert Service`);
