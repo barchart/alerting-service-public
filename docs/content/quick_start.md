@@ -71,7 +71,11 @@ Once connected, we could create a new alert as follows:
 
 ## Demos
 
-A sample web application was built with the SDK. It could provide some insight into the features and usage of the SDK.
+Two sample applications were built with this SDK. They could provide some insight into SDK features and usage.
+
+### Web Browsers
+
+A single-page HTML application allows users to configure, start, stop, edit, delete, and monitor alerts.
 
 You can find the source code here:
 
@@ -82,7 +86,21 @@ The application is also hosted at:
 
 https://examples.aws.barchart.com/alerts-client-js/example.html
 
+### Node.js
 
+A simple Node.js script connects to the _test_ environment and retrieves a list of alerts. You can find the source code in the */example/node* folder.
+
+To run the script, make sure required dependencies are installed:
+
+```shell
+npm install
+```
+
+Then, execute it, as follows:
+
+```shell
+node ./example/node/example.js {user_id}
+```
 
 
 

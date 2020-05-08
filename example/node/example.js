@@ -91,7 +91,6 @@ const startup = (() => {
 			return alertManager.retrieveAlerts({ })
 				.then((alerts) => {
 					__logger.info(`Example: Retrieved alerts [ ${alerts.length} ] for [ ${userId}@${alertSystem} ]`);
-
 				}).catch((e) => {
 					__logger.warn(`Example: Failed to retrieve alerts for [ ${userId}@${alertSystem} ]`);
 				})
