@@ -25,8 +25,8 @@ Barchart offers an exhaustive array of market data for multiple asset classes tr
 
 Here are some examples:
 
-* Market Data (real-time or delayed)
-	* Trades, Quotes, and Volume
+* Price Data (real-time or delayed)
+	* Trades and Quotes
 	* New Highs and Lows
 	* Prior Day Prices and Gaps
 	* More...
