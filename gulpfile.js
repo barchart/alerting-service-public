@@ -11,7 +11,6 @@ const AWS = require('aws-sdk'),
 	gitStatus = require('git-get-status'),
 	glob = require('glob'),
 	jasmine = require('gulp-jasmine'),
-	jsdoc = require('gulp-jsdoc3'),
 	jshint = require('gulp-jshint'),
 	rename = require('gulp-rename'),
 	replace = require('gulp-replace'),
@@ -20,17 +19,6 @@ const AWS = require('aws-sdk'),
 function getVersionFromPackage() {
 	return JSON.parse(fs.readFileSync('./package.json', 'utf8')).version;
 }
-
-gulp.task('document', (cb) => {
-	config = {
-		"opts": {
-			"destination": "./docs"
-		},
-	};
-
-	gulp.src([ 'README.md', './lib/**/*.js' ], {read: false})
-		.pipe(jsdoc(config, cb));
-});
 
 gulp.task('ensure-clean-working-directory', (cb) => {
 	gitStatus((err, status) => {
