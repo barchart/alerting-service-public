@@ -1,6 +1,7 @@
 * [Overview](/content/product_overview)
 * [Quick Start](/content/quick_start)
 * Key Concepts
+	* [Alerts](/content/concepts/alerts)
 	* [Transports](/content/concepts/transports)
 	* [Security](/content/concepts/security)
 	* [Data Structures](/content/concepts/data_structures)

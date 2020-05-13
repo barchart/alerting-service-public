@@ -1,6 +1,6 @@
 ## Purpose
 
-**This SDK connects you to the _Barchart Alert Service_. You can define alert conditions, ask our remote service to track those conditions on your behalf, and receive immediate notifications when those conditions are met.**
+**This SDK allows you to connect and interact with the _Barchart Alert Service_. You can define alert conditions, ask our remote service to track those conditions on your behalf, and receive immediate notifications when those conditions are met.**
 
 Here's how it works:
 
@@ -47,11 +47,11 @@ Here are some examples:
 
 ## Supported Environments
 
-This SDK provides a convenient way to interact with the Barchart Alert Service. We recommend using the SDK in JavaScript environments; however it's not necessary -- as described in the [Other](#other) section (below).
+This SDK provides a convenient way to interact with the Barchart Alert Service. We recommend using it in JavaScript environments.
 
 #### Web Browsers
 
-This SDK can be distributed as part of your browser-based applications. The source code is written in ES6. Consequently, transpilation (with appropriate polyfills) is recommended before distribution.
+This SDK can be distributed as part of your browser-based applications. The source code is written in [ES2017](https://en.wikipedia.org/wiki/ECMAScript). Consequently, transpilation (with appropriate polyfills) is recommended before distribution.
 
 #### Node.js
 
@@ -59,7 +59,11 @@ Node.js is fully-supported.
 
 #### Other
 
-The Barchart Alert Service implements a REST interface. You may choose to interact with the REST interface directly. An [OpenAPI](https://www.openapis.org/) specification of the REST interface can be found in the [API Reference](/content/api) section.
+Please contact us at solutions@barchart.com or (866) 333-7587 to discuss a specific technology, platform, or language you are interested in.
+
+#### Direct Access
+
+The Barchart Alert Service implements a REST interface via HTTP. You may choose to interact with the service directly, bypassing this SDK entirely. An [OpenAPI](https://www.openapis.org/) specification of the interface can be found in the [API Reference](/content/api) section.
 
 
 

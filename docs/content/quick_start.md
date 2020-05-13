@@ -1,42 +1,54 @@
 ## Setup
 
-This SDK has been published to Node Package Manager (NPM). The package is named *@barchart/alerts-client-js*. It can be installed as follows:
+As a consumer of the Barchart Alert Service, you have two options:
+
+1. Connect and communicate with the backend _by embedding this SDK in your software_, or
+2. Connect and communicate with the backend _by direct interaction with the REST interface_.
+
+**If you choose to use the SDK**, you can install it from NPM (Node Package Manager), as follows:
 
 ```shell
-> npm install @barchart/alerts-client-js -S
+npm install @barchart/alerts-client-js -S
 ```
 
-If you aren't using NPM, you can download the SDK directly from GitHub at https://github.com/barchart/alerts-client-js.
+**Otherwise, if you choose not to use the SDK**, please finish reviewing this page, then refer to the [API Reference](/content/api) section.
+
+## Environments
+
+Two instances of the Barchart Alert Service are always running:
+
+#### Demo
+
+The _demo_ environment can be used for integration and evaluation purposes. It can be accessed at ```alerts-management-demo.barchart.com``` and has two significant limitations:
+
+* data saved in the _demo_ environment is purged nightly, and
+* data saved in the _demo_ environment can be accessed by anyone.
+
+#### Production
+
+The _production_ environment does not permit permit anonymous connections. **Contact Barchart at solutions@barchart.com or (866) 333-7587 for assistance configuring your account.**
 
 ## Authentication
 
-The _production_ environment does not permit anonymous connections. **Contact Barchart at solutions@barchart.com or (866) 333-7587 for assistance configuring your account.**
+[JSON Web Tokens](https://en.wikipedia.org/wiki/JSON_Web_Token) — called JWT — are used for authentication and authorization. Each request made to the backend must include a token. Generating these tokens is surprisingly easy -- refer to the [Key Concepts: Security](/content/concepts/security) section for details.
 
-However, you can use our _test_ environment for evaluation purposes. The _test_ environment has two significant limitations:
+In the _demo_ environment, token generation uses the following:
 
-* data saved in the _test_ environment is purged nightly, and
-* data saved in the _test_ environment is accessible to anyone (on the Internet).
+* The JWT signing algorithm is HMAC-SHA256 (aka HS256)
+* The JWT signing secret is "public-knowledge-1234567890"
 
-### JWT
+Since the signing secret is available to everyone (see above), there is no expectation of privacy; the _demo_ environment is for testing and evaluation only.
 
-The Barchart Alert Service uses [JWT](https://en.wikipedia.org/wiki/JSON_Web_Token) for authentication and authorization.
+In the the _production_ environment, you must exchange a _"secret"_  with Barchart — in the form of a [public/private key pair](https://en.wikipedia.org/wiki/Public-key_cryptography). Consequently, your data will be secure.
 
-When connecting to the _test_ environment, a simple tool (included in the SDK) can be used to create tokens. Since these tokens can be created by anyone, there is no expectation of privacy in the _test_ environment.
+Regardless of environment, the token payload uses two fields:
 
-When connecting to the _production_ environment, you will need to generate and sign a token. The process is surprisingly simple and more detail can be found in the [Key Concepts: Security](/content/concepts/security) section.
+* ```user_id``` is the unique identifier of the current user
+*```alert_system``` is a unique identifier for your organization (use "barchart.com" in the _demo_ environment).
 
 ## Connecting
 
-In general, to connect to the Barchart Alert Service, you need:
-
-* a mechanism to generate JWT tokens, and
-* a mechanism to send (and receive) data to (and from) the backend.
-
-### Using the API
-
-If you bypass this SDK entirely and work with the REST interface directly, you don't need to perform a "connect" action. Each HTTP request is independently authorized by the backend. You simply need to include a JWT token in the _Authorization_ header of each request.
-
-### Using the SDK
+#### Using the SDK
 
 The SDK provides an easy-to-use, promise-based mechanism for sending (and receiving) data. It does not require you to have knowledge of the transport layer.
 
@@ -59,11 +71,21 @@ alertManager.connect(jwtGeneratorFactory('me', 'barchart.com'))
 	});
 ```
 
+Alternately, we could a WebSocket transport (preferred), by swapping the adapter:
+
+```js
+const AdapterForSocketIo = require('@barchart/lib/adapters/AdapterForSocketIo');
+```
+
+#### Using the API
+
+If you choose to work directly with the REST interface, you won't need to perform a "connect" action. Each HTTP request is independently authorized by the backend. You simply need to include a JWT token in the _Authorization_ header of each request.
+
 ## Defining an Alert
 
-To create an alert, we must define an must construct an object which conforms to the ```Alert``` schema. To accommodate a wide variety of features, this schema is non-trivial. An in-depth discussion of the schema found in the [Key Concepts: Data Structures](/content/concepts/data_structures) section of the documentation.
+To create an alert, we must construct an object which conforms to the ```Alert``` schema. To accommodate a wide variety of features, this schema is non-trivial. An in-depth discussion of the schema found in the [Key Concepts: Data Structures](/content/concepts/data_structures) section.
 
-For now, here is an object, representing an alert with condition -- Apple stock trades over $600 per share:
+For now, here is an object, representing an alert with condition — Apple stock trades over $600 per share:
 
 ```json
 {
@@ -90,22 +112,9 @@ For now, here is an object, representing an alert with condition -- Apple stock 
 
 ## Creating an Alert
 
-### Using the API
+#### Using the SDK
 
-### Using the SDK
-
-Once connected, we can request a list of alerts, as follows:
-
-```js
-alertManager.retrieveAlerts({ user_id: 'me', alert_system: 'barchart.com' })
-	.then((alerts) => {
-		// process alerts ...
-	});
-```
-
-Now, let's create a new alert.
-
-Once we have our data object, we simply call ```AlertManager.createAlert```, as follows:
+After we've defined an alert (see above), the ```AlertManager.createAlert``` function will persist the it:
 
 ```js
 alertManager.createAlert(alertToCreate)
@@ -114,7 +123,13 @@ alertManager.createAlert(alertToCreate)
 	});
 ```
 
-Finally, we can instruct the backend to begin tracking this alert, as follows:
+#### Using the API
+
+## Starting an Alert
+
+#### Using the SDK
+
+Instruct the backend to begin tracking an alert, as follows:
 
 ```js
 alertManager.enableAlert(alert)
@@ -122,6 +137,33 @@ alertManager.enableAlert(alert)
 		// Alert tracking is starting ...
 	});
 ```
+
+We can stop an active alert as follows:
+
+```js
+alertManager.disableAlert(alert)
+	.then(() => {
+		// Alert tracking is starting ...
+	});
+```
+
+
+#### Using the API
+
+## Listing Alerts
+
+#### Using the SDK
+
+we can request a list of alerts, as follows:
+
+```js
+alertManager.retrieveAlerts({ user_id: 'me', alert_system: 'barchart.com' })
+	.then((alerts) => {
+		// process alerts ...
+	});
+```
+
+#### Using the API
 
 ## Demos
 
@@ -142,7 +184,7 @@ https://examples.aws.barchart.com/alerts-client-js/example.html
 
 ### Node.js
 
-A simple Node.js script connects to the _test_ environment and retrieves a list of alerts. You can find the source code in the */example/node* folder.
+A simple Node.js script connects to the _demo_ environment and retrieves a list of alerts. You can find the source code in the */example/node* folder.
 
 To run the script, make sure required dependencies are installed:
 
