@@ -2019,52 +2019,52 @@ module.exports = (() => {
 
       this._createEndpoint = EndpointBuilder.for('create-alert', 'Create alert').withVerb(VerbType.POST).withProtocol(protocolType).withHost(host).withPort(port).withPathBuilder(pb => {
         pb.withLiteralParameter('alerts', 'alerts');
-      }).withBody().withRequestInterceptor(requestInterceptor).withErrorInterceptor(ErrorInterceptor.GENERAL).endpoint;
+      }).withBody().withRequestInterceptor(requestInterceptor).withResponseInterceptor(ResponseInterceptor.DATA).withErrorInterceptor(ErrorInterceptor.GENERAL).endpoint;
       this._retrieveEndpoint = EndpointBuilder.for('query', 'Query').withVerb(VerbType.GET).withProtocol(protocolType).withHost(host).withPort(port).withPathBuilder(pb => {
         pb.withLiteralParameter('alerts', 'alerts').withVariableParameter('alert_id', 'alert_id', 'alert_id');
-      }).withRequestInterceptor(requestInterceptor).withErrorInterceptor(ErrorInterceptor.GENERAL).endpoint;
+      }).withRequestInterceptor(requestInterceptor).withResponseInterceptor(ResponseInterceptor.DATA).withErrorInterceptor(ErrorInterceptor.GENERAL).endpoint;
       this._queryEndpoint = EndpointBuilder.for('query', 'Query').withVerb(VerbType.GET).withProtocol(protocolType).withHost(host).withPort(port).withPathBuilder(pb => {
         pb.withLiteralParameter('alerts', 'alerts').withLiteralParameter('users', 'users').withVariableParameter('alert_system', 'alert_system', 'alert_system').withVariableParameter('user_id', 'user_id', 'user_id');
       }).withRequestInterceptor(requestInterceptor).withResponseInterceptor(ResponseInterceptor.DATA).withErrorInterceptor(ErrorInterceptor.GENERAL).endpoint;
       this._updateEndpoint = EndpointBuilder.for('update-alert', 'Update alert').withVerb(VerbType.PUT).withProtocol(protocolType).withHost(host).withPort(port).withPathBuilder(pb => {
         pb.withLiteralParameter('alerts', 'alerts').withVariableParameter('alert_id', 'alert_id', 'alert_id');
-      }).withBody().withRequestInterceptor(requestInterceptor).withErrorInterceptor(ErrorInterceptor.GENERAL).endpoint;
+      }).withBody().withRequestInterceptor(requestInterceptor).withResponseInterceptor(ResponseInterceptor.DATA).withErrorInterceptor(ErrorInterceptor.GENERAL).endpoint;
       this._updateAlertsForUserEndpoint = EndpointBuilder.for('update-alert', 'Update alert').withVerb(VerbType.PUT).withProtocol(protocolType).withHost(host).withPort(port).withPathBuilder(pb => {
         pb.withLiteralParameter('alerts', 'alerts').withLiteralParameter('users', 'users').withVariableParameter('alert_system', 'alert_system', 'alert_system').withVariableParameter('user_id', 'user_id', 'user_id');
-      }).withBody().withRequestInterceptor(requestInterceptor).withErrorInterceptor(ErrorInterceptor.GENERAL).endpoint;
+      }).withBody().withRequestInterceptor(requestInterceptor).withResponseInterceptor(ResponseInterceptor.DATA).withErrorInterceptor(ErrorInterceptor.GENERAL).endpoint;
       this._deleteEndpoint = EndpointBuilder.for('delete-alert', 'Delete alert').withVerb(VerbType.DELETE).withProtocol(protocolType).withHost(host).withPort(port).withPathBuilder(pb => {
         pb.withLiteralParameter('alerts', 'alerts').withVariableParameter('alert_id', 'alert_id', 'alert_id');
-      }).withRequestInterceptor(requestInterceptor).withErrorInterceptor(ErrorInterceptor.GENERAL).endpoint;
+      }).withRequestInterceptor(requestInterceptor).withResponseInterceptor(ResponseInterceptor.DATA).withErrorInterceptor(ErrorInterceptor.GENERAL).endpoint;
       this._retrieveTargetsEndpoint = EndpointBuilder.for('retrieve-targets', 'Retrieve targets').withVerb(VerbType.GET).withProtocol(protocolType).withHost(host).withPort(port).withPathBuilder(pb => {
         pb.withLiteralParameter('alert', 'alert').withLiteralParameter('targets', 'targets');
-      }).withErrorInterceptor(ErrorInterceptor.GENERAL).endpoint;
+      }).withResponseInterceptor(ResponseInterceptor.DATA).withErrorInterceptor(ErrorInterceptor.GENERAL).endpoint;
       this._retrievePropertiesEndpoint = EndpointBuilder.for('retrieve-properties', 'Retrieve properties').withVerb(VerbType.GET).withProtocol(protocolType).withHost(host).withPort(port).withPathBuilder(pb => {
         pb.withLiteralParameter('alert', 'alert').withLiteralParameter('targets', 'targets').withLiteralParameter('properties', 'properties');
-      }).withErrorInterceptor(ErrorInterceptor.GENERAL).endpoint;
+      }).withResponseInterceptor(ResponseInterceptor.DATA).withErrorInterceptor(ErrorInterceptor.GENERAL).endpoint;
       this._retrieveOperatorsEndpoint = EndpointBuilder.for('retrieve-operators', 'Retrieve operators').withVerb(VerbType.GET).withProtocol(protocolType).withHost(host).withPort(port).withPathBuilder(pb => {
         pb.withLiteralParameter('alert', 'alert').withLiteralParameter('operators', 'operators');
-      }).withErrorInterceptor(ErrorInterceptor.GENERAL).endpoint;
+      }).withResponseInterceptor(ResponseInterceptor.DATA).withErrorInterceptor(ErrorInterceptor.GENERAL).endpoint;
       this._retrieveModifiersEndpoint = EndpointBuilder.for('retrieve-modifiers', 'Retrieve modifiers').withVerb(VerbType.GET).withProtocol(protocolType).withHost(host).withPort(port).withPathBuilder(pb => {
         pb.withLiteralParameter('alert', 'alert').withLiteralParameter('modifiers', 'modifiers');
-      }).withErrorInterceptor(ErrorInterceptor.GENERAL).endpoint;
+      }).withResponseInterceptor(ResponseInterceptor.DATA).withErrorInterceptor(ErrorInterceptor.GENERAL).endpoint;
       this._retrievePublisherTypesEndpoint = EndpointBuilder.for('retrieve-publisher-types', 'Retrieve publisher types').withVerb(VerbType.GET).withProtocol(protocolType).withHost(host).withPort(port).withPathBuilder(pb => {
         pb.withLiteralParameter('alert', 'alert').withLiteralParameter('publishers', 'publishers');
-      }).withErrorInterceptor(ErrorInterceptor.GENERAL).endpoint;
+      }).withResponseInterceptor(ResponseInterceptor.DATA).withErrorInterceptor(ErrorInterceptor.GENERAL).endpoint;
       this._retrievePublisherTypeDefaultsEndpoint = EndpointBuilder.for('retrieve-publisher-type-defaults', 'Retrieve publisher type defaults').withVerb(VerbType.GET).withProtocol(protocolType).withHost(host).withPort(port).withPathBuilder(pb => {
         pb.withLiteralParameter('alert', 'alert').withLiteralParameter('publishers', 'publishers').withLiteralParameter('default', 'default').withVariableParameter('alert_system', 'alert_system', 'alert_system').withVariableParameter('user_id', 'user_id', 'user_id');
-      }).withRequestInterceptor(requestInterceptor).withErrorInterceptor(ErrorInterceptor.GENERAL).endpoint;
+      }).withRequestInterceptor(requestInterceptor).withResponseInterceptor(ResponseInterceptor.DATA).withErrorInterceptor(ErrorInterceptor.GENERAL).endpoint;
       this._assignPublisherTypeDefaultEndpoint = EndpointBuilder.for('assign-publisher-type-default', 'Assign default publisher type').withVerb(VerbType.PUT).withProtocol(protocolType).withHost(host).withPort(port).withPathBuilder(pb => {
         pb.withLiteralParameter('alert', 'alert').withLiteralParameter('publishers', 'publishers').withLiteralParameter('default', 'default').withVariableParameter('alert_system', 'alert_system', 'alert_system').withVariableParameter('user_id', 'user_id', 'user_id').withVariableParameter('publisher_type_id', 'publisher_type_id', 'publisher_type_id');
-      }).withBody().withRequestInterceptor(requestInterceptor).withErrorInterceptor(ErrorInterceptor.GENERAL).endpoint;
+      }).withBody().withRequestInterceptor(requestInterceptor).withResponseInterceptor(ResponseInterceptor.DATA).withErrorInterceptor(ErrorInterceptor.GENERAL).endpoint;
       this._retrieveMarketDataConfigurationEndpoint = EndpointBuilder.for('get-market-data-configuration', 'Get market data configuration').withVerb(VerbType.GET).withProtocol(protocolType).withHost(host).withPort(port).withPathBuilder(pb => {
         pb.withLiteralParameter('alert', 'alert').withLiteralParameter('market', 'market').withLiteralParameter('configuration', 'configuration').withVariableParameter('alert_system', 'alert_system', 'alert_system').withVariableParameter('user_id', 'user_id', 'user_id');
-      }).withRequestInterceptor(requestInterceptor).withErrorInterceptor(ErrorInterceptor.GENERAL).endpoint;
+      }).withRequestInterceptor(requestInterceptor).withResponseInterceptor(ResponseInterceptor.DATA).withErrorInterceptor(ErrorInterceptor.GENERAL).endpoint;
       this._assignMarketDataConfigurationEndpoint = EndpointBuilder.for('assign-market-data-configuration', 'Assign market data configuration').withVerb(VerbType.PUT).withProtocol(protocolType).withHost(host).withPort(port).withPathBuilder(pb => {
         pb.withLiteralParameter('alert', 'alert').withLiteralParameter('market', 'market').withLiteralParameter('configuration', 'configuration').withVariableParameter('alert_system', 'alert_system', 'alert_system').withVariableParameter('user_id', 'user_id', 'user_id');
-      }).withBody().withRequestInterceptor(requestInterceptor).withErrorInterceptor(ErrorInterceptor.GENERAL).endpoint;
+      }).withBody().withRequestInterceptor(requestInterceptor).withResponseInterceptor(ResponseInterceptor.DATA).withErrorInterceptor(ErrorInterceptor.GENERAL).endpoint;
       this._userEndpoint = EndpointBuilder.for('get-user', 'Get user').withVerb(VerbType.GET).withProtocol(protocolType).withHost(host).withPort(port).withPathBuilder(pb => {
         pb.withLiteralParameter('user', 'user');
-      }).withErrorInterceptor(ErrorInterceptor.GENERAL).endpoint;
+      }).withResponseInterceptor(ResponseInterceptor.DATA).withErrorInterceptor(ErrorInterceptor.GENERAL).endpoint;
       this._versionEndpoint = EndpointBuilder.for('get-version', 'Get version').withVerb(VerbType.GET).withProtocol(protocolType).withHost(host).withPort(port).withPathBuilder(pb => {
         pb.withLiteralParameter('server', 'server').withLiteralParameter('version', 'version');
       }).withResponseInterceptor(ResponseInterceptor.DATA).withErrorInterceptor(ErrorInterceptor.GENERAL).endpoint;
@@ -37263,30 +37263,36 @@ utils.intFromLE = intFromLE;
 arguments[4][88][0].apply(exports,arguments)
 },{"buffer":122,"dup":88}],214:[function(require,module,exports){
 module.exports={
-  "_from": "elliptic@^6.5.2",
+  "_args": [
+    [
+      "elliptic@6.5.2",
+      "/Users/bryan/Documents/git/alerts-client-js"
+    ]
+  ],
+  "_development": true,
+  "_from": "elliptic@6.5.2",
   "_id": "elliptic@6.5.2",
   "_inBundle": false,
   "_integrity": "sha512-f4x70okzZbIQl/NSRLkI/+tteV/9WqL98zx+SQ69KbXxmVrmjwsNUPn/gYJJ0sHvEak24cZgHIPegRePAtA/xw==",
   "_location": "/elliptic",
   "_phantomChildren": {},
   "_requested": {
-    "type": "range",
+    "type": "version",
     "registry": true,
-    "raw": "elliptic@^6.5.2",
+    "raw": "elliptic@6.5.2",
     "name": "elliptic",
     "escapedName": "elliptic",
-    "rawSpec": "^6.5.2",
+    "rawSpec": "6.5.2",
     "saveSpec": null,
-    "fetchSpec": "^6.5.2"
+    "fetchSpec": "6.5.2"
   },
   "_requiredBy": [
     "/browserify-sign",
     "/create-ecdh"
   ],
   "_resolved": "https://registry.npmjs.org/elliptic/-/elliptic-6.5.2.tgz",
-  "_shasum": "05c5678d7173c049d8ca433552224a495d0e3762",
-  "_spec": "elliptic@^6.5.2",
-  "_where": "/Users/bryan/Documents/git/alerts-client-js/node_modules/browserify-sign",
+  "_spec": "6.5.2",
+  "_where": "/Users/bryan/Documents/git/alerts-client-js",
   "author": {
     "name": "Fedor Indutny",
     "email": "fedor@indutny.com"
@@ -37294,7 +37300,6 @@ module.exports={
   "bugs": {
     "url": "https://github.com/indutny/elliptic/issues"
   },
-  "bundleDependencies": false,
   "dependencies": {
     "bn.js": "^4.4.0",
     "brorand": "^1.0.1",
@@ -37304,7 +37309,6 @@ module.exports={
     "minimalistic-assert": "^1.0.0",
     "minimalistic-crypto-utils": "^1.0.0"
   },
-  "deprecated": false,
   "description": "EC cryptography",
   "devDependencies": {
     "brfs": "^1.4.3",
