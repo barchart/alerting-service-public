@@ -12,10 +12,8 @@ const LoggerFactory = require('./../../lib/logging/LoggerFactory'),
 	CustomLoggingProvider = require('./logging/CustomLoggingProvider');
 
 const myAlert = {
-	"user_id": "bryan",
+	"user_id": "me",
 	"alert_system": "barchart.com",
-	"automatic_reset": false,
-	"alert_behavior": "terminate",
 	"conditions": [
 		{
 			"property": {
@@ -123,7 +121,16 @@ const startup = (() => {
 					return alertManager.createAlert(myAlert)
 						.then((created) => {
 							console.log(`A new alert was created, ID is: [ ${created.alert_id} ].`);
-						})
+							
+							return created;
+						}).then((created) => {
+							return alertManager.enableAlert(created)
+								.then((echo) => {
+									console.log(echo);
+
+									// Alert tracking is starting ...
+								});
+						});
 				});
 		}).catch((e) => {
 			console.log(e);

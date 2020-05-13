@@ -1,6 +1,7 @@
 ## AlertManager :id=alertmanager
 >The **central component of the SDK**. It is responsible for connecting to Barchart's
-Alert Service, querying existing alerts, creating new alerts, and monitoring alert status.
+Alert Service, querying existing alerts, creating new alerts, and monitoring the status
+of existing alerts.
 
 **Kind**: global class  
 **Extends**: <code>Disposable</code>  
@@ -11,7 +12,9 @@ Alert Service, querying existing alerts, creating new alerts, and monitoring ale
 * [AlertManager](#AlertManager) ⇐ <code>Disposable</code>
     * _instance_
         * [.connect(jwtProvider)](#AlertManagerconnect) ⇒ <code>Promise.&lt;AlertManager&gt;</code>
-        * [.createAlert(alert)](#AlertManagercreateAlert) ⇒ <code>Promise.&lt;Array.&lt;any&gt;&gt;</code>
+        * [.createAlert(alert)](#AlertManagercreateAlert) ⇒ <code>Promise.&lt;Schema.Alert&gt;</code>
+        * [.enableAlert(alert)](#AlertManagerenableAlert) ⇒ <code>Promise.&lt;Schema.Alert&gt;</code>
+        * [.disableAlert(alert)](#AlertManagerdisableAlert) ⇒ <code>Promise.&lt;Schema.Alert&gt;</code>
         * [.retrieveAlerts(query)](#AlertManagerretrieveAlerts) ⇒ <code>Promise.&lt;Array.&lt;Alert&gt;&gt;</code>
         * [.checkSymbol(symbol)](#AlertManagercheckSymbol) ⇒ <code>Promise.&lt;String&gt;</code>
     * _static_
@@ -42,7 +45,38 @@ connection has been established and other instance methods can be used.
 >Creates a new alert.
 
 **Kind**: instance method of <code>AlertManager</code>  
-**Returns**: <code>Promise.&lt;Array.&lt;any&gt;&gt;</code>  
+**Returns**: <code>Promise.&lt;Schema.Alert&gt;</code>  
+**Access**: public  
+
+| Param | Type |
+| --- | --- |
+| alert | [<code>Schema.Alert</code>](/content/sdk/lib-data?id=schema.alert) | 
+
+
+* * *
+
+### alertManager.enableAlert(alert) :id=alertmanagerenablealert
+>Sends a request to the backend to begin "tracking" an alert. If successful,
+the alert will transition to the ```Active``` state.
+
+**Kind**: instance method of <code>AlertManager</code>  
+**Returns**: <code>Promise.&lt;Schema.Alert&gt;</code>  
+**Access**: public  
+
+| Param | Type |
+| --- | --- |
+| alert | [<code>Schema.Alert</code>](/content/sdk/lib-data?id=schema.alert) | 
+
+
+* * *
+
+### alertManager.disableAlert(alert) :id=alertmanagerdisablealert
+>Sends a request to the backend to stop "tracking" an alert. If successful,
+the alert will transition to the ```Inactive``` state.
+
+**Kind**: instance method of <code>AlertManager</code>  
+**Returns**: <code>Promise.&lt;Schema.Alert&gt;</code>  
+**Access**: public  
 
 | Param | Type |
 | --- | --- |

@@ -32,10 +32,10 @@ The _production_ environment does not permit permit anonymous connections. **Con
 
 [JSON Web Tokens](https://en.wikipedia.org/wiki/JSON_Web_Token) — called JWT — are used for authentication and authorization. Each request made to the backend must include a token. Generating these tokens is surprisingly easy -- refer to the [Key Concepts: Security](/content/concepts/security) section for details.
 
-In the _demo_ environment, token generation uses the following:
+In the _demo_ environment, token generation follows these rules:
 
-* The JWT signing algorithm is HMAC-SHA256 (aka HS256)
-* The JWT signing secret is "public-knowledge-1234567890"
+* All tokens are signed with the ```HMAC-SHA256``` (aka ```HS256```) algorithm
+* All tokens are signed with the ```"public-knowledge-1234567890"``` secret
 
 Since the signing secret is available to everyone (see above), there is no expectation of privacy; the _demo_ environment is for testing and evaluation only.
 
@@ -83,16 +83,15 @@ If you choose to work directly with the REST interface, you won't need to perfor
 
 ## Defining an Alert
 
-To create an alert, we must construct an object which conforms to the ```Alert``` schema. To accommodate a wide variety of features, this schema is non-trivial. An in-depth discussion of the schema found in the [Key Concepts: Data Structures](/content/concepts/data_structures) section.
+To create an alert, we must construct an object which conforms to the ```Alert``` definition. To accommodate a wide variety of features, the schema is non-trivial and an in-depth discussion can be found in the [Key Concepts: Data Structures](/content/concepts/data_structures) section.
 
-For now, here is an object, representing an alert with condition — Apple stock trades over $600 per share:
+For now, here is simple ```Alert``` object with a single condition — Apple stock trades over $600 per share:
 
 ```json
 {
 	"user_id": "me",
 	"alert_system": "barchart.com",
-	"automatic_reset": false,
-	"alert_behavior": "terminate",
+	"name": "My First Alert"
 	"conditions": [
 		{
 			"property": {
@@ -112,7 +111,7 @@ For now, here is an object, representing an alert with condition — Apple stock
 
 ## Creating an Alert
 
-After we've defined an alert (see above), we need to persist it.
+After we've defined the alert, we need to persist it. The backend will assign an ```alert_id``` value and the complete ```Alert``` object will be returned to us.
 
 #### Using the SDK
 
@@ -126,15 +125,18 @@ alertManager.createAlert(alertToCreate)
 #### Using the API
 
 ```shell
+curl 'http://localhost:3000/alerts' \
+  -H 'Accept: application/json' \
+  -H 'Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoibWUiLCJhbGVydF9zeXN0ZW0iOiJiYXJjaGFydC5jb20iLCJpYXQiOjE1ODk0MTEyNzl9.SxyC8s_CKhPyzcNmM_h_TRMiNSx3YstKGmAb2IOWqgM' \
+  -H 'Content-Type: application/json;charset=UTF-8' \
+  --data-binary '{"user_id":"me","alert_system":"barchart.com","name":"My First Alert","conditions":[{"property":{"property_id":1,"target":{"identifier":"AAPL"}},"operator":{"operator_id":2,"operand":"600"}}]}'
 ```
 
 ## Starting an Alert
 
-
+After an ```Alert``` is created, the ```alert_state``` will be ```Inactive```. We must start the alert to begin tracking its conditions.
 
 #### Using the SDK
-
-Instruct the backend to begin tracking an alert, as follows:
 
 ```js
 alertManager.enableAlert(alert)
@@ -142,8 +144,6 @@ alertManager.enableAlert(alert)
 		// Alert tracking is starting ...
 	});
 ```
-
-We can stop an active alert as follows:
 
 ```js
 alertManager.disableAlert(alert)
@@ -174,7 +174,7 @@ alertManager.retrieveAlerts({ user_id: 'me', alert_system: 'barchart.com' })
 
 Two sample applications were built with this SDK. They could provide some insight into SDK features and usage.
 
-### Web Browsers
+### Web Application
 
 A single-page HTML application allows you to configure, start, stop, edit, delete, and monitor alerts.
 
