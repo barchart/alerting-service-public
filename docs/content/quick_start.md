@@ -106,8 +106,7 @@ For now, here is an object, representing an alert with condition — Apple stock
 				"operand": "600"
 			}
 		}
-	],
-	"publishers": [ ]
+	]
 }
 ```
 
@@ -117,19 +116,17 @@ After we've defined an alert (see above), we need to persist it.
 
 #### Using the SDK
 
-The ```AlertManager.createAlert``` function will save a new alert, as follows:
-
 ```js
 alertManager.createAlert(alertToCreate)
 	.then((alert) => {
-		console.log(`A new alert was created, ID is: [ ${alert.alert_id} ].`);
+		console.log(`A new alert was created with ID: [ ${alert.alert_id} ].`);
 	});
 ```
 
 #### Using the API
 
-
-
+```shell
+```
 
 ## Starting an Alert
 

@@ -26,12 +26,9 @@ const myAlert = {
 			},
 			"operator": {
 				"operator_id": 2,
-				"operand": "600"
+				"operand": "123"
 			}
 		}
-	],
-	"publishers": [
-
 	]
 };
 
@@ -125,14 +122,16 @@ const startup = (() => {
 				}).then(() => {
 					return alertManager.createAlert(myAlert)
 						.then((created) => {
-							console.log('done');
+							console.log(`A new alert was created, ID is: [ ${created.alert_id} ].`);
 						})
 				});
 		}).catch((e) => {
-		__logger.warn(`Example: Failed to connect to Barchart\'s Alert Service`);
-	}).then(() => {
-		__logger.info(`Example: Disposing AlertManager`);
+			console.log(e);
 
-		alertManager.dispose();
-	});
+			__logger.warn(`Example: Failed to connect to Barchart\'s Alert Service`);
+		}).then(() => {
+			__logger.info(`Example: Disposing AlertManager`);
+
+			alertManager.dispose();
+		});
 })();
