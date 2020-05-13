@@ -92,7 +92,7 @@ For now, here is an object, representing an alert with condition — Apple stock
 	"user_id": "me",
 	"alert_system": "barchart.com",
 	"automatic_reset": false,
-	"alert_behavior": "terminate"
+	"alert_behavior": "terminate",
 	"conditions": [
 		{
 			"property": {
@@ -106,26 +106,34 @@ For now, here is an object, representing an alert with condition — Apple stock
 				"operand": "600"
 			}
 		}
-	]
+	],
+	"publishers": [ ]
 }
 ```
 
 ## Creating an Alert
 
+After we've defined an alert (see above), we need to persist it.
+
 #### Using the SDK
 
-After we've defined an alert (see above), the ```AlertManager.createAlert``` function will persist the it:
+The ```AlertManager.createAlert``` function will save a new alert, as follows:
 
 ```js
 alertManager.createAlert(alertToCreate)
 	.then((alert) => {
-		console.log(`A new alert was created, the alert's ID is: [ ${alert.alert_id} ].`);
+		console.log(`A new alert was created, ID is: [ ${alert.alert_id} ].`);
 	});
 ```
 
 #### Using the API
 
+
+
+
 ## Starting an Alert
+
+
 
 #### Using the SDK
 

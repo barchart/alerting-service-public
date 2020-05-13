@@ -3,7 +3,7 @@ const process = require('process');
 const AlertManager = require('./../../lib/AlertManager');
 
 const AdapterForHttp = require('./../../lib/adapters/AdapterForHttp');
-	AdapterForSocketIo = require('./../../lib/adapters/AdapterForSocketIo');
+AdapterForSocketIo = require('./../../lib/adapters/AdapterForSocketIo');
 
 const JwtProvider = require('./../../lib/security/JwtProvider'),
 	getJwtGenerator = require('./../../lib/security/demo/getJwtGenerator');
@@ -11,9 +11,33 @@ const JwtProvider = require('./../../lib/security/JwtProvider'),
 const LoggerFactory = require('./../../lib/logging/LoggerFactory'),
 	CustomLoggingProvider = require('./logging/CustomLoggingProvider');
 
+const myAlert = {
+	"user_id": "bryan",
+	"alert_system": "barchart.com",
+	"automatic_reset": false,
+	"alert_behavior": "terminate",
+	"conditions": [
+		{
+			"property": {
+				"property_id": 1,
+				"target": {
+					"identifier": "AAPL"
+				}
+			},
+			"operator": {
+				"operator_id": 2,
+				"operand": "600"
+			}
+		}
+	],
+	"publishers": [
+
+	]
+};
+
 const startup = (() => {
 	'use strict';
-	
+
 	//LoggerFactory.configureForConsole();
 	//LoggerFactory.configureForSilence();
 
@@ -89,7 +113,7 @@ const startup = (() => {
 			__logger.info(`Example: Retrieving a list of alerts for [ ${user_id}@${alert_system} ]`);
 
 			const payload = { };
-			
+
 			payload.user_id = user_id;
 			payload.alert_system = alert_system;
 
@@ -98,12 +122,17 @@ const startup = (() => {
 					__logger.info(`Example: Retrieved alerts [ ${alerts.length} ] for [ ${user_id}@${alert_system} ]`);
 				}).catch((e) => {
 					__logger.warn(`Example: Failed to retrieve alerts for [ ${user_id}@${alert_system} ]`);
+				}).then(() => {
+					return alertManager.createAlert(myAlert)
+						.then((created) => {
+							console.log('done');
+						})
 				});
 		}).catch((e) => {
-			__logger.warn(`Example: Failed to connect to Barchart\'s Alert Service`);
-		}).then(() => {
-			__logger.info(`Example: Disposing AlertManager`);
+		__logger.warn(`Example: Failed to connect to Barchart\'s Alert Service`);
+	}).then(() => {
+		__logger.info(`Example: Disposing AlertManager`);
 
-			alertManager.dispose();
-		});
+		alertManager.dispose();
+	});
 })();
