@@ -126,6 +126,7 @@ alertManager.createAlert(alertToCreate)
 
 ```shell
 curl 'http://localhost:3000/alerts' \
+  -X 'POST' \
   -H 'Accept: application/json' \
   -H 'Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoibWUiLCJhbGVydF9zeXN0ZW0iOiJiYXJjaGFydC5jb20iLCJpYXQiOjE1ODk0MTEyNzl9.SxyC8s_CKhPyzcNmM_h_TRMiNSx3YstKGmAb2IOWqgM' \
   -H 'Content-Type: application/json;charset=UTF-8' \
@@ -138,28 +139,53 @@ After an ```Alert``` is created, the ```alert_state``` will be ```Inactive```. W
 
 #### Using the SDK
 
+To start the alert, pass the ```Alert``` object to the ```AlertManager.enableAlert``` function:
+
 ```js
 alertManager.enableAlert(alert)
 	.then(() => {
-		// Alert tracking is starting ...
+		// Alert is starting ...
 	});
 ```
+
+To stop the alert, pass the ```Alert``` object to the ```AlertManager.disableAlert``` function:
 
 ```js
 alertManager.disableAlert(alert)
 	.then(() => {
-		// Alert tracking is starting ...
+		// Alert is stopping ...
 	});
 ```
 
-
 #### Using the API
+
+The REST-ful operation to start an alert updates its ```alert_state``` property to ```Starting```:
+
+```shell
+curl 'http://localhost:3000/alerts/ef5acb88-d747-48d2-b8d2-713cf351c012' \
+  -X 'PUT' \
+  -H 'Accept: application/json' \
+  -H 'Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoibWUiLCJhbGVydF9zeXN0ZW0iOiJiYXJjaGFydC5jb20iLCJpYXQiOjE1ODk0MTEyNzl9.SxyC8s_CKhPyzcNmM_h_TRMiNSx3YstKGmAb2IOWqgM' \
+  -H 'Content-Type: application/json;charset=UTF-8' \
+  --data-binary '{"alert_id":"ef5acb88-d747-48d2-b8d2-713cf351c012","alert_state":"Starting"}'
+```
+
+The REST-ful operation to stop an alert updates its ```alert_state``` property to ```Stopping```:
+
+```shell
+curl 'http://localhost:3000/alerts/ef5acb88-d747-48d2-b8d2-713cf351c012' \
+  -X 'PUT' \
+  -H 'Accept: application/json' \
+  -H 'Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoibWUiLCJhbGVydF9zeXN0ZW0iOiJiYXJjaGFydC5jb20iLCJpYXQiOjE1ODk0MTEyNzl9.SxyC8s_CKhPyzcNmM_h_TRMiNSx3YstKGmAb2IOWqgM' \
+  -H 'Content-Type: application/json;charset=UTF-8' \
+  --data-binary '{"alert_id":"ef5acb88-d747-48d2-b8d2-713cf351c012","alert_state":"Stopping"}'
+```
 
 ## Listing Alerts
 
-#### Using the SDK
+You can request a list of alerts which belong to a user as follows.
 
-we can request a list of alerts, as follows:
+#### Using the SDK
 
 ```js
 alertManager.retrieveAlerts({ user_id: 'me', alert_system: 'barchart.com' })
@@ -169,6 +195,13 @@ alertManager.retrieveAlerts({ user_id: 'me', alert_system: 'barchart.com' })
 ```
 
 #### Using the API
+
+```shell
+curl 'http://localhost:3000/alerts/users/barchart.com/me' \
+  -X 'GET' \
+  -H 'Accept: application/json' \
+  -H 'Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoibWUiLCJhbGVydF9zeXN0ZW0iOiJiYXJjaGFydC5jb20iLCJpYXQiOjE1ODk0MTEyNzl9.SxyC8s_CKhPyzcNmM_h_TRMiNSx3YstKGmAb2IOWqgM'
+```
 
 ## Demos
 
