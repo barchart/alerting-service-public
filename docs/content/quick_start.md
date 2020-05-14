@@ -224,16 +224,18 @@ A single-page HTML application allows you to configure, start, stop, edit, delet
 
 You can find the source code here:
 
-* /example/browser/example.html
-* /example/browser/js/startup.js
+* */example/browser/example.html*
+* */example/browser/js/startup.js*
 
-The application is also hosted at:
+This application is also hosted at:
 
 https://examples.aws.barchart.com/alerts-client-js/example.html
 
 ### Node.js
 
-A simple Node.js script connects to the _demo_ environment and retrieves a list of alerts. You can find the source code in the */example/node* folder.
+A simple Node.js script connects to the _demo_ environment and retrieves a list of alerts. You can find the source code here:
+
+* */example/node/example.js*
 
 To run the script, make sure required dependencies are installed:
 
@@ -241,7 +243,7 @@ To run the script, make sure required dependencies are installed:
 npm install
 ```
 
-Then, execute it, as follows:
+Then, execute it:
 
 ```shell
 node ./example/node/example.js {user_id}
