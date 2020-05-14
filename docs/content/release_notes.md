@@ -10,6 +10,7 @@
 * Visibility
   * GitHub repository's access level changed to public.
   * Published to NPM as a [public package](https://www.npmjs.com/package/@barchart/alerts-client-js).
+  * MIT License applied.
 * Documentation
   * [JSDoc](https://jsdoc.app/) completed and updated in code files.
   * [OpenAPI](https://www.openapis.org/) definition added.
