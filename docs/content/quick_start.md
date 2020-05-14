@@ -109,7 +109,9 @@ For now, here is simple ```Alert``` object with a single condition — Apple sto
 }
 ```
 
-## Creating an Alert
+## Working with Alerts
+
+### Creating an Alert
 
 After we've defined the alert, we need to persist it. The backend will assign an ```alert_id``` value and the complete ```Alert``` object will be returned to us.
 
@@ -133,7 +135,7 @@ curl 'http://localhost:3000/alerts' \
   --data-binary '{"user_id":"me","alert_system":"barchart.com","name":"My First Alert","conditions":[{"property":{"property_id":1,"target":{"identifier":"AAPL"}},"operator":{"operator_id":2,"operand":"600"}}]}'
 ```
 
-## Starting an Alert
+### Starting an Alert
 
 After an ```Alert``` is created, the ```alert_state``` will be ```Inactive```. We must start the alert to begin tracking its conditions.
 
@@ -181,7 +183,7 @@ curl 'http://localhost:3000/alerts/ef5acb88-d747-48d2-b8d2-713cf351c012' \
   --data-binary '{"alert_id":"ef5acb88-d747-48d2-b8d2-713cf351c012","alert_state":"Stopping"}'
 ```
 
-## Listing Alerts
+### Listing Alerts
 
 You can request a list of alerts which belong to a user as follows.
 
@@ -202,6 +204,15 @@ curl 'http://localhost:3000/alerts/users/barchart.com/me' \
   -H 'Accept: application/json' \
   -H 'Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoibWUiLCJhbGVydF9zeXN0ZW0iOiJiYXJjaGFydC5jb20iLCJpYXQiOjE1ODk0MTEyNzl9.SxyC8s_CKhPyzcNmM_h_TRMiNSx3YstKGmAb2IOWqgM'
 ```
+
+### Other Alert Actions
+
+To fully integrate with the Barchart Alert Service, you will need to
+
+* Subscribing to the state changes for your alerts.
+* Starting (and stopping) multiple alerts.
+* Deleting alerts.
+* Configuring default notification strategies (e.g. email, SMS, etc)
 
 ## Demos
 
