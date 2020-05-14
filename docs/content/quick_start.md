@@ -37,7 +37,7 @@ In the _demo_ environment, token generation follows these rules:
 * All tokens are signed with the ```HMAC-SHA256``` (aka ```HS256```) algorithm
 * All tokens are signed with the ```"public-knowledge-1234567890"``` secret
 
-Since the signing secret is available to everyone (see above), there is no expectation of privacy; the _demo_ environment is for testing and evaluation only.
+Since the signing secret is available to everyone (see above), there can be no expectation of privacy; the _demo_ environment is for testing and evaluation only.
 
 In the the _production_ environment, you must exchange a _"secret"_  with Barchart — in the form of a [public/private key pair](https://en.wikipedia.org/wiki/Public-key_cryptography). Consequently, your data will be secure.
 
