@@ -13,11 +13,14 @@ of existing alerts.
     * _instance_
         * [.connect(jwtProvider)](#AlertManagerconnect) ⇒ <code>Promise.&lt;AlertManager&gt;</code>
         * [.createAlert(alert)](#AlertManagercreateAlert) ⇒ <code>Promise.&lt;Schema.Alert&gt;</code>
+        * [.editAlert(alert)](#AlertManagereditAlert) ⇒ <code>Promise.&lt;Alert&gt;</code>
+        * [.deleteAlert(alert)](#AlertManagerdeleteAlert) ⇒ <code>Promise.&lt;Schema.Alert&gt;</code>
         * [.retrieveAlert(alert)](#AlertManagerretrieveAlert) ⇒ <code>Promise.&lt;Schema.Alert&gt;</code>
         * [.retrieveAlerts(query)](#AlertManagerretrieveAlerts) ⇒ <code>Promise.&lt;Array.&lt;Alert&gt;&gt;</code>
-        * [.deleteAlert(alert)](#AlertManagerdeleteAlert) ⇒ <code>Promise.&lt;Schema.Alert&gt;</code>
         * [.enableAlert(alert)](#AlertManagerenableAlert) ⇒ <code>Promise.&lt;Schema.Alert&gt;</code>
+        * [.enableAlerts(query)](#AlertManagerenableAlerts) ⇒ <code>Promise.&lt;Boolean&gt;</code>
         * [.disableAlert(alert)](#AlertManagerdisableAlert) ⇒ <code>Promise.&lt;Schema.Alert&gt;</code>
+        * [.disableAlerts(query)](#AlertManagerdisableAlerts) ⇒ <code>Promise.&lt;Boolean&gt;</code>
         * [.checkSymbol(symbol)](#AlertManagercheckSymbol) ⇒ <code>Promise.&lt;String&gt;</code>
     * _static_
         * [.version](#AlertManagerversion) ⇒ <code>String</code>
@@ -57,31 +60,18 @@ connection has been established and other instance methods can be used.
 
 * * *
 
-### alertManager.retrieveAlert(alert) :id=alertmanagerretrievealert
->Gets a single alert by its identifier (the ```alert_id``` property must be
-supplied).
+### alertManager.editAlert(alert) :id=alertmanagereditalert
+>Performs a synthetic update operation on an existing alert. The
+existing alert is deleted. Then, a new alert is created in its
+place. The new alert will have the same identifier.
 
 **Kind**: instance method of <code>AlertManager</code>  
-**Returns**: <code>Promise.&lt;Schema.Alert&gt;</code>  
+**Returns**: <code>Promise.&lt;Alert&gt;</code>  
 **Access**: public  
 
 | Param | Type |
 | --- | --- |
 | alert | [<code>Schema.Alert</code>](/content/sdk/lib-data?id=schema.alert) | 
-
-
-* * *
-
-### alertManager.retrieveAlerts(query) :id=alertmanagerretrievealerts
->Gets the set of alerts which match the ```query``` parameter.
-
-**Kind**: instance method of <code>AlertManager</code>  
-**Returns**: <code>Promise.&lt;Array.&lt;Alert&gt;&gt;</code>  
-**Access**: public  
-
-| Param | Type |
-| --- | --- |
-| query | [<code>Schema.AlertQuery</code>](/content/sdk/lib-data?id=schema.alertquery) | 
 
 
 * * *
@@ -100,9 +90,8 @@ supplied).
 
 * * *
 
-### alertManager.enableAlert(alert) :id=alertmanagerenablealert
->Sends a request to the backend to begin "tracking" an alert. If successful,
-the alert will transition to the ```Active``` state.
+### alertManager.retrieveAlert(alert) :id=alertmanagerretrievealert
+>Gets a single alert by its identifier.
 
 **Kind**: instance method of <code>AlertManager</code>  
 **Returns**: <code>Promise.&lt;Schema.Alert&gt;</code>  
@@ -110,14 +99,55 @@ the alert will transition to the ```Active``` state.
 
 | Param | Type |
 | --- | --- |
-| alert | [<code>Schema.Alert</code>](/content/sdk/lib-data?id=schema.alert) | 
+| alert | [<code>Schema.Alert</code>](/content/sdk/lib-data?id=schema.alert) \| [<code>Schema.AlertIdentifier</code>](/content/sdk/lib-data?id=schema.alertidentifier) | 
+
+
+* * *
+
+### alertManager.retrieveAlerts(query) :id=alertmanagerretrievealerts
+>Gets the set of alerts which match a query.
+
+**Kind**: instance method of <code>AlertManager</code>  
+**Returns**: <code>Promise.&lt;Array.&lt;Alert&gt;&gt;</code>  
+**Access**: public  
+
+| Param | Type |
+| --- | --- |
+| query | [<code>Schema.AlertQuery</code>](/content/sdk/lib-data?id=schema.alertquery) | 
+
+
+* * *
+
+### alertManager.enableAlert(alert) :id=alertmanagerenablealert
+>Sends a request to transition an alert to the ```Active``` state.
+
+**Kind**: instance method of <code>AlertManager</code>  
+**Returns**: <code>Promise.&lt;Schema.Alert&gt;</code>  
+**Access**: public  
+
+| Param | Type |
+| --- | --- |
+| alert | [<code>Schema.Alert</code>](/content/sdk/lib-data?id=schema.alert) \| [<code>Schema.AlertIdentifier</code>](/content/sdk/lib-data?id=schema.alertidentifier) | 
+
+
+* * *
+
+### alertManager.enableAlerts(query) :id=alertmanagerenablealerts
+>Sends a request to transition all alerts owned by a user to the ```Active``` state.
+
+**Kind**: instance method of <code>AlertManager</code>  
+**Returns**: <code>Promise.&lt;Boolean&gt;</code>  
+**Access**: public  
+
+| Param | Type |
+| --- | --- |
+| query | [<code>Schema.AlertQuery</code>](/content/sdk/lib-data?id=schema.alertquery) | 
 
 
 * * *
 
 ### alertManager.disableAlert(alert) :id=alertmanagerdisablealert
->Sends a request to the backend to stop "tracking" an alert. If successful,
-the alert will transition to the ```Inactive``` state.
+>Sends a request to transition an alert to the ```Inactive``` state.
 
 **Kind**: instance method of <code>AlertManager</code>  
 **Returns**: <code>Promise.&lt;Schema.Alert&gt;</code>  
@@ -125,7 +155,21 @@ the alert will transition to the ```Inactive``` state.
 
 | Param | Type |
 | --- | --- |
-| alert | [<code>Schema.Alert</code>](/content/sdk/lib-data?id=schema.alert) | 
+| alert | [<code>Schema.Alert</code>](/content/sdk/lib-data?id=schema.alert) \| [<code>Schema.AlertIdentifier</code>](/content/sdk/lib-data?id=schema.alertidentifier) | 
+
+
+* * *
+
+### alertManager.disableAlerts(query) :id=alertmanagerdisablealerts
+>Sends a request to transition all alerts owned by a user to the ```Inactive``` state.
+
+**Kind**: instance method of <code>AlertManager</code>  
+**Returns**: <code>Promise.&lt;Boolean&gt;</code>  
+**Access**: public  
+
+| Param | Type |
+| --- | --- |
+| query | [<code>Schema.AlertQuery</code>](/content/sdk/lib-data?id=schema.alertquery) | 
 
 
 * * *
@@ -161,8 +205,8 @@ used.
 
 | Param | Type | Description |
 | --- | --- | --- |
-| host | <code>String</code> | The host name of the Alert Service. |
-| port | <code>Number</code> | The TCP port of the Alert Service. |
+| host | <code>String</code> | Barchart Alert Service's hostname. |
+| port | <code>Number</code> | Barchart Alert Service's TCP port number. |
 | secure | <code>Boolean</code> | If true, the transport layer will use encryption (e.g. HTTPS, WSS, etc). |
 | adapterClazz | <code>function</code> | The transport strategy. Specifically, the constructor function for a class extending [AdapterBase](/content/sdk/lib-adapters?id=/content/sdk/lib-adapters?id=adapterbase). |
 

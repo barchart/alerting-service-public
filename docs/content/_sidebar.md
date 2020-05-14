@@ -12,5 +12,6 @@
 <!-- api_open -->
 * [API Reference](/content/api_reference)
 <!-- api_close -->
+* [API Reference](/content/api_reference)
 * [Release Notes](/content/release_notes)
 

@@ -45,7 +45,7 @@ library.
 * * *
 
 ### adapterBase.host :id=adapterbasehost
->The host name of the Barchart Alert Service.
+>The hostname of the Barchart Alert Service.
 
 **Kind**: instance property of <code>AdapterBase</code>  
 **Returns**: <code>String</code>  
@@ -123,7 +123,7 @@ is used for data feeds.
 * * *
 
 ### adapterForHttp.host :id=adapterforhttphost
->The host name of the Barchart Alert Service.
+>The hostname of the Barchart Alert Service.
 
 **Kind**: instance property of <code>AdapterForHttp</code>  
 **Overrides**: [<code>host</code>](#AdapterBasehost)  
@@ -188,7 +188,7 @@ The Socket.IO will use a WebSocket in modern browsers.
 * * *
 
 ### adapterForSocketIo.host :id=adapterforsocketiohost
->The host name of the Barchart Alert Service.
+>The hostname of the Barchart Alert Service.
 
 **Kind**: instance property of <code>AdapterForSocketIo</code>  
 **Overrides**: [<code>host</code>](#AdapterBasehost)  
@@ -252,7 +252,7 @@ The Socket.IO will use a WebSocket in modern browsers.
 * * *
 
 ### adapterForWebSockets.host :id=adapterforwebsocketshost
->The host name of the Barchart Alert Service.
+>The hostname of the Barchart Alert Service.
 
 **Kind**: instance property of <code>AdapterForWebSockets</code>  
 **Overrides**: [<code>host</code>](#AdapterBasehost)  

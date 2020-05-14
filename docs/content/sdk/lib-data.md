@@ -61,6 +61,7 @@
 * [Schema](#Schema) : <code>object</code>
     * _static_
         * [.Alert](#SchemaAlert) : <code>Object</code>
+        * [.AlertIdentifier](#SchemaAlertIdentifier) : <code>Object</code>
         * [.AlertQuery](#SchemaAlertQuery) : <code>Object</code>
 
 
@@ -93,6 +94,22 @@ new alert.
 | [publishers] | <code>Array.&lt;Publisher&gt;</code> |  |
 | [effectivePublishers] | <code>Array.&lt;Publisher&gt;</code> |  |
 | [tracking_server_id] | <code>String</code> |  |
+
+
+* * *
+
+### Schema.AlertIdentifier :id=schemaalertidentifier
+>A subset of [Alert](#SchemaAlert) properties. An [Alert](#SchemaAlert) can be substituted
+for this type.
+
+**Kind**: static typedef of <code>Schema</code>  
+**Properties**
+
+| Name | Type | Description |
+| --- | --- | --- |
+| [alert_id] | <code>String</code> | The alert's unique identifier (assigned by the backend). |
+| user_id | <code>String</code> | The alert owner's unique identifier. |
+| alert_system | <code>String</code> | The alert owner's domain. |
 
 
 * * *
