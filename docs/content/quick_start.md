@@ -59,7 +59,7 @@ const AlertManager = require('@barchart/alert-client-js/lib/AlertManager'),
 	AdapterForHttp = require('@barchart/lib/adapters/AdapterForHttp'),
 	jwtGeneratorFactory = require('@barchart/lib/security/demo/getJwtGenerator');
 
-const host = 'alerts-management-test.barchart.com';
+const host = 'alerts-management-demo.barchart.com';
 const port = 443;
 const secure = true;
 
