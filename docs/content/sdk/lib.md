@@ -13,9 +13,11 @@ of existing alerts.
     * _instance_
         * [.connect(jwtProvider)](#AlertManagerconnect) ⇒ <code>Promise.&lt;AlertManager&gt;</code>
         * [.createAlert(alert)](#AlertManagercreateAlert) ⇒ <code>Promise.&lt;Schema.Alert&gt;</code>
+        * [.retrieveAlert(alert)](#AlertManagerretrieveAlert) ⇒ <code>Promise.&lt;Schema.Alert&gt;</code>
+        * [.retrieveAlerts(query)](#AlertManagerretrieveAlerts) ⇒ <code>Promise.&lt;Array.&lt;Alert&gt;&gt;</code>
+        * [.deleteAlert(alert)](#AlertManagerdeleteAlert) ⇒ <code>Promise.&lt;Schema.Alert&gt;</code>
         * [.enableAlert(alert)](#AlertManagerenableAlert) ⇒ <code>Promise.&lt;Schema.Alert&gt;</code>
         * [.disableAlert(alert)](#AlertManagerdisableAlert) ⇒ <code>Promise.&lt;Schema.Alert&gt;</code>
-        * [.retrieveAlerts(query)](#AlertManagerretrieveAlerts) ⇒ <code>Promise.&lt;Array.&lt;Alert&gt;&gt;</code>
         * [.checkSymbol(symbol)](#AlertManagercheckSymbol) ⇒ <code>Promise.&lt;String&gt;</code>
     * _static_
         * [.version](#AlertManagerversion) ⇒ <code>String</code>
@@ -55,6 +57,49 @@ connection has been established and other instance methods can be used.
 
 * * *
 
+### alertManager.retrieveAlert(alert) :id=alertmanagerretrievealert
+>Gets a single alert by its identifier (the ```alert_id``` property must be
+supplied).
+
+**Kind**: instance method of <code>AlertManager</code>  
+**Returns**: <code>Promise.&lt;Schema.Alert&gt;</code>  
+**Access**: public  
+
+| Param | Type |
+| --- | --- |
+| alert | [<code>Schema.Alert</code>](/content/sdk/lib-data?id=schema.alert) | 
+
+
+* * *
+
+### alertManager.retrieveAlerts(query) :id=alertmanagerretrievealerts
+>Gets the set of alerts which match the ```query``` parameter.
+
+**Kind**: instance method of <code>AlertManager</code>  
+**Returns**: <code>Promise.&lt;Array.&lt;Alert&gt;&gt;</code>  
+**Access**: public  
+
+| Param | Type |
+| --- | --- |
+| query | [<code>Schema.AlertQuery</code>](/content/sdk/lib-data?id=schema.alertquery) | 
+
+
+* * *
+
+### alertManager.deleteAlert(alert) :id=alertmanagerdeletealert
+>Deletes an existing alert.
+
+**Kind**: instance method of <code>AlertManager</code>  
+**Returns**: <code>Promise.&lt;Schema.Alert&gt;</code>  
+**Access**: public  
+
+| Param | Type |
+| --- | --- |
+| alert | [<code>Schema.Alert</code>](/content/sdk/lib-data?id=schema.alert) | 
+
+
+* * *
+
 ### alertManager.enableAlert(alert) :id=alertmanagerenablealert
 >Sends a request to the backend to begin "tracking" an alert. If successful,
 the alert will transition to the ```Active``` state.
@@ -81,21 +126,6 @@ the alert will transition to the ```Inactive``` state.
 | Param | Type |
 | --- | --- |
 | alert | [<code>Schema.Alert</code>](/content/sdk/lib-data?id=schema.alert) | 
-
-
-* * *
-
-### alertManager.retrieveAlerts(query) :id=alertmanagerretrievealerts
->Returns [Alert](Alert) objects for the current user. Optional filtering
-can be applied.
-
-**Kind**: instance method of <code>AlertManager</code>  
-**Returns**: <code>Promise.&lt;Array.&lt;Alert&gt;&gt;</code>  
-**Access**: public  
-
-| Param | Type |
-| --- | --- |
-| query | [<code>Schema.AlertFilter</code>](/content/sdk/lib-data?id=schema.alertfilter) | 
 
 
 * * *
