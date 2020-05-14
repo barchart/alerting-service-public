@@ -1,3 +1,38 @@
+## Demos
+
+Two sample applications were built with this SDK. They could provide some insight into SDK features and usage.
+
+### Web Application
+
+A single-page HTML application allows you to configure, start, stop, edit, delete, and monitor alerts.
+
+You can find the source code here:
+
+* */example/browser/example.html*
+* */example/browser/js/startup.js*
+
+This application is also hosted at:
+
+https://examples.aws.barchart.com/alerts-client-js/example.html
+
+### Node.js
+
+A simple Node.js script connects to the _demo_ environment and retrieves a list of alerts. You can find the source code here:
+
+* */example/node/example.js*
+
+To run the script, make sure required dependencies are installed:
+
+```shell
+npm install
+```
+
+Then, execute it:
+
+```shell
+node ./example/node/example.js {user_id}
+```
+
 ## Setup
 
 As a consumer of the Barchart Alert Service, you have two options:
@@ -109,9 +144,7 @@ For now, here is simple ```Alert``` object with a single condition — Apple sto
 }
 ```
 
-## Working with Alerts
-
-### Creating an Alert
+## Creating an Alert
 
 After we've defined the alert, we need to persist it. The backend will assign an ```alert_id``` value and the complete ```Alert``` object will be returned to us.
 
@@ -135,7 +168,7 @@ curl 'http://localhost:3000/alerts' \
   --data-binary '{"user_id":"me","alert_system":"barchart.com","name":"My First Alert","conditions":[{"property":{"property_id":1,"target":{"identifier":"AAPL"}},"operator":{"operator_id":2,"operand":"600"}}]}'
 ```
 
-### Starting an Alert
+## Starting an Alert
 
 After an ```Alert``` is created, the ```alert_state``` will be ```Inactive```. We must start the alert to begin tracking its conditions.
 
@@ -182,72 +215,3 @@ curl 'http://localhost:3000/alerts/ef5acb88-d747-48d2-b8d2-713cf351c012' \
   -H 'Content-Type: application/json;charset=UTF-8' \
   --data-binary '{"alert_id":"ef5acb88-d747-48d2-b8d2-713cf351c012","alert_state":"Stopping"}'
 ```
-
-### Listing Alerts
-
-You can request a list of alerts which belong to a user as follows.
-
-#### Using the SDK
-
-```js
-alertManager.retrieveAlerts({ user_id: 'me', alert_system: 'barchart.com' })
-	.then((alerts) => {
-		// process alerts ...
-	});
-```
-
-#### Using the API
-
-```shell
-curl 'http://localhost:3000/alerts/users/barchart.com/me' \
-  -X 'GET' \
-  -H 'Accept: application/json' \
-  -H 'Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoibWUiLCJhbGVydF9zeXN0ZW0iOiJiYXJjaGFydC5jb20iLCJpYXQiOjE1ODk0MTEyNzl9.SxyC8s_CKhPyzcNmM_h_TRMiNSx3YstKGmAb2IOWqgM'
-```
-
-### Other Alert Actions
-
-To fully integrate with the Barchart Alert Service, you will need to
-
-* Subscribing to the state changes for your alerts.
-* Starting (and stopping) multiple alerts.
-* Deleting alerts.
-* Configuring default notification strategies (e.g. email, SMS, etc)
-
-## Demos
-
-Two sample applications were built with this SDK. They could provide some insight into SDK features and usage.
-
-### Web Application
-
-A single-page HTML application allows you to configure, start, stop, edit, delete, and monitor alerts.
-
-You can find the source code here:
-
-* */example/browser/example.html*
-* */example/browser/js/startup.js*
-
-This application is also hosted at:
-
-https://examples.aws.barchart.com/alerts-client-js/example.html
-
-### Node.js
-
-A simple Node.js script connects to the _demo_ environment and retrieves a list of alerts. You can find the source code here:
-
-* */example/node/example.js*
-
-To run the script, make sure required dependencies are installed:
-
-```shell
-npm install
-```
-
-Then, execute it:
-
-```shell
-node ./example/node/example.js {user_id}
-```
-
-
-
