@@ -14,6 +14,5 @@
 	* [Components](/content/api/components)
 	* [Paths](/content/api/paths)
 <!-- api_close -->
-* [API Reference](/content/api_reference)
 * [Release Notes](/content/release_notes)
 
