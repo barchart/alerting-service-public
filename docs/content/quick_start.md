@@ -1,38 +1,3 @@
-## Demos
-
-Two sample applications were built with this SDK. They could provide some insight into SDK features and usage.
-
-### Web Application
-
-A single-page HTML application allows you to configure, start, stop, edit, delete, and monitor alerts.
-
-You can find the source code here:
-
-* */example/browser/example.html*
-* */example/browser/js/startup.js*
-
-This application is also hosted at:
-
-https://examples.aws.barchart.com/alerts-client-js/example.html
-
-### Node.js
-
-A simple Node.js script connects to the _demo_ environment and retrieves a list of alerts. You can find the source code here:
-
-* */example/node/example.js*
-
-To run the script, make sure required dependencies are installed:
-
-```shell
-npm install
-```
-
-Then, execute it:
-
-```shell
-node ./example/node/example.js {user_id}
-```
-
 ## Setup
 
 As a consumer of the Barchart Alert Service, you have two options:
@@ -214,4 +179,39 @@ curl 'http://localhost:3000/alerts/ef5acb88-d747-48d2-b8d2-713cf351c012' \
   -H 'Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoibWUiLCJhbGVydF9zeXN0ZW0iOiJiYXJjaGFydC5jb20iLCJpYXQiOjE1ODk0MTEyNzl9.SxyC8s_CKhPyzcNmM_h_TRMiNSx3YstKGmAb2IOWqgM' \
   -H 'Content-Type: application/json;charset=UTF-8' \
   --data-binary '{"alert_id":"ef5acb88-d747-48d2-b8d2-713cf351c012","alert_state":"Stopping"}'
+```
+
+## Sample Applications
+
+Two sample applications were built with this SDK. They could provide some insight into SDK features and usage.
+
+### Web Application
+
+A single-page HTML application allows you to configure, start, stop, edit, delete, and monitor alerts.
+
+You can find the source code here:
+
+* */example/browser/example.html*
+* */example/browser/js/startup.js*
+
+This application is also hosted at:
+
+https://examples.aws.barchart.com/alerts-client-js/example.html
+
+### Node.js
+
+A simple Node.js script connects to the _demo_ environment and retrieves a list of alerts. You can find the source code here:
+
+* */example/node/example.js*
+
+To run the script, make sure required dependencies are installed:
+
+```shell
+npm install
+```
+
+Then, execute it:
+
+```shell
+node ./example/node/example.js {user_id}
 ```
