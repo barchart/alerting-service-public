@@ -56,25 +56,19 @@ We connect, using the adapter for HTTP transport, as follows:
 
 ```js
 const AlertManager = require('@barchart/alert-client-js/lib/AlertManager'),
-	AdapterForHttp = require('@barchart/lib/adapters/AdapterForHttp'),
+	AdapterForSocketIo = require('@barchart/lib/adapters/AdapterForSocketIo'),
 	jwtGeneratorFactory = require('@barchart/lib/security/demo/getJwtGenerator');
 
 const host = 'alerts-management-demo.barchart.com';
 const port = 443;
 const secure = true;
 
-const alertManager = new AlertManager(host, port, secure, AdapterForHttp);
+const alertManager = new AlertManager(host, port, secure, AdapterForSocketIo);
 
 alertManager.connect(jwtGeneratorFactory('me', 'barchart.com'))
 	.then(() => {
 		// connected ...
 	});
-```
-
-Alternately, we could a WebSocket transport (preferred), by swapping the adapter:
-
-```js
-const AdapterForSocketIo = require('@barchart/lib/adapters/AdapterForSocketIo');
 ```
 
 #### Using the API
