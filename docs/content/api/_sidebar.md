@@ -9,6 +9,11 @@
 <!-- sdk_open -->
 * [SDK Reference](/content/sdk_reference)
 <!-- sdk_close -->
+<!-- api_open -->
+* [API Reference](/content/api_reference)
+	* [Components](/content/api/components)
+	* [Paths](/content/api/paths)
+<!-- api_close -->
 * [API Reference](/content/api_reference)
 * [Release Notes](/content/release_notes)
 

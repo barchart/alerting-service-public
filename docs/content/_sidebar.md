@@ -9,6 +9,8 @@
 <!-- sdk_open -->
 * [SDK Reference](/content/sdk_reference)
 <!-- sdk_close -->
+<!-- api_open -->
 * [API Reference](/content/api_reference)
+<!-- api_close -->
 * [Release Notes](/content/release_notes)
 

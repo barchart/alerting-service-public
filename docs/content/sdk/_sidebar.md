@@ -8,6 +8,9 @@
 	* [Data Feeds](/content/concepts/data_feeds)
 <!-- sdk_open -->
 * [SDK Reference](/content/sdk_reference)
+<!-- sdk_close -->
+<!-- sdk_open -->
+* [SDK Reference](/content/sdk_reference)
 	* [lib](/content/sdk/lib)
 	* [lib/adapters](/content/sdk/lib-adapters)
 	* [lib/data](/content/sdk/lib-data)
