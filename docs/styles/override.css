@@ -28,11 +28,11 @@ h2#contents + ul p {
 
 #sample-notifications + table tr th:first-child {
 	 border: 1px solid transparent;
-	 border-right-color: #CCC;
+	 /* border-right-color: #CCC; */
 	 border-bottom-color: #CCC;
  }
 #sample-notifications + table tr td:first-child {
 	border: 1px solid transparent;
-	border-right-color: #CCC;
+	/* border-right-color: #CCC; */
 }
 
