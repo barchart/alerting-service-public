@@ -17,6 +17,8 @@ Here's how it works:
 	* Barchart's Alert Service will continuously monitor your conditions
 	* Once your conditions are met, notifications are dispatched
 
+## Sample Notifications
+
 ## Streaming Data Catalog
 
 Any data which is available within the Barchart ecosystem can be used to build alert conditions.
