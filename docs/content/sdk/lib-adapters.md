@@ -303,10 +303,10 @@ The Socket.IO will use a WebSocket in modern browsers.
 
 * [Callbacks](#Callbacks) : <code>object</code>
     * _static_
-        * [.AlertCreatedCallback](#CallbacksAlertCreatedCallback) ⇒ <code>Object</code>
-        * [.AlertMutatedCallback](#CallbacksAlertMutatedCallback) ⇒ <code>Object</code>
-        * [.AlertDeletedCallback](#CallbacksAlertDeletedCallback) ⇒ <code>Object</code>
-        * [.AlertTriggeredCallback](#CallbacksAlertTriggeredCallback) ⇒ <code>Object</code>
+        * [.AlertCreatedCallback](#CallbacksAlertCreatedCallback) ⇒ [<code>Schema.Alert</code>](/content/sdk/lib-data?id=schema.alert)
+        * [.AlertMutatedCallback](#CallbacksAlertMutatedCallback) ⇒ [<code>Schema.Alert</code>](/content/sdk/lib-data?id=schema.alert)
+        * [.AlertDeletedCallback](#CallbacksAlertDeletedCallback) ⇒ [<code>Schema.Alert</code>](/content/sdk/lib-data?id=schema.alert)
+        * [.AlertTriggeredCallback](#CallbacksAlertTriggeredCallback) ⇒ [<code>Schema.Alert</code>](/content/sdk/lib-data?id=schema.alert)
 
 
 * * *
@@ -316,17 +316,17 @@ The Socket.IO will use a WebSocket in modern browsers.
 after a new alert has been created.
 
 **Kind**: static typedef of <code>Callbacks</code>  
-**Returns**: <code>Object</code>  
+**Returns**: [<code>Schema.Alert</code>](/content/sdk/lib-data?id=schema.alert)  
 **Access**: public  
 
 * * *
 
 ### Callbacks.AlertMutatedCallback :id=callbacksalertmutatedcallback
 >The function signature for a callback which notifies the [AlertManager](/content/sdk/lib?id=/content/sdk/lib?id=alertmanager)
-after an alert mutates (e.g. its stage changes).
+after an alert mutates (e.g. the ```alert_state``` property changes).
 
 **Kind**: static typedef of <code>Callbacks</code>  
-**Returns**: <code>Object</code>  
+**Returns**: [<code>Schema.Alert</code>](/content/sdk/lib-data?id=schema.alert)  
 **Access**: public  
 
 * * *
@@ -336,7 +336,7 @@ after an alert mutates (e.g. its stage changes).
 after an alert has been deleted.
 
 **Kind**: static typedef of <code>Callbacks</code>  
-**Returns**: <code>Object</code>  
+**Returns**: [<code>Schema.Alert</code>](/content/sdk/lib-data?id=schema.alert)  
 **Access**: public  
 
 * * *
@@ -346,7 +346,7 @@ after an alert has been deleted.
 after an alert has been triggered.
 
 **Kind**: static typedef of <code>Callbacks</code>  
-**Returns**: <code>Object</code>  
+**Returns**: [<code>Schema.Alert</code>](/content/sdk/lib-data?id=schema.alert)  
 **Access**: public  
 
 * * *
