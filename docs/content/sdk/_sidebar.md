@@ -1,11 +1,11 @@
 * [Overview](/content/product_overview)
 * [Quick Start](/content/quick_start)
 * Key Concepts
-	* [Alerts](/content/concepts/alerts)
-	* [Transports](/content/concepts/transports)
+	* [Alert Data Structure](/content/concepts/alert_data_structures)
+	* [Alert Data Streams](/content/concepts/alert_data_feeds)
+	* [Alert Notifications](/content/concepts/alert_notifications)
+	* [Connectivity](/content/concepts/connectivity)
 	* [Security](/content/concepts/security)
-	* [Data Structures](/content/concepts/data_structures)
-	* [Data Feeds](/content/concepts/data_feeds)
 <!-- sdk_open -->
 * [SDK Reference](/content/sdk_reference)
 <!-- sdk_close -->
