@@ -1,14 +1,15 @@
 openapi: 3.0.0
 
 info:
-  title: "Alert Management"
-  description: "The Node.js server that exposes client interfaces creating, starting, and stopping alerts."
-  version: 3.1.37
-
+  title: "Barchart Alert Service"
+  description: "Define and manage alert conditions and notifications"
+  version: 4.0.1
 
 servers:
-  - description: Stage server
-    url: "http://alerts-management-stage.barchart.com"
+  - description: "Demo"
+    url: "https://alerts-management-demo.barchart.com"
+  - description: "Production"
+    url: "https://alerts-management.barchart.com"
 
 components:
   schemas:
