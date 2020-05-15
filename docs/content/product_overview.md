@@ -19,6 +19,10 @@ Here's how it works:
 
 ## Sample Notifications
 
+| SMS  | Email |
+| -------- | --------|
+| ![SMS Screen Capture Image](images/sms.jpg) | ![Email Screen Capture Image](images/email.jpg)  |
+
 ## Streaming Data Catalog
 
 Any data which is available within the Barchart ecosystem can be used to build alert conditions.

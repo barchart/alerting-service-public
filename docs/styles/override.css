@@ -15,3 +15,24 @@ main section.content {
 h2#contents + ul p {
     margin: 0;
 }
+
+#sample-notifications + table th {
+	border: 1px solid transparent;
+	border-bottom-color: #CCC;
+}
+#sample-notifications + table td {
+	border: 1px solid transparent;
+
+	padding-top: 13px;
+}
+
+#sample-notifications + table tr th:first-child {
+	 border: 1px solid transparent;
+	 border-right-color: #CCC;
+	 border-bottom-color: #CCC;
+ }
+#sample-notifications + table tr td:first-child {
+	border: 1px solid transparent;
+	border-right-color: #CCC;
+}
+
