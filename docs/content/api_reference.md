@@ -1,8 +1,8 @@
 # API Reference
 
-## Alert Management 3.1.37 {docsify-ignore}
+## Barchart Alert Service 4.0.1 {docsify-ignore}
     
-> The Node.js server that exposes client interfaces creating, starting, and stopping alerts.
+> Define and manage alert conditions and notifications
 
 ## OpenAPI Definition {docsify-ignore}
 
@@ -16,7 +16,8 @@
 
 ## Servers {docsify-ignore}
 
-* [http://alerts-management-stage.barchart.com](http://alerts-management-stage.barchart.com)  - Stage server
+* [https://alerts-management-demo.barchart.com](https://alerts-management-demo.barchart.com)  - Demo (evaluation and testing only)
+* [https://alerts-management.barchart.com](https://alerts-management.barchart.com)  - Production
 
 ## Components {docsify-ignore}
 
