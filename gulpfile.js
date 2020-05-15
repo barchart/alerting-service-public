@@ -147,9 +147,10 @@ gulp.task('watch', () => {
 });
 
 gulp.task('lint', () => {
-	return gulp.src(['./lib/**/*.js', './test/specs/**/*.js'])
-		.pipe(jshint({'esversion': 6}))
-		.pipe(jshint.reporter('default'));
+	return gulp.src([ './lib/**/*.js', './test/specs/**/*.js', './example/browser/js/**/*.js', './example/node/**/*.js', './gulpfile.js' ])
+		.pipe(jshint({ esversion: 9 }))
+		.pipe(jshint.reporter('default'))
+		.pipe(jshint.reporter('fail'));
 });
 
 gulp.task('default', gulp.series('lint'));

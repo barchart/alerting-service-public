@@ -988,7 +988,7 @@ module.exports = (() => {
 
 		that.timezones = ko.observable(timezone.getTimezones());
 
-		that.publisherTypeId = ko.observable(publisherTypeDefault.publisher_type_id)
+		that.publisherTypeId = ko.observable(publisherTypeDefault.publisher_type_id);
 		that.transport = ko.observable(publisherTypeDefault.transport);
 		that.provider = ko.observable(publisherTypeDefault.provider);
 		that.defaultRecipient = ko.observable(publisherTypeDefault.default_recipient);
@@ -1176,8 +1176,6 @@ module.exports = (() => {
 									pageModel.changeToGrid();
 								});
 						}).catch((e) => {
-							debugger;
-
 							console.log(e);
 
 							alertManager.dispose();
@@ -1201,7 +1199,7 @@ module.exports = (() => {
 				return initializePromise.then(() => {
 					ko.applyBindings(pageModel, $('body')[0]);
 				});
-			})
+			});
 	};
 
 	$(document).ready(function() {
