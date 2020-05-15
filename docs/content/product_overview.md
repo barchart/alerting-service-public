@@ -25,9 +25,9 @@ Here's how it works:
 
 ## Streaming Data Catalog
 
-All data streams within the Barchart ecosystem can be used to build alert conditions.
+Any data streams within the Barchart ecosystem can be used to build alert conditions.
 
-Barchart offers an exhaustive array of market data for multiple asset classes trading on exchanges around the world. Consult our [website](https://www.barchart.com/solutions/data/market) for more information.
+Barchart offers an exhaustive array of market data for multiple asset classes which trade on exchanges around the world. Consult our [website](https://www.barchart.com/solutions/data/market) for more information.
 
 Here are some examples:
 
