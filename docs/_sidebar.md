@@ -4,6 +4,7 @@
 	* [Basic System Architecture](/content/concepts/basic_architecture)
 	* [Alert Data Structure](/content/concepts/alert_data_structure)
 	* [Alert Data Sources](/content/concepts/alert_data_sources)
+	* [Alert Operations](/content/concepts/alert_operations)
 	* [Alert Notifications](/content/concepts/alert_notifications)
 	* [Connectivity](/content/concepts/connectivity)
 	* [Security](/content/concepts/security)
