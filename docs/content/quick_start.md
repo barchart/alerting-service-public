@@ -77,7 +77,7 @@ If you choose to work directly with the REST interface, you won't need to perfor
 
 ## Defining an Alert
 
-To create an alert, we must construct an object which conforms to the ```Alert``` definition. To accommodate a wide variety of features, the schema is non-trivial and an in-depth discussion can be found in the [Key Concepts: Data Structures](/content/concepts/data_structures) section.
+To create an alert, we must construct an object which conforms to the ```Alert``` definition. To accommodate a wide variety of features, the schema is non-trivial and an in-depth discussion can be found in the [Key Concepts: Alert Data Structures](/content/concepts/alert_data_structure) section.
 
 For now, here is simple ```Alert``` object with a single condition — Apple stock trades over $600 per share:
 
