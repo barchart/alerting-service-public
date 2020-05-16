@@ -10,7 +10,7 @@ The backend accepts connections using two secure protocols:
   * Events are pushed from the server.
 * **HTTPS**
   * Recommended for non-interactive clients.
-  * Discrete request/response model.
+  * Discrete, request/response communication model.
   * Endpoints structured as a REST-ful web service.
   * Supported by SDK (see [```AdapterForSocketHttp```](/content/sdk/lib-adapters?id=adapterforhttp)).
   * Possible to consume directly — without using this SDK (see [API Documentation](/content/api_reference)).
@@ -45,4 +45,4 @@ const secure = true;
 const manager = new AlertManager(host, port, secure, AdapterForHttp);
 ```
 
-Adding a ```require``` statement (or ```import``` statement) for only the adapter being used should reduce the size of any "bundled" code you generate.
+_Tip: Only ```require``` (or ```import```) the adapter you intend to use — this will reduce the size of your bundled code._
