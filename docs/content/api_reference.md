@@ -2,7 +2,7 @@
 
 ## Barchart Alert Service 4.0.1 {docsify-ignore}
     
-> Define and manage alert conditions and notifications
+> Define and manage alert conditions and notifications using Barchart&#x27;s REST-ful web service
 
 ## OpenAPI Definition {docsify-ignore}
 
