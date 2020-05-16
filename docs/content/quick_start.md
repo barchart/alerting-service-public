@@ -77,9 +77,9 @@ If you choose to work directly with the REST interface, you won't need to perfor
 
 ## Defining an Alert
 
-To create an alert, we must construct an object which conforms to the ```Alert``` definition. To accommodate a wide variety of features, the schema is non-trivial and an in-depth discussion can be found in the [Key Concepts: Alert Data Structures](/content/concepts/alert_data_structure) section.
+First, we must construct an object which conforms to the [```Alert```](/content/sdk/lib-data?id=schemaalert) schema. To accommodate a wide variety of features, this schema is non-trivial.
 
-For now, here is simple ```Alert``` object with a single condition — Apple stock trades over $600 per share:
+For now, here is simple ```Alert``` object with one condition - _notify me when Apple stock trades over $600 per share_:
 
 ```json
 {
@@ -103,9 +103,17 @@ For now, here is simple ```Alert``` object with a single condition — Apple sto
 }
 ```
 
+Glancing at this object probably raises more questions that it answers, for example:
+
+* What is a ```Condition```?
+* What is a ```Property```?
+* What is a ```Target```?
+
+You can find an in-depth discussion of these topics in the  [Key Concepts: Alert Data Structures](/content/concepts/alert_data_structure) section.
+
 ## Creating an Alert
 
-After we've defined the alert, we need to persist it. The backend will assign an ```alert_id``` value and the complete ```Alert``` object will be returned to us.
+Assuming we've defined an alert (see above), the first thing we need to do is save it. The backend will assign an ```alert_id``` value and return a _complete_ ```Alert``` object to you.
 
 #### Using the SDK
 
@@ -129,11 +137,11 @@ curl 'http://localhost:3000/alerts' \
 
 ## Starting an Alert
 
-After an ```Alert``` is created, the ```alert_state``` will be ```Inactive```. We must start the alert to begin tracking its conditions.
+After an ```Alert``` has been saved, its ```alert_state``` will be ```Inactive```. We must start the alert to begin _tracking_ its conditions.
 
 #### Using the SDK
 
-To start the alert, pass the ```Alert``` object to the ```AlertManager.enableAlert``` function:
+To start the alert, use the ```AlertManager.enableAlert``` function:
 
 ```js
 alertManager.enableAlert(alert)
@@ -142,7 +150,7 @@ alertManager.enableAlert(alert)
 	});
 ```
 
-To stop the alert, pass the ```Alert``` object to the ```AlertManager.disableAlert``` function:
+To stop the alert, use the ```AlertManager.disableAlert``` function:
 
 ```js
 alertManager.disableAlert(alert)
@@ -153,7 +161,7 @@ alertManager.disableAlert(alert)
 
 #### Using the API
 
-The REST-ful operation to start an alert updates its ```alert_state``` property to ```Starting```:
+The REST-ful operation to start an alert updates object, setting its ```alert_state``` property to ```Starting```:
 
 ```shell
 curl 'http://localhost:3000/alerts/ef5acb88-d747-48d2-b8d2-713cf351c012' \
@@ -164,7 +172,7 @@ curl 'http://localhost:3000/alerts/ef5acb88-d747-48d2-b8d2-713cf351c012' \
   --data-binary '{"alert_id":"ef5acb88-d747-48d2-b8d2-713cf351c012","alert_state":"Starting"}'
 ```
 
-The REST-ful operation to stop an alert updates its ```alert_state``` property to ```Stopping```:
+The REST-ful operation to stop alert updates object, setting its ```alert_state``` property to ```Stopping```:
 
 ```shell
 curl 'http://localhost:3000/alerts/ef5acb88-d747-48d2-b8d2-713cf351c012' \
@@ -181,7 +189,7 @@ Two sample applications were built with this SDK. They could provide some insigh
 
 ### Web Application
 
-A single-page HTML application allows you to configure, start, stop, edit, delete, and monitor alerts.
+A single-page HTML application allows you to dynamically construct, save, start, stop, edit, delete, and monitor alerts.
 
 You can find the source code here:
 
