@@ -1,4 +1,4 @@
-## Connectivity
+## Options
 
 The backend accepts connections using two secure protocols:
 
@@ -15,7 +15,7 @@ The backend accepts connections using two secure protocols:
 * Coming soon
   * Pure WebSocket (to be implemented without Socket.IO)
 
-### Selection
+## Adapters
 
 Picking a protocol simply requires you to pass an "adapter" to the [```AlertManager```], as follows:
 
