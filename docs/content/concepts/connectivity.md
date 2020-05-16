@@ -45,4 +45,4 @@ const secure = true;
 const manager = new AlertManager(host, port, secure, AdapterForHttp);
 ```
 
-Adding a ```require``` (or ```import```) for a single adapter will save some space in your bundled code.
+Adding a ```require``` statement (or ```import``` statement) for only the adapter being used should reduce the size of any "bundled" code you generate.
