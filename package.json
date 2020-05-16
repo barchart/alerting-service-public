@@ -18,7 +18,7 @@
 	},
 	"keywords": [],
 	"dependencies": {
-		"@barchart/common-js": "^3.5.2",
+		"@barchart/common-js": "^3.6.0",
 		"@barchart/instruments-client-js": "^3.5.1",
 		"@barchart/marketdata-api-js": "^5.1.1",
 		"jsonwebtoken": "^8.5.1",
