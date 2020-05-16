@@ -2,8 +2,8 @@ const process = require('process');
 
 const AlertManager = require('./../../lib/AlertManager');
 
-const AdapterForHttp = require('./../../lib/adapters/AdapterForHttp');
-AdapterForSocketIo = require('./../../lib/adapters/AdapterForSocketIo');
+const AdapterForHttp = require('./../../lib/adapters/AdapterForHttp'),
+	AdapterForSocketIo = require('./../../lib/adapters/AdapterForSocketIo');
 
 const JwtProvider = require('./../../lib/security/JwtProvider'),
 	getJwtGenerator = require('./../../lib/security/demo/getJwtGenerator');
