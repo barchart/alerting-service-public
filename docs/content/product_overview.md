@@ -69,4 +69,4 @@ The Barchart Alert Service implements a REST interface via HTTP. You may choose 
 
 #### Other
 
-If you're not interested in direct access and JavaScript isn't suitable for your environment, please contact us at solutions@barchart.com or (866) 333-7587.
+If JavaScript isn't suitable for your environment and you're not interested in direct access, please contact us at solutions@barchart.com or (866) 333-7587.
