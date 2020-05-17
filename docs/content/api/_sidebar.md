@@ -1,7 +1,7 @@
 * [Overview](/content/product_overview)
 * [Quick Start](/content/quick_start)
 * Key Concepts
-	* [Connectivity](/content/concepts/connectivity)
+	* [Connecting](/content/concepts/connecting)
 	* [Security](/content/concepts/security)
 	* [System Architecture](/content/concepts/system_architecture)
 	* [Alert Data Structure](/content/concepts/alert_data_structure)

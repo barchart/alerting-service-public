@@ -5,7 +5,7 @@ The backend accepts connections using two secure protocols:
 * **WebSockets**
   * Recommended for interactive clients.
   * Persistent full-duplex communication between SDK and backend.
-  * Implemented with [Socket.IO](https://socket.io/)
+  * Implemented with the [Socket.IO](https://socket.io/) library.
   * Supported by SDK (see [```AdapterForSocketIO```](/content/sdk/lib-adapters?id=adapterforsocketio)).
   * Events are pushed from the server.
 * **HTTPS**
@@ -19,9 +19,9 @@ The backend accepts connections using two secure protocols:
   * Pure WebSocket (to be implemented without Socket.IO).
   * In the SDK, changing the transport is a one-line code chhange (see below).
 
-## Connection Adapters
+## Using the SDK
 
-Picking a protocol requires you to provide an "adapter" when you instantiate the [```AlertManager```](/content/sdk/lib?id=alertmanager), as follows:
+The first step is to create an instance if the [```AlertManager```](/content/sdk/lib?id=alertmanager) class. In general, you application will use one instance. Picking a protocol requires you to provide an "adapter" ```AlertManager```, as follows:
 
 ```js
 const AdapterForSocketIo = require('@barchart/alert-client-js/lib/adapters/AdapterForSocketIo');
@@ -33,7 +33,7 @@ const secure = true;
 const manager = new AlertManager(host, port, secure, AdapterForSocketIo);
 ```
 
-or
+or, alternately:
 
 ```js
 const AdapterForHttp = require('@barchart/alert-client-js/lib/adapters/AdapterForHttp');
@@ -46,3 +46,7 @@ const manager = new AlertManager(host, port, secure, AdapterForHttp);
 ```
 
 _Tip: Only ```require``` (or ```import```) the adapter you intend to use — this will reduce the size of your bundled code._
+
+## Using the API
+
+There is no need to perform a _connect_ action when using the REST-ful API — each request is completely independent of previous requests.
