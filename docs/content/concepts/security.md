@@ -45,7 +45,7 @@ Each of your users must have a unique identifier. User identifiers as assigned t
 
 ## JSON Web Tokens
 
-Each request you send to the backend must include a [JSON Web Tokens](https://en.wikipedia.org/wiki/JSON_Web_Token).
+Each request you send to the backend must include a [JSON Web Token](https://en.wikipedia.org/wiki/JSON_Web_Token).
 
 ### Payload
 
@@ -87,6 +87,37 @@ Here are the connection details:
 Once you're ready to move to production, you'll need to exchange a public/private key pair with Barchart. **Contact us at solutions@barchart.com or (866) 333-7587 for assistance configuring your account.**
 
 ## Using the SDK
+
+Your system is responsible for initial authentication, for example:
+
+* Perhaps your user was challenged for a username and password.
+* Perhaps your user was identified using an SSO technique.
+* Perhaps the user is a system process running in a trusted environment.
+
+Since your system _"knows"_ which user is active and it is _also responsible for token generation_.
+
+First, write a function to return a signed token. The function must conform to the [```Schema.JwtTokenGenerator```](/content/sdk/lib-security?id=callbacksjwttokengenerator) contract — it accepts no arguments and returns a ```String``` (synchronously or asynchronously). For example:
+
+```js
+function getJwtToken() {
+	return Promise.resolve() {
+		// Generate a signed token and return it. You'll probably want to defer
+		// this to an internal, secure service (ensuring your JWT signing secret
+		// is not compromised).
+
+		return token;
+	}
+}
+```
+
+Once you've implemented this function, the hard part is over. Simply give it to the ```start``` function of your ```AlertManager``` instance:
+
+```js
+alertManager.start(getJwtToken)
+	.then(() => {
+		// Ready to use ...
+	})
+```
 
 ## Using the API
 
