@@ -61,15 +61,12 @@ This SDK can be distributed as part of your browser-based applications. The sour
 
 #### Node.js
 
-Node.js is fully-supported.
-
-#### Other
-
-Please contact us at solutions@barchart.com or (866) 333-7587 to discuss a specific technology, platform, or language you are interested in.
+This SDK is compatible with Node.js.
 
 #### Direct Access
 
 The Barchart Alert Service implements a REST interface via HTTP. You may choose to interact with the service directly, bypassing this SDK entirely. An [OpenAPI](https://www.openapis.org/) specification of the interface can be found in the [API Reference](/content/api) section.
 
+#### Other
 
-
+If you're not interested in direct access and JavaScript isn't suitable for your environment, please contact us at solutions@barchart.com or (866) 333-7587.
