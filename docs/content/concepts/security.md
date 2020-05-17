@@ -130,7 +130,7 @@ curl 'http://localhost:3000/alerts/users/barchart.com/me' \
   -H 'Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoibWUiLCJhbGVydF9zeXN0ZW0iOiJiYXJjaGFydC5jb20iLCJpYXQiOjE1ODk0MTEyNzl9.SxyC8s_CKhPyzcNmM_h_TRMiNSx3YstKGmAb2IOWqgM'
 ```
 
-If we decode the token (try [this tool](https://jwt.io/)), you'll see the payload also refers to :
+If we decode the token — try [this tool](https://jwt.io/) — you'll see the token payload refers to ```me@barchart.com````:
 
 ```json
 {
@@ -140,7 +140,7 @@ If we decode the token (try [this tool](https://jwt.io/)), you'll see the payloa
 }
 ```
 
-As a result, when using this token, only actions for alerts owned by ```me@barchart.com``` are accepted. An action for any other user will be rejected.
+As a result, when using this token, only actions for alerts owned by ```me@barchart.com``` are accepted (i.e. authorized). An action for a different user will be rejected.
 
 ## Best Practices
 
