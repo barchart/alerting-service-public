@@ -116,7 +116,7 @@ Once you've implemented this function, the hard part is over. Simply give it to 
 alertManager.start(getJwtToken)
 	.then(() => {
 		// Ready to use ...
-	})
+	});
 ```
 
 ## Using the API
