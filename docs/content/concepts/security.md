@@ -121,6 +121,27 @@ alertManager.start(getJwtToken)
 
 ## Using the API
 
+Conceptually, the approach is identical if your choose to use the REST interface directly. You still need to generate a token. After you generate the token, add it to the ```Authorization``` header of your HTTP request. For example, here is the cURL command to get for all alerts owned by ```me@barchart.com```:
+
+```shell
+curl 'http://localhost:3000/alerts/users/barchart.com/me' \
+  -X 'GET' \
+  -H 'Accept: application/json' \
+  -H 'Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoibWUiLCJhbGVydF9zeXN0ZW0iOiJiYXJjaGFydC5jb20iLCJpYXQiOjE1ODk0MTEyNzl9.SxyC8s_CKhPyzcNmM_h_TRMiNSx3YstKGmAb2IOWqgM'
+```
+
+If we decode the token (try [this tool](https://jwt.io/)), you'll see the payload also refers to :
+
+```json
+{
+  "user_id": "me",
+  "alert_system": "barchart.com",
+  "iat": 1589411279
+}
+```
+
+As a result, when using this token, only actions for alerts owned by ```me@barchart.com``` are accepted. An action for any other user will be rejected.
+
 ## Best Practices
 
 Under no circumstances should your JWT secret be accessible to anyone outside of your organization. If your secret is lost, security can be compromised.
