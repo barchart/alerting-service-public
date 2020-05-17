@@ -23,7 +23,7 @@ Your domain is a container for users. Your users own alerts. A domain can be con
 │   ├── users
 │   │   ├── user A
 │   │   │   ├── alert 1
-│   │   │   ├── alert 3
+│   │   │   ├── alert 2
 │   │   │   └── alert 3
 │   │   ├── user B
 │   │   │   └── alert 4
