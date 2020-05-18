@@ -16,6 +16,7 @@
     * _static_
         * [.Alert](#SchemaAlert) : <code>Object</code>
         * [.Condition](#SchemaCondition) : <code>Object</code>
+        * [.Property](#SchemaProperty) : <code>Object</code>
         * [.AlertIdentifier](#SchemaAlertIdentifier) : <code>Object</code>
         * [.AlertQuery](#SchemaAlertQuery) : <code>Object</code>
         * [.UserIdentifier](#SchemaUserIdentifier) : <code>Object</code>
@@ -48,7 +49,7 @@ assign an empty array.
 | [last_trigger_date] | <code>String</code> | The last time the alert was triggered (milliseconds since epoch). |
 | [user_notes] | <code>String</code> | Ad hoc text. |
 | [alert_type] | <code>String</code> | Used to classify the alert, controlling "default" publishing rules, if no publishers have been explicitly specified. This happens by matching the "active_alert_type" property of a [PublisherTypeDefault](PublisherTypeDefault). |
-| conditions | <code>Array.&lt;Condition&gt;</code> | The conditions which cause an the alert to be triggered. |
+| conditions | [<code>Array.&lt;Condition&gt;</code>](#SchemaCondition) | The conditions which cause an the alert to be triggered. If multiple conditions are present, they must all be satisfied before the alert will be triggered. |
 | [schedules] | <code>Array.&lt;AlertResetSchedule&gt;</code> |  |
 | [publishers] | <code>Array.&lt;Publisher&gt;</code> | The rules for publishing a notification. This is optional. In most cases, it's best to rely on the default rules bound to the alert's owner. |
 | [effectivePublishers] | <code>Array.&lt;Publisher&gt;</code> | A read-only property added by the backend listing the "effective" rules which will be used to publish notifications. Any rules in the "publishers" property take precedence, then the default rules for the alert's owner are applied. |
@@ -59,9 +60,9 @@ assign an empty array.
 ### Schema.Condition :id=schemacondition
 >A "condition" is a statement that can be evaluated as the backend processes streaming data.
 
-For example, "Apple stock's last price is higher than $600" forms a "condition" object.
-Breaking down the example, the "property" object denotes "Apple stock's last price" and
-the "operator" object denotes "higher than $600."
+For example, "Apple stock's last price is higher than $600" is a condition. Using this example,
+the "property" object denotes "Apple stock's last price" and the "operator" object denotes "higher
+than $600."
 
 Only required properties are necessary to create a new condition.
 
@@ -70,10 +71,35 @@ Only required properties are necessary to create a new condition.
 
 | Name | Type | Description |
 | --- | --- | --- |
-| [condition_id] | <code>String</code> | The conditions's unique identifier (assigned by the backend). |
+| [condition_id] | <code>String</code> | The condition's unique identifier (assigned by the backend). |
 | [name] | <code>String</code> | The name of the condition (if not provided, the backend will attempt to generate a name). |
-| property | <code>Schema.Property</code> | The "property" which is being evaluated (e.g. last price). |
+| property | [<code>Property</code>](#SchemaProperty) | The "property" which is being evaluated (e.g. last price). |
 | operator | <code>Schema.Operator</code> | The "operator" to use to evaluate the ```property``` (e.g. greater than). |
+
+
+* * *
+
+### Schema.Property :id=schemaproperty
+>A "property" an attribute of an observable object. It is one of the key components
+of a [Condition](#SchemaCondition).
+
+To use an example, a stock quote is an observable object and we may refer to the last
+price attribute of the quote. The ```target``` property refers to a **specific** observable
+object. For example, Apple is a specific stock quote.
+
+**Kind**: static typedef of <code>Schema</code>  
+**Properties**
+
+| Name | Type | Description |
+| --- | --- | --- |
+| [property_id] | <code>Number</code> | The property's unique identifier (assigned by the backend). |
+| [target] | <code>Schema.Target</code> | Points to a concrete object (e.g. Apple common stock versus Microsoft common stock). **This is required when building a [Condition](#SchemaCondition).** |
+| [type] | [<code>PropertyType</code>](#EnumsPropertyType) | The attribute's value type (e.g. a number or a string). |
+| [valid_operators] | <code>Array.&lt;Schema.Operator&gt;</code> | A list of operators which can be used with this [Property](#SchemaProperty) to create a [Condition](#SchemaCondition). Managed by the backend. |
+| [category] | <code>Array.&lt;String&gt;</code> | A grouping container for the property. Useful when displaying a list of properties. Managed by the backend. |
+| [description] | <code>Array.&lt;String&gt;</code> | A description of the property (broken into one or more components). Managed by the backend. |
+| [descriptionShort] | <code>Array.&lt;String&gt;</code> | Similar to ```description``` but with condensed or abbreviated wording. Managed by the backend. |
+| [sortOrder] | <code>Number</code> | A suggested ranking for use when displaying a list of properties. Managed by the backend. |
 
 
 * * *
@@ -132,6 +158,7 @@ for this type.
     * _static_
         * [.AlertState](#EnumsAlertState) : <code>enum</code>
         * [.AlertBehaviour](#EnumsAlertBehaviour) : <code>enum</code>
+        * [.PropertyType](#EnumsPropertyType) : <code>enum</code>
 
 
 * * *
@@ -165,6 +192,22 @@ for this type.
 | terminate | <code>String</code> | When the alert becomes ```Active```, it begins tracking immediately. Once the alert's conditions have been met, notifications are published and tracking stops. The alert will transition to ```Triggered``` state. This is the default behavior. |
 | continue | <code>String</code> | When the alert becomes ```Active```, it begins tracking immediately. Once the alert's conditions have been met, notifications are published and tracking continues. The alert will remain in the ```Active``` state. This is useful for news alerts. |
 | schedule | <code>String</code> | When the alert becomes ```Active```, it waits until the until a scheduled time to begin tracking. Once an alert's conditions have been met, notifications will be published and tracking stops; however, The alert will remain in the ```Active``` state waiting to begin tracking again at the next scheduled time. This behavior is rarely used. |
+
+
+* * *
+
+### Enums.PropertyType :id=enumspropertytype
+>The possible value types for a [Property](#SchemaProperty).
+
+**Kind**: static enum of <code>Enums</code>  
+**Properties**
+
+| Name | Type | Description |
+| --- | --- | --- |
+| number | <code>String</code> | A simple number. |
+| object | <code>String</code> | A complex object (with one or more of its own properties). |
+| percent | <code>String</code> | A number which represents a percentage where 1.0 represents 100% and 0.5 represents 50%. |
+| string | <code>String</code> | A simple string. |
 
 
 * * *
