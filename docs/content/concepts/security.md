@@ -124,7 +124,7 @@ alertManager.start(getJwtToken)
 Conceptually, the approach is identical if your choose to use the REST interface directly. You still need to generate a token. After you generate the token, add it to the ```Authorization``` header of your HTTP request. For example, here is the cURL command to get for all alerts owned by ```me@barchart.com```:
 
 ```shell
-curl 'http://localhost:3000/alerts/users/barchart.com/me' \
+curl 'https://alerts-management-demo.barchart.com/alerts/users/barchart.com/me' \
   -X 'GET' \
   -H 'Accept: application/json' \
   -H 'Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoibWUiLCJhbGVydF9zeXN0ZW0iOiJiYXJjaGFydC5jb20iLCJpYXQiOjE1ODk0MTEyNzl9.SxyC8s_CKhPyzcNmM_h_TRMiNSx3YstKGmAb2IOWqgM'

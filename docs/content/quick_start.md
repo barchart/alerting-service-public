@@ -127,7 +127,7 @@ alertManager.createAlert(alertToCreate)
 #### Using the API
 
 ```shell
-curl 'http://localhost:3000/alerts' \
+curl 'https://alerts-management-demo.barchart.com/alerts' \
   -X 'POST' \
   -H 'Accept: application/json' \
   -H 'Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoibWUiLCJhbGVydF9zeXN0ZW0iOiJiYXJjaGFydC5jb20iLCJpYXQiOjE1ODk0MTEyNzl9.SxyC8s_CKhPyzcNmM_h_TRMiNSx3YstKGmAb2IOWqgM' \
@@ -164,7 +164,7 @@ alertManager.disableAlert(alert)
 The REST-ful operation to start an alert updates object, setting its ```alert_state``` property to ```Starting```:
 
 ```shell
-curl 'http://localhost:3000/alerts/ef5acb88-d747-48d2-b8d2-713cf351c012' \
+curl 'https://alerts-management-demo.barchart.com/alerts/ef5acb88-d747-48d2-b8d2-713cf351c012' \
   -X 'PUT' \
   -H 'Accept: application/json' \
   -H 'Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoibWUiLCJhbGVydF9zeXN0ZW0iOiJiYXJjaGFydC5jb20iLCJpYXQiOjE1ODk0MTEyNzl9.SxyC8s_CKhPyzcNmM_h_TRMiNSx3YstKGmAb2IOWqgM' \
@@ -175,7 +175,7 @@ curl 'http://localhost:3000/alerts/ef5acb88-d747-48d2-b8d2-713cf351c012' \
 The REST-ful operation to stop alert updates object, setting its ```alert_state``` property to ```Stopping```:
 
 ```shell
-curl 'http://localhost:3000/alerts/ef5acb88-d747-48d2-b8d2-713cf351c012' \
+curl 'https://alerts-management-demo.barchart.com/alerts/ef5acb88-d747-48d2-b8d2-713cf351c012' \
   -X 'PUT' \
   -H 'Accept: application/json' \
   -H 'Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoibWUiLCJhbGVydF9zeXN0ZW0iOiJiYXJjaGFydC5jb20iLCJpYXQiOjE1ODk0MTEyNzl9.SxyC8s_CKhPyzcNmM_h_TRMiNSx3YstKGmAb2IOWqgM' \
