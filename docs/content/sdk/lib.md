@@ -176,10 +176,12 @@ place. The new alert will have the same identifier.
 * * *
 
 ### alertManager.checkSymbol(symbol) :id=alertmanagerchecksymbol
->Checks to ensure a instrument's symbol is valid and the instrument
-has not been marked as expired. In some cases a different symbol
-will be returned. When this happens the alternate symbol should be
-used.
+>When constructing alert conditions, we often refer to a stock by
+its symbol. This function will validate the symbol before you
+attempt to assign it to the ```identifier``` property of a
+```Target``` object. In some cases, an alternate (alias) symbol
+will be returned. If the symbol returned is different, you must
+use the alternate symbol.
 
 **Kind**: instance method of <code>AlertManager</code>  
 **Returns**: <code>Promise.&lt;String&gt;</code>  

@@ -61,6 +61,7 @@
 * [Schema](#Schema) : <code>object</code>
     * _static_
         * [.Alert](#SchemaAlert) : <code>Object</code>
+        * [.Condition](#SchemaCondition) : <code>Object</code>
         * [.AlertIdentifier](#SchemaAlertIdentifier) : <code>Object</code>
         * [.AlertQuery](#SchemaAlertQuery) : <code>Object</code>
         * [.UserIdentifier](#SchemaUserIdentifier) : <code>Object</code>
@@ -70,10 +71,12 @@
 
 ### Schema.Alert :id=schemaalert
 >An "alert" is the system's **primary** data structure. An "alert" is essentially
-a collection of "conditions" to monitor. All required properties must be present
-to create a new alert. Once an alert has been created, the backend will "fill in"
-any omitted properties. For example, if you create an alert without a ```publishers```
-property, the backend will add the property and assign an empty array.
+a collection of ```conditions``` which the backend monitors.
+
+All required properties must be present to create a new alert. Once an alert has been
+created, the backend will "fill in" any omitted properties. For example, if you create
+an alert without a ```publishers``` property, the backend will add the property and
+assign an empty array.
 
 **Kind**: static typedef of <code>Schema</code>  
 **Properties**
@@ -95,6 +98,28 @@ property, the backend will add the property and assign an empty array.
 | [schedules] | <code>Array.&lt;AlertResetSchedule&gt;</code> |  |
 | [publishers] | <code>Array.&lt;Publisher&gt;</code> | The rules for publishing a notification. This is optional. In most cases, it's best to rely on the default rules bound to the alert's owner. |
 | [effectivePublishers] | <code>Array.&lt;Publisher&gt;</code> | A read-only property added by the backend listing the "effective" rules which will be used to publish notifications. Any rules in the "publishers" property take precedence, then the default rules for the alert's owner are applied. |
+
+
+* * *
+
+### Schema.Condition :id=schemacondition
+>A "condition" is a statement that can be evaluated as the backend processes streaming data.
+
+For example, "Apple stock's last price is higher than $600" forms a "condition" object.
+Breaking down the example, the "property" object denotes "Apple stock's last price" and
+the "operator" object denotes "higher than $600."
+
+Only required properties are necessary to create a new condition.
+
+**Kind**: static typedef of <code>Schema</code>  
+**Properties**
+
+| Name | Type | Description |
+| --- | --- | --- |
+| [condition_id] | <code>String</code> | The conditions's unique identifier (assigned by the backend). |
+| [name] | <code>String</code> | The name of the condition (if not provided, the backend will attempt to generate a name). |
+| property | <code>Schema.Property</code> | The "property" which is being evaluated (e.g. last price). |
+| operator | <code>Schema.Operator</code> | The "operator" to use to evaluate the ```property``` (e.g. greater than). |
 
 
 * * *
