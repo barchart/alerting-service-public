@@ -54,7 +54,7 @@
 					</div>
 					<div class="form-group" data-bind="css: { 'has-error': system().length === 0 }, event: { keypress: handleConnectKeypress }">
 						<label class="pull-left">System</label>
-						<input class="form-control" data-bind="textInput: system" type="text"">
+						<input class="form-control" data-bind="textInput: system" type="text">
 					</div>
 					<div class="form-group" data-bind="css: { 'has-error': userId().length === 0 }, event: { keypress: handleConnectKeypress }">
 						<label class="pull-left">User ID</label>
@@ -526,13 +526,14 @@
         <h4 class="pull-left">
 	        <span data-bind="providerDescription"></span>
 	        <span data-bind="visible: connected">
-		        <span data-bind="text: userId"></span>@<span data-bind="text: host"></span>
+				<span data-bind="visible: connected"><span data-bind="text: authenticatedUser"></span></span>
+				<span>::</span>
+				<span data-bind="text: host"></span>
 	        </span>
-        </h4>
+		</h4>
         <h4 class="pull-right">
-	        <span data-bind="visible: connected">SDK Version: <span data-bind="text: version().sdk"></span>,</span>
-	        <span data-bind="visible: connected">API Version <span data-bind="text: version().api"></span>,</span>
-	        <span data-bind="visible: connected">Authenticated User: <span data-bind="text: authenticatedUser"></span></span>
+			<span data-bind="visible: connected"><a href="https://barchart.github.io/alerts-client-js/#/content/sdk_reference" target="_blank" style="color: white;">sdk version <span data-bind="text: version().sdk"></span></a> :: </span>
+			<span data-bind="visible: connected"><a href="https://barchart.github.io/alerts-client-js/#/content/api_reference" target="_blank" style="color: white;">api version <span data-bind="text: version().api"></span></a></span>
         </h4>
     </div>
 </body>
