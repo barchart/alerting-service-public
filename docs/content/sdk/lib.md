@@ -22,6 +22,7 @@ of existing alerts.
         * [.disableAlert(alert)](#AlertManagerdisableAlert) ⇒ <code>Promise.&lt;Schema.Alert&gt;</code>
         * [.disableAlerts(query)](#AlertManagerdisableAlerts) ⇒ <code>Promise.&lt;Boolean&gt;</code>
         * [.checkSymbol(symbol)](#AlertManagercheckSymbol) ⇒ <code>Promise.&lt;String&gt;</code>
+        * [.getUser()](#AlertManagergetUser) ⇒ <code>Promise.&lt;UserIdentifier&gt;</code>
     * _static_
         * [.version](#AlertManagerversion) ⇒ <code>String</code>
     * _constructor_
@@ -188,6 +189,16 @@ used.
 | --- | --- | --- |
 | symbol | <code>String</code> | The symbol to check |
 
+
+* * *
+
+### alertManager.getUser() :id=alertmanagergetuser
+>Returns the current user (according to the JWT token which is embedded
+in the request).
+
+**Kind**: instance method of <code>AlertManager</code>  
+**Returns**: <code>Promise.&lt;UserIdentifier&gt;</code>  
+**Access**: public  
 
 * * *
 

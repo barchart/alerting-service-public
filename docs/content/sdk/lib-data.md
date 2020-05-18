@@ -63,14 +63,17 @@
         * [.Alert](#SchemaAlert) : <code>Object</code>
         * [.AlertIdentifier](#SchemaAlertIdentifier) : <code>Object</code>
         * [.AlertQuery](#SchemaAlertQuery) : <code>Object</code>
+        * [.UserIdentifier](#SchemaUserIdentifier) : <code>Object</code>
 
 
 * * *
 
 ### Schema.Alert :id=schemaalert
 >An "alert" is the system's **primary** data structure. An "alert" is essentially
-a collection of "conditions" to monitor. All required must be present to create a
-new alert.
+a collection of "conditions" to monitor. All required properties must be present
+to create a new alert. Once an alert has been created, the backend will "fill in"
+any omitted properties. For example, if you create an alert without a ```publishers```
+property, the backend will add the property and assign an empty array.
 
 **Kind**: static typedef of <code>Schema</code>  
 **Properties**
@@ -86,14 +89,12 @@ new alert.
 | [create_date] | <code>String</code> | The time the alert was created (milliseconds since epoch). |
 | [last_start_date] | <code>String</code> | The last time the alert was started (milliseconds since epoch). |
 | [last_trigger_date] | <code>String</code> | The last time the alert was triggered (milliseconds since epoch). |
-| [user_notes] | <code>String</code> |  |
+| [user_notes] | <code>String</code> | Ad hoc text. |
 | [alert_type] | <code>String</code> | Used to classify the alert, controlling "default" publishing rules, if no publishers have been explicitly specified. This happens by matching the "active_alert_type" property of a [PublisherTypeDefault](PublisherTypeDefault). |
-| [automatic_reset] | <code>Boolean</code> |  |
-| conditions | <code>Array.&lt;Condition&gt;</code> |  |
+| conditions | <code>Array.&lt;Condition&gt;</code> | The conditions which cause an the alert to be triggered. |
 | [schedules] | <code>Array.&lt;AlertResetSchedule&gt;</code> |  |
-| [publishers] | <code>Array.&lt;Publisher&gt;</code> |  |
-| [effectivePublishers] | <code>Array.&lt;Publisher&gt;</code> |  |
-| [tracking_server_id] | <code>String</code> |  |
+| [publishers] | <code>Array.&lt;Publisher&gt;</code> | The rules for publishing a notification. This is optional. In most cases, it's best to rely on the default rules bound to the alert's owner. |
+| [effectivePublishers] | <code>Array.&lt;Publisher&gt;</code> | A read-only property added by the backend listing the "effective" rules which will be used to publish notifications. Any rules in the "publishers" property take precedence, then the default rules for the alert's owner are applied. |
 
 
 * * *
@@ -125,6 +126,20 @@ for this type.
 | user_id | <code>String</code> | A value to match against an alert's ```user_id``` property. |
 | alert_system | <code>String</code> | A value to match against an alert's ```alert_system``` property. |
 | [alert_system_key] | <code>String</code> | A value to match against an alert's ```alert_system_key``` property. |
+
+
+* * *
+
+### Schema.UserIdentifier :id=schemauseridentifier
+>The compound key for a system user.
+
+**Kind**: static typedef of <code>Schema</code>  
+**Properties**
+
+| Name | Type | Description |
+| --- | --- | --- |
+| user_id | <code>String</code> | The alert owner's unique identifier. |
+| alert_system | <code>String</code> | The alert owner's domain. |
 
 
 * * *

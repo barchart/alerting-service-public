@@ -1103,6 +1103,8 @@ module.exports = (() => {
 							startupPromises.push(
 								alertManager.getUser()
 									.then(function(data) {
+										debugger;
+
 										if (data.user_id && data.alert_system) {
 											pageModel.authenticatedUser(`${data.user_id}@${data.alert_system}`);
 										}

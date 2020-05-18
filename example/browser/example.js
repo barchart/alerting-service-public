@@ -1039,6 +1039,8 @@ module.exports = (() => {
             pageModel.handleAlertTrigger(triggeredAlert);
           });
           startupPromises.push(alertManager.getUser().then(function (data) {
+            debugger;
+
             if (data.user_id && data.alert_system) {
               pageModel.authenticatedUser(`${data.user_id}@${data.alert_system}`);
             }
@@ -1643,6 +1645,14 @@ module.exports = (() => {
         return this._adapter.getServerVersion();
       });
     }
+    /**
+     * Returns the current user (according to the JWT token which is embedded
+     * in the request).
+     *
+     * @public
+     * @returns {Promise<UserIdentifier>}
+     */
+
 
     getUser() {
       return Promise.resolve().then(() => {
@@ -2122,7 +2132,7 @@ module.exports = (() => {
       }).withBody().withRequestInterceptor(requestInterceptor).withResponseInterceptor(ResponseInterceptor.DATA).withErrorInterceptor(ErrorInterceptor.GENERAL).endpoint;
       this._userEndpoint = EndpointBuilder.for('get-user', 'Get user').withVerb(VerbType.GET).withProtocol(protocolType).withHost(host).withPort(port).withPathBuilder(pb => {
         pb.withLiteralParameter('user', 'user');
-      }).withResponseInterceptor(ResponseInterceptor.DATA).withErrorInterceptor(ErrorInterceptor.GENERAL).endpoint;
+      }).withRequestInterceptor(requestInterceptor).withResponseInterceptor(ResponseInterceptor.DATA).withErrorInterceptor(ErrorInterceptor.GENERAL).endpoint;
       this._versionEndpoint = EndpointBuilder.for('get-version', 'Get version').withVerb(VerbType.GET).withProtocol(protocolType).withHost(host).withPort(port).withPathBuilder(pb => {
         pb.withLiteralParameter('server', 'server').withLiteralParameter('version', 'version');
       }).withResponseInterceptor(ResponseInterceptor.DATA).withErrorInterceptor(ErrorInterceptor.GENERAL).endpoint;
