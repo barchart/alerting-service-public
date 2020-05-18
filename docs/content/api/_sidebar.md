@@ -3,7 +3,6 @@
 * Key Concepts
 	* [Connecting](/content/concepts/connecting)
 	* [Security](/content/concepts/security)
-	* [System Architecture](/content/concepts/system_architecture)
 	* [Alert Data Structure](/content/concepts/alert_data_structure)
 	* [Alert Data Sources](/content/concepts/alert_data_sources)
 	* [Alert Operations](/content/concepts/alert_operations)
