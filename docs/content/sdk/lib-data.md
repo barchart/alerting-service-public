@@ -1,54 +1,8 @@
 ## Contents {docsify-ignore}
 
-* [Enums](#Enums) 
-
 * [Schema](#Schema) 
 
-
-* * *
-
-## Enums :id=enums
->A namespace for enumerations.
-
-**Kind**: global namespace  
-
-* [Enums](#Enums) : <code>object</code>
-    * _static_
-        * [.AlertState](#EnumsAlertState) : <code>enum</code>
-        * [.AlertBehaviour](#EnumsAlertBehaviour) : <code>enum</code>
-
-
-* * *
-
-### Enums.AlertState :id=enumsalertstate
->The mutually-exclusive states an [Alert](#SchemaAlert) can inhabit.
-
-**Kind**: static enum of <code>Enums</code>  
-**Properties**
-
-| Name | Description |
-| --- | --- |
-| Inactive | The alert is not processing. No notifications will be generated. |
-| Starting | The alert is attempting to transition to the ```Active``` state. |
-| Active | The alert is tracking; however, its conditions have not yet been met. |
-| Scheduled | The alert is not currently tracking; however, it is scheduled to become ```Active``` in the future. |
-| Stopping | The alert is attempting to transition to the ```Inactive``` state. |
-| Triggered | The alert's conditions have been met. Functionally speaking, this is equivalent to the ```Inactive``` state. |
-
-
-* * *
-
-### Enums.AlertBehaviour :id=enumsalertbehaviour
->The possible ways an [Alert](#SchemaAlert) can react after its conditions have been met.
-
-**Kind**: static enum of <code>Enums</code>  
-**Properties**
-
-| Name | Type | Description |
-| --- | --- | --- |
-| terminate | <code>String</code> | When the alert becomes ```Active```, it begins tracking immediately. Once the alert's conditions have been met, notifications are published and tracking stops. The alert will transition to ```Triggered``` state. This is the default behavior. |
-| continue | <code>String</code> | When the alert becomes ```Active```, it begins tracking immediately. Once the alert's conditions have been met, notifications are published and tracking continues. The alert will remain in the ```Active``` state. This is useful for news alerts. |
-| schedule | <code>String</code> | When the alert becomes ```Active```, it waits until the until a scheduled time to begin tracking. Once an alert's conditions have been met, notifications will be published and tracking stops; however, The alert will remain in the ```Active``` state waiting to begin tracking again at the next scheduled time. This behavior is rarely used. |
+* [Enums](#Enums) 
 
 
 * * *
@@ -165,6 +119,52 @@ for this type.
 | --- | --- | --- |
 | user_id | <code>String</code> | The alert owner's unique identifier. |
 | alert_system | <code>String</code> | The alert owner's domain. |
+
+
+* * *
+
+## Enums :id=enums
+>A namespace for enumerations.
+
+**Kind**: global namespace  
+
+* [Enums](#Enums) : <code>object</code>
+    * _static_
+        * [.AlertState](#EnumsAlertState) : <code>enum</code>
+        * [.AlertBehaviour](#EnumsAlertBehaviour) : <code>enum</code>
+
+
+* * *
+
+### Enums.AlertState :id=enumsalertstate
+>The mutually-exclusive states an [Alert](#SchemaAlert) can inhabit.
+
+**Kind**: static enum of <code>Enums</code>  
+**Properties**
+
+| Name | Description |
+| --- | --- |
+| Inactive | The alert is not processing. No notifications will be generated. |
+| Starting | The alert is attempting to transition to the ```Active``` state. |
+| Active | The alert is tracking; however, its conditions have not yet been met. |
+| Scheduled | The alert is not currently tracking; however, it is scheduled to become ```Active``` in the future. |
+| Stopping | The alert is attempting to transition to the ```Inactive``` state. |
+| Triggered | The alert's conditions have been met. Functionally speaking, this is equivalent to the ```Inactive``` state. |
+
+
+* * *
+
+### Enums.AlertBehaviour :id=enumsalertbehaviour
+>The possible ways an [Alert](#SchemaAlert) can react after its conditions have been met.
+
+**Kind**: static enum of <code>Enums</code>  
+**Properties**
+
+| Name | Type | Description |
+| --- | --- | --- |
+| terminate | <code>String</code> | When the alert becomes ```Active```, it begins tracking immediately. Once the alert's conditions have been met, notifications are published and tracking stops. The alert will transition to ```Triggered``` state. This is the default behavior. |
+| continue | <code>String</code> | When the alert becomes ```Active```, it begins tracking immediately. Once the alert's conditions have been met, notifications are published and tracking continues. The alert will remain in the ```Active``` state. This is useful for news alerts. |
+| schedule | <code>String</code> | When the alert becomes ```Active```, it waits until the until a scheduled time to begin tracking. Once an alert's conditions have been met, notifications will be published and tracking stops; however, The alert will remain in the ```Active``` state waiting to begin tracking again at the next scheduled time. This behavior is rarely used. |
 
 
 * * *
