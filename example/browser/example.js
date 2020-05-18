@@ -25,9 +25,9 @@ module.exports = (() => {
 
   function PageModel(host, system, userId) {
     var that = this;
-    that.host = ko.observable(host || 'alerts-management-test.barchart.com');
+    that.host = ko.observable(host || 'alerts-management-demo.barchart.com');
     that.system = ko.observable(system || 'barchart.com');
-    that.userId = ko.observable(userId || '000000');
+    that.userId = ko.observable(userId || 'me');
     that.mode = ko.observable('socket.io');
     currentSystem = system;
     currentUserId = userId;
@@ -1089,7 +1089,6 @@ module.exports = (() => {
             pageModel.changeToGrid();
           });
         }).catch(e => {
-          debugger;
           console.log(e);
           alertManager.dispose();
           alertManager = null;
@@ -1148,13 +1147,14 @@ module.exports = (() => {
   regex.hosts.production = /(prod)/i;
   /**
    * The **central component of the SDK**. It is responsible for connecting to Barchart's
-   * Alert Service, querying existing alerts, creating new alerts, and monitoring alert status.
+   * Alert Service, querying existing alerts, creating new alerts, and monitoring the status
+   * of existing alerts.
    *
    * @public
    * @exported
    * @extends {Disposable}
-   * @param {String} host - The host name of the Alert Service.
-   * @param {Number} port - The TCP port of the Alert Service.
+   * @param {String} host - Barchart Alert Service's hostname.
+   * @param {Number} port - Barchart Alert Service's TCP port number.
    * @param {Boolean} secure - If true, the transport layer will use encryption (e.g. HTTPS, WSS, etc).
    * @param {Function} adapterClazz - The transport strategy. Specifically, the constructor function for a class extending {@link AdapterBase}.
    */
@@ -1230,8 +1230,9 @@ module.exports = (() => {
     /**
      * Creates a new alert.
      *
+     * @public
      * @param {Schema.Alert} alert
-     * @returns {Promise<any[]>}
+     * @returns {Promise<Schema.Alert>}
      */
 
 
@@ -1307,15 +1308,16 @@ module.exports = (() => {
         return this._adapter.createAlert(alert);
       });
     }
+    /**
+     * Performs a synthetic update operation on an existing alert. The
+     * existing alert is deleted. Then, a new alert is created in its
+     * place. The new alert will have the same identifier.
+     *
+     * @public
+     * @param {Schema.Alert} alert
+     * @returns {Promise<Alert>}
+     */
 
-    retrieveAlert(alert) {
-      return Promise.resolve().then(() => {
-        checkStatus(this, 'retrieve alert');
-        validate.alert.forQuery(alert);
-      }).then(() => {
-        return this._adapter.retrieveAlert(alert);
-      });
-    }
 
     editAlert(alert) {
       return Promise.resolve().then(() => {
@@ -1327,81 +1329,47 @@ module.exports = (() => {
         return this.createAlert(alert);
       });
     }
+    /**
+     * Deletes an existing alert.
+     *
+     * @public
+     * @param {Schema.Alert} alert
+     * @returns {Promise<Schema.Alert>}
+     */
 
-    enableAlert(alert) {
-      return Promise.resolve().then(() => {
-        checkStatus(this, 'enable alert');
-        validate.alert.forQuery(alert);
-      }).then(() => {
-        const clone = Object.assign(alert);
-        clone.alert_state = 'Starting';
-        onAlertMutated.call(this, clone);
-        return this._adapter.updateAlert({
-          alert_id: alert.alert_id,
-          alert_state: 'Starting'
-        });
-      });
-    }
-
-    enableAlerts(query) {
-      return Promise.resolve().then(() => {
-        checkStatus(this, 'enable alerts');
-        validate.alert.forUser(query);
-        return this._adapter.updateAlertsForUser({
-          user_id: query.user_id,
-          alert_system: query.alert_system,
-          alert_state: 'Starting'
-        });
-      }).then(() => {
-        return true;
-      });
-    }
-
-    disableAlert(alert) {
-      return Promise.resolve().then(() => {
-        checkStatus(this, 'disable alert');
-        validate.alert.forQuery(alert);
-      }).then(() => {
-        const clone = Object.assign(alert);
-        clone.alert_state = 'Stopping';
-        onAlertMutated.call(this, clone);
-        return this._adapter.updateAlert({
-          alert_id: alert.alert_id,
-          alert_state: 'Stopping'
-        });
-      });
-    }
-
-    disableAlerts(query) {
-      return Promise.resolve().then(() => {
-        checkStatus(this, 'disable alerts');
-        validate.alert.forUser(query);
-        return this._adapter.updateAlertsForUser({
-          user_id: query.user_id,
-          alert_system: query.alert_system,
-          alert_state: 'Stopping'
-        });
-      }).then(() => {
-        return true;
-      });
-    }
 
     deleteAlert(alert) {
       return Promise.resolve().then(() => {
         checkStatus(this, 'delete alert');
         validate.alert.forQuery(alert);
-      }).then(() => {}).then(() => {
+      }).then(() => {
         return this._adapter.deleteAlert({
           alert_id: alert.alert_id
         });
       });
     }
     /**
-     * Returns {@link Alert} objects for the current user. Optional filtering
-     * can be applied.
+     * Gets a single alert by its identifier.
      *
      * @public
-     * @param {Schema.AlertFilter} query
+     * @param {Schema.Alert|Schema.AlertIdentifier} alert
+     * @returns {Promise<Schema.Alert>}
+     */
+
+
+    retrieveAlert(alert) {
+      return Promise.resolve().then(() => {
+        checkStatus(this, 'retrieve alert');
+        validate.alert.forQuery(alert);
+      }).then(() => {
+        return this._adapter.retrieveAlert(alert);
+      });
+    }
+    /**
+     * Gets the set of alerts which match a query.
+     *
+     * @public
+     * @param {Schema.AlertQuery} query
      * @returns {Promise<Alert[]>}
      */
 
@@ -1436,6 +1404,96 @@ module.exports = (() => {
         } else {
           return results;
         }
+      });
+    }
+    /**
+     * Sends a request to transition an alert to the ```Active``` state.
+     *
+     * @public
+     * @param {Schema.Alert|Schema.AlertIdentifier} alert
+     * @returns {Promise<Schema.Alert>}
+     */
+
+
+    enableAlert(alert) {
+      return Promise.resolve().then(() => {
+        checkStatus(this, 'enable alert');
+        validate.alert.forQuery(alert);
+      }).then(() => {
+        const clone = Object.assign(alert);
+        clone.alert_state = 'Starting';
+        onAlertMutated.call(this, clone);
+        return this._adapter.updateAlert({
+          alert_id: alert.alert_id,
+          alert_state: 'Starting'
+        });
+      });
+    }
+    /**
+     * Sends a request to transition all alerts owned by a user to the ```Active``` state.
+     *
+     * @public
+     * @param {Schema.AlertQuery} query
+     * @returns {Promise<Boolean>}
+     */
+
+
+    enableAlerts(query) {
+      return Promise.resolve().then(() => {
+        checkStatus(this, 'enable alerts');
+        validate.alert.forUser(query);
+        return this._adapter.updateAlertsForUser({
+          user_id: query.user_id,
+          alert_system: query.alert_system,
+          alert_state: 'Starting'
+        });
+      }).then(() => {
+        return true;
+      });
+    }
+    /**
+     * Sends a request to transition an alert to the ```Inactive``` state.
+     *
+     * @public
+     * @param {Schema.Alert|Schema.AlertIdentifier} alert
+     * @returns {Promise<Schema.Alert>}
+     */
+
+
+    disableAlert(alert) {
+      return Promise.resolve().then(() => {
+        checkStatus(this, 'disable alert');
+        validate.alert.forQuery(alert);
+      }).then(() => {
+        const clone = Object.assign(alert);
+        clone.alert_state = 'Stopping';
+        onAlertMutated.call(this, clone);
+        return this._adapter.updateAlert({
+          alert_id: alert.alert_id,
+          alert_state: 'Stopping'
+        });
+      });
+    }
+    /**
+     * Sends a request to transition all alerts owned by a user to the ```Inactive``` state.
+     *
+     * @public
+     * @param {Schema.AlertQuery} query
+     * @returns {Promise<Boolean>}
+     */
+
+
+    disableAlerts(query) {
+      return Promise.resolve().then(() => {
+        checkStatus(this, 'disable alerts');
+        validate.alert.forUser(query);
+        return this._adapter.updateAlertsForUser({
+          user_id: query.user_id,
+          alert_system: query.alert_system,
+          alert_state: 'Stopping'
+        });
+      }).then(() => {
+        return true;
       });
     }
 
@@ -1844,7 +1902,7 @@ module.exports = (() => {
       this._onAlertTriggered = onAlertTriggered;
     }
     /**
-     * The host name of the Barchart Alert Service.
+     * The hostname of the Barchart Alert Service.
      *
      * @public
      * @returns {String}
@@ -2740,7 +2798,8 @@ module.exports = (() => {
       assert.argumentIsOptional(alert.notes, `${d}.notes`, Object);
       assert.argumentIsOptional(alert.user_notes, `${d}.user_notes`, String);
       assert.argumentIsOptional(alert.alert_system_key, `${d}.alert_system_key`, String);
-      assert.argumentIsRequired(alert.automatic_reset, `${d}.automatic_reset`, Boolean);
+      assert.argumentIsOptional(alert.alert_behavior, `${d}.alert_behavior`, String);
+      assert.argumentIsOptional(alert.automatic_reset, `${d}.automatic_reset`, Boolean);
       assert.argumentIsArray(alert.conditions, `${d}.conditions`, condition.forCreate);
 
       if (alert.hasOwnProperty('publishers')) {

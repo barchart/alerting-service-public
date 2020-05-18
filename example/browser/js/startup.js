@@ -28,9 +28,9 @@ module.exports = (() => {
 	function PageModel(host, system, userId) {
 		var that = this;
 
-		that.host = ko.observable(host || 'alerts-management-test.barchart.com');
+		that.host = ko.observable(host || 'alerts-management-demo.barchart.com');
 		that.system = ko.observable(system || 'barchart.com');
-		that.userId = ko.observable(userId || '000000');
+		that.userId = ko.observable(userId || 'me');
 		that.mode = ko.observable('socket.io');
 
 		currentSystem = system;
