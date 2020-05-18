@@ -49,4 +49,4 @@ _Tip: Only ```require``` (or ```import```) the adapter you intend to use — thi
 
 ## Using the API
 
-There is no need to perform a _connect_ action when using the REST-ful API — each request is completely independent of previous requests.
+There is no need to perform a _connect_ action when using the REST-ful API — each request is completely independent.
