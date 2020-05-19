@@ -19,7 +19,7 @@
   "keywords": [],
   "dependencies": {
     "@barchart/common-js": "^3.6.0",
-    "@barchart/instruments-client-js": "^3.6.0",
+    "@barchart/instruments-client-js": "^3.5.1",
     "@barchart/marketdata-api-js": "^5.1.2",
 	"socket.io-client": "^2.3.0",
 	"uuid": "^3.4.0"
