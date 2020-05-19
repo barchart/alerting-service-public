@@ -22,6 +22,8 @@ of existing alerts.
         * [.disableAlert(alert)](#AlertManagerdisableAlert) ⇒ <code>Promise.&lt;Schema.Alert&gt;</code>
         * [.disableAlerts(query)](#AlertManagerdisableAlerts) ⇒ <code>Promise.&lt;Boolean&gt;</code>
         * [.checkSymbol(symbol)](#AlertManagercheckSymbol) ⇒ <code>Promise.&lt;String&gt;</code>
+        * [.getTargets()](#AlertManagergetTargets) ⇒ <code>Promise.&lt;Array.&lt;Schema.Target&gt;&gt;</code>
+        * [.getProperties()](#AlertManagergetProperties) ⇒ <code>Promise.&lt;Array.&lt;Schema.Property&gt;&gt;</code>
         * [.getUser()](#AlertManagergetUser) ⇒ <code>Promise.&lt;UserIdentifier&gt;</code>
     * _static_
         * [.version](#AlertManagerversion) ⇒ <code>String</code>
@@ -191,6 +193,26 @@ use the alternate symbol.
 | --- | --- | --- |
 | symbol | <code>String</code> | The symbol to check |
 
+
+* * *
+
+### alertManager.getTargets() :id=alertmanagergettargets
+>Retrieves the entire list of targets which are available to the
+system.
+
+**Kind**: instance method of <code>AlertManager</code>  
+**Returns**: <code>Promise.&lt;Array.&lt;Schema.Target&gt;&gt;</code>  
+**Access**: public  
+
+* * *
+
+### alertManager.getProperties() :id=alertmanagergetproperties
+>Retrieves the entire list of properties which are available to the
+system.
+
+**Kind**: instance method of <code>AlertManager</code>  
+**Returns**: <code>Promise.&lt;Array.&lt;Schema.Property&gt;&gt;</code>  
+**Access**: public  
 
 * * *
 
