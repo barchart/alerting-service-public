@@ -3,59 +3,59 @@
   "version": "3.4.0",
   "description": "JavaScript SDK for interacting with Barchart Alert Service",
   "author": {
-    "name": "Bryan Ingle",
-    "email": "bryan.ingle@barchart.com",
-    "url": "http://www.barchart.com"
+	"name": "Bryan Ingle",
+	"email": "bryan.ingle@barchart.com",
+	"url": "http://www.barchart.com"
   },
   "main": "./lib/index.js",
   "scripts": {
-    "test": "gulp test",
-    "watch": "gulp watch"
+	"test": "gulp test",
+	"watch": "gulp watch"
   },
   "repository": {
-    "type": "git",
-    "url": "git+ssh://github.com/barchart/alerts-client-js"
+	"type": "git",
+	"url": "git+ssh://github.com/barchart/alerts-client-js"
   },
   "keywords": [],
   "dependencies": {
-    "@barchart/common-js": "^3.6.0",
-    "@barchart/instruments-client-js": "^3.5.1",
-    "@barchart/marketdata-api-js": "^5.1.2",
+	"@barchart/common-js": "^3.6.0",
+	"@barchart/instruments-client-js": "^3.5.1",
+	"@barchart/marketdata-api-js": "^5.1.2",
 	"socket.io-client": "^2.3.0",
 	"uuid": "^3.4.0"
   },
   "devDependencies": {
-    "@barchart/tgam-jwt-js": "~1.4.0",
-    "@babel/core": "^7.6.2",
-    "aws-sdk": "^2.546.0",
-    "babelify": "^10.0.0",
-    "browserify": "^16.5.0",
-    "git-get-status": "^1.0.5",
-    "glob": "^6.0.1",
-    "gulp": "^4.0.2",
-    "gulp-awspublish": "^4.0.0",
-    "gulp-bump": "~1.0.0",
-    "gulp-git": "^2.5.1",
-    "gulp-jasmine": "^2.2.1",
-    "gulp-jsdoc3": "^1.0.1",
-    "gulp-jshint": "~2.1.0",
-    "gulp-rename": "^1.4.0",
-    "gulp-replace": "^0.5.4",
-    "jsdoc": "^3.5.5",
-    "jshint": "2.9.5",
-    "vinyl-buffer": "^1.0.1",
-    "vinyl-source-stream": "^2.0.0"
+	"@barchart/tgam-jwt-js": "~1.4.0",
+	"@babel/core": "^7.6.2",
+	"aws-sdk": "^2.546.0",
+	"babelify": "^10.0.0",
+	"browserify": "^16.5.0",
+	"git-get-status": "^1.0.5",
+	"glob": "^6.0.1",
+	"gulp": "^4.0.2",
+	"gulp-awspublish": "^4.0.0",
+	"gulp-bump": "~1.0.0",
+	"gulp-git": "^2.5.1",
+	"gulp-jasmine": "^2.2.1",
+	"gulp-jsdoc3": "^1.0.1",
+	"gulp-jshint": "~2.1.0",
+	"gulp-rename": "^1.4.0",
+	"gulp-replace": "^0.5.4",
+	"jsdoc": "^3.5.5",
+	"jshint": "2.9.5",
+	"vinyl-buffer": "^1.0.1",
+	"vinyl-source-stream": "^2.0.0"
   },
   "browser": {
-    "common/lang/connection": "common/lang/browser/connection",
-    "common/network/rest/RestProvider": "common/network/rest/browser/XhrRestProvider"
+	"common/lang/connection": "common/lang/browser/connection",
+	"common/network/rest/RestProvider": "common/network/rest/browser/XhrRestProvider"
   },
   "browserify": {
-    "transform": [
-      [
-        "babelify"
-      ]
-    ]
+	"transform": [
+	  [
+		"babelify"
+	  ]
+	]
   },
   "license": "UNLICENSED"
 }
