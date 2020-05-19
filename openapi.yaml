@@ -9,7 +9,7 @@ servers:
   - description: "Demo (evaluation and testing only)"
     url: "https://alerts-management-demo.barchart.com"
   - description: "Production"
-    url: "https://alerts-management.barchart.com"
+    url: "https://alerts-management.barchart-prod.com"
 
 components:
   schemas:
