@@ -24,6 +24,7 @@ of existing alerts.
         * [.checkSymbol(symbol)](#AlertManagercheckSymbol) ⇒ <code>Promise.&lt;String&gt;</code>
         * [.getTargets()](#AlertManagergetTargets) ⇒ <code>Promise.&lt;Array.&lt;Schema.Target&gt;&gt;</code>
         * [.getProperties()](#AlertManagergetProperties) ⇒ <code>Promise.&lt;Array.&lt;Schema.Property&gt;&gt;</code>
+        * [.getOperators()](#AlertManagergetOperators) ⇒ <code>Promise.&lt;Array.&lt;Schema.Operator&gt;&gt;</code>
         * [.getUser()](#AlertManagergetUser) ⇒ <code>Promise.&lt;UserIdentifier&gt;</code>
     * _static_
         * [.version](#AlertManagerversion) ⇒ <code>String</code>
@@ -212,6 +213,16 @@ system.
 
 **Kind**: instance method of <code>AlertManager</code>  
 **Returns**: <code>Promise.&lt;Array.&lt;Schema.Property&gt;&gt;</code>  
+**Access**: public  
+
+* * *
+
+### alertManager.getOperators() :id=alertmanagergetoperators
+>Retrieves the entire list of operators which are available to the
+system.
+
+**Kind**: instance method of <code>AlertManager</code>  
+**Returns**: <code>Promise.&lt;Array.&lt;Schema.Operator&gt;&gt;</code>  
 **Access**: public  
 
 * * *

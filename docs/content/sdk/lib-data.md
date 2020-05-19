@@ -18,6 +18,7 @@
         * [.Condition](#SchemaCondition) : <code>Object</code>
         * [.Property](#SchemaProperty) : <code>Object</code>
         * [.Target](#SchemaTarget) : <code>Object</code>
+        * [.Operator](#SchemaOperator) : <code>Object</code>
         * [.AlertIdentifier](#SchemaAlertIdentifier) : <code>Object</code>
         * [.AlertQuery](#SchemaAlertQuery) : <code>Object</code>
         * [.UserIdentifier](#SchemaUserIdentifier) : <code>Object</code>
@@ -43,17 +44,17 @@ assign an empty array. This applies to all component types.
 | [name] | <code>String</code> | The name of the alert (if not provided, the backend will attempt to generate a name). |
 | user_id | <code>String</code> | The alert owner's unique identifier. |
 | alert_system | <code>String</code> | The alert owner's domain. |
-| [alert_state] | [<code>AlertState</code>](#EnumsAlertState) | The alert's current status (managed by the backend). |
+| [alert_state] | [<code>AlertState</code>](#EnumsAlertState) | The alert's current status. Managed by the backend. |
 | [alert_behaviour] | [<code>AlertBehaviour</code>](#EnumsAlertBehaviour) | The alert's strategy for handling state changes after its conditions are met —```terminate``` is the default value. |
-| [create_date] | <code>String</code> | The time the alert was created (milliseconds since epoch). |
-| [last_start_date] | <code>String</code> | The last time the alert was started (milliseconds since epoch). |
-| [last_trigger_date] | <code>String</code> | The last time the alert was triggered (milliseconds since epoch). |
+| [create_date] | <code>String</code> | The time the alert was created (milliseconds since epoch). Managed by the backend. |
+| [last_start_date] | <code>String</code> | The last time the alert was started (milliseconds since epoch). Managed by the backend. |
+| [last_trigger_date] | <code>String</code> | The last time the alert was triggered (milliseconds since epoch). Managed by the backend. |
 | [user_notes] | <code>String</code> | Ad hoc text. |
 | [alert_type] | <code>String</code> | Used to classify the alert, controlling "default" publishing rules, if no publishers have been explicitly specified. This happens by matching the "active_alert_type" property of a [PublisherTypeDefault](PublisherTypeDefault). |
 | conditions | [<code>Array.&lt;Condition&gt;</code>](#SchemaCondition) | The conditions which cause an the alert to be triggered. If multiple conditions are present, they must all be satisfied before the alert will be triggered. |
-| [schedules] | <code>Array.&lt;AlertResetSchedule&gt;</code> |  |
 | [publishers] | <code>Array.&lt;Publisher&gt;</code> | The rules for publishing a notification. This is optional. In most cases, it's best to rely on the default rules bound to the alert's owner. |
 | [effectivePublishers] | <code>Array.&lt;Publisher&gt;</code> | A read-only property added by the backend listing the "effective" rules which will be used to publish notifications. Any rules in the "publishers" property take precedence, then the default rules for the alert's owner are applied. |
+| [schedules] | <code>Array.&lt;AlertResetSchedule&gt;</code> |  |
 
 
 * * *
@@ -73,9 +74,9 @@ Only required fields are necessary to create a condition (for use with a new ale
 | Name | Type | Description |
 | --- | --- | --- |
 | condition_id | <code>String</code> | The condition's unique identifier (assigned by the backend). |
-| [name] | <code>String</code> | The name of the condition (if not provided, the backend will attempt to generate a name). |
+| [name] | <code>String</code> | The name of the condition (if not provided, the backend will attempt to generate a name). Managed by the backend. |
 | property | [<code>Property</code>](#SchemaProperty) | The "property" which is being evaluated (e.g. last price). |
-| operator | <code>Schema.Operator</code> | The "operator" to use to evaluate the ```property``` (e.g. greater than). |
+| operator | [<code>Operator</code>](#SchemaOperator) | The "operator" to use to evaluate the ```property``` (e.g. greater than). |
 
 
 * * *
@@ -92,9 +93,9 @@ A property is a key component of a [Condition](#SchemaCondition).
 | Name | Type | Description |
 | --- | --- | --- |
 | property_id | <code>Number</code> | The property's unique identifier (assigned by the backend). |
-| [target] | [<code>Target</code>](#SchemaTarget) | Points to a concrete object (e.g. Apple common stock versus Microsoft common stock). **This is required when a new alert.** |
-| [type] | [<code>PropertyType</code>](#EnumsPropertyType) | The attribute's value type (e.g. a number or a string). |
-| [valid_operators] | <code>Array.&lt;Schema.Operator&gt;</code> | A list of operators which can be used with this [Property](#SchemaProperty) to create a [Condition](#SchemaCondition). Managed by the backend. |
+| [target] | [<code>Target</code>](#SchemaTarget) | Points to a concrete object (e.g. Apple common stock versus Microsoft common stock). Managed by the backend. |
+| [type] | [<code>PropertyType</code>](#EnumsPropertyType) | The attribute's value type (e.g. a number or a string). Managed by the backend. |
+| [valid_operators] | [<code>Array.&lt;Operator&gt;</code>](#SchemaOperator) | A list of operators which can be used with this [Property](#SchemaProperty) to create a [Condition](#SchemaCondition). Managed by the backend. |
 | [category] | <code>Array.&lt;String&gt;</code> | A grouping container for the property. Useful when displaying a list of properties. Managed by the backend. |
 | [description] | <code>Array.&lt;String&gt;</code> | A description of the property (broken into one or more components). Managed by the backend. |
 | [descriptionShort] | <code>Array.&lt;String&gt;</code> | Similar to ```description``` but with condensed or abbreviated wording. Managed by the backend. |
@@ -117,10 +118,37 @@ refers to a specific item within the group (by using an ```identifier```).
 | Name | Type | Description |
 | --- | --- | --- |
 | target_id | <code>Number</code> | The target's unique identifier (assigned by the backend). In other words, the identifier for the entire group. |
-| [description] | <code>String</code> | The description of the target. In other words, the description of the entire group. |
+| [description] | <code>String</code> | The description of the target. In other words, the description of the entire group. Managed by the backend. |
 | [identifier] | <code>String</code> | The identifier for the specific item within the group. For example, within the group of stock quotes, the symbol "AAPL" is the identifier for Apple. **This is required when a new alert.** |
-| identifier_description | <code>String</code> | The description of the a target's ```identifier```. |
-| type | <code>String</code> |  |
+| identifier_description | <code>String</code> | The description of the a target's ```identifier```. Managed by the backend. |
+| type | [<code>TargetType</code>](#EnumsTargetType) | Indicates if the target's identifier is an instrument symbol (e.g. AAPL). Managed by the backend. |
+
+
+* * *
+
+### Schema.Operator :id=schemaoperator
+>A logical "operator" which can be used in a conditional expression. When
+when as part of a [Condition](Condition), the operator also includes an
+```operand``` value.
+
+For example, take the phrase  "greater than $600." The "operator"
+refers to "greater than" and the "operand" refers to "$600."
+
+**Kind**: static typedef of <code>Schema</code>  
+**Properties**
+
+| Name | Type | Description |
+| --- | --- | --- |
+| operator_id | <code>Number</code> | The operators's unique identifier (assigned by the backend). |
+| [operator_name] | <code>String</code> | A description of the operator. Managed by the backend. |
+| [operator_type] | [<code>OperatorType</code>](#EnumsOperatorType) | Managed by the backend. |
+| [operand_type] | [<code>OperandType</code>](#EnumsOperandType) | Describes the data type for an operand (e.g. for $600, the type is "number"). Managed by the backend. |
+| [operand_literal] | <code>Boolean</code> | Indicates if the operand is a concrete value (e.g. $600). If not, the operand is a reference to a variable. Managed by the backend. |
+| [operand_options] | <code>Array.&lt;String&gt;</code> | Lists the possible values which can be used as an ```operand```; if the array has no items, then there is no restriction on possible values. Managed by the backend. |
+| [display.short] | <code>String</code> | A short description of the operator (usually one character). Managed by the backend. |
+| [display.medium] | <code>String</code> | A medium-length description of the operator. Managed by the backend. |
+| [display.long] | <code>String</code> | A full-length description of the operator. Managed by the backend. |
+| [modifiers] | <code>Array</code> |  |
 
 
 * * *
@@ -180,6 +208,9 @@ for this type.
         * [.AlertState](#EnumsAlertState) : <code>enum</code>
         * [.AlertBehaviour](#EnumsAlertBehaviour) : <code>enum</code>
         * [.PropertyType](#EnumsPropertyType) : <code>enum</code>
+        * [.OperandType](#EnumsOperandType) : <code>enum</code>
+        * [.OperatorType](#EnumsOperatorType) : <code>enum</code>
+        * [.TargetType](#EnumsTargetType) : <code>enum</code>
 
 
 * * *
@@ -226,9 +257,50 @@ for this type.
 | Name | Type | Description |
 | --- | --- | --- |
 | number | <code>String</code> | A simple number. |
-| object | <code>String</code> | A complex object (with one or more of its own properties). |
-| percent | <code>String</code> | A number which represents a percentage where 1.0 represents 100% and 0.5 represents 50%. |
 | string | <code>String</code> | A simple string. |
+| percent | <code>String</code> | A number which represents a percentage where 1.0 represents 100% and 0.5 represents 50%. |
+| object | <code>String</code> | A complex object (with one or more of its own properties). |
+
+
+* * *
+
+### Enums.OperandType :id=enumsoperandtype
+>Describes the type of an operator's operand. For example, in the phrase "greater
+than $600," where the operand is "$600," the type is a number.
+
+**Kind**: static enum of <code>Enums</code>  
+**Properties**
+
+| Name | Type | Description |
+| --- | --- | --- |
+| number | <code>String</code> | A simple number. |
+| string | <code>String</code> | A simple string. |
+
+
+* * *
+
+### Enums.OperatorType :id=enumsoperatortype
+**Kind**: static enum of <code>Enums</code>  
+**Properties**
+
+| Name | Type | Description |
+| --- | --- | --- |
+| unary | <code>String</code> | The operator does not require an operand. |
+| binary | <code>String</code> | The operator requires one operand. |
+
+
+* * *
+
+### Enums.TargetType :id=enumstargettype
+>Categories a target's identifier.
+
+**Kind**: static enum of <code>Enums</code>  
+**Properties**
+
+| Name | Type | Description |
+| --- | --- | --- |
+| string | <code>String</code> | The target's identifier is a simple string. |
+| symbol | <code>String</code> | The target's identifier is an instrument symbol (e.g. "AAPL" for Apple stock). |
 
 
 * * *
