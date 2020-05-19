@@ -6,7 +6,7 @@
 
 ## OpenAPI Definition {docsify-ignore}
 
-[Download](/static/openapi.yaml)
+[Download](static/openapi.yaml)
 
 ## Contents {docsify-ignore}
 
@@ -17,7 +17,7 @@
 ## Servers {docsify-ignore}
 
 * [https://alerts-management-demo.barchart.com](https://alerts-management-demo.barchart.com)  - Demo (evaluation and testing only)
-* [https://alerts-management.barchart.com](https://alerts-management.barchart.com)  - Production
+* [https://alerts-management.barchart-prod.com](https://alerts-management.barchart-prod.com)  - Production
 
 ## Components {docsify-ignore}
 

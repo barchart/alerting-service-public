@@ -8,7 +8,7 @@
 * * *
 
 ## Schema :id=schema
->A meta namespace containing structural contracts of anonymous objects.
+> A meta namespace containing structural contracts of anonymous objects.
 
 **Kind**: global namespace  
 
@@ -27,15 +27,15 @@
 * * *
 
 ### Schema.Alert :id=schemaalert
->An "alert" is the system's **primary** data structure. An "alert" is essentially
-a collection of ```conditions``` which the backend monitors.
+> An "alert" is the system's **primary** data structure. An "alert" is essentially
+> a collection of ```conditions``` which the backend monitors.
+> 
+> All required properties must be present to create a new alert. Once an alert has been
+> created, the backend will "fill in" any omitted properties. For example, if you create
+> an alert without a ```publishers``` property, the backend will add the property and
+> assign an empty array. This applies to all component types.
 
-All required properties must be present to create a new alert. Once an alert has been
-created, the backend will "fill in" any omitted properties. For example, if you create
-an alert without a ```publishers``` property, the backend will add the property and
-assign an empty array. This applies to all component types.
-
-**Kind**: static typedef of <code>Schema</code>  
+**Kind**: static typedef of [<code>Schema</code>](#Schema)  
 **Properties**
 
 | Name | Type | Description |
@@ -50,25 +50,25 @@ assign an empty array. This applies to all component types.
 | [last_start_date] | <code>String</code> | The last time the alert was started (milliseconds since epoch). Managed by the backend. |
 | [last_trigger_date] | <code>String</code> | The last time the alert was triggered (milliseconds since epoch). Managed by the backend. |
 | [user_notes] | <code>String</code> | Ad hoc text. |
-| [alert_type] | <code>String</code> | Used to classify the alert, controlling "default" publishing rules, if no publishers have been explicitly specified. This happens by matching the "active_alert_type" property of a [PublisherTypeDefault](PublisherTypeDefault). |
+| [alert_type] | <code>String</code> | Used to classify the alert, controlling "default" publishing rules, if no publishers have been explicitly specified. This happens by matching the "active_alert_type" property of a [PublisherTypeDefault](#publishertypedefault). |
 | conditions | [<code>Array.&lt;Condition&gt;</code>](#SchemaCondition) | The conditions which cause an the alert to be triggered. If multiple conditions are present, they must all be satisfied before the alert will be triggered. |
-| [publishers] | <code>Array.&lt;Publisher&gt;</code> | The rules for publishing a notification. This is optional. In most cases, it's best to rely on the default rules bound to the alert's owner. |
-| [effectivePublishers] | <code>Array.&lt;Publisher&gt;</code> | A read-only property added by the backend listing the "effective" rules which will be used to publish notifications. Any rules in the "publishers" property take precedence, then the default rules for the alert's owner are applied. |
+| [publishers] | <code>Array.&lt;Schema.Publisher&gt;</code> | The rules for publishing a notification. This is optional. In most cases, it's best to rely on the default rules bound to the alert's owner. |
+| [effectivePublishers] | <code>Array.&lt;Schema.Publisher&gt;</code> | A read-only property added by the backend listing the "effective" rules which will be used to publish notifications. Any rules in the "publishers" property take precedence, then the default rules for the alert's owner are applied. |
 | [schedules] | <code>Array.&lt;AlertResetSchedule&gt;</code> |  |
 
 
 * * *
 
 ### Schema.Condition :id=schemacondition
->A "condition" is a statement that can be evaluated (as the backend processes streaming data).
+> A "condition" is a statement that can be evaluated (as the backend processes streaming data).
+> 
+> For example, "Apple stock's last price is higher than $600" is a condition. Using this example,
+> the "property" object denotes "Apple stock's last price" and the "operator" object denotes "higher
+> than $600."
+> 
+> Only required fields are necessary to create a condition (for use with a new alert object).
 
-For example, "Apple stock's last price is higher than $600" is a condition. Using this example,
-the "property" object denotes "Apple stock's last price" and the "operator" object denotes "higher
-than $600."
-
-Only required fields are necessary to create a condition (for use with a new alert object).
-
-**Kind**: static typedef of <code>Schema</code>  
+**Kind**: static typedef of [<code>Schema</code>](#Schema)  
 **Properties**
 
 | Name | Type | Description |
@@ -82,12 +82,12 @@ Only required fields are necessary to create a condition (for use with a new ale
 * * *
 
 ### Schema.Property :id=schemaproperty
->A "property" is an attribute of an observable object. A property refers to a [Target](Target).
-For example, a **stock quote** is a target. The **last price** of the stock quote is the attribute.
+> A "property" is an attribute of an observable object. A property refers to a [Target](#target).
+> For example, a **stock quote** is a target. The **last price** of the stock quote is the attribute.
+> 
+> A property is a key component of a [Condition](#schemacondition).
 
-A property is a key component of a [Condition](#SchemaCondition).
-
-**Kind**: static typedef of <code>Schema</code>  
+**Kind**: static typedef of [<code>Schema</code>](#Schema)  
 **Properties**
 
 | Name | Type | Description |
@@ -95,7 +95,7 @@ A property is a key component of a [Condition](#SchemaCondition).
 | property_id | <code>Number</code> | The property's unique identifier (assigned by the backend). |
 | [target] | [<code>Target</code>](#SchemaTarget) | Points to a concrete object (e.g. Apple common stock versus Microsoft common stock). Managed by the backend. |
 | [type] | [<code>PropertyType</code>](#EnumsPropertyType) | The attribute's value type (e.g. a number or a string). Managed by the backend. |
-| [valid_operators] | [<code>Array.&lt;Operator&gt;</code>](#SchemaOperator) | A list of operators which can be used with this [Property](#SchemaProperty) to create a [Condition](#SchemaCondition). Managed by the backend. |
+| [valid_operators] | [<code>Array.&lt;Operator&gt;</code>](#SchemaOperator) | A list of operators which can be used with this [Property](#schemaproperty) to create a [Condition](#schemacondition). Managed by the backend. |
 | [category] | <code>Array.&lt;String&gt;</code> | A grouping container for the property. Useful when displaying a list of properties. Managed by the backend. |
 | [description] | <code>Array.&lt;String&gt;</code> | A description of the property (broken into one or more components). Managed by the backend. |
 | [descriptionShort] | <code>Array.&lt;String&gt;</code> | Similar to ```description``` but with condensed or abbreviated wording. Managed by the backend. |
@@ -105,14 +105,14 @@ A property is a key component of a [Condition](#SchemaCondition).
 * * *
 
 ### Schema.Target :id=schematarget
->A "target" refers to an entire group of objects (e.g. stock quotes). When used to
-build an alert, a target has an ```identifier``` which points to the specific object
-(within the group).
+> A "target" refers to an entire group of objects (e.g. stock quotes). When used to
+> build an alert, a target has an ```identifier``` which points to the specific object
+> (within the group).
+> 
+> To use an example, a stock quote is a group of objects. The stock quote for Apple
+> refers to a specific item within the group (by using an ```identifier```).
 
-To use an example, a stock quote is a group of objects. The stock quote for Apple
-refers to a specific item within the group (by using an ```identifier```).
-
-**Kind**: static typedef of <code>Schema</code>  
+**Kind**: static typedef of [<code>Schema</code>](#Schema)  
 **Properties**
 
 | Name | Type | Description |
@@ -127,14 +127,14 @@ refers to a specific item within the group (by using an ```identifier```).
 * * *
 
 ### Schema.Operator :id=schemaoperator
->A logical "operator" which can be used in a conditional expression. When
-when as part of a [Condition](Condition), the operator also includes an
-```operand``` value.
+> A logical "operator" which can be used in a conditional expression. When
+> when as part of a [Condition](#condition), the operator also includes an
+> ```operand``` value.
+> 
+> For example, take the phrase  "greater than $600." The "operator"
+> refers to "greater than" and the "operand" refers to "$600."
 
-For example, take the phrase  "greater than $600." The "operator"
-refers to "greater than" and the "operand" refers to "$600."
-
-**Kind**: static typedef of <code>Schema</code>  
+**Kind**: static typedef of [<code>Schema</code>](#Schema)  
 **Properties**
 
 | Name | Type | Description |
@@ -154,10 +154,10 @@ refers to "greater than" and the "operand" refers to "$600."
 * * *
 
 ### Schema.AlertIdentifier :id=schemaalertidentifier
->A subset of [Alert](#SchemaAlert) properties. An [Alert](#SchemaAlert) can be substituted
-for this type.
+> A subset of [Alert](#schemaalert) properties. An [Alert](#schemaalert) can be substituted
+> for this type.
 
-**Kind**: static typedef of <code>Schema</code>  
+**Kind**: static typedef of [<code>Schema</code>](#Schema)  
 **Properties**
 
 | Name | Type | Description |
@@ -170,9 +170,9 @@ for this type.
 * * *
 
 ### Schema.AlertQuery :id=schemaalertquery
->Parameters used when running a query for alerts.
+> Parameters used when running a query for alerts.
 
-**Kind**: static typedef of <code>Schema</code>  
+**Kind**: static typedef of [<code>Schema</code>](#Schema)  
 **Properties**
 
 | Name | Type | Description |
@@ -185,9 +185,9 @@ for this type.
 * * *
 
 ### Schema.UserIdentifier :id=schemauseridentifier
->The compound key for a system user.
+> The compound key for a system user.
 
-**Kind**: static typedef of <code>Schema</code>  
+**Kind**: static typedef of [<code>Schema</code>](#Schema)  
 **Properties**
 
 | Name | Type | Description |
@@ -199,7 +199,7 @@ for this type.
 * * *
 
 ## Enums :id=enums
->A namespace for enumerations.
+> A namespace for enumerations.
 
 **Kind**: global namespace  
 
@@ -216,9 +216,9 @@ for this type.
 * * *
 
 ### Enums.AlertState :id=enumsalertstate
->The mutually-exclusive states an [Alert](#SchemaAlert) can inhabit.
+> The mutually-exclusive states an [Alert](#schemaalert) can inhabit.
 
-**Kind**: static enum of <code>Enums</code>  
+**Kind**: static enum of [<code>Enums</code>](#Enums)  
 **Properties**
 
 | Name | Description |
@@ -234,9 +234,9 @@ for this type.
 * * *
 
 ### Enums.AlertBehaviour :id=enumsalertbehaviour
->The possible ways an [Alert](#SchemaAlert) can react after its conditions have been met.
+> The possible ways an [Alert](#schemaalert) can react after its conditions have been met.
 
-**Kind**: static enum of <code>Enums</code>  
+**Kind**: static enum of [<code>Enums</code>](#Enums)  
 **Properties**
 
 | Name | Type | Description |
@@ -249,9 +249,9 @@ for this type.
 * * *
 
 ### Enums.PropertyType :id=enumspropertytype
->The possible value types for a [Property](#SchemaProperty).
+> The possible value types for a [Property](#schemaproperty).
 
-**Kind**: static enum of <code>Enums</code>  
+**Kind**: static enum of [<code>Enums</code>](#Enums)  
 **Properties**
 
 | Name | Type | Description |
@@ -265,10 +265,10 @@ for this type.
 * * *
 
 ### Enums.OperandType :id=enumsoperandtype
->Describes the type of an operator's operand. For example, in the phrase "greater
-than $600," where the operand is "$600," the type is a number.
+> Describes the type of an operator's operand. For example, in the phrase "greater
+> than $600," where the operand is "$600," the type is a number.
 
-**Kind**: static enum of <code>Enums</code>  
+**Kind**: static enum of [<code>Enums</code>](#Enums)  
 **Properties**
 
 | Name | Type | Description |
@@ -280,7 +280,7 @@ than $600," where the operand is "$600," the type is a number.
 * * *
 
 ### Enums.OperatorType :id=enumsoperatortype
-**Kind**: static enum of <code>Enums</code>  
+**Kind**: static enum of [<code>Enums</code>](#Enums)  
 **Properties**
 
 | Name | Type | Description |
@@ -292,9 +292,9 @@ than $600," where the operand is "$600," the type is a number.
 * * *
 
 ### Enums.TargetType :id=enumstargettype
->Categories a target's identifier.
+> Categories a target's identifier.
 
-**Kind**: static enum of <code>Enums</code>  
+**Kind**: static enum of [<code>Enums</code>](#Enums)  
 **Properties**
 
 | Name | Type | Description |

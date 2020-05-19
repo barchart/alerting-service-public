@@ -10,7 +10,7 @@
 * * *
 
 ## JwtPayload :id=jwtpayload
->An object which contains the required assertions for a token.
+> An object which contains the required assertions for a token.
 
 **Kind**: global class  
 **Access**: public  
@@ -29,36 +29,36 @@
 * * *
 
 ### jwtPayload.userId :id=jwtpayloaduserid
->The unique identifier of the authenticated user. This value must match
-the [Schema.Alert#user_id](Schema.Alert#user_id) of any alert you attempt to create, edit, or delete.
+> The unique identifier of the authenticated user. This value must match
+> the [Schema.Alert#user_id](#schemaalertuser_id) of any alert you attempt to create, edit, or delete.
 
-**Kind**: instance property of <code>JwtPayload</code>  
+**Kind**: instance property of [<code>JwtPayload</code>](#JwtPayload)  
 **Returns**: <code>String</code>  
 **Access**: public  
 
 * * *
 
 ### jwtPayload.alertSystem :id=jwtpayloadalertsystem
->The authenticated user's domain. In the demo environment, use your company name. This value must
-match the [Schema.Alert#alert_system](Schema.Alert#alert_system) of any alert you attempt to create, edit, or delete.
+> The authenticated user's domain. In the demo environment, use your company name. This value must
+> match the [Schema.Alert#alert_system](#schemaalertalert_system) of any alert you attempt to create, edit, or delete.
 
-**Kind**: instance property of <code>JwtPayload</code>  
+**Kind**: instance property of [<code>JwtPayload</code>](#JwtPayload)  
 **Returns**: <code>String</code>  
 **Access**: public  
 
 * * *
 
 ### jwtPayload.forSigning() :id=jwtpayloadforsigning
->Returns the simple object representation, used for signing a token.
+> Returns the simple object representation, used for signing a token.
 
-**Kind**: instance method of <code>JwtPayload</code>  
+**Kind**: instance method of [<code>JwtPayload</code>](#JwtPayload)  
 **Returns**: <code>String</code>  
 **Access**: public  
 
 * * *
 
 ### new JwtPayload(userId, alertSystem) :id=new_jwtpayload_new
-**Kind**: constructor of <code>JwtPayload</code>  
+**Kind**: constructor of [<code>JwtPayload</code>](#JwtPayload)  
 
 | Param | Type | Description |
 | --- | --- | --- |
@@ -69,9 +69,9 @@ match the [Schema.Alert#alert_system](Schema.Alert#alert_system) of any alert yo
 * * *
 
 ## JwtProvider :id=jwtprovider
->Generates and caches a signed token (using a delegate). The cached token
-is refreshed periodically. An instance of this class is required by
-the [AdapterBase](/content/sdk/lib-adapters?id=/content/sdk/lib-adapters?id=adapterbase) implementations.
+> Generates and caches a signed token (using a delegate). The cached token
+> is refreshed periodically. An instance of this class is required by
+> the [AdapterBase](/content/sdk/lib-adapters?id=adapterbase) implementations.
 
 **Kind**: global class  
 **Access**: public  
@@ -88,16 +88,16 @@ the [AdapterBase](/content/sdk/lib-adapters?id=/content/sdk/lib-adapters?id=adap
 * * *
 
 ### jwtProvider.getToken() :id=jwtprovidergettoken
->Reads the current token, refreshing if necessary.
+> Reads the current token, refreshing if necessary.
 
-**Kind**: instance method of <code>JwtProvider</code>  
+**Kind**: instance method of [<code>JwtProvider</code>](#JwtProvider)  
 **Returns**: <code>Promise.&lt;String&gt;</code>  
 **Access**: public  
 
 * * *
 
 ### new JwtProvider(generator, interval) :id=new_jwtprovider_new
-**Kind**: constructor of <code>JwtProvider</code>  
+**Kind**: constructor of [<code>JwtProvider</code>](#JwtProvider)  
 
 | Param | Type | Description |
 | --- | --- | --- |
@@ -108,16 +108,16 @@ the [AdapterBase](/content/sdk/lib-adapters?id=/content/sdk/lib-adapters?id=adap
 * * *
 
 ## Callbacks :id=callbacks
->A meta namespace containing signatures of anonymous functions.
+> A meta namespace containing signatures of anonymous functions.
 
 **Kind**: global namespace  
 
 * * *
 
 ### Callbacks.JwtTokenGenerator :id=callbacksjwttokengenerator
->A function which returns a signed token.
+> A function which returns a signed token.
 
-**Kind**: static typedef of <code>Callbacks</code>  
+**Kind**: static typedef of [<code>Callbacks</code>](#Callbacks)  
 **Returns**: <code>String</code> \| <code>Promise.&lt;String&gt;</code>  
 **Access**: public  
 
