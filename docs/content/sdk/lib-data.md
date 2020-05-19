@@ -60,7 +60,7 @@
 * * *
 
 ### Schema.Condition :id=schemacondition
-> A "condition" is a statement that can be evaluated (as the backend processes streaming data).
+> A "condition" is a statement that is evaluated by the backend (as streaming data is processed).
 > 
 > For example, "Apple stock's last price is higher than $600" is a condition. Using this example,
 > the "property" object denotes "Apple stock's last price" and the "operator" object denotes "higher
@@ -82,8 +82,9 @@
 * * *
 
 ### Schema.Property :id=schemaproperty
-> A "property" is an attribute of an observable object. A property refers to a [Target](#target).
-> For example, a **stock quote** is a target. The **last price** of the stock quote is the attribute.
+> A "property" is an attribute of a "condition" referring to a streaming data source. A property includes
+> a [Target](#target). For exaple, the **last price** of the stock quote is a property. Specifying "Apple" stock,
+> as opposed to some other company, is the target.
 > 
 > A property is a key component of a [Condition](#schemacondition).
 
