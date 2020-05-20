@@ -1,5 +1,13 @@
-Alert Notifications
+## Coming Soon
 
-Publishers
+Here's an outline:
 
-Content Customization
+* Types
+  * Direct WebSocket
+  * Email
+  * SMS
+  * Webhook (HTTP POST)
+  * Mobile Push Notifications
+* Template Customization
+  * Coming soon
+* User Defaults
