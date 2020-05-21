@@ -119,7 +119,7 @@ _Refer to [```Schema.Property```](/content/sdk/lib-data?id=schemaproperty) for a
 
 Here is an object — using the fewest fields necessary — to create a property (for use with a new alert):
 
-```json
+```json (psuedo)
 {
 	"property_id": 1,
 	"target": { /* See below */ }
