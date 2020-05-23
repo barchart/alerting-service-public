@@ -52,7 +52,7 @@ gulp.task('embed-version', () => {
 });
 
 gulp.task('commit-changes', () => {
-	return gulp.src(['./', './package.json', './lib/index.js', './lib/alerts/index.js', './example/browser/example.js'])
+	return gulp.src(['./', './test/', './package.json', './lib/meta.js', './docs/_coverpage.md', './example/browser/example.js'])
 		.pipe(git.add())
 		.pipe(git.commit('Release. Bump version number'));
 });
