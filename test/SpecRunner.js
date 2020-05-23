@@ -17,9 +17,13 @@ module.exports = (() => {
       assert.argumentIsOptional(alert.notes, `${d}.notes`, Object);
       assert.argumentIsOptional(alert.user_notes, `${d}.user_notes`, String);
       assert.argumentIsOptional(alert.alert_system_key, `${d}.alert_system_key`, String);
-      assert.argumentIsRequired(alert.automatic_reset, `${d}.automatic_reset`, Boolean);
+      assert.argumentIsOptional(alert.alert_behavior, `${d}.alert_behavior`, String);
+      assert.argumentIsOptional(alert.automatic_reset, `${d}.automatic_reset`, Boolean);
       assert.argumentIsArray(alert.conditions, `${d}.conditions`, condition.forCreate);
-      assert.argumentIsArray(alert.publishers, `${d}.publishers`, publisher.forCreate);
+
+      if (alert.hasOwnProperty('publishers')) {
+        assert.argumentIsArray(alert.publishers, `${d}.publishers`, publisher.forCreate);
+      }
     },
     forEdit: (alert, description) => {
       const d = getDescription(description);
@@ -224,7 +228,7 @@ module.exports = (() => {
   // is no expectation of privacy or security. In this narrow case, making the
   // secret public knowledge, by including it here, is intentional.
 
-  const SECRET = 'not_a_secret::everyone_has_it';
+  const SECRET = 'public-knowledge-1234567890';
   /**
    * Returns a {@link Callbacks.JwtTokenGenerator} function. The resulting function will
    * generate a token allowing you to impersonate any user in the test environment. It will
@@ -5311,7 +5315,13 @@ PEMEncoder.prototype.encode = function encode(data, options) {
     } else if (cmp > 0) {
       r.isub(this.p);
     } else {
-      r.strip();
+      if (r.strip !== undefined) {
+        // r is BN v4 instance
+        r.strip();
+      } else {
+        // r is BN v5 instance
+        r._strip();
+      }
     }
 
     return r;
@@ -8995,7 +9005,13 @@ function fromByteArray (uint8) {
     } else if (cmp > 0) {
       r.isub(this.p);
     } else {
-      r._strip();
+      if (r.strip !== undefined) {
+        // r is a BN v4 instance
+        r.strip();
+      } else {
+        // r is a BN v5 instance
+        r._strip();
+      }
     }
 
     return r;
@@ -11023,7 +11039,7 @@ module.exports={
 }
 
 },{}],52:[function(require,module,exports){
-var Buffer = require('buffer').Buffer
+var Buffer = require('safe-buffer').Buffer
 var createHash = require('create-hash')
 var stream = require('readable-stream')
 var inherits = require('inherits')
@@ -11116,9 +11132,9 @@ module.exports = {
   createVerify: createVerify
 }
 
-},{"./algorithms.json":50,"./sign":53,"./verify":54,"buffer":70,"create-hash":79,"inherits":145,"readable-stream":69}],53:[function(require,module,exports){
+},{"./algorithms.json":50,"./sign":53,"./verify":54,"create-hash":79,"inherits":145,"readable-stream":69,"safe-buffer":212}],53:[function(require,module,exports){
 // much of this based on https://github.com/indutny/self-signed/blob/gh-pages/lib/rsa.js
-var Buffer = require('buffer').Buffer
+var Buffer = require('safe-buffer').Buffer
 var createHmac = require('create-hmac')
 var crt = require('browserify-rsa')
 var EC = require('elliptic').ec
@@ -11261,9 +11277,9 @@ module.exports = sign
 module.exports.getKey = getKey
 module.exports.makeKey = makeKey
 
-},{"./curves.json":51,"bn.js":24,"browserify-rsa":47,"buffer":70,"create-hmac":81,"elliptic":97,"parse-asn1":179}],54:[function(require,module,exports){
+},{"./curves.json":51,"bn.js":24,"browserify-rsa":47,"create-hmac":81,"elliptic":97,"parse-asn1":179,"safe-buffer":212}],54:[function(require,module,exports){
 // much of this based on https://github.com/indutny/self-signed/blob/gh-pages/lib/rsa.js
-var Buffer = require('buffer').Buffer
+var Buffer = require('safe-buffer').Buffer
 var BN = require('bn.js')
 var EC = require('elliptic').ec
 var parseKeys = require('parse-asn1')
@@ -11347,7 +11363,7 @@ function checkValue (b, q) {
 
 module.exports = verify
 
-},{"./curves.json":51,"bn.js":24,"buffer":70,"elliptic":97,"parse-asn1":179}],55:[function(require,module,exports){
+},{"./curves.json":51,"bn.js":24,"elliptic":97,"parse-asn1":179,"safe-buffer":212}],55:[function(require,module,exports){
 'use strict';
 
 function _inheritsLoose(subClass, superClass) { subClass.prototype = Object.create(superClass.prototype); subClass.prototype.constructor = subClass; subClass.__proto__ = superClass; }
