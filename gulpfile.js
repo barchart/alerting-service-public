@@ -13,6 +13,7 @@ const AWS = require('aws-sdk'),
 	jasmine = require('gulp-jasmine'),
 	jshint = require('gulp-jshint'),
 	merge = require('merge-stream'),
+	prompt = require('gulp-prompt'),
 	rename = require('gulp-rename'),
 	replace = require('gulp-replace'),
 	source = require('vinyl-source-stream');
@@ -31,10 +32,25 @@ gulp.task('ensure-clean-working-directory', (cb) => {
 	});
 });
 
+gulp.task('bump-choice', (cb) => {
+	const processor = prompt.prompt({
+		type: 'list',
+		name: 'bump',
+		message: 'What type of bump would you like to do?',
+		choices: ['patch', 'minor', 'major'],
+	}, (res) => {
+		global.bump = res.bump;
+
+		return cb();
+	});
+
+	return gulp.src(['./package.json']).pipe(processor);
+});
+
 gulp.task('bump-version', () => {
 	return gulp.src([ './package.json' ])
-	.pipe(bump({ type: 'patch' }))
-	.pipe(gulp.dest('./'));
+		.pipe(bump({ type: global.bump || 'patch' }))
+		.pipe(gulp.dest('./'));
 });
 
 gulp.task('embed-version', () => {
@@ -134,6 +150,7 @@ gulp.task('test', gulp.series('execute-tests'));
 
 gulp.task('release', gulp.series(
 	'ensure-clean-working-directory',
+	'bump-choice',
 	'bump-version',
 	'embed-version',
 	'execute-tests',
