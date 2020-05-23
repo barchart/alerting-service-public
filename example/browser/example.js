@@ -1039,8 +1039,6 @@ module.exports = (() => {
             pageModel.handleAlertTrigger(triggeredAlert);
           });
           startupPromises.push(alertManager.getUser().then(function (data) {
-            debugger;
-
             if (data.user_id && data.alert_system) {
               pageModel.authenticatedUser(`${data.user_id}@${data.alert_system}`);
             }
@@ -1308,7 +1306,7 @@ module.exports = (() => {
      *
      * @public
      * @param {Schema.Alert} alert
-     * @returns {Promise<Alert>}
+     * @returns {Promise<Schema.Alert>}
      */
 
 
@@ -1363,7 +1361,7 @@ module.exports = (() => {
      *
      * @public
      * @param {Schema.AlertQuery} query
-     * @returns {Promise<Alert[]>}
+     * @returns {Promise<Schema.Alert[]>}
      */
 
 
@@ -1561,6 +1559,14 @@ module.exports = (() => {
         return result.instrument.symbol;
       });
     }
+    /**
+     * Retrieves the entire list of targets which are available to the
+     * system.
+     *
+     * @public
+     * @returns {Promise<Schema.Target[]>}
+     */
+
 
     getTargets() {
       return Promise.resolve().then(() => {
@@ -1568,6 +1574,14 @@ module.exports = (() => {
         return this._adapter.getTargets();
       });
     }
+    /**
+     * Retrieves the entire list of properties which are available to the
+     * system.
+     *
+     * @public
+     * @returns {Promise<Schema.Property[]>}
+     */
+
 
     getProperties() {
       return Promise.resolve().then(() => {
@@ -1575,6 +1589,14 @@ module.exports = (() => {
         return this._adapter.getProperties();
       });
     }
+    /**
+     * Retrieves the entire list of operators which are available to the
+     * system.
+     *
+     * @public
+     * @returns {Promise<Schema.Operator[]>}
+     */
+
 
     getOperators() {
       return Promise.resolve().then(() => {
@@ -1630,6 +1652,13 @@ module.exports = (() => {
         return this._adapter.assignMarketDataConfiguration(marketDataConfiguration);
       });
     }
+    /**
+     * Returns the version number of the remote service you are connected to.
+     *
+     * @public
+     * @returns {Promise<String>}
+     */
+
 
     getServerVersion() {
       return Promise.resolve().then(() => {
@@ -1643,7 +1672,7 @@ module.exports = (() => {
      * in the request).
      *
      * @public
-     * @returns {Promise<UserIdentifier>}
+     * @returns {Promise<Schema.UserIdentifier>}
      */
 
 
@@ -3029,7 +3058,7 @@ module.exports = (() => {
   'use strict';
 
   return {
-    version: '4.0.0'
+    version: '4.0.1'
   };
 })();
 
@@ -15674,7 +15703,13 @@ PEMEncoder.prototype.encode = function encode(data, options) {
     } else if (cmp > 0) {
       r.isub(this.p);
     } else {
-      r.strip();
+      if (r.strip !== undefined) {
+        // r is BN v4 instance
+        r.strip();
+      } else {
+        // r is BN v5 instance
+        r._strip();
+      }
     }
 
     return r;
@@ -22114,7 +22149,13 @@ module.exports = (function() {
     } else if (cmp > 0) {
       r.isub(this.p);
     } else {
-      r._strip();
+      if (r.strip !== undefined) {
+        // r is a BN v4 instance
+        r.strip();
+      } else {
+        // r is a BN v5 instance
+        r._strip();
+      }
     }
 
     return r;
