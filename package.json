@@ -1,56 +1,57 @@
 {
-	"name": "@barchart/alerts-client-js",
-	"version": "4.0.0",
-	"description": "JavaScript SDK for Barchart Alert Service",
-	"author": {
-		"name": "Bryan Ingle",
-		"email": "bryan.ingle@barchart.com",
-		"url": "http://www.barchart.com"
-	},
-	"scripts": {
-		"docs": "docsify serve ./docs",
-		"test": "gulp test",
-		"watch": "gulp watch"
-	},
-	"repository": {
-		"type": "git",
-		"url": "git+ssh://github.com/barchart/alerts-client-js"
-	},
-	"keywords": [],
-	"dependencies": {
-		"@barchart/common-js": "^3.6.0",
-		"@barchart/marketdata-api-js": "^5.1.2",
-		"jsonwebtoken": "^8.5.1",
-		"socket.io-client": "^2.3.0",
-		"uuid": "^3.4.0"
-	},
-	"devDependencies": {
-		"@babel/core": "^7.6.2",
-		"aws-sdk": "^2.671.0",
-		"babelify": "^10.0.0",
-		"browserify": "^16.5.0",
-		"git-get-status": "^1.0.5",
-		"glob": "^6.0.1",
-		"gulp": "^4.0.2",
-		"gulp-awspublish": "^4.0.0",
-		"gulp-bump": "~1.0.0",
-		"gulp-git": "^2.5.1",
-		"gulp-jasmine": "^2.2.1",
-		"gulp-jshint": "^2.1.0",
-		"gulp-rename": "^1.4.0",
-		"gulp-replace": "^0.5.4",
-		"jshint": "^2.10.3",
-		"log4js": "^4.4.0",
-		"vinyl-buffer": "^1.0.1",
-		"vinyl-source-stream": "^2.0.0"
-	},
-	"browserify": {
-		"transform": [
-			[
-				"babelify"
-			]
-		]
-	},
-	"license": "MIT",
-	"private": false
+  "name": "@barchart/alerts-client-js",
+  "version": "4.0.0",
+  "description": "JavaScript SDK for Barchart Alert Service",
+  "author": {
+	"name": "Bryan Ingle",
+	"email": "bryan.ingle@barchart.com",
+	"url": "http://www.barchart.com"
+  },
+  "scripts": {
+	"docs": "docsify serve ./docs",
+	"test": "gulp test",
+	"watch": "gulp watch"
+  },
+  "repository": {
+	"type": "git",
+	"url": "git+ssh://github.com/barchart/alerts-client-js"
+  },
+  "keywords": [],
+  "dependencies": {
+	"@barchart/common-js": "^3.6.0",
+	"@barchart/marketdata-api-js": "^5.1.2",
+	"jsonwebtoken": "^8.5.1",
+	"socket.io-client": "^2.3.0",
+	"uuid": "^3.4.0"
+  },
+  "devDependencies": {
+	"@babel/core": "^7.6.2",
+	"aws-sdk": "^2.671.0",
+	"babelify": "^10.0.0",
+	"browserify": "^16.5.0",
+	"git-get-status": "^1.0.5",
+	"glob": "^6.0.1",
+	"gulp": "^4.0.2",
+	"gulp-awspublish": "^4.0.0",
+	"gulp-bump": "~1.0.0",
+	"gulp-git": "^2.5.1",
+	"gulp-jasmine": "^2.2.1",
+	"gulp-jshint": "^2.1.0",
+	"gulp-rename": "^1.4.0",
+	"gulp-replace": "^0.5.4",
+	"jshint": "^2.10.3",
+	"log4js": "^4.4.0",
+	"merge-stream": "^2.0.0",
+	"vinyl-buffer": "^1.0.1",
+	"vinyl-source-stream": "^2.0.0"
+  },
+  "browserify": {
+	"transform": [
+	  [
+		"babelify"
+	  ]
+	]
+  },
+  "license": "MIT",
+  "private": false
 }
