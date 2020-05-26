@@ -1,9 +1,31 @@
 # Components
 
+## Responses 
+
+### Unauthorized :id=responsesunauthorized
+> The unauthorized access.
+
+**Content Type**: <code>application/json</code>
+
+**Response Type:** <code><code>Object</code></code>
+
+| Name | Type | Required | Nullable | Description |
+| ---- | ---- | -------- | -------- | ----------- |
+| message | <code>String</code> | false | false |  |
+
+**Example**:
+
+```json
+{
+  "message": "unauthorized"
+}
+```
+
+* * *
+
 ## Schemas 
 
-### Alert :id=SchemasAlert
-
+### Alert :id=schemasalert
 **Type**: <code>Object</code>
     
 | Name | Type | Required | Nullable | Description |
@@ -162,8 +184,7 @@
 
 * * *
 
-### Publisher :id=SchemasPublisher
-
+### Publisher :id=schemaspublisher
 **Type**: <code>Object</code>
     
 | Name | Type | Required | Nullable | Description |
@@ -200,8 +221,7 @@
 
 * * *
 
-### Operator :id=SchemasOperator
-
+### Operator :id=schemasoperator
 **Type**: <code>Object</code>
     
 | Name | Type | Required | Nullable | Description |
@@ -253,8 +273,7 @@
 
 * * *
 
-### Condition :id=SchemasCondition
-
+### Condition :id=schemascondition
 **Type**: <code>Object</code>
     
 | Name | Type | Required | Nullable | Description |
@@ -349,8 +368,7 @@
 
 * * *
 
-### Property :id=SchemasProperty
-
+### Property :id=schemasproperty
 **Type**: <code>Object</code>
     
 | Name | Type | Required | Nullable | Description |
@@ -416,8 +434,7 @@
 
 * * *
 
-### Target :id=SchemasTarget
-
+### Target :id=schemastarget
 **Type**: <code>Object</code>
     
 | Name | Type | Required | Nullable | Description |
@@ -451,6 +468,21 @@
   "type": "symbol"
 }
 ```
+
+* * *
+
+## Security 
+
+### JWT :id=securityjwt
+
+>The JWT authorization
+
+**Type**: http bearer
+    
+#### Headers
+| Name | Format | Example |
+| ---- | ------ | ------- |
+| Authorization | JWT | Authorization: Bearer <code>&lt;Token&gt;</code> |
 
 * * *
 

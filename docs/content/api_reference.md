@@ -21,6 +21,10 @@
 
 ## Components {docsify-ignore}
 
+### Responses 
+
+* [Unauthorized](/content/api/components?id=responsesUnauthorized)
+
 ### Schemas 
 
 * [Alert](/content/api/components?id=schemasAlert)
@@ -29,6 +33,10 @@
 * [Condition](/content/api/components?id=schemasCondition)
 * [Property](/content/api/components?id=schemasProperty)
 * [Target](/content/api/components?id=schemasTarget)
+
+### Security 
+
+* [JWT](/content/api/components?id=securityJWT)
 
 ## Paths {docsify-ignore}
 

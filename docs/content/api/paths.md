@@ -36,6 +36,8 @@
 
 **Summary**: Create Alert.
 
+**Security**: 
+[JWT](/content/api/components?id=securityJWT)
 #### Request Body
     
 **Content Type**: application/json
@@ -45,20 +47,20 @@
 | Name | Type | Required | Nullable | Description |
 | ---- | ---- | -------- | -------- | ----------- |
 | name | <code>String</code> | false | false |  |
-| alert_behavior | <code>String</code> | false | false |  |
 | user_id | <code>String</code> | false | false |  |
+| alert_behavior | <code>String</code> | false | false |  |
 | alert_system | <code>String</code> | false | false |  |
 | alert_type | <code>String</code> | false | false |  |
 | user_notes | <code>String</code> | false | false |  |
 | automatic_reset | <code>Boolean</code> | false | false |  |
-| conditions | <code>Object</code> |  | false |  |
-| conditions.property | <code>Object</code> |  | false |  |
-| conditions.property.property_id | <code>Integer</code> | false | false |  |
-| conditions.property.target | <code>Object</code> |  | false |  |
-| conditions.property.target.identifier | <code>String</code> | false | false |  |
-| conditions.operator | <code>Object</code> |  | false |  |
-| conditions.operator.operator_id | <code>Integer</code> | false | false |  |
-| conditions.operator.operand | <code>String</code> | false | false |  |
+| conditions | <code>Array&lt;object&gt;</code> | false | false |  |
+| conditions[i].property | <code>Object</code> |  | false |  |
+| conditions[i].property.property_id | <code>Integer</code> | false | false |  |
+| conditions[i].property.target | <code>Object</code> |  | false |  |
+| conditions[i].property.target.identifier | <code>String</code> | false | false |  |
+| conditions[i].operator | <code>Object</code> |  | false |  |
+| conditions[i].operator.operator_id | <code>Integer</code> | false | false |  |
+| conditions[i].operator.operand | <code>String</code> | false | false |  |
 | publishers | <code>Array&lt;object&gt;</code> | false | false |  |
 | publishers[i].publisher_id | <code>String</code> | false | false |  |
 | publishers[i].use_default_recipient | <code>Boolean</code> | false | false |  |
@@ -73,24 +75,26 @@
 ```json
 {
   "name": "Buy TSLA",
-  "alert_behavior": "Terminate",
-  "user_id": "barchart-test-user",
+  "user_id": "me",
+  "alert_behavior": "terminate",
   "alert_system": "barchart.com",
   "alert_type": "price",
   "user_notes": "Time to buy Tesla Motors stock",
   "automatic_reset": true,
-  "conditions": {
-    "property": {
-      "property_id": 1,
-      "target": {
-        "identifier": "AAPL"
+  "conditions": [
+    {
+      "property": {
+        "property_id": 1,
+        "target": {
+          "identifier": "AAPL"
+        }
+      },
+      "operator": {
+        "operator_id": 3,
+        "operand": "99"
       }
-    },
-    "operator": {
-      "operator_id": 3,
-      "operand": "99"
     }
-  },
+  ],
   "publishers": [
     {
       "publisher_id": "9c864a19-ce77-4a87-8cd6-e0810ecb120e",
@@ -115,6 +119,10 @@
 **Content Type**: <code>application/json</code>
 
 **Response Type:** [<code>Array&lt;Alert&gt;</code>](/content/api/components?id=schemasAlert)
+
+* * *
+
+**Status Code**: 401 - [Unauthorized](/content/api/components?id&#x3D;responsesunauthorized)
 
 * * *
 
@@ -146,6 +154,8 @@
 
 **Summary**: Retrieve Alert.
 
+**Security**: 
+[JWT](/content/api/components?id=securityJWT)
 #### Path Parameters
 
 | Name | Type | Required | Nullable | Description |
@@ -192,6 +202,8 @@
 
 **Summary**: Delete Alert
 
+**Security**: 
+[JWT](/content/api/components?id=securityJWT)
 #### Path Parameters
 
 | Name | Type | Required | Nullable | Description |
@@ -238,6 +250,8 @@
 
 **Summary**: Start/Stop Alert.
 
+**Security**: 
+[JWT](/content/api/components?id=securityJWT)
 #### Path Parameters
 
 | Name | Type | Required | Nullable | Description |
@@ -326,6 +340,8 @@
 
 **Summary**: Retrieve Alerts For User.
 
+**Security**: 
+[JWT](/content/api/components?id=securityJWT)
 #### Path Parameters
 
 | Name | Type | Required | Nullable | Description |
@@ -373,6 +389,8 @@
 
 **Summary**: Start/Stop Multiple Alerts For User
 
+**Security**: 
+[JWT](/content/api/components?id=securityJWT)
 #### Path Parameters
 
 | Name | Type | Required | Nullable | Description |
@@ -442,6 +460,8 @@
 
 **Summary**: Retrieve Alerts By Remote System Key
 
+**Security**: 
+[JWT](/content/api/components?id=securityJWT)
 #### Path Parameters
 
 | Name | Type | Required | Nullable | Description |
@@ -490,6 +510,8 @@
 
 **Summary**: Retrieve Market Data Configuration For User
 
+**Security**: 
+[JWT](/content/api/components?id=securityJWT)
 #### Path Parameters
 
 | Name | Type | Required | Nullable | Description |
@@ -595,7 +617,7 @@
 
 **Content Type**: <code>application/json</code>
 
-**Response Type:** <code>Object</code>
+**Response Type:** <code>Array&lt;Object&gt;</code>
     
 | Name | Type | Required | Nullable | Description |
 | ---- | ---- | -------- | -------- | ----------- |
@@ -612,19 +634,21 @@
 **Example**:
 
 ```json
-{
-  "modifier_id": 3,
-  "name": "convert-price-currency",
-  "display": "convert price currency",
-  "display_short": "convert price currency",
-  "type": "string",
-  "format": "0.00%",
-  "operand_index": 0,
-  "target_types": [
-    "number",
-    "percent"
-  ]
-}
+[
+  {
+    "modifier_id": 3,
+    "name": "convert-price-currency",
+    "display": "convert price currency",
+    "display_short": "convert price currency",
+    "type": "string",
+    "format": "0.00%",
+    "operand_index": 0,
+    "target_types": [
+      "number",
+      "percent"
+    ]
+  }
+]
 ```
 
 * * *
@@ -643,7 +667,7 @@
 
 **Content Type**: <code>application/json</code>
 
-**Response Type:** <code>Object</code>
+**Response Type:** <code>Array&lt;Object&gt;</code>
     
 | Name | Type | Required | Nullable | Description |
 | ---- | ---- | -------- | -------- | ----------- |
@@ -654,11 +678,13 @@
 **Example**:
 
 ```json
-{
-  "publisher_type_id": 1,
-  "transport": "sms",
-  "provider": "twilio"
-}
+[
+  {
+    "publisher_type_id": 1,
+    "transport": "sms",
+    "provider": "twilio"
+  }
+]
 ```
 
 * * *
@@ -669,6 +695,8 @@
 
 **Summary**: Retrieve Publisher Type Defaults For User
 
+**Security**: 
+[JWT](/content/api/components?id=securityJWT)
 #### Path Parameters
 
 | Name | Type | Required | Nullable | Description |
@@ -684,7 +712,7 @@
 
 **Content Type**: <code>application/json</code>
 
-**Response Type:** <code>Object</code>
+**Response Type:** <code>Array&lt;Object&gt;</code>
     
 | Name | Type | Required | Nullable | Description |
 | ---- | ---- | -------- | -------- | ----------- |
@@ -693,9 +721,9 @@
 | provider | <code>String</code> | false | false |  |
 | user_id | <code>String</code> | false | false |  |
 | alert_system | <code>String</code> | false | false |  |
-| default_recipient | <code>String</code> | false | false |  |
-| default_recipient_hmac | <code>String</code> | false | false |  |
-| allow_window_timezone | <code>String</code> | false | false |  |
+| default_recipient | <code>String</code> | false | true |  |
+| default_recipient_hmac | <code>String</code> | false | true |  |
+| allow_window_timezone | <code>String</code> | false | true |  |
 | allow_window_start | <code>String</code> | false | true |  |
 | allow_window_end | <code>String</code> | false | true |  |
 | active_alert_types | <code>Array</code> | false | false |  |
@@ -704,21 +732,23 @@
 **Example**:
 
 ```json
-{
-  "publisher_type_id": 1,
-  "transport": "sms",
-  "provider": "twilio",
-  "user_id": "string",
-  "alert_system": "barchart.com",
-  "default_recipient": "2489539701",
-  "default_recipient_hmac": "string",
-  "allow_window_timezone": "America/Chicago",
-  "allow_window_start": "string",
-  "allow_window_end": "string",
-  "active_alert_types": [
-    "price"
-  ]
-}
+[
+  {
+    "publisher_type_id": 1,
+    "transport": "sms",
+    "provider": "twilio",
+    "user_id": "string",
+    "alert_system": "barchart.com",
+    "default_recipient": "2489539701",
+    "default_recipient_hmac": "94b6239ae1d309a46163bb1e2f64213170ef201fb3f99ed1908caee899a34d2b",
+    "allow_window_timezone": "America/Chicago",
+    "allow_window_start": "06:00",
+    "allow_window_end": "20:30",
+    "active_alert_types": [
+      "price"
+    ]
+  }
+]
 ```
 
 * * *
@@ -729,6 +759,8 @@
 
 **Summary**: Save Publisher Type Defaults For User
 
+**Security**: 
+[JWT](/content/api/components?id=securityJWT)
 #### Path Parameters
 
 | Name | Type | Required | Nullable | Description |
@@ -741,7 +773,7 @@
     
 **Content Type**: application/json
 
-**Type**: <code>Object</code>
+**Type**: <code>Array&lt;Object&gt;</code>
 
 | Name | Type | Required | Nullable | Description |
 | ---- | ---- | -------- | -------- | ----------- |
@@ -758,18 +790,20 @@
 **Example**:
 
 ```json
-{
-  "publisher_type_id": 1,
-  "user_id": "string",
-  "alert_system": "barchart.com",
-  "default_recipient": "2489539701",
-  "allow_window_timezone": "America/Chicago",
-  "allow_window_start": "string",
-  "allow_window_end": "string",
-  "active_alert_types": [
-    "price"
-  ]
-}
+[
+  {
+    "publisher_type_id": 1,
+    "user_id": "me",
+    "alert_system": "barchart.com",
+    "default_recipient": "2489539701",
+    "allow_window_timezone": "America/Chicago",
+    "allow_window_start": "06:00",
+    "allow_window_end": "20:30",
+    "active_alert_types": [
+      "price"
+    ]
+  }
+]
 ```
 
 #### Responses
@@ -790,7 +824,7 @@
 | user_id | <code>String</code> | false | false |  |
 | alert_system | <code>String</code> | false | false |  |
 | default_recipient | <code>String</code> | false | false |  |
-| default_recipient_hmac | <code>String</code> | false | false |  |
+| default_recipient_hmac | <code>String</code> | false | true |  |
 | allow_window_timezone | <code>String</code> | false | false |  |
 | allow_window_start | <code>String</code> | false | true |  |
 | allow_window_end | <code>String</code> | false | true |  |
@@ -808,10 +842,10 @@
     "user_id": "string",
     "alert_system": "barchart.com",
     "default_recipient": "2489539701",
-    "default_recipient_hmac": "string",
+    "default_recipient_hmac": "94b6239ae1d309a46163bb1e2f64213170ef201fb3f99ed1908caee899a34d2b",
     "allow_window_timezone": "America/Chicago",
-    "allow_window_start": "string",
-    "allow_window_end": "string",
+    "allow_window_start": "06:00",
+    "allow_window_end": "20:30",
     "active_alert_types": [
       "price"
     ]

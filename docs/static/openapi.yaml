@@ -12,6 +12,13 @@ servers:
     url: "https://alerts-management.barchart-prod.com"
 
 components:
+  securitySchemes:
+    JWT:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+      description: The JWT authorization
+
   schemas:
     Alert:
       type: object
@@ -84,7 +91,6 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/Publisher'
-
 
     Publisher:
       type: object
@@ -279,6 +285,18 @@ components:
           type: string
           example: "symbol"
 
+  responses:
+    Unauthorized:
+      description: The unauthorized access.
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              message:
+                type: string
+                example: "unauthorized"
+
 paths:
   /server/version:
     get:
@@ -300,21 +318,27 @@ paths:
     post:
       summary: Create Alert.
       description: Creates a new alert.
+      security:
+        - JWT: []
       requestBody:
         content:
           application/json:
             schema:
               type: object
+              required:
+                - user_id
+                - alert_system
+                - conditions
               properties:
                 name:
                   type: string
                   example: "Buy TSLA"
-                alert_behavior:
-                  type: string
-                  example: "Terminate"
                 user_id:
                   type: string
-                  example: "barchart-test-user"
+                  example: "me"
+                alert_behavior:
+                  type: string
+                  example: "terminate"
                 alert_system:
                   type: string
                   example: "barchart.com"
@@ -328,29 +352,31 @@ paths:
                   type: boolean
                   example: true
                 conditions:
-                  type: object
-                  properties:
-                    property:
-                      type: object
-                      properties:
-                        property_id:
-                          type: integer
-                          example: 1
-                        target:
-                          type: object
-                          properties:
-                            identifier:
-                              type: string
-                              example: AAPL
-                    operator:
-                      type: object
-                      properties:
-                        operator_id:
-                          type: integer
-                          example: 3
-                        operand:
-                          type: string
-                          example: "99"
+                  type: array
+                  items:
+                    type: object
+                    properties:
+                      property:
+                        type: object
+                        properties:
+                          property_id:
+                            type: integer
+                            example: 1
+                          target:
+                            type: object
+                            properties:
+                              identifier:
+                                type: string
+                                example: AAPL
+                      operator:
+                        type: object
+                        properties:
+                          operator_id:
+                            type: integer
+                            example: 3
+                          operand:
+                            type: string
+                            example: "99"
                 publishers:
                   type: array
                   items:
@@ -399,11 +425,15 @@ paths:
                     type: string
                     example: "The argument [ query.user_id ] must be a [ string ]"
 
+        '401':
+          $ref: '#/components/responses/Unauthorized'
 
   /alerts/{alert_id}:
     get:
       summary: Retrieve Alert.
       description: Retrieves an existing alert.
+      security:
+        - JWT: []
       parameters:
         - name: alert_id
           description: The UUID for the alert.
@@ -432,10 +462,11 @@ paths:
                     type: string
                     example: "no data"
 
-
     delete:
       summary: "Delete Alert"
       description: "Deletes an existing alert, stopping it, if necessary."
+      security:
+        - JWT: []
       parameters:
         - name: alert_id
           in: path
@@ -464,11 +495,11 @@ paths:
                     type: string
                     example: "no data"
 
-
-
     put:
       summary: "Start/Stop Alert."
       description: "Starts or stops an alert."
+      security:
+        - JWT: []
       parameters:
         - name: alert_id
           in: path
@@ -524,6 +555,8 @@ paths:
     get:
       summary: "Retrieve Alerts For User."
       description: "Retrieves all alerts for a single user."
+      security:
+        - JWT: []
       parameters:
         - name: user_id
           required: true
@@ -561,6 +594,8 @@ paths:
     put:
       summary: "Start/Stop Multiple Alerts For User"
       description: "Starts or stops an zero to many alerts for a single user."
+      security:
+        - JWT: []
       parameters:
         - name: user_id
           required: true
@@ -616,6 +651,8 @@ paths:
     get:
       summary: "Retrieve Alerts By Remote System Key"
       description: Retrieves all alerts, for a single user, which have a specific "alert_system_key" property value.
+      security:
+        - JWT: []
       parameters:
         - name: user_id
           in: path
@@ -657,11 +694,12 @@ paths:
                   message:
                     type: string
 
-
   /alert/market/configuration/{alert_system}/{user_id}:
     get:
       summary: "Retrieve Market Data Configuration For User"
       description: "Retrieves default publishing information for a single user."
+      security:
+        - JWT: []
       parameters:
         - name: alert_system
           in: path
@@ -699,7 +737,6 @@ paths:
                   market_data_id:
                     type: string
                     example: "bri"
-
 
   /alert/targets:
     get:
@@ -741,9 +778,6 @@ paths:
               schema:
                 $ref: '#/components/schemas/Operator'
 
-
-
-
   /alert/modifiers:
     get:
       summary: "Retrieve Modifiers"
@@ -754,35 +788,37 @@ paths:
           content:
             application/json:
               schema:
-                type: object
-                properties:
-                  modifier_id:
-                    type: string
-                    example: 3
-                  name:
-                    type: string
-                    example: "convert-price-currency"
-                  display:
-                    type: string
-                    example: "convert price currency"
-                  display_short:
-                    type: string
-                    example: "convert price currency"
-                  type:
-                    type: string
-                    example: "string"
-                  format:
-                    type: string
-                    nullable: true
-                    example: "0.00%"
-                  operand_index:
-                    type: integer
-                    example: 0
-                  target_types:
-                    type: array
-                    items:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    modifier_id:
                       type: string
-                    example: ["number", "percent"]
+                      example: 3
+                    name:
+                      type: string
+                      example: "convert-price-currency"
+                    display:
+                      type: string
+                      example: "convert price currency"
+                    display_short:
+                      type: string
+                      example: "convert price currency"
+                    type:
+                      type: string
+                      example: "string"
+                    format:
+                      type: string
+                      nullable: true
+                      example: "0.00%"
+                    operand_index:
+                      type: integer
+                      example: 0
+                    target_types:
+                      type: array
+                      items:
+                        type: string
+                      example: ["number", "percent"]
 
   /alert/publishers:
     get:
@@ -794,22 +830,26 @@ paths:
           content:
             application/json:
               schema:
-                type: object
-                properties:
-                  publisher_type_id:
-                    type: integer
-                    example: 1
-                  transport:
-                    type: string
-                    example: "sms"
-                  provider:
-                    type: string
-                    example: "twilio"
+                type: array
+                items:
+                  type: object
+                  properties:
+                    publisher_type_id:
+                      type: integer
+                      example: 1
+                    transport:
+                      type: string
+                      example: "sms"
+                    provider:
+                      type: string
+                      example: "twilio"
 
   /alert/publishers/default/{alert_system}/{user_id}:
     get:
       summary: "Retrieve Publisher Type Defaults For User"
       description: "Retrieves default publishing information for a single user."
+      security:
+        - JWT: []
       parameters:
         - name: alert_system
           in: path
@@ -824,53 +864,62 @@ paths:
           description: The unique identifier of the user (in the :alert_system)
           schema:
             type: string
-
       responses:
         200:
           description: "A JSON document, containing an array of publisher-type-default objects."
           content:
             application/json:
               schema:
-                type: object
-                properties:
-                  publisher_type_id:
-                    type: integer
-                    example: 1
-                  transport:
-                    type: string
-                    example: "sms"
-                  provider:
-                    type: string
-                    example: "twilio"
-                  user_id:
-                    type: string
-                  alert_system:
-                    type: string
-                    example: "barchart.com"
-                  default_recipient:
-                    type: string
-                    example: "2489539701"
-                  default_recipient_hmac:
-                    type: string # ???
-                  allow_window_timezone:
-                    type: string
-                    example: "America/Chicago"
-                  allow_window_start:
-                    type: string # ???
-                    nullable: true
-                  allow_window_end:
-                    type: string # ???
-                    nullable: true
-                  active_alert_types:
-                    type: array
-                    example: ["price"]
-                    items:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    publisher_type_id:
+                      type: integer
+                      example: 1
+                    transport:
                       type: string
+                      example: "sms"
+                    provider:
+                      type: string
+                      example: "twilio"
+                    user_id:
+                      type: string
+                    alert_system:
+                      type: string
+                      example: "barchart.com"
+                    default_recipient:
+                      type: string
+                      example: "2489539701"
+                      nullable: true
+                    default_recipient_hmac:
+                      type: string
+                      nullable: true
+                      example: "94b6239ae1d309a46163bb1e2f64213170ef201fb3f99ed1908caee899a34d2b"
+                    allow_window_timezone:
+                      type: string
+                      example: "America/Chicago"
+                      nullable: true
+                    allow_window_start:
+                      type: string
+                      nullable: true
+                      example: "06:00"
+                    allow_window_end:
+                      type: string
+                      nullable: true
+                      example: "20:30"
+                    active_alert_types:
+                      type: array
+                      example: ["price"]
+                      items:
+                        type: string
 
   /alert/publishers/default/{alert_system}/{user_id}/{publisher_type_id}:
     put:
       summary: "Save Publisher Type Defaults For User"
       description: "Updates default publishing information for a single user."
+      security:
+        - JWT: []
       parameters:
         - name: user_id
           in: path
@@ -896,33 +945,39 @@ paths:
         content:
           application/json:
             schema:
-              type: object
-              properties:
-                publisher_type_id:
-                  type: integer
-                  example: 1
-                user_id:
-                  type: string
-                alert_system:
-                  type: string
-                  example: "barchart.com"
-                default_recipient:
-                  type: string
-                  example: "2489539701"
-                allow_window_timezone:
-                  type: string
-                  example: "America/Chicago"
-                allow_window_start:
-                  type: string # ???
-                  nullable: true
-                allow_window_end:
-                  type: string # ???
-                  nullable: true
-                active_alert_types:
-                  type: array
-                  example: ["price"]
-                  items:
+              type:
+                array
+              items:
+                type: object
+                properties:
+                  publisher_type_id:
+                    type: integer
+                    example: 1
+                  user_id:
                     type: string
+                    example: "me"
+                  alert_system:
+                    type: string
+                    example: "barchart.com"
+                  default_recipient:
+                    type: string
+                    example: "2489539701"
+                  allow_window_timezone:
+                    type: string
+                    example: "America/Chicago"
+                  allow_window_start:
+                    type: string
+                    nullable: true
+                    example: "06:00"
+                  allow_window_end:
+                    type: string
+                    nullable: true
+                    example: "20:30"
+                  active_alert_types:
+                    type: array
+                    example: ["price"]
+                    items:
+                      type: string
 
       responses:
         200:
@@ -952,16 +1007,20 @@ paths:
                       type: string
                       example: "2489539701"
                     default_recipient_hmac:
-                      type: string # ???
+                      type: string
+                      nullable: true
+                      example: "94b6239ae1d309a46163bb1e2f64213170ef201fb3f99ed1908caee899a34d2b"
                     allow_window_timezone:
                       type: string
                       example: "America/Chicago"
                     allow_window_start:
-                      type: string # ???
+                      type: string
                       nullable: true
+                      example: "06:00"
                     allow_window_end:
-                      type: string # ???
+                      type: string
                       nullable: true
+                      example: "20:30"
                     active_alert_types:
                       type: array
                       example: ["price"]
