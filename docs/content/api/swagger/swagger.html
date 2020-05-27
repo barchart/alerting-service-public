@@ -28,7 +28,7 @@
         const prefix = window.location.pathname.split('/content')[0];
         let url = `${window.location.origin}/static/${openApiFileName}`;
         if (prefix !== '') {
-            url = `${window.location.origin}/${prefix}/static/${openApiFileName}`;
+            url = `${window.location.origin}${prefix}/static/${openApiFileName}`;
         }
         window.ui = SwaggerUIBundle({
             url: url,
