@@ -222,7 +222,7 @@
 
 * * *
 
-**Status Code**: 404
+**Status Code**: 500
 
 > The alert does not exist.
 
@@ -238,7 +238,7 @@
 
 ```json
 {
-  "message": "no data"
+  "message": "Alert could not be deleted."
 }
 ```
 
