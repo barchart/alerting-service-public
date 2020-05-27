@@ -14,6 +14,7 @@
 * [API Reference](/content/api_reference)
 	* [Components](/content/api/components)
 	* [Paths](/content/api/paths)
+	* [Swagger UI](/content/api/swagger)
 <!-- api_close -->
 * [Release Notes](/content/release_notes)
 
