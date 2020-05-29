@@ -13,7 +13,7 @@
 * [Servers](#Servers)
 * [Components](#Components)
 * [Paths](#Paths)
-* [Swagger UI](#swagger-ui)
+* [Try Me](#tryme)
 
 ## Servers {docsify-ignore}
 
@@ -58,8 +58,8 @@
 * [GET /alert/publishers/default/{alert_system}/{user_id}](/content/api/paths?id=get-alertpublishersdefaultalert_systemuser_id)
 * [PUT /alert/publishers/default/{alert_system}/{user_id}/{publisher_type_id}](/content/api/paths?id=put-alertpublishersdefaultalert_systemuser_idpublisher_type_id)
 
-## Swagger UI {docsify-ignore}
+## Try Me :id=tryme {docsify-ignore}
 
-**Swagger UI** allows anyone to interact with the API’s resources without having any of the implementation logic in place. It’s automatically generated from a OpenAPI Specification, with the visual documentation making it easy for back end implementation and client side consumption.
+**Try Me** page allows anyone to interact with the API’s resources without having any of the implementation logic in place. It’s automatically generated from a OpenAPI Specification, with the visual documentation making it easy for back end implementation and client side consumption.
 
-> You can test the API by following link: [Open Swagger UI](content/api/swagger)
+> You can test the API by following link: [Try Me](content/api/try)
