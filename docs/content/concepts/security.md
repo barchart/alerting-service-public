@@ -92,7 +92,7 @@ Your system is responsible for initial authentication, for example:
 
 * Perhaps your user was challenged for a username and password.
 * Perhaps your user was identified using an SSO technique.
-* Perhaps the "user" is a script running within a trusted environment.
+* Perhaps your "user" is a script running within a trusted environment.
 
 Since your system _"knows"_ which user is active, it is also _responsible for token generation_.
 
