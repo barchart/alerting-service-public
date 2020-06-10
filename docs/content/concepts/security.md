@@ -110,7 +110,7 @@ function getJwtToken() {
 }
 ```
 
-Next, instantiate a ```JwtProvider``` which uses the aforementioned function. Finally, pass the ```JwtProvider``` instance to the ```connect``` function of your ```AlertManager``` instance, as follows:
+Once you've implemented the function, the hard part is over. Next, instantiate a ```JwtProvider``` which uses the aforementioned function. Finally, pass the ```JwtProvider``` instance to the ```connect``` function of your ```AlertManager``` instance, as follows:
 
 ```js
 alertManager.connect(new JwtProvider(getJwtToken))
