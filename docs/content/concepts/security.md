@@ -94,7 +94,7 @@ Your system is responsible for initial authentication, for example:
 * Perhaps your user was identified using an SSO technique.
 * Perhaps the user is a system process running in a trusted environment.
 
-Since your system _"knows"_ which user is active and it is _also responsible for token generation_.
+Since your system _"knows"_ which user is active, it is also _responsible for token generation_.
 
 First, write a function to return a signed token. The function must conform to the [```Schema.JwtTokenGenerator```](/content/sdk/lib-security?id=callbacksjwttokengenerator) contract — it accepts no arguments and returns a ```String``` (synchronously or asynchronously). For example:
 
