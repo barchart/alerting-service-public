@@ -100,13 +100,14 @@ First, write a function to return a signed token. The function must conform to t
 
 ```js
 function getJwtToken() {
-	return Promise.resolve() {
-		// Generate a signed token and return it. You'll probably want to delegate
-		// the work to a remote service. This helps to ensure your JWT signing secret
-		// cannot be compromised.
+	return Promise.resolve()
+		.then(() => {
+			// Generate a signed token and return it. You'll probably want to delegate
+			// the work to a remote service. This helps to ensure your JWT signing secret
+			// cannot be compromised.
 
-		return token;
-	}
+			return token;
+		});
 }
 ```
 
