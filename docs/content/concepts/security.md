@@ -103,8 +103,8 @@ function getJwtToken() {
 	return Promise.resolve()
 		.then(() => {
 			// Generate a signed token and return it. You'll probably want to delegate
-			// the work to a remote service. This helps to ensure your JWT signing secret
-			// cannot be compromised.
+			// the actual work to a remote service. This helps to ensure your JWT signing
+			// secret cannot be compromised.
 
 			return token;
 		});
