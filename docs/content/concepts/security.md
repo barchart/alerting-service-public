@@ -32,14 +32,14 @@ Your domain is a container for users. Your users own alerts. A domain can be con
 Your domain is a simple ```String``` value. This value is used in two important ways:
 
 * as the ```alert_system``` property of any ```Alert``` you create, and
-* as the ```alert_system``` property of the payload of any JSON Web Token (JWT) you create.
+* as the ```alert_system``` property of the payload of any JSON Web Token (JWT) you create (see below).
 
 ## Your Users
 
 Each of your users must have a unique identifier. You are responsible for picking a user's unique identifier. A user's identifier is must be assigned to:
 
 * the ```user_id``` property of any ```Alert``` you create (on behalf of that user), and
-* the ```user_id``` property of the payload of any JWT you generate (on behalf of that user).
+* the ```user_id``` property of the payload of any JSON Web Token (JWT) you create (see below).
 
 ## JSON Web Tokens
 
