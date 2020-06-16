@@ -2,7 +2,7 @@
 
 As a consumer of the Barchart Alert Service, your software will:
 
-* Create alerts on behalf of your users (or your systems), and
+* Create alerts, and
 * Observe and maintain those alerts.
 
 Barchart established commercially reasonable procedures to ensure your data is safe:
