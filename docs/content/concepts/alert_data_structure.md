@@ -154,7 +154,7 @@ Here is an object — using the fewest fields necessary — to create a target (
 
 _Refer to [```Schema.Operator```](/content/sdk/lib-data?id=schemaoperator) for a formal definition._
 
-**An operator refers to type of comparison.** For example, _"greater than"_, _"less than"_, and _"equals"_ are three different types of operators. Operator objects include an ```operand``` property to complete the right-hand side of an expression (e.g. "greater than $600").
+**An operator refers to type of comparison.** For example, _greater than_, _less than_, and _equals_ are operators. Operator objects include an ```operand``` property. The operand is used to complete the right-hand side of an expression (e.g. "greater than $600").
 
 Here is an object — using the fewest fields necessary — to create a operator (for use with a new alert):
 
