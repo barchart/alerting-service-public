@@ -125,7 +125,7 @@ Here is an object — using the fewest fields necessary — to create a conditio
 
 _Refer to [```Schema.Property```](/content/sdk/lib-data?id=schemaproperty) for a formal definition._
 
-**A "property" is an attribute of a "condition" referring to a streaming data source** including a target. For example, the **last price** of a stock quote is a property. Then, specifying Apple stock, as opposed to some other company, is the target.
+**A "property" is an attribute of a "condition" referring to a streaming data source**, including a target. For example, the **last price** of a stock quote is a property. Then, we target Apple stock, as opposed to some other company.
 
 Here is an object — using the fewest fields necessary — to create a property (for use with a new alert):
 
