@@ -47,7 +47,7 @@ Each request you send to the backend must include a [JSON Web Token](https://en.
 
 ### Payload
 
-The token payload has two required properties (a.k.a claims or assertions):
+The token payload has two required claims, for example:
 
 ```json
 {
