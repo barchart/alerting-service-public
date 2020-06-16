@@ -1,6 +1,6 @@
 ## Synopsis
 
-The Barchart Alert Service communicates using JSON data. We send JSON objects to the backend and we receive JSON objects in response. **This section describes the schema for these JSON objects.**
+The Barchart Alert Service communicates using [JSON](https://en.wikipedia.org/wiki/JSON) data. You JSON-formatted objects to the backend. You receive JSON-formatted in response. **This section describes the schema for these JSON objects.**
 
 The top-level object is called an  _alert_. Here is a visualization of an alert, showing important component structures:
 
