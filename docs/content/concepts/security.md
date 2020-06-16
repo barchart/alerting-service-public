@@ -34,8 +34,6 @@ Your domain is a simple ```String``` value. This value is used in two important 
 * as the ```alert_system``` property of any ```Alert``` you create, and
 * as the ```alert_system``` property of the payload of any JSON Web Token (JWT) you create.
 
-Each alert has a  which must use this value. It must also be included in the JWT token you generate (see below).
-
 ## Your Users
 
 Each of your users must have a unique identifier. User identifiers as assigned to:
