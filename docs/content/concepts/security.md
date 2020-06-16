@@ -120,7 +120,7 @@ alertManager.connect(new JwtProvider(getJwtToken))
 
 ## Using the API
 
-Conceptually, the approach is identical if your choose to use the REST interface directly. You still need to generate a token. After you generate the token, add it to the ```Authorization``` header of your HTTP request. For example, here is the cURL command to get for all alerts owned by ```me@barchart.com```:
+Each HTTP request must include a token. After you generate the token, add it to the ```Authorization``` header of your HTTP request. For example, here is the cURL command to get for all alerts owned by ```me@barchart.com```:
 
 ```shell
 curl 'https://alerts-management-demo.barchart.com/alerts/users/barchart.com/me' \
