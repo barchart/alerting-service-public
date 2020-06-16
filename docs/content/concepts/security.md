@@ -129,7 +129,7 @@ curl 'https://alerts-management-demo.barchart.com/alerts/users/barchart.com/me' 
   -H 'Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoibWUiLCJhbGVydF9zeXN0ZW0iOiJiYXJjaGFydC5jb20iLCJpYXQiOjE1ODk0MTEyNzl9.SxyC8s_CKhPyzcNmM_h_TRMiNSx3YstKGmAb2IOWqgM'
 ```
 
-If we decode the token — try [this tool](https://jwt.io/) — you'll see the token payload refers to ```me@barchart.com````:
+If we decode the token — try [this tool](https://jwt.io/) — you'll see the token payload refers to ```me@barchart.com```:
 
 ```json
 {
