@@ -8,7 +8,7 @@ As a consumer of the Barchart Alert Service, your software will:
 Barchart uses commercially reasonable procedures to ensure your data is safe:
 
 * All data is encrypted before transmission (using HTTP over SSL/TLS).
-* All requests are authenticated and authorized, that is:
+* All requests are authenticated and authorized:
   * The requestor's identity is verified, and
   * The requestor's authority to perform the action (e.g. read an alert) is verified.
 
