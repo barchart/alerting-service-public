@@ -17,7 +17,6 @@ The backend accepts connections using two secure protocols:
   * Events are not pushed from the server — subscriptions must be simulated with short polling.
 * **Coming soon**
   * Pure WebSocket (to be implemented without Socket.IO).
-  * In the SDK, switching the transport is a one-line code change.
 
 ## Using the SDK
 
