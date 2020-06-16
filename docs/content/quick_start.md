@@ -109,7 +109,7 @@ Glancing at this object probably raises more questions that it answers, for exam
 * What is a ```Property```?
 * What is a ```Target```?
 
-You can find an in-depth discussion of these topics in the  [Key Concepts: Alert Data Structures](/content/concepts/alert_data_structure) section.
+You can find an in-depth discussion of these topics in the [Key Concepts: Alert Data Structures](/content/concepts/alert_data_structure) section.
 
 ## Creating an Alert
 
