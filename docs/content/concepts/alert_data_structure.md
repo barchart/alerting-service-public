@@ -1,6 +1,6 @@
 ## Synopsis
 
-The Barchart Alert Service communicates using JSON data. We send JSON objects to the backend and we receive JSON objects in response.
+The Barchart Alert Service communicates using JSON data. We send JSON objects to the backend and we receive JSON objects in response. **This section describes the schema for these JSON objects.**
 
 The top-level object is called an  _"alert"_. Here is a visualization of an alert, showing important component structures:
 
@@ -14,18 +14,22 @@ The top-level object is called an  _"alert"_. Here is a visualization of an aler
 │   ├── Publisher(s)
 ```
 
-Consider an alert with a condition for _Apple stock's last price is greater than $600_. Using this alert, let's extend the previous visualization:
+Assume we want to create an alert with the following condition:
 
- ```text
- ├── Alert
- │   ├── Condition 1:
- │   │   ├── Property: (Last Price)
- │   │   │   └── Target: (AAPL)
- │   │   ├── Operator: (Greater Than)
- │   │   │   └── Operand: ($600)
- ```
+* Apple stock's last price is greater than $600
 
- Here is the JSON object representing the same alert:
+We can extend our structural visualization, as follows:
+
+```text
+├── Alert
+│   ├── Condition 1:
+│   │   ├── Property: (Last Price)
+│   │   │   └── Target: (AAPL)
+│   │   ├── Operator: (Greater Than)
+│   │   │   └── Operand: ($600)
+```
+
+Here is the *actual* JSON object representing the alert:
 
 ```json
 {
