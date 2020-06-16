@@ -140,7 +140,7 @@ Here is an object — using the fewest fields necessary — to create a property
 
 _Refer to [```Schema.Target```](/content/sdk/lib-data?id=schematarget) for a formal definition._
 
-**A "target" identifies a specific entity.** For example, Apple stock is a target and Microsoft stock is a another target. Each uses a different ```identifier``` property value. Targets are included on property object.
+**A "target" identifies a specific entity.** For example, Apple stock is a target. Microsoft stock is a different target. They are differenciated by the ```identifier``` property value.
 
 Here is an object — using the fewest fields necessary — to create a target (for use with a new alert):
 
