@@ -55,13 +55,13 @@ Here is the *actual* JSON object representing the alert:
 
 ## Building Conditions
 
-In order to build conditional statements, you'll need the list of available
+In order to build conditional statements, you'll need the listings of:
 
 * _targets_ — things which can be observed (e.g. a stock quote)
 * _properties_ — attributes of the object being observed (e.g. last price)
 * _operators_ — comparisons which can be applied to properties (e.g. greater than)
 
-Request them as follows:
+Request these listings as follows:
 
 ```js
 const promises = [
@@ -78,7 +78,7 @@ return Promise.all(promises)
 	});
 ```
 
-If you're building an interactive application, you'll need this metadata to build a dynamic UI — allowing your users to define their own conditions. For example, our sample application allows users to define their own conditions (see the [Quick Start: Sample Applications](/content/quick_start?id=sample-applications) section for loading instructions).
+If you're building an interactive application, you'll use this metadata to build a dynamic UI — allowing your users to define their own conditions. Take a look at our HTML5 sample application. Loading instructions can be found in the [Quick Start: Sample Applications](/content/quick_start?id=sample-applications) section.
 
 ### Natural Language Text
 
