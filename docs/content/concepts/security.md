@@ -56,7 +56,7 @@ The token payload has two required claims, for example:
 }
 ```
 
-The backend will _decode_ the token and _verify_ its authenticity (using a shared secret). We've glossed of the underlying mechanics of JWT -- plenty of good information is available online (e.g. [here](https://jwt.io/introduction/)).
+The backend will _decode_ the token and _verify_ its authenticity (using a shared secret). We've glossed of the underlying mechanics of JWT — plenty of good information is available online (e.g. [here](https://jwt.io/introduction/)).
 
 ### Signing
 
