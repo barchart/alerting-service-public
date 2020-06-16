@@ -57,9 +57,9 @@ Here is the *actual* JSON object representing the alert:
 
 In order to build conditional statements, you'll need the list of available
 
-* _target_,
-* _property_, and
-* _operator_ objects.
+* _targets_ (something which can be observed, e.g. a stock quote)
+* _properties_ (a property of the object being observed, e.g. last price),
+* _operators_ (the comparisons which are valid for a property, e.g. greater than)
 
 Request them as follows:
 
