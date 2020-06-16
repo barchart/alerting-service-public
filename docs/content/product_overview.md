@@ -85,7 +85,7 @@ Privacy is important to Barchart. You can read our privacy policy here:
 
 Here's how:
 
-* Each alert is owned by a user. You must provide unique user identifiers for those users. However, the identifiers can be meaningless — other to differentiate one user from another. A common technique is to use [Universally Unique Identifiers](https://en.wikipedia.org/wiki/Universally_unique_identifier).
-* Each notification delivered to a user. Barchart can deliver notifications on your behalf. Alternately, we can deliver notifications to your web service. In this manner, you handle the "last mile" of delivery for notifications and forgo the need to provide us with contact information for your users.
+* Each alert is owned by a user. You must provide Barchart with unique user identifiers for your users; however, they can be meaningless — other to differentiate one user from another. [Universally Unique Identifiers](https://en.wikipedia.org/wiki/Universally_unique_identifier) are commonly used for this purpose.
+* Alert notifications are delivered your users. Barchart can do this on your behalf. Alternately, we can deliver notifications to your web service. In this manner, you handle the "last mile" of delivery and eliminate the need to share the contact information for your users.
 
 Furthermore, each request to the Barchart Alert Service is authenticated. This is done using JWT technology. You generate "tokens" and the Barchart Alert service verifies their authenticity. The tokens provide security; however they do not contain any sensitive information (e.g. passwords). You can read more about this in the [Key Concepts: Security]((/content/concepts/security)) section of the documentation.
