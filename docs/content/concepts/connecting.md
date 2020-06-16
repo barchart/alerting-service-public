@@ -20,7 +20,7 @@ The backend accepts connections using two secure protocols:
 
 ## Using the SDK
 
-The first step is to create an instance if the [```AlertManager```](/content/sdk/lib?id=alertmanager) class. In general, you application will use one instance. Picking a protocol requires you to provide an "adapter" ```AlertManager```, as follows:
+First, create an instance of the [```AlertManager```](/content/sdk/lib?id=alertmanager) class. In general, will only need to create one instance. Pick a transport protocol by passing an "adapter" type as follows:
 
 ```js
 const AdapterForSocketIo = require('@barchart/alert-client-js/lib/adapters/AdapterForSocketIo');
