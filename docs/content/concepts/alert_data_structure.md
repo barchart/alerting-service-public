@@ -55,7 +55,13 @@ Here is the *actual* JSON object representing the alert:
 
 ## Building Conditions
 
-In order to build conditional statements, you'll need the list of available _"target"_, _"property"_, and _"operator"_ objects. Request them as follows:
+In order to build conditional statements, you'll need the list of available
+
+* _"target"_,
+* _"property"_, and
+* _"operator"_ objects.
+
+Request them as follows:
 
 ```js
 const promises = [
