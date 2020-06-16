@@ -139,7 +139,7 @@ If we decode the token — try [this tool](https://jwt.io/) — you'll see the t
 }
 ```
 
-As a result, when using this token, only actions for alerts owned by ```me@barchart.com``` are accepted (i.e. authorized). An action for a different user will be rejected.
+When using this token, we can only interact with alerts owned by ```me@barchart.com```.
 
 ## Best Practices
 
