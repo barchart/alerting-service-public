@@ -88,9 +88,9 @@ Once you're ready to move to production, you'll need to exchange a public/privat
 
 Your system is responsible for initial authentication, for example:
 
-* Perhaps users provide a username and password.
+* Perhaps users are identified by username and password.
 * Perhaps users are identified using an SSO technology.
-* Perhaps you are running scripts in a trusted environment and the "user" is assumed.
+* Perhaps users are assumed to be valid because your software runs in a trusted environment.
 
 Since your system _"knows"_ which user is active, it is also _responsible for token generation_.
 
