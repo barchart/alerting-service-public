@@ -77,7 +77,7 @@ If JavaScript isn't suitable for your environment and you're not interested in d
 
 Privacy is important to Barchart. You can read our privacy policy here:
 
-https://www.barchart.com/solutions/company/terms-and-privacy
+[https://www.barchart.com/solutions/company/terms-and-privacy](https://www.barchart.com/solutions/company/terms-and-privacy)
 
 #### User Privacy (Alert Service)
 
