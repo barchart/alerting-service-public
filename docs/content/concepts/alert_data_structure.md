@@ -2,7 +2,7 @@
 
 The Barchart Alert Service communicates using JSON data. We send JSON objects to the backend and we receive JSON objects in response. **This section describes the schema for these JSON objects.**
 
-The top-level object is called an  _"alert"_. Here is a visualization of an alert, showing important component structures:
+The top-level object is called an  _alert_. Here is a visualization of an alert, showing important component structures:
 
 ```text
 ├── Alert
@@ -57,9 +57,9 @@ Here is the *actual* JSON object representing the alert:
 
 In order to build conditional statements, you'll need the list of available
 
-* _"target"_,
-* _"property"_, and
-* _"operator"_ objects.
+* _target_,
+* _property_, and
+* _operator_ objects.
 
 Request them as follows:
 
