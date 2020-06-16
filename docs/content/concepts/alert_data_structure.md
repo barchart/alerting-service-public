@@ -76,7 +76,7 @@ return Promise.all(promises)
 	.then(results) => {
 		const availableTargets = results[0];
 		const availableProperties = results[1];
-		const availableOperators = results[3];
+		const availableOperators = results[2];
 	});
 ```
 
