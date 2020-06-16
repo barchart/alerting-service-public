@@ -5,9 +5,9 @@
 Here's how it works:
 
 * You _choose_ notification mechanism(s):
+	* Receive notifications to your web service, via HTTP POST (you handle last mile)
 	* Receive notifications via email
 	* Receive notifications via SMS messages
-	* Receive notifications to your web service, via HTTP POST
 	* Receive push notifications to your mobile applications (coming soon)
 * You _define_ an alert. Each alert has one or more conditions, for example:
 	* Apple common stock trades over $500.00 per share
@@ -70,3 +70,20 @@ The Barchart Alert Service implements a REST interface via HTTP. You may choose 
 #### Other
 
 If JavaScript isn't suitable for your environment and you're not interested in direct access, please contact us at solutions@barchart.com or (866) 333-7587.
+
+## User Privacy
+
+#### User Privacy (General)
+
+Privacy is important to Barchart. You can read our privacy policy here:
+
+https://www.barchart.com/solutions/company/terms-and-privacy
+
+#### User Privacy (Alert Service)
+
+**You can avoid sharing identifying information regarding your users.**
+
+Here's how:
+
+* Each alert is owned by a user. You must provide unique user identifiers for those users. However, the identifiers can be meaningless — other to differentiate one user from another. A common technique is to use [Universally Unique Identifiers](https://en.wikipedia.org/wiki/Universally_unique_identifier).
+* Each notification delivered to a user. Barchart can deliver notifications on your behalf. Alternately, we can deliver notifications to your web service. In this manner, you handle the "last mile" of delivery for notifications and forgo the need to provide us with contact information for your users..
