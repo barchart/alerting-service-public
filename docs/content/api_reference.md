@@ -13,12 +13,11 @@
 * [Servers](#Servers)
 * [Components](#Components)
 * [Paths](#Paths)
-* [Try Me](#tryme)
 
 ## Servers {docsify-ignore}
 
 * [https://alerts-management-demo.barchart.com](https://alerts-management-demo.barchart.com)  - Demo (evaluation and testing only)
-* [https://alerts-management.barchart-prod.com](https://alerts-management.barchart-prod.com)  - Production
+* [https://alerts-management-prod.barchart.com](https://alerts-management-prod.barchart.com)  - Production
 
 ## Components {docsify-ignore}
 
@@ -34,10 +33,6 @@
 * [Condition](/content/api/components?id=schemasCondition)
 * [Property](/content/api/components?id=schemasProperty)
 * [Target](/content/api/components?id=schemasTarget)
-
-### Security 
-
-* [JWT](/content/api/components?id=securityJWT)
 
 ## Paths {docsify-ignore}
 
@@ -57,9 +52,3 @@
 * [GET /alert/publishers](/content/api/paths?id=get-alertpublishers)
 * [GET /alert/publishers/default/{alert_system}/{user_id}](/content/api/paths?id=get-alertpublishersdefaultalert_systemuser_id)
 * [PUT /alert/publishers/default/{alert_system}/{user_id}/{publisher_type_id}](/content/api/paths?id=put-alertpublishersdefaultalert_systemuser_idpublisher_type_id)
-
-## Try Me :id=tryme {docsify-ignore}
-
-**Try Me** page allows anyone to interact with the API’s resources without having any of the implementation logic in place. It’s automatically generated from a OpenAPI Specification, with the visual documentation making it easy for back end implementation and client side consumption.
-
-> You can test the API by following link: [Try Me](content/api/try)

@@ -2,7 +2,8 @@
 
 ## Responses 
 
-### Unauthorized :id=responsesunauthorized
+### Unauthorized :id=ResponsesUnauthorized
+
 > The unauthorized access.
 
 **Content Type**: <code>application/json</code>
@@ -25,7 +26,8 @@
 
 ## Schemas 
 
-### Alert :id=schemasalert
+### Alert :id=SchemasAlert
+
 **Type**: <code>Object</code>
     
 | Name | Type | Required | Nullable | Description |
@@ -184,7 +186,8 @@
 
 * * *
 
-### Publisher :id=schemaspublisher
+### Publisher :id=SchemasPublisher
+
 **Type**: <code>Object</code>
     
 | Name | Type | Required | Nullable | Description |
@@ -221,7 +224,8 @@
 
 * * *
 
-### Operator :id=schemasoperator
+### Operator :id=SchemasOperator
+
 **Type**: <code>Object</code>
     
 | Name | Type | Required | Nullable | Description |
@@ -273,7 +277,8 @@
 
 * * *
 
-### Condition :id=schemascondition
+### Condition :id=SchemasCondition
+
 **Type**: <code>Object</code>
     
 | Name | Type | Required | Nullable | Description |
@@ -368,7 +373,8 @@
 
 * * *
 
-### Property :id=schemasproperty
+### Property :id=SchemasProperty
+
 **Type**: <code>Object</code>
     
 | Name | Type | Required | Nullable | Description |
@@ -434,7 +440,8 @@
 
 * * *
 
-### Target :id=schemastarget
+### Target :id=SchemasTarget
+
 **Type**: <code>Object</code>
     
 | Name | Type | Required | Nullable | Description |
@@ -468,21 +475,6 @@
   "type": "symbol"
 }
 ```
-
-* * *
-
-## Security 
-
-### JWT :id=securityjwt
-
->The JWT authorization
-
-**Type**: http bearer
-    
-#### Headers
-| Name | Format | Example |
-| ---- | ------ | ------- |
-| Authorization | JWT | Authorization: Bearer <code>&lt;Token&gt;</code> |
 
 * * *
 

@@ -36,8 +36,6 @@
 
 **Summary**: Create Alert.
 
-**Security**: 
-[JWT](/content/api/components?id=securityJWT)
 #### Request Body
     
 **Content Type**: application/json
@@ -154,8 +152,6 @@
 
 **Summary**: Retrieve Alert.
 
-**Security**: 
-[JWT](/content/api/components?id=securityJWT)
 #### Path Parameters
 
 | Name | Type | Required | Nullable | Description |
@@ -202,8 +198,6 @@
 
 **Summary**: Delete Alert
 
-**Security**: 
-[JWT](/content/api/components?id=securityJWT)
 #### Path Parameters
 
 | Name | Type | Required | Nullable | Description |
@@ -250,8 +244,6 @@
 
 **Summary**: Start/Stop Alert.
 
-**Security**: 
-[JWT](/content/api/components?id=securityJWT)
 #### Path Parameters
 
 | Name | Type | Required | Nullable | Description |
@@ -340,8 +332,6 @@
 
 **Summary**: Retrieve Alerts For User.
 
-**Security**: 
-[JWT](/content/api/components?id=securityJWT)
 #### Path Parameters
 
 | Name | Type | Required | Nullable | Description |
@@ -389,8 +379,6 @@
 
 **Summary**: Start/Stop Multiple Alerts For User
 
-**Security**: 
-[JWT](/content/api/components?id=securityJWT)
 #### Path Parameters
 
 | Name | Type | Required | Nullable | Description |
@@ -460,8 +448,6 @@
 
 **Summary**: Retrieve Alerts By Remote System Key
 
-**Security**: 
-[JWT](/content/api/components?id=securityJWT)
 #### Path Parameters
 
 | Name | Type | Required | Nullable | Description |
@@ -510,8 +496,6 @@
 
 **Summary**: Retrieve Market Data Configuration For User
 
-**Security**: 
-[JWT](/content/api/components?id=securityJWT)
 #### Path Parameters
 
 | Name | Type | Required | Nullable | Description |
@@ -695,8 +679,6 @@
 
 **Summary**: Retrieve Publisher Type Defaults For User
 
-**Security**: 
-[JWT](/content/api/components?id=securityJWT)
 #### Path Parameters
 
 | Name | Type | Required | Nullable | Description |
@@ -759,8 +741,6 @@
 
 **Summary**: Save Publisher Type Defaults For User
 
-**Security**: 
-[JWT](/content/api/components?id=securityJWT)
 #### Path Parameters
 
 | Name | Type | Required | Nullable | Description |
