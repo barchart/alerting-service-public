@@ -5,7 +5,7 @@ As a consumer of the Barchart Alert Service, your software will:
 * Create alerts, and
 * Observe and maintain those alerts.
 
-Barchart established commercially reasonable procedures to ensure your data is safe:
+Barchart uses commercially reasonable procedures to ensure your data is safe:
 
 * All data is encrypted before transmission (using HTTP over SSL/TLS).
 * All requests are authenticated and authorized, that is:
