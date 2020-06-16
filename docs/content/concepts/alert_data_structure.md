@@ -90,7 +90,7 @@ In order to define a conditional statement as a JSON object, you need to:
 
 Using the same example — Apple stock's last price is greater than $600 — our JSON object looks like this (comments added):
 
-```json
+```json (psuedo)
 {
 	"property": {
 		"property_id": 1, <-- The numeric identifier of the "last price" property (see metadata for properties)
