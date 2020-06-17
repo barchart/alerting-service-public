@@ -12,6 +12,10 @@ You can retrieve an up-to-date listings as follows:
 
 ## Stream Attributes
 
+Alert conditions based on an attribute (or property) of a target. For example, _last price_ (proeprty) of _market data quote_ (target). Here is a listing of attributes:
+
+
+
 ## Additional Streams
 
 More esoteric streams are available:
