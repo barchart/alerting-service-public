@@ -73,7 +73,7 @@ If JavaScript isn't suitable for your environment and you're not interested in d
 
 ## User Privacy
 
-Privacy is important to Barchart and we do not wish to transmit or collect personally identifiable information about your users. We strongly suggest that all users of the Alerts Service avoid sharing identifying information regarding your users.
+Privacy is important to Barchart and we do not wish to transmit or collect personally identifiable information about your users. We encourage users of the Alerts Service to avoid sharing identifying information.
 
 Here's how:
 
