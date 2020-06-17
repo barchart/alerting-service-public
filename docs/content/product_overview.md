@@ -73,9 +73,11 @@ If JavaScript isn't suitable for your environment and you're not interested in d
 
 ## User Privacy
 
-Privacy is important to Barchart and we do not wish to transmit or collect personally identifiable information about your users. We strongly suggest that all users of the Alerts Service avoid sharing identifying information regarding your users. Here's how:
+Privacy is important to Barchart and we do not wish to transmit or collect personally identifiable information about your users. We strongly suggest that all users of the Alerts Service avoid sharing identifying information regarding your users.
+
+Here's how:
 
 * Each alert is owned by a user. You must provide Barchart with unique user identifiers for your users; however, they can be meaningless — other to differentiate one user from another. [Universally Unique Identifiers](https://en.wikipedia.org/wiki/Universally_unique_identifier) are commonly used for this purpose.
 * Alert notifications are delivered your users. Barchart can do this on your behalf. Alternately, we can deliver notifications to your web service. In this manner, you handle the "last mile" of delivery and eliminate the need to share contact information for your users.
 
-Furthermore, each request to the Barchart Alert Service is authenticated. This is done using JWT technology. You generate "tokens" and the Barchart Alert service verifies their authenticity. The tokens provide security; however they do not contain any sensitive information (e.g. passwords). You can read more about this in the [Key Concepts: Security]((/content/concepts/security)) section of the documentation.
+Furthermore, each request to the Alert Service is authenticated. This is done using JWT technology. You generate "tokens" and the Alert Service verifies their authenticity. The tokens provide security; however they do not contain any sensitive information (e.g. passwords). You can read more about this in the [Key Concepts: Security]((/content/concepts/security)) section of the documentation.
