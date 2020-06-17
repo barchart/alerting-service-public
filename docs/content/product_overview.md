@@ -73,17 +73,7 @@ If JavaScript isn't suitable for your environment and you're not interested in d
 
 ## User Privacy
 
-#### General
-
-Privacy is important to Barchart. You can read our privacy policy here:
-
-[https://www.barchart.com/solutions/company/terms-and-privacy](https://www.barchart.com/solutions/company/terms-and-privacy)
-
-#### Alert Service
-
-**You can avoid sharing identifying information regarding your users.**
-
-Here's how:
+Privacy is important to Barchart and we do not wish to transmit or collect personally identifiable information about your users. We strongly suggest that all users of the Alerts Service avoid sharing identifying information regarding your users. Here's how:
 
 * Each alert is owned by a user. You must provide Barchart with unique user identifiers for your users; however, they can be meaningless — other to differentiate one user from another. [Universally Unique Identifiers](https://en.wikipedia.org/wiki/Universally_unique_identifier) are commonly used for this purpose.
 * Alert notifications are delivered your users. Barchart can do this on your behalf. Alternately, we can deliver notifications to your web service. In this manner, you handle the "last mile" of delivery and eliminate the need to share contact information for your users.
