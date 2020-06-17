@@ -1,5 +1,3 @@
-## Synopsis
-
 **This page lists discrete actions which can be executed.** Each action described here includes:
 
 * a ink to SDK reference,
@@ -7,7 +5,9 @@
 * a link to Open API definition, and
 * an example cURL request to the API
 
-## Alert Metadata Actions
+## Metadata Lookup
+
+_This section is incomplete, more coming soon._
 
 ### List Available Targets
 
@@ -58,6 +58,10 @@ curl 'https://alerts-management-demo.barchart.com/alert/targets/properties' \
   -H 'Accept: */*'
 ```
 
-## Alert Items Actions
+## Alert Actions
+
+_This section is incomplete, more coming soon._
 
 ## Alert Subscriptions
+
+_This section is incomplete, more coming soon._
