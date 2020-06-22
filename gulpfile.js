@@ -1,7 +1,8 @@
 const gulp = require('gulp');
 
 const exec = require('child_process').exec,
-	fs = require('fs');
+	fs = require('fs'),
+	path = require('path');
 
 const AWS = require('aws-sdk'),
 	awspublish = require('gulp-awspublish'),
@@ -128,6 +129,27 @@ gulp.task('upload-example-to-S3', () => {
 	return gulp.src(['./example/browser/example.html', './example/browser/example.js', './example/browser/example.css'])
 		.pipe(rename((path) => {
 			path.dirname = 'alerts-client-js';
+		}))
+		.pipe(publisher.publish(headers, options))
+		.pipe(publisher.cache())
+		.pipe(awspublish.reporter());
+});
+
+gulp.task('upload-documentation-site-to-S3', () => {
+	let publisher = awspublish.create({
+		region: 'us-east-1',
+		params: {
+			Bucket: 'docs.barchart.com'
+		},
+		credentials: new AWS.SharedIniFileCredentials({profile: 'default'})
+	});
+
+	let headers = {'Cache-Control': 'no-cache'};
+	let options = {};
+
+	return gulp.src(['./docs/**'])
+		.pipe(rename((filePath) => {
+			filePath.dirname = path.join('alerts', filePath.dirname);
 		}))
 		.pipe(publisher.publish(headers, options))
 		.pipe(publisher.cache())
