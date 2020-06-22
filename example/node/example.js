@@ -61,15 +61,9 @@ const startup = (() => {
 		adapterDescription = 'Socket.IO';
 	}
 
-	/*
-	const host = 'alerts-management-stage.barchart.com';
+	const host = 'alerts-management-demo.barchart.com';
 	const port = 443;
 	const secure = true;
-	*/
-
-	const host = 'localhost';
-	const port = 3000;
-	const secure = false;
 
 	__logger.info(`Example: Created AlertManager for [ ${host}:${port} ] using [ ${adapterDescription} ] mode`);
 
