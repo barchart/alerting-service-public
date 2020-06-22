@@ -1,7 +1,7 @@
 const gulp = require('gulp');
 
 const exec = require('child_process').exec,
-	require('fs');
+	fs = require('fs');
 
 const AWS = require('aws-sdk'),
 	awspublish = require('gulp-awspublish'),
