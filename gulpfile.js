@@ -114,7 +114,7 @@ gulp.task('build-test-bundle', () => {
 
 gulp.task('build', gulp.series('build-example-bundle'));
 
-gulp.task('upload-example-to-S3', () => {
+gulp.task('upload-example-page-to-S3', () => {
 	let publisher = awspublish.create({
 		region: 'us-east-1',
 		params: {
@@ -134,6 +134,8 @@ gulp.task('upload-example-to-S3', () => {
 		.pipe(publisher.cache())
 		.pipe(awspublish.reporter());
 });
+
+gulp.task('deploy-example-page', gulp.series('upload-example-page-to-S3'));
 
 gulp.task('upload-documentation-site-to-S3', () => {
 	let publisher = awspublish.create({
@@ -156,7 +158,7 @@ gulp.task('upload-documentation-site-to-S3', () => {
 		.pipe(awspublish.reporter());
 });
 
-gulp.task('deploy-example', gulp.series('upload-example-to-S3'));
+gulp.task('deploy-documentation', gulp.series('upload-documentation-site-to-S3'));
 
 gulp.task('execute-browser-tests', () => {
 	return gulp.src('test/SpecRunner.js')
@@ -185,7 +187,9 @@ gulp.task('release', gulp.series(
 	'build-example-bundle',
 	'commit-changes',
 	'push-changes',
-	'create-tag'
+	'create-tag',
+	'deploy-example-page',
+	'deploy-documentation'
 ));
 
 gulp.task('watch', () => {
