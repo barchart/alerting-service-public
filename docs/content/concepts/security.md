@@ -32,7 +32,7 @@ Your domain is a container for users. Your users own alerts. A domain can be con
 Your domain is a simple ```String``` value. This value is used in two important ways:
 
 * as the ```alert_system``` property of any ```Alert``` you create, and
-* as the ```alert_system``` property of the payload of any JSON Web Token (JWT) you create (see below).
+* as the ```alert_system``` property of each JSON Web Token (JWT) you create (see below).
 
 ## Your Users
 
