@@ -1,6 +1,6 @@
 ## Purpose
 
-**This SDK helps your applications connect to the  _Barchart Alert Service_. You can define alert conditions, ask our remote service to track those conditions on your behalf, and receive immediate notifications when those conditions are met.**
+**This SDK connects your applications to the  _Barchart Alert Service_. You can define alert conditions, ask our remote service to track those conditions on your behalf, and receive immediate notifications when those conditions are met.**
 
 Here's how it works:
 
