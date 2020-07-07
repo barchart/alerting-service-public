@@ -44,7 +44,7 @@ In the the _production_ environment, you must exchange a _"secret"_  with Barcha
 Regardless of environment, the token payload uses two fields:
 
 * ```user_id``` is the unique identifier of the current user
-*```alert_system``` is a unique identifier for your organization (use "barchart.com" in the _demo_ environment).
+* ```alert_system``` is a unique identifier for your organization (use "barchart.com" in the _demo_ environment).
 
 ## Connecting
 
