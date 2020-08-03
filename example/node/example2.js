@@ -2,17 +2,13 @@ const process = require('process');
 
 const AlertManager = require('./../../lib/AlertManager');
 
-const AdapterForHttp = require('./../../lib/adapters/AdapterForHttp'),
-	AdapterForSocketIo = require('./../../lib/adapters/AdapterForSocketIo');
+const AdapterForHttp = require('./../../lib/adapters/AdapterForHttp');
 
 const JwtProvider = require('./../../lib/security/JwtProvider'),
 	getJwtGenerator = require('./../../lib/security/demo/getJwtGenerator');
 
 const LoggerFactory = require('./../../lib/logging/LoggerFactory'),
 	CustomLoggingProvider = require('./logging/CustomLoggingProvider');
-
-//LoggerFactory.configureForConsole();
-//LoggerFactory.configureForSilence();
 
 LoggerFactory.configure(new CustomLoggingProvider());
 
@@ -46,31 +42,18 @@ const user_id = process.argv[2];
 const alert_system = 'barchart.com';
 
 if (!user_id) {
-	logger.error('A user identifier must be specified. Here is a usage example: "node example.js user-1234"');
+	logger.error('A user identifier must be specified. Here is a usage example: "node example2.js user-1234"');
 
 	process.exit();
-}
-
-const mode = process.argv[3];
-
-let adapterClazz;
-let adapterDescription;
-
-if (mode === 'http') {
-	adapterClazz = AdapterForHttp;
-	adapterDescription = 'HTTP';
-} else {
-	adapterClazz = AdapterForSocketIo;
-	adapterDescription = 'Socket.IO';
 }
 
 const host = 'alerts-management-demo.barchart.com';
 const port = 443;
 const secure = true;
 
-logger.info(`Example: Created AlertManager for [ ${host}:${port} ] using [ ${adapterDescription} ] mode`);
+logger.info(`Example: Created AlertManager for [ ${host}:${port} ] using [ HTTP ] mode`);
 
-alertManager = new AlertManager(host, port, secure, adapterClazz);
+alertManager = new AlertManager(host, port, secure, AdapterForHttp);
 
 logger.info(`Example: Configuring JWT generator to impersonate [ ${user_id}@${alert_system} ]`);
 
@@ -82,18 +65,34 @@ logger.info(`Example: Connecting to the Barchart Alerting Service`);
 alertManager.connect(jwtProvider)
 	.then(() => {
 		logger.info(`Example: Connected to the Barchart Alerting Service`);
-		logger.info(`Example: Retrieving a list of alerts for [ ${user_id}@${alert_system} ]`);
+		logger.info(`Example: Creating new alert for [ ${user_id}@${alert_system} ]`);
 
-		const payload = { };
+		const alert = {
+			name: 'Example Alert: AAPL exceeds $600',
+			user_id: user_id,
+			alert_system: alert_system,
+			conditions: [
+				{
+					property: {
+						property_id: 1,
+						target: {
+							identifier: 'AAPL'
+						}
+					},
+					operator: {
+						operator_id: 2,
+						operand: "600.00"
+					}
+				}
+			]
+		};
 
-		payload.user_id = user_id;
-		payload.alert_system = alert_system;
-
-		return alertManager.retrieveAlerts(payload)
-			.then((alerts) => {
-				logger.info(`Example: Retrieved alerts [ ${alerts.length} ] for [ ${user_id}@${alert_system} ]`);
+		return alertManager.createAlert(alert)
+			.then((created) => {
+				logger.info(`Example: Created new alert for [ ${user_id}@${alert_system} ] with ID [ ${created.alert_id} ]`);
 			}).catch((e) => {
-				logger.warn(`Example: Failed to retrieve alerts for [ ${user_id}@${alert_system} ]`);
+				logger.error(`Example: Failed to create new alert for [ ${user_id}@${alert_system} ]`);
+				logger.error(e);
 			});
 	}).catch((e) => {
 		logger.warn(`Example: Failed to connect to the Barchart Alerting Service`);
