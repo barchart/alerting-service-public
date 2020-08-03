@@ -18,7 +18,7 @@ LoggerFactory.configure(new CustomLoggingProvider());
 
 const logger = LoggerFactory.getLogger('@barchart/example');
 
-logger.info(`Example: Node.js example script started, SDK version [ ${AlertManager.version} ]`);
+logger.info(`Example: Node.js example script started, using SDK version [ ${AlertManager.version} ]`);
 
 let alertManager = null;
 
@@ -71,11 +71,11 @@ logger.info(`Example: Configuring JWT generator to impersonate [ ${user_id}@${al
 const jwtGenerator = getJwtGenerator(user_id, alert_system);
 const jwtProvider = new JwtProvider(jwtGenerator, 60000, 'demo');
 
-logger.info(`Example: Connecting to Barchart\'s Alert Service`);
+logger.info(`Example: Connecting to the Barchart Alerting Service`);
 
 alertManager.connect(jwtProvider)
 	.then(() => {
-		logger.info(`Example: Connected to Barchart\'s Alert Service`);
+		logger.info(`Example: Connected to the Barchart Alerting Service`);
 
 		logger.info(`Example: Retrieving a list of alerts for [ ${user_id}@${alert_system} ]`);
 
@@ -91,7 +91,7 @@ alertManager.connect(jwtProvider)
 				logger.warn(`Example: Failed to retrieve alerts for [ ${user_id}@${alert_system} ]`);
 			});
 	}).catch((e) => {
-		logger.warn(`Example: Failed to connect to Barchart\'s Alert Service`);
+		logger.warn(`Example: Failed to connect to the Barchart Alerting Service`);
 	}).then(() => {
 		logger.info(`Example: Disposing AlertManager`);
 
