@@ -81,7 +81,7 @@ alertManager.connect(jwtProvider)
 					},
 					operator: {
 						operator_id: 2,
-						operand: "600.00"
+						operand: '600.00'
 					}
 				}
 			]
