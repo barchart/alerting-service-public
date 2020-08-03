@@ -12,8 +12,8 @@
 * * *
 
 ## Logger :id=logger
-> An interface for writing log messages. An implementation of this
-> class is returned by [LoggerProvider.getLogger](#loggerprovidergetlogger).
+> <p>An interface for writing log messages. An implementation of this
+> class is returned by [LoggerProvider.getLogger](#loggerprovidergetlogger).</p>
 
 **Kind**: global abstract class  
 **Access**: public  
@@ -33,7 +33,7 @@
 * * *
 
 ### logger.log() :id=loggerlog
-> Writes a log message.
+> <p>Writes a log message.</p>
 
 **Kind**: instance abstract method of [<code>Logger</code>](#Logger)  
 **Access**: public  
@@ -46,7 +46,7 @@
 * * *
 
 ### logger.trace() :id=loggertrace
-> Writes a log message at "trace" level.
+> <p>Writes a log message at &quot;trace&quot; level.</p>
 
 **Kind**: instance abstract method of [<code>Logger</code>](#Logger)  
 **Access**: public  
@@ -59,7 +59,7 @@
 * * *
 
 ### logger.debug() :id=loggerdebug
-> Writes a log message at "debug" level.
+> <p>Writes a log message at &quot;debug&quot; level.</p>
 
 **Kind**: instance abstract method of [<code>Logger</code>](#Logger)  
 **Access**: public  
@@ -72,7 +72,7 @@
 * * *
 
 ### logger.info() :id=loggerinfo
-> Writes a log message at "info" level.
+> <p>Writes a log message at &quot;info&quot; level.</p>
 
 **Kind**: instance abstract method of [<code>Logger</code>](#Logger)  
 **Access**: public  
@@ -85,7 +85,7 @@
 * * *
 
 ### logger.warn() :id=loggerwarn
-> Writes a log message at "warn" level.
+> <p>Writes a log message at &quot;warn&quot; level.</p>
 
 **Kind**: instance abstract method of [<code>Logger</code>](#Logger)  
 **Access**: public  
@@ -98,7 +98,7 @@
 * * *
 
 ### logger.error() :id=loggererror
-> Writes a log message at "error" level.
+> <p>Writes a log message at &quot;error&quot; level.</p>
 
 **Kind**: instance abstract method of [<code>Logger</code>](#Logger)  
 **Access**: public  
@@ -111,7 +111,7 @@
 * * *
 
 ## LoggerFactory :id=loggerfactory
-> Container for static functions which control logging within the SDK.
+> <p>Container for static functions which control logging within the SDK.</p>
 
 **Kind**: global class  
 **Access**: public  
@@ -129,7 +129,7 @@
 * * *
 
 ### LoggerFactory.configureForConsole() :id=loggerfactoryconfigureforconsole
-> Configures the SDK to write log messages to the console.
+> <p>Configures the SDK to write log messages to the console.</p>
 
 **Kind**: static method of [<code>LoggerFactory</code>](#LoggerFactory)  
 **Access**: public  
@@ -137,7 +137,7 @@
 * * *
 
 ### LoggerFactory.configureForSilence() :id=loggerfactoryconfigureforsilence
-> Configures the SDK to mute all log messages.
+> <p>Configures the SDK to mute all log messages.</p>
 
 **Kind**: static method of [<code>LoggerFactory</code>](#LoggerFactory)  
 **Access**: public  
@@ -145,8 +145,8 @@
 * * *
 
 ### LoggerFactory.configure(provider) :id=loggerfactoryconfigure
-> Configures the library to delegate any log messages to a custom
-> implementation of the [LoggerProvider](/content/sdk/lib-logging?id=loggerprovider) class.
+> <p>Configures the library to delegate any log messages to a custom
+> implementation of the [LoggerProvider](/content/sdk/lib-logging?id=loggerprovider) class.</p>
 
 **Kind**: static method of [<code>LoggerFactory</code>](#LoggerFactory)  
 **Access**: public  
@@ -159,7 +159,7 @@
 * * *
 
 ### LoggerFactory.getLogger(category) :id=loggerfactorygetlogger
-> Returns an instance of [Logger](/content/sdk/lib-logging?id=logger) for a specific category.
+> <p>Returns an instance of [Logger](/content/sdk/lib-logging?id=logger) for a specific category.</p>
 
 **Kind**: static method of [<code>LoggerFactory</code>](#LoggerFactory)  
 **Returns**: [<code>Logger</code>](#Logger)  
@@ -173,9 +173,9 @@
 * * *
 
 ## LoggerProvider :id=loggerprovider
-> A contract for generating [Logger](/content/sdk/lib-logging?id=logger) instances. For custom logging
+> <p>A contract for generating [Logger](/content/sdk/lib-logging?id=logger) instances. For custom logging
 > the SDK consumer should implement this class and pass it to the
-> [configure](#loggerfactoryconfigure) function.
+> [configure](#loggerfactoryconfigure) function.</p>
 
 **Kind**: global abstract class  
 **Access**: public  
@@ -185,7 +185,7 @@
 * * *
 
 ### loggerProvider.getLogger(category) :id=loggerprovidergetlogger
-> Returns an instance of [Logger](/content/sdk/lib-logging?id=logger).
+> <p>Returns an instance of [Logger](/content/sdk/lib-logging?id=logger).</p>
 
 **Kind**: instance method of [<code>LoggerProvider</code>](#LoggerProvider)  
 **Returns**: [<code>Logger</code>](#Logger)  
@@ -199,16 +199,16 @@
 * * *
 
 ## Schema :id=schema
-> A meta namespace containing structural contracts of anonymous objects.
+> <p>A meta namespace containing structural contracts of anonymous objects.</p>
 
 **Kind**: global namespace  
 
 * * *
 
 ### Schema.Loggable :id=schemaloggable
-> Something which can be logged (e.g. ```String```, ```Number```, or ```Object```). Ultimately,
-> the [Logger](/content/sdk/lib-logging?id=logger) implementation will determine the method (e.g. using ```JSON.stringify``` or
-> ```toString```).
+> <p>Something which can be logged (e.g. <code>String</code>, <code>Number</code>, or <code>Object</code>). Ultimately,
+> the [Logger](/content/sdk/lib-logging?id=logger) implementation will determine the method (e.g. using <code>JSON.stringify</code> or
+> <code>toString</code>).</p>
 
 **Kind**: static typedef of [<code>Schema</code>](#Schema)  
 **Access**: public  

@@ -1,7 +1,7 @@
 ## AlertManager :id=alertmanager
-> The **central component of the SDK**. It is responsible for connecting to Barchart's
+> <p>The <strong>central component of the SDK</strong>. It is responsible for connecting to Barchart's
 > Alert Service, querying existing alerts, creating new alerts, and monitoring the status
-> of existing alerts.
+> of existing alerts.</p>
 
 **Kind**: global class  
 **Extends**: <code>Disposable</code>  
@@ -36,9 +36,9 @@
 * * *
 
 ### alertManager.connect(jwtProvider) :id=alertmanagerconnect
-> Attempts to establish a connection to the backend. This function should be invoked
+> <p>Attempts to establish a connection to the backend. This function should be invoked
 > immediately following instantiation. Once the resulting promise resolves, a
-> connection has been established and other instance methods can be used.
+> connection has been established and other instance methods can be used.</p>
 
 **Kind**: instance method of [<code>AlertManager</code>](#AlertManager)  
 **Returns**: [<code>Promise.&lt;AlertManager&gt;</code>](#AlertManager)  
@@ -46,13 +46,13 @@
 
 | Param | Type | Description |
 | --- | --- | --- |
-| jwtProvider | [<code>JwtProvider</code>](/content/sdk/lib-security?id=jwtprovider) | Your implementation of [JwtProvider](/content/sdk/lib-security?id=jwtprovider). |
+| jwtProvider | [<code>JwtProvider</code>](/content/sdk/lib-security?id=jwtprovider) | <p>Your implementation of [JwtProvider](/content/sdk/lib-security?id=jwtprovider).</p> |
 
 
 * * *
 
 ### alertManager.createAlert(alert) :id=alertmanagercreatealert
-> Creates a new alert.
+> <p>Creates a new alert.</p>
 
 **Kind**: instance method of [<code>AlertManager</code>](#AlertManager)  
 **Returns**: [<code>Promise.&lt;Schema.Alert&gt;</code>](/content/sdk/lib-data?id=schemaalert)  
@@ -66,9 +66,9 @@
 * * *
 
 ### alertManager.editAlert(alert) :id=alertmanagereditalert
-> Performs a synthetic update operation on an existing alert. The
+> <p>Performs a synthetic update operation on an existing alert. The
 > existing alert is deleted. Then, a new alert is created in its
-> place. The new alert will have the same identifier.
+> place. The new alert will have the same identifier.</p>
 
 **Kind**: instance method of [<code>AlertManager</code>](#AlertManager)  
 **Returns**: [<code>Promise.&lt;Schema.Alert&gt;</code>](/content/sdk/lib-data?id=schemaalert)  
@@ -82,7 +82,7 @@
 * * *
 
 ### alertManager.deleteAlert(alert) :id=alertmanagerdeletealert
-> Deletes an existing alert.
+> <p>Deletes an existing alert.</p>
 
 **Kind**: instance method of [<code>AlertManager</code>](#AlertManager)  
 **Returns**: [<code>Promise.&lt;Schema.Alert&gt;</code>](/content/sdk/lib-data?id=schemaalert)  
@@ -96,7 +96,7 @@
 * * *
 
 ### alertManager.retrieveAlert(alert) :id=alertmanagerretrievealert
-> Gets a single alert by its identifier.
+> <p>Gets a single alert by its identifier.</p>
 
 **Kind**: instance method of [<code>AlertManager</code>](#AlertManager)  
 **Returns**: [<code>Promise.&lt;Schema.Alert&gt;</code>](/content/sdk/lib-data?id=schemaalert)  
@@ -110,7 +110,7 @@
 * * *
 
 ### alertManager.retrieveAlerts(query) :id=alertmanagerretrievealerts
-> Gets the set of alerts which match a query.
+> <p>Gets the set of alerts which match a query.</p>
 
 **Kind**: instance method of [<code>AlertManager</code>](#AlertManager)  
 **Returns**: [<code>Promise.&lt;Array.&lt;Schema.Alert&gt;&gt;</code>](/content/sdk/lib-data?id=schemaalert)  
@@ -124,7 +124,7 @@
 * * *
 
 ### alertManager.enableAlert(alert) :id=alertmanagerenablealert
-> Sends a request to transition an alert to the ```Active``` state.
+> <p>Sends a request to transition an alert to the <code>Active</code> state.</p>
 
 **Kind**: instance method of [<code>AlertManager</code>](#AlertManager)  
 **Returns**: [<code>Promise.&lt;Schema.Alert&gt;</code>](/content/sdk/lib-data?id=schemaalert)  
@@ -138,7 +138,7 @@
 * * *
 
 ### alertManager.enableAlerts(query) :id=alertmanagerenablealerts
-> Sends a request to transition all alerts owned by a user to the ```Active``` state.
+> <p>Sends a request to transition all alerts owned by a user to the <code>Active</code> state.</p>
 
 **Kind**: instance method of [<code>AlertManager</code>](#AlertManager)  
 **Returns**: <code>Promise.&lt;Boolean&gt;</code>  
@@ -152,7 +152,7 @@
 * * *
 
 ### alertManager.disableAlert(alert) :id=alertmanagerdisablealert
-> Sends a request to transition an alert to the ```Inactive``` state.
+> <p>Sends a request to transition an alert to the <code>Inactive</code> state.</p>
 
 **Kind**: instance method of [<code>AlertManager</code>](#AlertManager)  
 **Returns**: [<code>Promise.&lt;Schema.Alert&gt;</code>](/content/sdk/lib-data?id=schemaalert)  
@@ -166,7 +166,7 @@
 * * *
 
 ### alertManager.disableAlerts(query) :id=alertmanagerdisablealerts
-> Sends a request to transition all alerts owned by a user to the ```Inactive``` state.
+> <p>Sends a request to transition all alerts owned by a user to the <code>Inactive</code> state.</p>
 
 **Kind**: instance method of [<code>AlertManager</code>](#AlertManager)  
 **Returns**: <code>Promise.&lt;Boolean&gt;</code>  
@@ -180,12 +180,12 @@
 * * *
 
 ### alertManager.checkSymbol(symbol) :id=alertmanagerchecksymbol
-> When constructing alert conditions, we often refer to a stock by
+> <p>When constructing alert conditions, we often refer to a stock by
 > its symbol. This function will validate the symbol before you
-> attempt to assign it to the ```identifier``` property of a
-> ```Target``` object. In some cases, an alternate (alias) symbol
+> attempt to assign it to the <code>identifier</code> property of a
+> <code>Target</code> object. In some cases, an alternate (alias) symbol
 > will be returned. If the symbol returned is different, you must
-> use the alternate symbol.
+> use the alternate symbol.</p>
 
 **Kind**: instance method of [<code>AlertManager</code>](#AlertManager)  
 **Returns**: <code>Promise.&lt;String&gt;</code>  
@@ -193,14 +193,14 @@
 
 | Param | Type | Description |
 | --- | --- | --- |
-| symbol | <code>String</code> | The symbol to check |
+| symbol | <code>String</code> | <p>The symbol to check</p> |
 
 
 * * *
 
 ### alertManager.getTargets() :id=alertmanagergettargets
-> Retrieves the entire list of targets which are available to the
-> system.
+> <p>Retrieves the entire list of targets which are available to the
+> system.</p>
 
 **Kind**: instance method of [<code>AlertManager</code>](#AlertManager)  
 **Returns**: [<code>Promise.&lt;Array.&lt;Schema.Target&gt;&gt;</code>](/content/sdk/lib-data?id=schematarget)  
@@ -209,8 +209,8 @@
 * * *
 
 ### alertManager.getProperties() :id=alertmanagergetproperties
-> Retrieves the entire list of properties which are available to the
-> system.
+> <p>Retrieves the entire list of properties which are available to the
+> system.</p>
 
 **Kind**: instance method of [<code>AlertManager</code>](#AlertManager)  
 **Returns**: [<code>Promise.&lt;Array.&lt;Schema.Property&gt;&gt;</code>](/content/sdk/lib-data?id=schemaproperty)  
@@ -219,8 +219,8 @@
 * * *
 
 ### alertManager.getOperators() :id=alertmanagergetoperators
-> Retrieves the entire list of operators which are available to the
-> system.
+> <p>Retrieves the entire list of operators which are available to the
+> system.</p>
 
 **Kind**: instance method of [<code>AlertManager</code>](#AlertManager)  
 **Returns**: [<code>Promise.&lt;Array.&lt;Schema.Operator&gt;&gt;</code>](/content/sdk/lib-data?id=schemaoperator)  
@@ -229,7 +229,7 @@
 * * *
 
 ### alertManager.getServerVersion() :id=alertmanagergetserverversion
-> Returns the version number of the remote service you are connected to.
+> <p>Returns the version number of the remote service you are connected to.</p>
 
 **Kind**: instance method of [<code>AlertManager</code>](#AlertManager)  
 **Returns**: <code>Promise.&lt;String&gt;</code>  
@@ -238,8 +238,8 @@
 * * *
 
 ### alertManager.getUser() :id=alertmanagergetuser
-> Returns the current user (according to the JWT token which is embedded
-> in the request).
+> <p>Returns the current user (according to the JWT token which is embedded
+> in the request).</p>
 
 **Kind**: instance method of [<code>AlertManager</code>](#AlertManager)  
 **Returns**: [<code>Promise.&lt;Schema.UserIdentifier&gt;</code>](/content/sdk/lib-data?id=schemauseridentifier)  
@@ -248,7 +248,7 @@
 * * *
 
 ### AlertManager.version :id=alertmanagerversion
-> Returns the version of the SDK.
+> <p>Returns the version of the SDK.</p>
 
 **Kind**: static property of [<code>AlertManager</code>](#AlertManager)  
 **Returns**: <code>String</code>  
@@ -261,10 +261,10 @@
 
 | Param | Type | Description |
 | --- | --- | --- |
-| host | <code>String</code> | Barchart Alert Service's hostname. |
-| port | <code>Number</code> | Barchart Alert Service's TCP port number. |
-| secure | <code>Boolean</code> | If true, the transport layer will use encryption (e.g. HTTPS, WSS, etc). |
-| adapterClazz | <code>function</code> | The transport strategy. Specifically, the constructor function for a class extending [AdapterBase](/content/sdk/lib-adapters?id=adapterbase). |
+| host | <code>String</code> | <p>Barchart Alert Service's hostname.</p> |
+| port | <code>Number</code> | <p>Barchart Alert Service's TCP port number.</p> |
+| secure | <code>Boolean</code> | <p>If true, the transport layer will use encryption (e.g. HTTPS, WSS, etc).</p> |
+| adapterClazz | <code>function</code> | <p>The transport strategy. Specifically, the constructor function for a class extending [AdapterBase](/content/sdk/lib-adapters?id=adapterbase).</p> |
 
 
 * * *

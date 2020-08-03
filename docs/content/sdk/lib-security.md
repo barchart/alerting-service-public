@@ -10,7 +10,7 @@
 * * *
 
 ## JwtPayload :id=jwtpayload
-> An object which contains the required assertions for a token.
+> <p>An object which contains the required assertions for a token.</p>
 
 **Kind**: global class  
 **Access**: public  
@@ -29,8 +29,8 @@
 * * *
 
 ### jwtPayload.userId :id=jwtpayloaduserid
-> The unique identifier of the authenticated user. This value must match
-> the [Schema.Alert#user_id](#schemaalertuser_id) of any alert you attempt to create, edit, or delete.
+> <p>The unique identifier of the authenticated user. This value must match
+> the [Schema.Alert#user_id](#schemaalertuser_id) of any alert you attempt to create, edit, or delete.</p>
 
 **Kind**: instance property of [<code>JwtPayload</code>](#JwtPayload)  
 **Returns**: <code>String</code>  
@@ -39,8 +39,8 @@
 * * *
 
 ### jwtPayload.alertSystem :id=jwtpayloadalertsystem
-> The authenticated user's domain. In the demo environment, use your company name. This value must
-> match the [Schema.Alert#alert_system](#schemaalertalert_system) of any alert you attempt to create, edit, or delete.
+> <p>The authenticated user's domain. In the demo environment, use your company name. This value must
+> match the [Schema.Alert#alert_system](#schemaalertalert_system) of any alert you attempt to create, edit, or delete.</p>
 
 **Kind**: instance property of [<code>JwtPayload</code>](#JwtPayload)  
 **Returns**: <code>String</code>  
@@ -49,7 +49,7 @@
 * * *
 
 ### jwtPayload.forSigning() :id=jwtpayloadforsigning
-> Returns the simple object representation, used for signing a token.
+> <p>Returns the simple object representation, used for signing a token.</p>
 
 **Kind**: instance method of [<code>JwtPayload</code>](#JwtPayload)  
 **Returns**: <code>String</code>  
@@ -62,16 +62,16 @@
 
 | Param | Type | Description |
 | --- | --- | --- |
-| userId | <code>String</code> | The unique identifier of the authenticated user. |
-| alertSystem | <code>String</code> | The authenticated user's domain. In the demo environment, use your company name. In the production environment, Barchart will assign a value to use. |
+| userId | <code>String</code> | <p>The unique identifier of the authenticated user.</p> |
+| alertSystem | <code>String</code> | <p>The authenticated user's domain. In the demo environment, use your company name. In the production environment, Barchart will assign a value to use.</p> |
 
 
 * * *
 
 ## JwtProvider :id=jwtprovider
-> Generates and caches a signed token (using a delegate). The cached token
+> <p>Generates and caches a signed token (using a delegate). The cached token
 > is refreshed periodically. An instance of this class is required by
-> the [AdapterBase](/content/sdk/lib-adapters?id=adapterbase) implementations.
+> the [AdapterBase](/content/sdk/lib-adapters?id=adapterbase) implementations.</p>
 
 **Kind**: global class  
 **Access**: public  
@@ -88,7 +88,7 @@
 * * *
 
 ### jwtProvider.getToken() :id=jwtprovidergettoken
-> Reads the current token, refreshing if necessary.
+> <p>Reads the current token, refreshing if necessary.</p>
 
 **Kind**: instance method of [<code>JwtProvider</code>](#JwtProvider)  
 **Returns**: <code>Promise.&lt;String&gt;</code>  
@@ -101,21 +101,21 @@
 
 | Param | Type | Description |
 | --- | --- | --- |
-| generator | [<code>JwtTokenGenerator</code>](#CallbacksJwtTokenGenerator) | An anonymous function which returns a signed JWT token. |
-| interval | <code>Number</code> | The number of milliseconds which must pass before a new JWT token is generated. |
+| generator | [<code>JwtTokenGenerator</code>](#CallbacksJwtTokenGenerator) | <p>An anonymous function which returns a signed JWT token.</p> |
+| interval | <code>Number</code> | <p>The number of milliseconds which must pass before a new JWT token is generated.</p> |
 
 
 * * *
 
 ## Callbacks :id=callbacks
-> A meta namespace containing signatures of anonymous functions.
+> <p>A meta namespace containing signatures of anonymous functions.</p>
 
 **Kind**: global namespace  
 
 * * *
 
 ### Callbacks.JwtTokenGenerator :id=callbacksjwttokengenerator
-> A function which returns a signed token.
+> <p>A function which returns a signed token.</p>
 
 **Kind**: static typedef of [<code>Callbacks</code>](#Callbacks)  
 **Returns**: <code>String</code> \| <code>Promise.&lt;String&gt;</code>  

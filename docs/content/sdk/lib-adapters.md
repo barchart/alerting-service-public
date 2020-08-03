@@ -14,12 +14,12 @@
 * * *
 
 ## AdapterBase :id=adapterbase
-> The abstract definition for a transport strategy between the [AlertManager](/content/sdk/lib?id=alertmanager) and
+> <p>The abstract definition for a transport strategy between the [AlertManager](/content/sdk/lib?id=alertmanager) and
 > the backend. As a consumer of the SDK, it is unlikely you will need to implement this
 > class. However, you will need to select an existing implementation and pass it to your
 > [AlertManager](/content/sdk/lib?id=alertmanager) instance. Two existing implementations are included in the SDK.
-> One uses pure HTTP requests. The other uses the [Socket.IO](https://socket.io/docs/)
-> library.
+> One uses pure HTTP requests. The other uses the <a href="https://socket.io/docs/">Socket.IO</a>
+> library.</p>
 
 **Kind**: global abstract class  
 **Extends**: <code>Disposable</code>  
@@ -45,7 +45,7 @@
 * * *
 
 ### adapterBase.host :id=adapterbasehost
-> The hostname of the Barchart Alert Service.
+> <p>The hostname of the Barchart Alert Service.</p>
 
 **Kind**: instance property of [<code>AdapterBase</code>](#AdapterBase)  
 **Returns**: <code>String</code>  
@@ -54,7 +54,7 @@
 * * *
 
 ### adapterBase.port :id=adapterbaseport
-> The TCP port number of the Barchart Alert Service.
+> <p>The TCP port number of the Barchart Alert Service.</p>
 
 **Kind**: instance property of [<code>AdapterBase</code>](#AdapterBase)  
 **Returns**: <code>String</code>  
@@ -63,7 +63,7 @@
 * * *
 
 ### adapterBase.secure :id=adapterbasesecure
-> Indicates if encryption will be used (e.g. WSS, HTTPS).
+> <p>Indicates if encryption will be used (e.g. WSS, HTTPS).</p>
 
 **Kind**: instance property of [<code>AdapterBase</code>](#AdapterBase)  
 **Returns**: <code>String</code>  
@@ -72,7 +72,7 @@
 * * *
 
 ### adapterBase.connect(jwtProvider) :id=adapterbaseconnect
-> Connects to the backend.
+> <p>Connects to the backend.</p>
 
 **Kind**: instance method of [<code>AdapterBase</code>](#AdapterBase)  
 **Returns**: [<code>Promise.&lt;AdapterBase&gt;</code>](#AdapterBase)  
@@ -102,9 +102,9 @@
 * * *
 
 ## AdapterForHttp :id=adapterforhttp
-> A backend communication strategy implemented with purely with HTTP requests
-> (using the [Axios](https://github.com/axios/axios) library). Short polling
-> is used for data feeds.
+> <p>A backend communication strategy implemented with purely with HTTP requests
+> (using the <a href="https://github.com/axios/axios">Axios</a> library). Short polling
+> is used for data feeds.</p>
 
 **Kind**: global class  
 **Extends**: [<code>AdapterBase</code>](#AdapterBase)  
@@ -123,7 +123,7 @@
 * * *
 
 ### adapterForHttp.host :id=adapterforhttphost
-> The hostname of the Barchart Alert Service.
+> <p>The hostname of the Barchart Alert Service.</p>
 
 **Kind**: instance property of [<code>AdapterForHttp</code>](#AdapterForHttp)  
 **Overrides**: [<code>host</code>](#AdapterBasehost)  
@@ -133,7 +133,7 @@
 * * *
 
 ### adapterForHttp.port :id=adapterforhttpport
-> The TCP port number of the Barchart Alert Service.
+> <p>The TCP port number of the Barchart Alert Service.</p>
 
 **Kind**: instance property of [<code>AdapterForHttp</code>](#AdapterForHttp)  
 **Overrides**: [<code>port</code>](#AdapterBaseport)  
@@ -143,7 +143,7 @@
 * * *
 
 ### adapterForHttp.secure :id=adapterforhttpsecure
-> Indicates if encryption will be used (e.g. WSS, HTTPS).
+> <p>Indicates if encryption will be used (e.g. WSS, HTTPS).</p>
 
 **Kind**: instance property of [<code>AdapterForHttp</code>](#AdapterForHttp)  
 **Overrides**: [<code>secure</code>](#AdapterBasesecure)  
@@ -153,7 +153,7 @@
 * * *
 
 ### adapterForHttp.connect(jwtProvider) :id=adapterforhttpconnect
-> Connects to the backend.
+> <p>Connects to the backend.</p>
 
 **Kind**: instance method of [<code>AdapterForHttp</code>](#AdapterForHttp)  
 **Overrides**: [<code>connect</code>](#AdapterBaseconnect)  
@@ -168,8 +168,8 @@
 * * *
 
 ## AdapterForSocketIo :id=adapterforsocketio
-> A backend communication strategy implemented with the [Socket.IO](https://socket.io/docs/) library.
-> The Socket.IO will use a WebSocket in modern browsers.
+> <p>A backend communication strategy implemented with the <a href="https://socket.io/docs/">Socket.IO</a> library.
+> The Socket.IO will use a WebSocket in modern browsers.</p>
 
 **Kind**: global class  
 **Extends**: [<code>AdapterBase</code>](#AdapterBase)  
@@ -188,7 +188,7 @@
 * * *
 
 ### adapterForSocketIo.host :id=adapterforsocketiohost
-> The hostname of the Barchart Alert Service.
+> <p>The hostname of the Barchart Alert Service.</p>
 
 **Kind**: instance property of [<code>AdapterForSocketIo</code>](#AdapterForSocketIo)  
 **Overrides**: [<code>host</code>](#AdapterBasehost)  
@@ -198,7 +198,7 @@
 * * *
 
 ### adapterForSocketIo.port :id=adapterforsocketioport
-> The TCP port number of the Barchart Alert Service.
+> <p>The TCP port number of the Barchart Alert Service.</p>
 
 **Kind**: instance property of [<code>AdapterForSocketIo</code>](#AdapterForSocketIo)  
 **Overrides**: [<code>port</code>](#AdapterBaseport)  
@@ -208,7 +208,7 @@
 * * *
 
 ### adapterForSocketIo.secure :id=adapterforsocketiosecure
-> Indicates if encryption will be used (e.g. WSS, HTTPS).
+> <p>Indicates if encryption will be used (e.g. WSS, HTTPS).</p>
 
 **Kind**: instance property of [<code>AdapterForSocketIo</code>](#AdapterForSocketIo)  
 **Overrides**: [<code>secure</code>](#AdapterBasesecure)  
@@ -218,7 +218,7 @@
 * * *
 
 ### adapterForSocketIo.connect(jwtProvider) :id=adapterforsocketioconnect
-> Connects to the backend.
+> <p>Connects to the backend.</p>
 
 **Kind**: instance method of [<code>AdapterForSocketIo</code>](#AdapterForSocketIo)  
 **Overrides**: [<code>connect</code>](#AdapterBaseconnect)  
@@ -233,7 +233,7 @@
 * * *
 
 ## AdapterForWebSockets :id=adapterforwebsockets
-> A backend communication adapter implemented with WebSockets. Coming in version 4.1.0.
+> <p>A backend communication adapter implemented with WebSockets. Coming in version 4.1.0.</p>
 
 **Kind**: global class  
 **Extends**: [<code>AdapterBase</code>](#AdapterBase)  
@@ -252,7 +252,7 @@
 * * *
 
 ### adapterForWebSockets.host :id=adapterforwebsocketshost
-> The hostname of the Barchart Alert Service.
+> <p>The hostname of the Barchart Alert Service.</p>
 
 **Kind**: instance property of [<code>AdapterForWebSockets</code>](#AdapterForWebSockets)  
 **Overrides**: [<code>host</code>](#AdapterBasehost)  
@@ -262,7 +262,7 @@
 * * *
 
 ### adapterForWebSockets.port :id=adapterforwebsocketsport
-> The TCP port number of the Barchart Alert Service.
+> <p>The TCP port number of the Barchart Alert Service.</p>
 
 **Kind**: instance property of [<code>AdapterForWebSockets</code>](#AdapterForWebSockets)  
 **Overrides**: [<code>port</code>](#AdapterBaseport)  
@@ -272,7 +272,7 @@
 * * *
 
 ### adapterForWebSockets.secure :id=adapterforwebsocketssecure
-> Indicates if encryption will be used (e.g. WSS, HTTPS).
+> <p>Indicates if encryption will be used (e.g. WSS, HTTPS).</p>
 
 **Kind**: instance property of [<code>AdapterForWebSockets</code>](#AdapterForWebSockets)  
 **Overrides**: [<code>secure</code>](#AdapterBasesecure)  
@@ -282,7 +282,7 @@
 * * *
 
 ### adapterForWebSockets.connect(jwtProvider) :id=adapterforwebsocketsconnect
-> Connects to the backend.
+> <p>Connects to the backend.</p>
 
 **Kind**: instance method of [<code>AdapterForWebSockets</code>](#AdapterForWebSockets)  
 **Overrides**: [<code>connect</code>](#AdapterBaseconnect)  
@@ -297,7 +297,7 @@
 * * *
 
 ## Callbacks :id=callbacks
-> A meta namespace containing signatures of anonymous functions.
+> <p>A meta namespace containing signatures of anonymous functions.</p>
 
 **Kind**: global namespace  
 
@@ -312,8 +312,8 @@
 * * *
 
 ### Callbacks.AlertCreatedCallback :id=callbacksalertcreatedcallback
-> The function signature for a callback which notifies the [AlertManager](/content/sdk/lib?id=alertmanager)
-> after a new alert has been created.
+> <p>The function signature for a callback which notifies the [AlertManager](/content/sdk/lib?id=alertmanager)
+> after a new alert has been created.</p>
 
 **Kind**: static typedef of [<code>Callbacks</code>](#Callbacks)  
 **Returns**: [<code>Schema.Alert</code>](/content/sdk/lib-data?id=schemaalert)  
@@ -322,8 +322,8 @@
 * * *
 
 ### Callbacks.AlertMutatedCallback :id=callbacksalertmutatedcallback
-> The function signature for a callback which notifies the [AlertManager](/content/sdk/lib?id=alertmanager)
-> after an alert mutates (e.g. the ```alert_state``` property changes).
+> <p>The function signature for a callback which notifies the [AlertManager](/content/sdk/lib?id=alertmanager)
+> after an alert mutates (e.g. the <code>alert_state</code> property changes).</p>
 
 **Kind**: static typedef of [<code>Callbacks</code>](#Callbacks)  
 **Returns**: [<code>Schema.Alert</code>](/content/sdk/lib-data?id=schemaalert)  
@@ -332,8 +332,8 @@
 * * *
 
 ### Callbacks.AlertDeletedCallback :id=callbacksalertdeletedcallback
-> The function signature for a callback which notifies the [AlertManager](/content/sdk/lib?id=alertmanager)
-> after an alert has been deleted.
+> <p>The function signature for a callback which notifies the [AlertManager](/content/sdk/lib?id=alertmanager)
+> after an alert has been deleted.</p>
 
 **Kind**: static typedef of [<code>Callbacks</code>](#Callbacks)  
 **Returns**: [<code>Schema.Alert</code>](/content/sdk/lib-data?id=schemaalert)  
@@ -342,8 +342,8 @@
 * * *
 
 ### Callbacks.AlertTriggeredCallback :id=callbacksalerttriggeredcallback
-> The function signature for a callback which notifies the [AlertManager](/content/sdk/lib?id=alertmanager)
-> after an alert has been triggered.
+> <p>The function signature for a callback which notifies the [AlertManager](/content/sdk/lib?id=alertmanager)
+> after an alert has been triggered.</p>
 
 **Kind**: static typedef of [<code>Callbacks</code>](#Callbacks)  
 **Returns**: [<code>Schema.Alert</code>](/content/sdk/lib-data?id=schemaalert)  
