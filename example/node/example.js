@@ -19,30 +19,30 @@ const startup = (() => {
 
 	LoggerFactory.configure(new CustomLoggingProvider());
 
-	const __logger = LoggerFactory.getLogger('@barchart/example');
+	const logger = LoggerFactory.getLogger('@barchart/example');
 
-	__logger.info(`Example: Node.js example script started, SDK version [ ${AlertManager.version} ]`);
+	logger.info(`Example: Node.js example script started, SDK version [ ${AlertManager.version} ]`);
 
 	let alertManager = null;
 
 	process.on('SIGINT', () => {
-		__logger.info('Example: Processing SIGINT');
+		logger.info('Example: Processing SIGINT');
 
 		if (alertManager !== null) {
 			alertManager.dispose();
 		}
 
-		__logger.info('Example: Node.js example script ending');
+		logger.info('Example: Node.js example script ending');
 
 		process.exit();
 	});
 
 	process.on('unhandledRejection', (error) => {
-		__logger.error('Unhandled Promise Rejection', error);
+		logger.error('Unhandled Promise Rejection', error);
 	});
 
 	process.on('uncaughtException', (error) => {
-		__logger.error('Unhandled Error', error);
+		logger.error('Unhandled Error', error);
 	});
 
 	const user_id = process.argv[2];
@@ -65,22 +65,22 @@ const startup = (() => {
 	const port = 443;
 	const secure = true;
 
-	__logger.info(`Example: Created AlertManager for [ ${host}:${port} ] using [ ${adapterDescription} ] mode`);
+	logger.info(`Example: Created AlertManager for [ ${host}:${port} ] using [ ${adapterDescription} ] mode`);
 
 	alertManager = new AlertManager(host, port, secure, adapterClazz);
 
-	__logger.info(`Example: Configuring JWT generator to impersonate [ ${user_id}@${alert_system} ]`);
+	logger.info(`Example: Configuring JWT generator to impersonate [ ${user_id}@${alert_system} ]`);
 
 	const jwtGenerator = getJwtGenerator(user_id, alert_system);
 	const jwtProvider = new JwtProvider(jwtGenerator, 60000, 'demo');
 
-	__logger.info(`Example: Connecting to Barchart\'s Alert Service`);
+	logger.info(`Example: Connecting to Barchart\'s Alert Service`);
 
 	alertManager.connect(jwtProvider)
 		.then(() => {
-			__logger.info(`Example: Connected to Barchart\'s Alert Service`);
+			logger.info(`Example: Connected to Barchart\'s Alert Service`);
 
-			__logger.info(`Example: Retrieving a list of alerts for [ ${user_id}@${alert_system} ]`);
+			logger.info(`Example: Retrieving a list of alerts for [ ${user_id}@${alert_system} ]`);
 
 			const payload = { };
 			
@@ -89,14 +89,14 @@ const startup = (() => {
 
 			return alertManager.retrieveAlerts(payload)
 				.then((alerts) => {
-					__logger.info(`Example: Retrieved alerts [ ${alerts.length} ] for [ ${user_id}@${alert_system} ]`);
+					logger.info(`Example: Retrieved alerts [ ${alerts.length} ] for [ ${user_id}@${alert_system} ]`);
 				}).catch((e) => {
-					__logger.warn(`Example: Failed to retrieve alerts for [ ${user_id}@${alert_system} ]`);
+					logger.warn(`Example: Failed to retrieve alerts for [ ${user_id}@${alert_system} ]`);
 				});
 		}).catch((e) => {
-			__logger.warn(`Example: Failed to connect to Barchart\'s Alert Service`);
+			logger.warn(`Example: Failed to connect to Barchart\'s Alert Service`);
 		}).then(() => {
-			__logger.info(`Example: Disposing AlertManager`);
+			logger.info(`Example: Disposing AlertManager`);
 
 			alertManager.dispose();
 		});
