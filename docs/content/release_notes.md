@@ -1,5 +1,11 @@
 # Release Notes
 
+## 4.0.6
+**No functional changes**
+
+* The ```package-lock.json``` file was removed and an ```.nmprc``` file was added. Depenency locking should be managed by the SDK consumer.
+* The documenation was updated (specifically, the Security section).
+
 ## 4.0.1
 **Initial Public Release**
 
