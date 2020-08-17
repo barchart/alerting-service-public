@@ -16,11 +16,6 @@ Complete documentation for this SDK can be accessed [here](https://barchart.gith
 
 ### Example Applications
 
-Two examples exist:
-
-* A single-page HTML application.
-* A Node.js scripts.
-
 Refer to the [documentation](https://barchart.github.io/alerts-client-js/#/content/quick_start?id=sample-applications) for more information.
 
 ### Package Managers
