@@ -71,7 +71,7 @@ Here are the connection details:
 * Algorithm: ```HMAC-SHA256``` (aka ```HS256```)
 * Secret: ```"public-knowledge-1234567890"```
 
-Since the demo environment is intended for testing and evaluation purposes only, the _"secret"_ is shared intentionally. This means data saved in the demo environment can be viewed and manipulated by anyone. Use caution with any sensitive data.
+Since the _demo_ environment is intended for testing and evaluation purposes only, the _"secret"_ is intentionally publicized. Data saved in the demo environment can be viewed and manipulated by anyone. Use caution with any sensitive data.
 
 #### Production
 
