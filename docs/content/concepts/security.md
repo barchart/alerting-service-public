@@ -12,7 +12,7 @@ Barchart uses commercially reasonable procedures to ensure your data is safe:
   * The requestor's identity is verified, and
   * The requestor's authority to perform the action (e.g. read an alert) is verified.
 
-The Alert Service uses [JSON Web Tokens](https://en.wikipedia.org/wiki/JSON_Web_Token) to authenticate and authorize your interactions (see below).
+**Authorization uses [JSON Web Tokens](https://en.wikipedia.org/wiki/JSON_Web_Token) technology.**
 
 ## Your Domain
 
