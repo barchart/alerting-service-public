@@ -122,7 +122,7 @@ alertManager.connect(new JwtProvider(getJwtToken))
 	});
 ```
 
-## Using the API
+#### Using the API
 
 Each HTTP request must include a token. After you generate the token, add it to the ```Authorization``` header of your HTTP request. For example, here is the cURL command to get for all alerts owned by ```me@barchart.com```:
 
