@@ -14,7 +14,7 @@ Connect to the **[Barchart](https://www.barchart.com) Alert Service** using this
 
 Complete documentation for this SDK can be accessed [here](https://barchart.github.io/alerts-client-js/).
 
-## Example Applications
+### Example Applications
 
 Two examples exist:
 
@@ -23,7 +23,7 @@ Two examples exist:
 
 Refer to the [documentation](https://barchart.github.io/alerts-client-js/#/content/quick_start?id=sample-applications) for more information.
 
-## Package Managers
+### Package Managers
 
 This library has been published as a _public_ module to NPM as [@barchart/alerts-client-js](https://www.npmjs.com/package/@barchart/alerts-client-js).
 
