@@ -3058,7 +3058,7 @@ module.exports = (() => {
   'use strict';
 
   return {
-    version: '4.0.4'
+    version: '4.0.5'
   };
 })();
 
@@ -3344,6 +3344,24 @@ module.exports = (() => {
     getIsSevere() {
       return this._head.search(item => item.type.severe, false, false) !== null;
     }
+    /**
+     * Searches the tree of {@link FailureReasonItem} instances for a non-standard
+     * http error code.
+     *
+     * @public
+     * @returns {Number|null}
+     */
+
+
+    getErrorCode() {
+      const node = this._head.search(item => item.type.error !== null, true, false);
+
+      if (node !== null) {
+        return node.getValue().type.error;
+      } else {
+        return null;
+      }
+    }
 
     toJSON() {
       return this.format();
@@ -3548,13 +3566,15 @@ module.exports = (() => {
    * @param {String} code - The enumeration code (and description).
    * @param {String} template - The template string for formatting human-readable messages.
    * @param {Boolean=} severe - Indicates if the failure is severe (default is true).
+   * @param {Number=} error - The HTTP error code which should be used as part of an HTTP response.
    */
 
   class FailureType extends Enum {
-    constructor(code, template, severe) {
+    constructor(code, template, severe, error) {
       super(code, code);
       assert.argumentIsRequired(template, 'template', String);
       assert.argumentIsOptional(severe, 'severe', Boolean);
+      assert.argumentIsOptional(error, 'error', Number);
       this._template = template;
 
       if (is.boolean(severe)) {
@@ -3562,6 +3582,8 @@ module.exports = (() => {
       } else {
         this._severe = true;
       }
+
+      this._error = error || null;
     }
     /**
      * The template string for formatting human-readable messages.
@@ -3584,6 +3606,17 @@ module.exports = (() => {
 
     get severe() {
       return this._severe;
+    }
+    /**
+     * The HTTP error code which should be used as part of an HTTP response.
+     *
+     * @public
+     * @return {Number|null}
+     */
+
+
+    get error() {
+      return this._error;
     }
     /**
      * One or more data points is missing.
@@ -9262,6 +9295,31 @@ module.exports = (() => {
       return Promise.resolve().then(() => {
         assert.argumentIsArray(functions, 'functions', Function);
         return functions.reduce((previous, fn) => previous.then(result => fn(result)), Promise.resolve(input));
+      });
+    },
+
+    /**
+     * Given an array of functions, where each returns a promise, runs
+     * the functions in sequential order, until one of the function
+     * returns a successful promise with a non-null result. Any
+     * rejected promise is ignored.
+     *
+     * @public
+     * @param {Function[]} executors
+     * @returns {Promise}
+     */
+    first(executors) {
+      return Promise.resolve().then(() => {
+        assert.argumentIsArray(executors, 'executors', Function);
+        return executors.reduce((previous, executor) => {
+          return previous.then(result => {
+            if (result === null) {
+              return executor().catch(() => Promise.resolve(null));
+            } else {
+              return previous;
+            }
+          });
+        }, Promise.resolve(null));
       });
     },
 
@@ -19489,7 +19547,11 @@ module.exports = (function() {
   // Check Symbol.for because not everywhere where Symbol defined
   // See https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Symbol#Browser_compatibility
   if (typeof Symbol !== 'undefined' && typeof Symbol.for === 'function') {
-    BN.prototype[Symbol.for('nodejs.util.inspect.custom')] = inspect;
+    try {
+      BN.prototype[Symbol.for('nodejs.util.inspect.custom')] = inspect;
+    } catch (e) {
+      BN.prototype.inspect = inspect;
+    }
   } else {
     BN.prototype.inspect = inspect;
   }
@@ -36569,7 +36631,7 @@ utils.intFromLE = intFromLE;
 arguments[4][82][0].apply(exports,arguments)
 },{"buffer":116,"dup":82}],208:[function(require,module,exports){
 module.exports={
-  "_from": "elliptic@^6.5.2",
+  "_from": "elliptic@^6.5.3",
   "_id": "elliptic@6.5.3",
   "_inBundle": false,
   "_integrity": "sha512-IMqzv5wNQf+E6aHeIqATs0tOLeOTwj1QKbRcS3jBbYkl5oLAserA8yJTT7/VyHUYG91PRmPyeQDObKLPpeS4dw==",
@@ -36578,12 +36640,12 @@ module.exports={
   "_requested": {
     "type": "range",
     "registry": true,
-    "raw": "elliptic@^6.5.2",
+    "raw": "elliptic@^6.5.3",
     "name": "elliptic",
     "escapedName": "elliptic",
-    "rawSpec": "^6.5.2",
+    "rawSpec": "^6.5.3",
     "saveSpec": null,
-    "fetchSpec": "^6.5.2"
+    "fetchSpec": "^6.5.3"
   },
   "_requiredBy": [
     "/browserify-sign",
@@ -36591,7 +36653,7 @@ module.exports={
   ],
   "_resolved": "https://registry.npmjs.org/elliptic/-/elliptic-6.5.3.tgz",
   "_shasum": "cb59eb2efdaf73a0bd78ccd7015a62ad6e0f93d6",
-  "_spec": "elliptic@^6.5.2",
+  "_spec": "elliptic@^6.5.3",
   "_where": "/Users/bryan/Documents/git/alerts-client-js/node_modules/browserify-sign",
   "author": {
     "name": "Fedor Indutny",
