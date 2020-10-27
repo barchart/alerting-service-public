@@ -193,7 +193,7 @@ gulp.task('release', gulp.series(
 ));
 
 gulp.task('watch', () => {
-	gulp.watch('./lib/**/*.js', gulp.series('build-example-bundles'));
+	gulp.watch('./lib/**/*.js', gulp.series('build-example-bundle'));
 });
 
 gulp.task('lint', () => {
