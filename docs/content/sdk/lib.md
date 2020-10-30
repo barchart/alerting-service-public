@@ -1,7 +1,7 @@
 ## AlertManager :id=alertmanager
-> <p>The <strong>central component of the SDK</strong>. It is responsible for connecting to Barchart's
+> The <strong>central component of the SDK</strong>. It is responsible for connecting to Barchart's
 > Alert Service, querying existing alerts, creating new alerts, and monitoring the status
-> of existing alerts.</p>
+> of existing alerts.
 
 **Kind**: global class  
 **Extends**: <code>Disposable</code>  
@@ -36,9 +36,9 @@
 * * *
 
 ### alertManager.connect(jwtProvider) :id=alertmanagerconnect
-> <p>Attempts to establish a connection to the backend. This function should be invoked
+> Attempts to establish a connection to the backend. This function should be invoked
 > immediately following instantiation. Once the resulting promise resolves, a
-> connection has been established and other instance methods can be used.</p>
+> connection has been established and other instance methods can be used.
 
 **Kind**: instance method of [<code>AlertManager</code>](#AlertManager)  
 **Returns**: [<code>Promise.&lt;AlertManager&gt;</code>](#AlertManager)  
@@ -52,7 +52,7 @@
 * * *
 
 ### alertManager.createAlert(alert) :id=alertmanagercreatealert
-> <p>Creates a new alert.</p>
+> Creates a new alert.
 
 **Kind**: instance method of [<code>AlertManager</code>](#AlertManager)  
 **Returns**: [<code>Promise.&lt;Schema.Alert&gt;</code>](/content/sdk/lib-data?id=schemaalert)  
@@ -66,9 +66,9 @@
 * * *
 
 ### alertManager.editAlert(alert) :id=alertmanagereditalert
-> <p>Performs a synthetic update operation on an existing alert. The
+> Performs a synthetic update operation on an existing alert. The
 > existing alert is deleted. Then, a new alert is created in its
-> place. The new alert will have the same identifier.</p>
+> place. The new alert will have the same identifier.
 
 **Kind**: instance method of [<code>AlertManager</code>](#AlertManager)  
 **Returns**: [<code>Promise.&lt;Schema.Alert&gt;</code>](/content/sdk/lib-data?id=schemaalert)  
@@ -82,7 +82,7 @@
 * * *
 
 ### alertManager.deleteAlert(alert) :id=alertmanagerdeletealert
-> <p>Deletes an existing alert.</p>
+> Deletes an existing alert.
 
 **Kind**: instance method of [<code>AlertManager</code>](#AlertManager)  
 **Returns**: [<code>Promise.&lt;Schema.Alert&gt;</code>](/content/sdk/lib-data?id=schemaalert)  
@@ -96,7 +96,7 @@
 * * *
 
 ### alertManager.retrieveAlert(alert) :id=alertmanagerretrievealert
-> <p>Gets a single alert by its identifier.</p>
+> Gets a single alert by its identifier.
 
 **Kind**: instance method of [<code>AlertManager</code>](#AlertManager)  
 **Returns**: [<code>Promise.&lt;Schema.Alert&gt;</code>](/content/sdk/lib-data?id=schemaalert)  
@@ -110,7 +110,7 @@
 * * *
 
 ### alertManager.retrieveAlerts(query) :id=alertmanagerretrievealerts
-> <p>Gets the set of alerts which match a query.</p>
+> Gets the set of alerts which match a query.
 
 **Kind**: instance method of [<code>AlertManager</code>](#AlertManager)  
 **Returns**: [<code>Promise.&lt;Array.&lt;Schema.Alert&gt;&gt;</code>](/content/sdk/lib-data?id=schemaalert)  
@@ -124,7 +124,7 @@
 * * *
 
 ### alertManager.enableAlert(alert) :id=alertmanagerenablealert
-> <p>Sends a request to transition an alert to the <code>Active</code> state.</p>
+> Sends a request to transition an alert to the <code>Active</code> state.
 
 **Kind**: instance method of [<code>AlertManager</code>](#AlertManager)  
 **Returns**: [<code>Promise.&lt;Schema.Alert&gt;</code>](/content/sdk/lib-data?id=schemaalert)  
@@ -138,7 +138,7 @@
 * * *
 
 ### alertManager.enableAlerts(query) :id=alertmanagerenablealerts
-> <p>Sends a request to transition all alerts owned by a user to the <code>Active</code> state.</p>
+> Sends a request to transition all alerts owned by a user to the <code>Active</code> state.
 
 **Kind**: instance method of [<code>AlertManager</code>](#AlertManager)  
 **Returns**: <code>Promise.&lt;Boolean&gt;</code>  
@@ -152,7 +152,7 @@
 * * *
 
 ### alertManager.disableAlert(alert) :id=alertmanagerdisablealert
-> <p>Sends a request to transition an alert to the <code>Inactive</code> state.</p>
+> Sends a request to transition an alert to the <code>Inactive</code> state.
 
 **Kind**: instance method of [<code>AlertManager</code>](#AlertManager)  
 **Returns**: [<code>Promise.&lt;Schema.Alert&gt;</code>](/content/sdk/lib-data?id=schemaalert)  
@@ -166,7 +166,7 @@
 * * *
 
 ### alertManager.disableAlerts(query) :id=alertmanagerdisablealerts
-> <p>Sends a request to transition all alerts owned by a user to the <code>Inactive</code> state.</p>
+> Sends a request to transition all alerts owned by a user to the <code>Inactive</code> state.
 
 **Kind**: instance method of [<code>AlertManager</code>](#AlertManager)  
 **Returns**: <code>Promise.&lt;Boolean&gt;</code>  
@@ -180,12 +180,12 @@
 * * *
 
 ### alertManager.checkSymbol(symbol) :id=alertmanagerchecksymbol
-> <p>When constructing alert conditions, we often refer to a stock by
+> When constructing alert conditions, we often refer to a stock by
 > its symbol. This function will validate the symbol before you
 > attempt to assign it to the <code>identifier</code> property of a
 > <code>Target</code> object. In some cases, an alternate (alias) symbol
 > will be returned. If the symbol returned is different, you must
-> use the alternate symbol.</p>
+> use the alternate symbol.
 
 **Kind**: instance method of [<code>AlertManager</code>](#AlertManager)  
 **Returns**: <code>Promise.&lt;String&gt;</code>  
@@ -199,8 +199,8 @@
 * * *
 
 ### alertManager.getTargets() :id=alertmanagergettargets
-> <p>Retrieves the entire list of targets which are available to the
-> system.</p>
+> Retrieves the entire list of targets which are available to the
+> system.
 
 **Kind**: instance method of [<code>AlertManager</code>](#AlertManager)  
 **Returns**: [<code>Promise.&lt;Array.&lt;Schema.Target&gt;&gt;</code>](/content/sdk/lib-data?id=schematarget)  
@@ -209,8 +209,8 @@
 * * *
 
 ### alertManager.getProperties() :id=alertmanagergetproperties
-> <p>Retrieves the entire list of properties which are available to the
-> system.</p>
+> Retrieves the entire list of properties which are available to the
+> system.
 
 **Kind**: instance method of [<code>AlertManager</code>](#AlertManager)  
 **Returns**: [<code>Promise.&lt;Array.&lt;Schema.Property&gt;&gt;</code>](/content/sdk/lib-data?id=schemaproperty)  
@@ -219,8 +219,8 @@
 * * *
 
 ### alertManager.getOperators() :id=alertmanagergetoperators
-> <p>Retrieves the entire list of operators which are available to the
-> system.</p>
+> Retrieves the entire list of operators which are available to the
+> system.
 
 **Kind**: instance method of [<code>AlertManager</code>](#AlertManager)  
 **Returns**: [<code>Promise.&lt;Array.&lt;Schema.Operator&gt;&gt;</code>](/content/sdk/lib-data?id=schemaoperator)  
@@ -229,7 +229,7 @@
 * * *
 
 ### alertManager.getServerVersion() :id=alertmanagergetserverversion
-> <p>Returns the version number of the remote service you are connected to.</p>
+> Returns the version number of the remote service you are connected to.
 
 **Kind**: instance method of [<code>AlertManager</code>](#AlertManager)  
 **Returns**: <code>Promise.&lt;String&gt;</code>  
@@ -238,8 +238,8 @@
 * * *
 
 ### alertManager.getUser() :id=alertmanagergetuser
-> <p>Returns the current user (according to the JWT token which is embedded
-> in the request).</p>
+> Returns the current user (according to the JWT token which is embedded
+> in the request).
 
 **Kind**: instance method of [<code>AlertManager</code>](#AlertManager)  
 **Returns**: [<code>Promise.&lt;Schema.UserIdentifier&gt;</code>](/content/sdk/lib-data?id=schemauseridentifier)  
@@ -248,7 +248,7 @@
 * * *
 
 ### AlertManager.version :id=alertmanagerversion
-> <p>Returns the version of the SDK.</p>
+> Returns the version of the SDK.
 
 **Kind**: static property of [<code>AlertManager</code>](#AlertManager)  
 **Returns**: <code>String</code>  

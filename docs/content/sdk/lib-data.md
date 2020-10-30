@@ -8,7 +8,7 @@
 * * *
 
 ## Schema :id=schema
-> <p>A meta namespace containing structural contracts of anonymous objects.</p>
+> A meta namespace containing structural contracts of anonymous objects.
 
 **Kind**: global namespace  
 
@@ -27,12 +27,12 @@
 * * *
 
 ### Schema.Alert :id=schemaalert
-> <p>An &quot;alert&quot; is the system's <strong>primary</strong> data structure. An &quot;alert&quot; is essentially
+> An &quot;alert&quot; is the system's <strong>primary</strong> data structure. An &quot;alert&quot; is essentially
 > a collection of <code>conditions</code> which the backend monitors.</p>
 > <p>All required properties must be present to create a new alert. Once an alert has been
 > created, the backend will &quot;fill in&quot; any omitted properties. For example, if you create
 > an alert without a <code>publishers</code> property, the backend will add the property and
-> assign an empty array. This applies to all component types.</p>
+> assign an empty array. This applies to all component types.
 
 **Kind**: static typedef of [<code>Schema</code>](#Schema)  
 **Properties**
@@ -59,11 +59,11 @@
 * * *
 
 ### Schema.Condition :id=schemacondition
-> <p>A &quot;condition&quot; is a statement that is evaluated by the backend (as streaming data is processed).</p>
+> A &quot;condition&quot; is a statement that is evaluated by the backend (as streaming data is processed).</p>
 > <p>For example, &quot;Apple stock's last price is higher than $600&quot; is a condition. Using this example,
 > the &quot;property&quot; object denotes &quot;Apple stock's last price&quot; and the &quot;operator&quot; object denotes &quot;higher
 > than $600.&quot;</p>
-> <p>Only required fields are necessary to create a condition (for use with a new alert object).</p>
+> <p>Only required fields are necessary to create a condition (for use with a new alert object).
 
 **Kind**: static typedef of [<code>Schema</code>](#Schema)  
 **Properties**
@@ -79,10 +79,10 @@
 * * *
 
 ### Schema.Property :id=schemaproperty
-> <p>A &quot;property&quot; is an attribute of a &quot;condition&quot; referring to a streaming data source. A property includes
-> a [Target](#target). For exaple, the <strong>last price</strong> of the stock quote is a property. Specifying &quot;Apple&quot; stock,
+> A &quot;property&quot; is an attribute of a &quot;condition&quot; referring to a streaming data source. A property includes
+> a [Target](#target). For example, the <strong>last price</strong> of the stock quote is a property. Specifying &quot;Apple&quot; stock,
 > as opposed to some other company, is the target.</p>
-> <p>A property is a key component of a [Condition](#schemacondition).</p>
+> <p>A property is a key component of a [Condition](#schemacondition).
 
 **Kind**: static typedef of [<code>Schema</code>](#Schema)  
 **Properties**
@@ -102,11 +102,11 @@
 * * *
 
 ### Schema.Target :id=schematarget
-> <p>A &quot;target&quot; refers to an entire group of objects (e.g. stock quotes). When used to
+> A &quot;target&quot; refers to an entire group of objects (e.g. stock quotes). When used to
 > build an alert, a target has an <code>identifier</code> which points to the specific object
 > (within the group).</p>
 > <p>To use an example, a stock quote is a group of objects. The stock quote for Apple
-> refers to a specific item within the group (by using an <code>identifier</code>).</p>
+> refers to a specific item within the group (by using an <code>identifier</code>).
 
 **Kind**: static typedef of [<code>Schema</code>](#Schema)  
 **Properties**
@@ -123,11 +123,11 @@
 * * *
 
 ### Schema.Operator :id=schemaoperator
-> <p>A logical &quot;operator&quot; which can be used in a conditional expression. When
+> A logical &quot;operator&quot; which can be used in a conditional expression. When
 > when as part of a [Condition](#condition), the operator also includes an
 > <code>operand</code> value.</p>
 > <p>For example, take the phrase  &quot;greater than $600.&quot; The &quot;operator&quot;
-> refers to &quot;greater than&quot; and the &quot;operand&quot; refers to &quot;$600.&quot;</p>
+> refers to &quot;greater than&quot; and the &quot;operand&quot; refers to &quot;$600.&quot;
 
 **Kind**: static typedef of [<code>Schema</code>](#Schema)  
 **Properties**
@@ -149,8 +149,8 @@
 * * *
 
 ### Schema.AlertIdentifier :id=schemaalertidentifier
-> <p>A subset of [Alert](#schemaalert) properties. An [Alert](#schemaalert) can be substituted
-> for this type.</p>
+> A subset of [Alert](#schemaalert) properties. An [Alert](#schemaalert) can be substituted
+> for this type.
 
 **Kind**: static typedef of [<code>Schema</code>](#Schema)  
 **Properties**
@@ -165,7 +165,7 @@
 * * *
 
 ### Schema.AlertQuery :id=schemaalertquery
-> <p>Parameters used when running a query for alerts.</p>
+> Parameters used when running a query for alerts.
 
 **Kind**: static typedef of [<code>Schema</code>](#Schema)  
 **Properties**
@@ -180,7 +180,7 @@
 * * *
 
 ### Schema.UserIdentifier :id=schemauseridentifier
-> <p>The compound key for a system user.</p>
+> The compound key for a system user.
 
 **Kind**: static typedef of [<code>Schema</code>](#Schema)  
 **Properties**
@@ -194,7 +194,7 @@
 * * *
 
 ## Enums :id=enums
-> <p>A namespace for enumerations.</p>
+> A namespace for enumerations.
 
 **Kind**: global namespace  
 
@@ -211,7 +211,7 @@
 * * *
 
 ### Enums.AlertState :id=enumsalertstate
-> <p>The mutually-exclusive states an [Alert](#schemaalert) can inhabit.</p>
+> The mutually-exclusive states an [Alert](#schemaalert) can inhabit.
 
 **Kind**: static enum of [<code>Enums</code>](#Enums)  
 **Properties**
@@ -229,7 +229,7 @@
 * * *
 
 ### Enums.AlertBehaviour :id=enumsalertbehaviour
-> <p>The possible ways an [Alert](#schemaalert) can react after its conditions have been met.</p>
+> The possible ways an [Alert](#schemaalert) can react after its conditions have been met.
 
 **Kind**: static enum of [<code>Enums</code>](#Enums)  
 **Properties**
@@ -244,7 +244,7 @@
 * * *
 
 ### Enums.PropertyType :id=enumspropertytype
-> <p>The possible value types for a [Property](#schemaproperty).</p>
+> The possible value types for a [Property](#schemaproperty).
 
 **Kind**: static enum of [<code>Enums</code>](#Enums)  
 **Properties**
@@ -260,8 +260,8 @@
 * * *
 
 ### Enums.OperandType :id=enumsoperandtype
-> <p>Describes the type of an operator's operand. For example, in the phrase &quot;greater
-> than $600,&quot; where the operand is &quot;$600,&quot; the type is a number.</p>
+> Describes the type of an operator's operand. For example, in the phrase &quot;greater
+> than $600,&quot; where the operand is &quot;$600,&quot; the type is a number.
 
 **Kind**: static enum of [<code>Enums</code>](#Enums)  
 **Properties**
@@ -287,7 +287,7 @@
 * * *
 
 ### Enums.TargetType :id=enumstargettype
-> <p>Categories a target's identifier.</p>
+> Categories a target's identifier.
 
 **Kind**: static enum of [<code>Enums</code>](#Enums)  
 **Properties**

@@ -1,16 +1,16 @@
 ## Functions :id=functions
-> <p>A meta namespace of pure functions.</p>
+> A meta namespace of pure functions.
 
 **Kind**: global namespace  
 
 * * *
 
 ### Functions.getJwtGenerator(userId, alertSystem) :id=functionsgetjwtgenerator
-> <p>Returns a [Callbacks.JwtTokenGenerator](/content/sdk/lib-security?id=callbacksjwttokengenerator) function. The resulting function will
+> Returns a [Callbacks.JwtTokenGenerator](/content/sdk/lib-security?id=callbacksjwttokengenerator) function. The resulting function will
 > generate a token allowing you to impersonate any user in the test environment. It will
 > not work in the production environment. Instead, connection to the production environment
 > requires you to sign your tokens with a private certificate (and provide Barchart the
-> matching public certificate).</p>
+> matching public certificate).
 
 **Kind**: static method of [<code>Functions</code>](#Functions)  
 **Returns**: [<code>Callbacks.JwtTokenGenerator</code>](/content/sdk/lib-security?id=callbacksjwttokengenerator)  

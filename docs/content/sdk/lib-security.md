@@ -10,7 +10,7 @@
 * * *
 
 ## JwtPayload :id=jwtpayload
-> <p>An object which contains the required assertions for a token.</p>
+> An object which contains the required assertions for a token.
 
 **Kind**: global class  
 **Access**: public  
@@ -29,8 +29,8 @@
 * * *
 
 ### jwtPayload.userId :id=jwtpayloaduserid
-> <p>The unique identifier of the authenticated user. This value must match
-> the [Schema.Alert#user_id](#schemaalertuser_id) of any alert you attempt to create, edit, or delete.</p>
+> The unique identifier of the authenticated user. This value must match
+> the [Schema.Alert#user_id](#schemaalertuser_id) of any alert you attempt to create, edit, or delete.
 
 **Kind**: instance property of [<code>JwtPayload</code>](#JwtPayload)  
 **Returns**: <code>String</code>  
@@ -39,8 +39,8 @@
 * * *
 
 ### jwtPayload.alertSystem :id=jwtpayloadalertsystem
-> <p>The authenticated user's domain. In the demo environment, use your company name. This value must
-> match the [Schema.Alert#alert_system](#schemaalertalert_system) of any alert you attempt to create, edit, or delete.</p>
+> The authenticated user's domain. In the demo environment, use your company name. This value must
+> match the [Schema.Alert#alert_system](#schemaalertalert_system) of any alert you attempt to create, edit, or delete.
 
 **Kind**: instance property of [<code>JwtPayload</code>](#JwtPayload)  
 **Returns**: <code>String</code>  
@@ -49,7 +49,7 @@
 * * *
 
 ### jwtPayload.forSigning() :id=jwtpayloadforsigning
-> <p>Returns the simple object representation, used for signing a token.</p>
+> Returns the simple object representation, used for signing a token.
 
 **Kind**: instance method of [<code>JwtPayload</code>](#JwtPayload)  
 **Returns**: <code>String</code>  
@@ -69,9 +69,9 @@
 * * *
 
 ## JwtProvider :id=jwtprovider
-> <p>Generates and caches a signed token (using a delegate). The cached token
+> Generates and caches a signed token (using a delegate). The cached token
 > is refreshed periodically. An instance of this class is required by
-> the [AdapterBase](/content/sdk/lib-adapters?id=adapterbase) implementations.</p>
+> the [AdapterBase](/content/sdk/lib-adapters?id=adapterbase) implementations.
 
 **Kind**: global class  
 **Access**: public  
@@ -88,7 +88,7 @@
 * * *
 
 ### jwtProvider.getToken() :id=jwtprovidergettoken
-> <p>Reads the current token, refreshing if necessary.</p>
+> Reads the current token, refreshing if necessary.
 
 **Kind**: instance method of [<code>JwtProvider</code>](#JwtProvider)  
 **Returns**: <code>Promise.&lt;String&gt;</code>  
@@ -108,14 +108,14 @@
 * * *
 
 ## Callbacks :id=callbacks
-> <p>A meta namespace containing signatures of anonymous functions.</p>
+> A meta namespace containing signatures of anonymous functions.
 
 **Kind**: global namespace  
 
 * * *
 
 ### Callbacks.JwtTokenGenerator :id=callbacksjwttokengenerator
-> <p>A function which returns a signed token.</p>
+> A function which returns a signed token.
 
 **Kind**: static typedef of [<code>Callbacks</code>](#Callbacks)  
 **Returns**: <code>String</code> \| <code>Promise.&lt;String&gt;</code>  
