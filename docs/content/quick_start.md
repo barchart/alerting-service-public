@@ -56,8 +56,8 @@ We connect, using the adapter for HTTP transport, as follows:
 
 ```js
 const AlertManager = require('@barchart/alerts-client-js/lib/AlertManager'),
-	AdapterForSocketIo = require('@barchart/lib/adapters/AdapterForSocketIo'),
-	jwtGeneratorFactory = require('@barchart/lib/security/demo/getJwtGenerator');
+	AdapterForSocketIo = require('@barchart/alerts-client-js/lib/adapters/AdapterForSocketIo'),
+	jwtGeneratorFactory = require('@barchart/alerts-client-js/lib/security/demo/getJwtGenerator');
 
 const host = 'alerts-management-demo.barchart.com';
 const port = 443;
