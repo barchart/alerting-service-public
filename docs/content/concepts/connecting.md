@@ -23,7 +23,7 @@ The backend accepts connections using two secure protocols:
 First, create an instance of the [```AlertManager```](/content/sdk/lib?id=alertmanager) class. In general, will only need to create one instance. Pick a transport protocol by passing an "adapter" type as follows:
 
 ```js
-const AdapterForSocketIo = require('@barchart/alert-client-js/lib/adapters/AdapterForSocketIo');
+const AdapterForSocketIo = require('@barchart/alerts-client-js/lib/adapters/AdapterForSocketIo');
 
 const host = 'alerts-management-demo.barchart.com';
 const port = 443;
@@ -35,7 +35,7 @@ const manager = new AlertManager(host, port, secure, AdapterForSocketIo);
 or, alternately:
 
 ```js
-const AdapterForHttp = require('@barchart/alert-client-js/lib/adapters/AdapterForHttp');
+const AdapterForHttp = require('@barchart/alerts-client-js/lib/adapters/AdapterForHttp');
 
 const host = 'alerts-management-demo.barchart.com';
 const port = 443;

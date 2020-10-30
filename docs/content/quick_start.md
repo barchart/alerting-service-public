@@ -55,7 +55,7 @@ The SDK provides an easy-to-use, promise-based mechanism for sending (and receiv
 We connect, using the adapter for HTTP transport, as follows:
 
 ```js
-const AlertManager = require('@barchart/alert-client-js/lib/AlertManager'),
+const AlertManager = require('@barchart/alerts-client-js/lib/AlertManager'),
 	AdapterForSocketIo = require('@barchart/lib/adapters/AdapterForSocketIo'),
 	jwtGeneratorFactory = require('@barchart/lib/security/demo/getJwtGenerator');
 
