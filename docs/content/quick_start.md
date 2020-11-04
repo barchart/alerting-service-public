@@ -57,6 +57,7 @@ We connect, using the adapter for HTTP transport, as follows:
 ```js
 const AlertManager = require('@barchart/alerts-client-js/lib/AlertManager'),
 	AdapterForSocketIo = require('@barchart/alerts-client-js/lib/adapters/AdapterForSocketIo'),
+	JwtProvider = require('@barchart/alerts-client-js/lib/security/JwtProvider'),
 	jwtGeneratorFactory = require('@barchart/alerts-client-js/lib/security/demo/getJwtGenerator');
 
 const host = 'alerts-management-demo.barchart.com';
@@ -65,7 +66,10 @@ const secure = true;
 
 const alertManager = new AlertManager(host, port, secure, AdapterForSocketIo);
 
-alertManager.connect(jwtGeneratorFactory('me', 'barchart.com'))
+const jwtGenerator = jwtGeneratorFactory('me', 'barchart.com');
+const jwtRefreshInterval = 60 * 1000 * 5;
+
+alertManager.connect(new JwtProvider(jwtGenerator, jwtRefreshInterval))
 	.then(() => {
 		// connected ...
 	});
