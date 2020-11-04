@@ -116,7 +116,7 @@ function getJwtToken() {
 Next, instantiate a [```JwtProvider```](/content/sdk/lib-security?id=jwtprovider) and pass the aforementioned function. Finally, call the [```AlertManager.connect```](/content/sdk/lib?id=alertmanagerconnect) function, as follows:
 
 ```js
-alertManager.connect(new JwtProvider(getJwtToken))
+alertManager.connect(new JwtProvider(getJwtToken, 60 * 1000 * 5))
 	.then(() => {
 		// Ready to use ...
 	});
