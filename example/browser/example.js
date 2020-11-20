@@ -187,8 +187,10 @@ module.exports = (() => {
 
   function AlertDisplayModel(alert) {
     var that = this;
+    window.xxx = that;
     that.alert = ko.observable(alert);
     that.processing = ko.observable(false);
+    that.readLoading = ko.observable(false);
     that.lastTriggerDateDisplay = ko.computed(function () {
       var alert = that.alert();
       var returnRef;
@@ -226,6 +228,15 @@ module.exports = (() => {
       alertManager.retrieveAlert(that.alert()).then(function (refreshedAlert) {
         that.alert(refreshedAlert);
       });
+    };
+
+    that.read = function (alertId, read) {
+      that.readLoading(true);
+      alertManager.updateRead({
+        alert_id: alertId,
+        read: !read
+      }).then(() => that.readLoading(false));
+      return true;
     };
   }
 
@@ -306,6 +317,7 @@ module.exports = (() => {
         user_id: currentUserId,
         alert_system: currentSystem,
         automatic_reset: that.automaticReset(),
+        read: false,
         conditions: _.map(that.conditions(), function (condition) {
           var property = condition.property();
           var operator = condition.operator();
@@ -1321,6 +1333,25 @@ module.exports = (() => {
       });
     }
     /**
+     * Performs an update operation on an existing alert to update read property.
+     *
+     * @public
+     * @param {Object} query
+     * @param {String} query.alert_id
+     * @param {Boolean} query.read
+     * @returns {Promise<Schema.Alert>}
+     */
+
+
+    updateRead(query) {
+      return Promise.resolve().then(() => {
+        checkStatus(this, 'update read');
+        validate.alert.forUpdateRead(query);
+      }).then(() => {
+        return this._adapter.updateRead(query);
+      });
+    }
+    /**
      * Deletes an existing alert.
      *
      * @public
@@ -1995,6 +2026,10 @@ module.exports = (() => {
       return null;
     }
 
+    updateRead(query) {
+      return null;
+    }
+
     updateAlertsForUser(query) {
       return null;
     }
@@ -2114,6 +2149,10 @@ module.exports = (() => {
       this._createEndpoint = EndpointBuilder.for('create-alert', 'Create alert').withVerb(VerbType.POST).withProtocol(protocolType).withHost(host).withPort(port).withPathBuilder(pb => {
         pb.withLiteralParameter('alerts', 'alerts');
       }).withBody().withRequestInterceptor(requestInterceptor).withResponseInterceptor(ResponseInterceptor.DATA).withErrorInterceptor(ErrorInterceptor.GENERAL).endpoint;
+      this._updateRead = EndpointBuilder.for('update-read', 'Update read').withVerb(VerbType.PUT).withProtocol(protocolType).withHost(host).withPort(port).withPathBuilder(pb => {
+        pb.withLiteralParameter('alerts', 'alerts').withVariableParameter('alert_id', 'alert_id', 'alert_id');
+        pb.withLiteralParameter('read', 'read');
+      }).withBody().withRequestInterceptor(requestInterceptor).withResponseInterceptor(ResponseInterceptor.DATA).withErrorInterceptor(ErrorInterceptor.GENERAL).endpoint;
       this._retrieveEndpoint = EndpointBuilder.for('query', 'Query').withVerb(VerbType.GET).withProtocol(protocolType).withHost(host).withPort(port).withPathBuilder(pb => {
         pb.withLiteralParameter('alerts', 'alerts').withVariableParameter('alert_id', 'alert_id', 'alert_id');
       }).withRequestInterceptor(requestInterceptor).withResponseInterceptor(ResponseInterceptor.DATA).withErrorInterceptor(ErrorInterceptor.GENERAL).endpoint;
@@ -2188,6 +2227,10 @@ module.exports = (() => {
 
     updateAlert(alert) {
       return Gateway.invoke(this._updateEndpoint, alert);
+    }
+
+    updateRead(query) {
+      return Gateway.invoke(this._updateRead, query);
     }
 
     updateAlertsForUser(query) {
@@ -2600,6 +2643,10 @@ module.exports = (() => {
       return sendRequestToServer.call(this, 'alerts/update', alert, true);
     }
 
+    updateRead(query) {
+      return sendRequestToServer.call(this, 'alerts/update/read', query, true);
+    }
+
     updateAlertsForUser(query) {
       return sendRequestToServer.call(this, 'alerts/update/user', query, true);
     }
@@ -2846,6 +2893,11 @@ module.exports = (() => {
       const d = getDescription(description);
       assert.argumentIsRequired(alert.alert_id, `${d}.alert_id`, String);
       validator.forCreate(alert, description);
+    },
+    forUpdateRead: (query, description) => {
+      const d = getDescription(description);
+      assert.argumentIsRequired(query.alert_id, `${d}.alert_id`, String);
+      assert.argumentIsRequired(query.read, `${d}.read`, Boolean);
     },
     forQuery: (alert, description) => {
       const d = getDescription(description);
@@ -3310,15 +3362,10 @@ module.exports = (() => {
 
     format() {
       const reasons = this._head.toJSObj(item => {
-        const formatted = {};
-        formatted.code = item ? item.type.code : null;
-        formatted.message = item ? item.format(this._data) : null;
-
-        if (item && item.type.verbose) {
-          formatted.data = item.data;
-        }
-
-        return formatted;
+        return {
+          code: item ? item.type.code : null,
+          message: item ? item.format(this._data) : null
+        };
       });
 
       return reasons.children;
@@ -3370,19 +3417,6 @@ module.exports = (() => {
 
     toJSON() {
       return this.format();
-    }
-    /**
-     * @public
-     * @static
-     * @param {FailureType} type
-     * @param {Object=} data
-     * @returns {FailureReason}
-     */
-
-
-    static from(type, data) {
-      const reason = new FailureReason();
-      return reason.addItem(type, data);
     }
     /**
      * Factory function for creating instances of {@link FailureReason}.
@@ -3518,17 +3552,6 @@ module.exports = (() => {
       return this._type;
     }
     /**
-     * The data.
-     *
-     * @public
-     * @return {Object}
-     */
-
-
-    get data() {
-      return this._data;
-    }
-    /**
      * Formats a human-readable message, describing the failure.
      *
      * @public
@@ -3596,16 +3619,14 @@ module.exports = (() => {
    * @param {String} template - The template string for formatting human-readable messages.
    * @param {Boolean=} severe - Indicates if the failure is severe (default is true).
    * @param {Number=} error - The HTTP error code which should be used as part of an HTTP response.
-   * @param {Boolean=} verbose - Indicates if data object should be included when serialized.
    */
 
   class FailureType extends Enum {
-    constructor(code, template, severe, error, verbose) {
+    constructor(code, template, severe, error) {
       super(code, code);
       assert.argumentIsRequired(template, 'template', String);
       assert.argumentIsOptional(severe, 'severe', Boolean);
       assert.argumentIsOptional(error, 'error', Number);
-      assert.argumentIsOptional(verbose, 'verbose', Boolean);
       this._template = template;
 
       if (is.boolean(severe)) {
@@ -3615,7 +3636,6 @@ module.exports = (() => {
       }
 
       this._error = error || null;
-      this._verbose = verbose || false;
     }
     /**
      * The template string for formatting human-readable messages.
@@ -3649,17 +3669,6 @@ module.exports = (() => {
 
     get error() {
       return this._error;
-    }
-    /**
-     * Indicates if data object should be included when serialized.
-     *
-     * @public
-     * @return {boolean}
-     */
-
-
-    get verbose() {
-      return this._verbose;
     }
     /**
      * One or more data points is missing.
@@ -3758,18 +3767,6 @@ module.exports = (() => {
       return requestGeneralFailure;
     }
     /**
-     * Insufficient permission level to access the resource.
-     *
-     * @public
-     * @static
-     * @returns {FailureType}
-     */
-
-
-    static get ENTITLEMENTS_FAILED() {
-      return entitlementsFailed;
-    }
-    /**
      * Returns an HTTP status code that would be suitable for use with the
      * failure type.
      *
@@ -3809,7 +3806,6 @@ module.exports = (() => {
   const requestInputMalformed = new FailureType('REQUEST_INPUT_MALFORMED', 'An attempt to {L|root.endpoint.description} failed, the data structure is invalid.');
   const schemaValidationFailure = new FailureType('SCHEMA_VALIDATION_FAILURE', 'An attempt to read {U|schema} data failed (found "{L|key}" when expecting "{L|name}")');
   const requestGeneralFailure = new FailureType('REQUEST_GENERAL_FAILURE', 'An attempt to {L|root.endpoint.description} failed for unspecified reason(s).');
-  const entitlementsFailed = new FailureType('ENTITLEMENTS_FAILED', 'Action blocked. The current user requires elevated permissions or the current user has exceeded a quota.', false, 403, true);
   return FailureType;
 })();
 
@@ -9470,7 +9466,6 @@ module.exports = (() => {
   /**
    * An implementation of the observer pattern.
    *
-   * @public
    * @param {*} sender - The object which owns the event.
    * @extends {Disposable}
    */
@@ -9544,7 +9539,6 @@ module.exports = (() => {
     /**
      * Returns true, if no handlers are currently registered.
      *
-     * @public
      * @returns {boolean}
      */
 
@@ -36774,30 +36768,35 @@ utils.intFromLE = intFromLE;
 arguments[4][82][0].apply(exports,arguments)
 },{"buffer":116,"dup":82}],208:[function(require,module,exports){
 module.exports={
-  "_from": "elliptic@^6.5.3",
+  "_args": [
+    [
+      "elliptic@6.5.3",
+      "/Users/dzmitryafanasenka/Documents/iTechArt/barchart/alerts/tgam-alerts-ui-js"
+    ]
+  ],
+  "_from": "elliptic@6.5.3",
   "_id": "elliptic@6.5.3",
   "_inBundle": false,
   "_integrity": "sha512-IMqzv5wNQf+E6aHeIqATs0tOLeOTwj1QKbRcS3jBbYkl5oLAserA8yJTT7/VyHUYG91PRmPyeQDObKLPpeS4dw==",
-  "_location": "/elliptic",
+  "_location": "/@barchart/alerts-client-js/elliptic",
   "_phantomChildren": {},
   "_requested": {
-    "type": "range",
+    "type": "version",
     "registry": true,
-    "raw": "elliptic@^6.5.3",
+    "raw": "elliptic@6.5.3",
     "name": "elliptic",
     "escapedName": "elliptic",
-    "rawSpec": "^6.5.3",
+    "rawSpec": "6.5.3",
     "saveSpec": null,
-    "fetchSpec": "^6.5.3"
+    "fetchSpec": "6.5.3"
   },
   "_requiredBy": [
-    "/browserify-sign",
-    "/create-ecdh"
+    "/@barchart/alerts-client-js/browserify-sign",
+    "/@barchart/alerts-client-js/create-ecdh"
   ],
   "_resolved": "https://registry.npmjs.org/elliptic/-/elliptic-6.5.3.tgz",
-  "_shasum": "cb59eb2efdaf73a0bd78ccd7015a62ad6e0f93d6",
-  "_spec": "elliptic@^6.5.3",
-  "_where": "/Users/bryan/Documents/git/alerts-client-js/node_modules/browserify-sign",
+  "_spec": "6.5.3",
+  "_where": "/Users/dzmitryafanasenka/Documents/iTechArt/barchart/alerts/tgam-alerts-ui-js",
   "author": {
     "name": "Fedor Indutny",
     "email": "fedor@indutny.com"
@@ -36805,7 +36804,6 @@ module.exports={
   "bugs": {
     "url": "https://github.com/indutny/elliptic/issues"
   },
-  "bundleDependencies": false,
   "dependencies": {
     "bn.js": "^4.4.0",
     "brorand": "^1.0.1",
@@ -36815,7 +36813,6 @@ module.exports={
     "minimalistic-assert": "^1.0.0",
     "minimalistic-crypto-utils": "^1.0.0"
   },
-  "deprecated": false,
   "description": "EC cryptography",
   "devDependencies": {
     "brfs": "^1.4.3",

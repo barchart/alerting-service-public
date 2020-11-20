@@ -81,6 +81,7 @@
                     <span style="padding-left: 10px;">State</span>
                     <span class="text-button text-button-black glyphicon glyphicon-stop" data-bind="click: disableAlerts"></span>
                 </th>
+                <th class="left col-md-1">Read</th>
                 <th class="center col-md-1">Conditions</th>
                 <th class="center col-md-1">Publishers</th>
                 <th class="center col-md-2">Last Triggered</th>
@@ -106,6 +107,9 @@
                 </span>
                 <span data-bind="text: alert().alert_state"></span>
                 </div>
+            </td>
+            <td class="left col-md-1">
+                <input type="checkbox" data-bind="enable: !readLoading(), click: () => read(alert().alert_id, alert().read), checked: alert().read">
             </td>
             <td class="center col-md-1" data-bind="text: alert().conditions.length"></td>
             <td class="center col-md-1" data-bind="text: alert().publishers.length"></td>

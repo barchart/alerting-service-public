@@ -194,6 +194,7 @@ module.exports = (() => {
 
 		that.alert = ko.observable(alert);
 		that.processing = ko.observable(false);
+		that.readLoading = ko.observable(false);
 
 		that.lastTriggerDateDisplay = ko.computed(function() {
 			var alert = that.alert();
@@ -236,6 +237,13 @@ module.exports = (() => {
 				.then(function(refreshedAlert) {
 					that.alert(refreshedAlert);
 				});
+		};
+		that.read = function(alertId, read) {
+			that.readLoading(true);
+			
+			alertManager.updateRead({alert_id: alertId, read: !read}).then(() => that.readLoading(false));
+			
+			return true;
 		};
 	}
 	function AlertEntryModel(alert) {
@@ -320,6 +328,7 @@ module.exports = (() => {
 				user_id: currentUserId,
 				alert_system: currentSystem,
 				automatic_reset: that.automaticReset(),
+				read: false,
 				conditions: _.map(that.conditions(), function(condition) {
 					var property = condition.property();
 					var operator = condition.operator();
