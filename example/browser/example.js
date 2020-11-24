@@ -187,7 +187,6 @@ module.exports = (() => {
 
   function AlertDisplayModel(alert) {
     var that = this;
-    window.xxx = that;
     that.alert = ko.observable(alert);
     that.processing = ko.observable(false);
     that.readLoading = ko.observable(false);
@@ -228,15 +227,6 @@ module.exports = (() => {
       alertManager.retrieveAlert(that.alert()).then(function (refreshedAlert) {
         that.alert(refreshedAlert);
       });
-    };
-
-    that.read = function (alertId, read) {
-      that.readLoading(true);
-      alertManager.updateRead({
-        alert_id: alertId,
-        read: !read
-      }).then(() => that.readLoading(false));
-      return true;
     };
   }
 
@@ -1333,25 +1323,6 @@ module.exports = (() => {
       });
     }
     /**
-     * Performs an update operation on an existing alert to update read property.
-     *
-     * @public
-     * @param {Object} query
-     * @param {String} query.alert_id
-     * @param {Boolean} query.read
-     * @returns {Promise<Schema.Alert>}
-     */
-
-
-    updateRead(query) {
-      return Promise.resolve().then(() => {
-        checkStatus(this, 'update read');
-        validate.alert.forUpdateRead(query);
-      }).then(() => {
-        return this._adapter.updateRead(query);
-      });
-    }
-    /**
      * Deletes an existing alert.
      *
      * @public
@@ -1714,6 +1685,67 @@ module.exports = (() => {
         return this._adapter.getUser();
       });
     }
+    /**
+     * Gets alerts trigger statuses.
+     *
+     * @public
+     * @param {Object} query
+     * @param {String} query.user_id
+     * @param {String} query.alert_system
+     * @param {String=} query.trigger_date
+     * @param {String=} query.trigger_status
+     * @returns {Promise<Schema.AlertTriggerStatus[]>}
+     */
+
+
+    getAlertTriggerStatuses(query) {
+      return Promise.resolve().then(() => {
+        checkStatus(this, 'retrieve alert trigger statuses');
+        validate.alert.forGetAlertTriggerStatuses(query);
+      }).then(() => {
+        return this._adapter.getAlertTriggerStatuses(query);
+      });
+    }
+    /**
+     * Updates alerts trigger status.
+     *
+     * @public
+     * @param {Object} query
+     * @param {String} query.alert_id
+     * @param {String=} query.trigger_date
+     * @param {String=} query.trigger_status
+     * @returns {Promise<Schema.AlertTriggerStatus>}
+     */
+
+
+    updateAlertTriggerStatus(query) {
+      return Promise.resolve().then(() => {
+        checkStatus(this, 'updates alert trigger status');
+        validate.alert.forUpdateAlertTriggerStatus(query);
+      }).then(() => {
+        return this._adapter.updateAlertTriggerStatus(query);
+      });
+    }
+    /**
+     * Updates alerts trigger statuses.
+     *
+     * @public
+     * @param {Object} query
+     * @param {String} query.user_id
+     * @param {String=} query.alert_system
+     * @param {String=} query.trigger_status
+     * @returns {Promise<Schema.AlertTriggerStatus[]>}
+     */
+
+
+    updateAlertTriggerStatuses(query) {
+      return Promise.resolve().then(() => {
+        checkStatus(this, 'updates alert trigger statuses');
+        validate.alert.forUpdateAlertTriggerStatuses(query);
+      }).then(() => {
+        return this._adapter.updateAlertTriggerStatuses(query);
+      });
+    }
 
     static getPropertiesForTarget(properties, target) {
       return properties.filter(property => property.target.target_id === target.target_id);
@@ -2026,10 +2058,6 @@ module.exports = (() => {
       return null;
     }
 
-    updateRead(query) {
-      return null;
-    }
-
     updateAlertsForUser(query) {
       return null;
     }
@@ -2087,6 +2115,14 @@ module.exports = (() => {
     }
 
     getServerVersion() {
+      return null;
+    }
+
+    getAlertTriggerStatuses(query) {
+      return null;
+    }
+
+    updateAlertTriggerStatus(query) {
       return null;
     }
 
@@ -2149,10 +2185,6 @@ module.exports = (() => {
       this._createEndpoint = EndpointBuilder.for('create-alert', 'Create alert').withVerb(VerbType.POST).withProtocol(protocolType).withHost(host).withPort(port).withPathBuilder(pb => {
         pb.withLiteralParameter('alerts', 'alerts');
       }).withBody().withRequestInterceptor(requestInterceptor).withResponseInterceptor(ResponseInterceptor.DATA).withErrorInterceptor(ErrorInterceptor.GENERAL).endpoint;
-      this._updateRead = EndpointBuilder.for('update-read', 'Update read').withVerb(VerbType.PUT).withProtocol(protocolType).withHost(host).withPort(port).withPathBuilder(pb => {
-        pb.withLiteralParameter('alerts', 'alerts').withVariableParameter('alert_id', 'alert_id', 'alert_id');
-        pb.withLiteralParameter('read', 'read');
-      }).withBody().withRequestInterceptor(requestInterceptor).withResponseInterceptor(ResponseInterceptor.DATA).withErrorInterceptor(ErrorInterceptor.GENERAL).endpoint;
       this._retrieveEndpoint = EndpointBuilder.for('query', 'Query').withVerb(VerbType.GET).withProtocol(protocolType).withHost(host).withPort(port).withPathBuilder(pb => {
         pb.withLiteralParameter('alerts', 'alerts').withVariableParameter('alert_id', 'alert_id', 'alert_id');
       }).withRequestInterceptor(requestInterceptor).withResponseInterceptor(ResponseInterceptor.DATA).withErrorInterceptor(ErrorInterceptor.GENERAL).endpoint;
@@ -2198,6 +2230,17 @@ module.exports = (() => {
       this._userEndpoint = EndpointBuilder.for('get-user', 'Get user').withVerb(VerbType.GET).withProtocol(protocolType).withHost(host).withPort(port).withPathBuilder(pb => {
         pb.withLiteralParameter('user', 'user');
       }).withRequestInterceptor(requestInterceptor).withResponseInterceptor(ResponseInterceptor.DATA).withErrorInterceptor(ErrorInterceptor.GENERAL).endpoint;
+      this._retrieveAlertTriggerStatusesEndpoint = EndpointBuilder.for('retrieve-alert-trigger-statuses', 'Retrieve alert trigger statuses').withVerb(VerbType.GET).withProtocol(protocolType).withHost(host).withPort(port).withPathBuilder(pb => {
+        pb.withLiteralParameter('alerts', 'alerts').withLiteralParameter('trigger', 'trigger').withLiteralParameter('status', 'status');
+      }).withQueryBuilder(pb => {
+        pb.withVariableParameter('alert_system', 'alert_system', 'alert_system').withVariableParameter('user_id', 'user_id', 'user_id').withVariableParameter('trigger_date', 'trigger_date', 'trigger_date', true).withVariableParameter('trigger_status', 'trigger_status', 'trigger_status', true);
+      }).withRequestInterceptor(requestInterceptor).withResponseInterceptor(ResponseInterceptor.DATA).withErrorInterceptor(ErrorInterceptor.GENERAL).endpoint;
+      this._updateAlertTriggerStatusEndpoint = EndpointBuilder.for('update-alert-trigger-status', 'Update alert trigger status').withVerb(VerbType.PUT).withProtocol(protocolType).withHost(host).withPort(port).withPathBuilder(pb => {
+        pb.withLiteralParameter('alerts', 'alerts').withLiteralParameter('trigger', 'trigger').withLiteralParameter('status', 'status');
+      }).withBody().withRequestInterceptor(requestInterceptor).withResponseInterceptor(ResponseInterceptor.DATA).withErrorInterceptor(ErrorInterceptor.GENERAL).endpoint;
+      this._updateAlertTriggerStatusesEndpoint = EndpointBuilder.for('update-alert-trigger-statuses', 'Update alert trigger statuses').withVerb(VerbType.PUT).withProtocol(protocolType).withHost(host).withPort(port).withPathBuilder(pb => {
+        pb.withLiteralParameter('alerts', 'alerts').withLiteralParameter('trigger', 'trigger').withLiteralParameter('statuses', 'statuses');
+      }).withBody().withRequestInterceptor(requestInterceptor).withResponseInterceptor(ResponseInterceptor.DATA).withErrorInterceptor(ErrorInterceptor.GENERAL).endpoint;
       this._versionEndpoint = EndpointBuilder.for('get-version', 'Get version').withVerb(VerbType.GET).withProtocol(protocolType).withHost(host).withPort(port).withPathBuilder(pb => {
         pb.withLiteralParameter('server', 'server').withLiteralParameter('version', 'version');
       }).withResponseInterceptor(ResponseInterceptor.DATA).withErrorInterceptor(ErrorInterceptor.GENERAL).endpoint;
@@ -2227,10 +2270,6 @@ module.exports = (() => {
 
     updateAlert(alert) {
       return Gateway.invoke(this._updateEndpoint, alert);
-    }
-
-    updateRead(query) {
-      return Gateway.invoke(this._updateRead, query);
     }
 
     updateAlertsForUser(query) {
@@ -2314,6 +2353,18 @@ module.exports = (() => {
 
     getServerVersion() {
       return Gateway.invoke(this._versionEndpoint);
+    }
+
+    getAlertTriggerStatuses(query) {
+      return Gateway.invoke(this._retrieveAlertTriggerStatusesEndpoint, query);
+    }
+
+    updateAlertTriggerStatus(query) {
+      return Gateway.invoke(this._updateAlertTriggerStatusEndpoint, query);
+    }
+
+    updateAlertTriggerStatuses(query) {
+      return Gateway.invoke(this._updateAlertTriggerStatusesEndpoint, query);
     }
 
     _onDispose() {
@@ -2643,10 +2694,6 @@ module.exports = (() => {
       return sendRequestToServer.call(this, 'alerts/update', alert, true);
     }
 
-    updateRead(query) {
-      return sendRequestToServer.call(this, 'alerts/update/read', query, true);
-    }
-
     updateAlertsForUser(query) {
       return sendRequestToServer.call(this, 'alerts/update/user', query, true);
     }
@@ -2715,6 +2762,18 @@ module.exports = (() => {
 
     getServerVersion() {
       return sendRequestToServer.call(this, 'server/version', {});
+    }
+
+    getAlertTriggerStatuses(query) {
+      return sendRequestToServer.call(this, 'alerts/trigger/retrieve/status', query, true);
+    }
+
+    updateAlertTriggerStatus(query) {
+      return sendRequestToServer.call(this, 'alerts/trigger/status', query, true);
+    }
+
+    updateAlertTriggerStatuses(query) {
+      return sendRequestToServer.call(this, 'alerts/trigger/statuses', query, true);
     }
 
     _onDispose() {
@@ -2894,10 +2953,24 @@ module.exports = (() => {
       assert.argumentIsRequired(alert.alert_id, `${d}.alert_id`, String);
       validator.forCreate(alert, description);
     },
-    forUpdateRead: (query, description) => {
+    forGetAlertTriggerStatuses: (query, description) => {
+      const d = getDescription(description);
+      assert.argumentIsRequired(query.user_id, `${d}.user_id`, String);
+      assert.argumentIsRequired(query.alert_system, `${d}.alert_system`, String);
+      assert.argumentIsOptional(query.trigger_date, `${d}.trigger_date`, String);
+      assert.argumentIsOptional(query.trigger_status, `${d}.trigger_status`, String);
+    },
+    forUpdateAlertTriggerStatus: (query, description) => {
       const d = getDescription(description);
       assert.argumentIsRequired(query.alert_id, `${d}.alert_id`, String);
-      assert.argumentIsRequired(query.read, `${d}.read`, Boolean);
+      assert.argumentIsOptional(query.trigger_date, `${d}.trigger_date`, Number);
+      assert.argumentIsOptional(query.trigger_status, `${d}.trigger_status`, String);
+    },
+    forUpdateAlertTriggerStatuses: (query, description) => {
+      const d = getDescription(description);
+      assert.argumentIsRequired(query.user_id, `${d}.user_id`, String);
+      assert.argumentIsRequired(query.alert_system, `${d}.alert_system`, String);
+      assert.argumentIsOptional(query.trigger_status, `${d}.trigger_status`, String);
     },
     forQuery: (alert, description) => {
       const d = getDescription(description);

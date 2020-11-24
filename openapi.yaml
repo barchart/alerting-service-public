@@ -284,6 +284,37 @@ components:
         type:
           type: string
           example: "symbol"
+          
+    AlertTriggerStatus:
+      type: object
+      description: An alert trigger status shows status of alert trigger.
+      required:
+        - alert_id
+        - alert_system
+        - user_id
+        - trigger_date
+        - trigger_status
+        - trigger_status_date
+      properties:
+        alert_id:
+          type: string
+          format: uuid
+          example: "b78b30e3-8af5-48a5-8998-0989269ad9d0"
+        alert_system:
+          type: string
+          example: "barchart.com"
+        user_id:
+          type: string
+          example: "barchart-test-user"
+        trigger_date:
+          type: string
+          example: "1605874379489"
+        trigger_status:
+          type: string
+          example: "Read"
+        trigger_status_date:
+          type: string
+          example: "1606227202480"
 
   responses:
     Unauthorized:
@@ -1026,3 +1057,118 @@ paths:
                       example: ["price"]
                       items:
                         type: string
+                        
+  /alerts/trigger/status:
+    get:
+      summary: "Retrieve Alert Trigger Statuses"
+      description: "Retrieves a list of alerts trigger statuses."
+      security:
+        - JWT: []
+      parameters:
+        - name: user_id
+          description: The user id.
+          in: query
+          required: true
+          schema:
+            type: string
+            example: "barchart-test-user"
+            
+        - name: alert_system
+          description: The alert system.
+          in: query
+          required: true
+          schema:
+            type: string
+            example: "barchart.com"
+
+        - name: trigger_date
+          description: Gets alert trigger statuses after this date
+          in: query
+          required: false
+          schema:
+            type: string
+            example: "1605874379489"
+            
+        - name: trigger_status
+          description: Gets triggers with this status
+          in: query
+          required: false
+          schema:
+            type: string
+            example: "Read"
+      responses:
+        200:
+          description: "A JSON document containing an array of alert trigger statuses"
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/AlertTriggerStatus'
+                  
+
+    put:
+      summary: "Updates an alert trigger status"
+      description: "Updates specific alert trigger status."
+      security:
+        - JWT: []
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                alert_id:
+                  type: string
+                  format: uuid
+                  example: "6bc32e9d-50ba-4f26-a633-a3cb3884b504"
+                trigger_date:
+                  type: integer
+                  example: 1605874379489
+                trigger_status: 
+                  type: string
+                  example: "Unread"
+      responses:
+        '200':
+          description: "A JSON document, conforming to the alert trigger status."
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AlertTriggerStatus'
+
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+
+  /alerts/trigger/statuses:
+    put:
+      summary: "Updates an alert trigger statuses"
+      description: "Updates all alert trigger status for the user."
+      security:
+        - JWT: []
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                user_id:
+                  type: string
+                  example: "barchart-test-user"
+                alert_system:
+                  type: string
+                  example: "barchart.com"
+                trigger_status:
+                  type: string
+                  example: "Unread"
+      responses:
+        '200':
+          description: "A JSON document, conforming to the alert trigger statuses."
+          content:
+            application/json:
+              schema:
+                type: array
+                items:  
+                  $ref: '#/components/schemas/AlertTriggerStatus'
+
+        '401':
+          $ref: '#/components/responses/Unauthorized'

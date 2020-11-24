@@ -238,13 +238,6 @@ module.exports = (() => {
 					that.alert(refreshedAlert);
 				});
 		};
-		that.read = function(alertId, read) {
-			that.readLoading(true);
-			
-			alertManager.updateRead({alert_id: alertId, read: !read}).then(() => that.readLoading(false));
-			
-			return true;
-		};
 	}
 	function AlertEntryModel(alert) {
 		var that = this;
