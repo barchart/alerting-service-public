@@ -6,8 +6,7 @@ const AdapterForHttp = require('./../../../lib/adapters/AdapterForHttp'),
 const JwtProvider = require('./../../../lib/security/JwtProvider'),
 	getJwtGenerator = require('./../../../lib/security/demo/getJwtGenerator');
 
-const array = require('@barchart/common-js/lang/array'),
-	timezone = require('@barchart/common-js/lang/timezone');
+const timezone = require('@barchart/common-js/lang/timezone');
 
 const ComparatorBuilder = require('@barchart/common-js/collections/sorting/ComparatorBuilder'),
 	comparators = require('@barchart/common-js/collections/sorting/comparators');
