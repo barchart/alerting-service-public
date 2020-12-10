@@ -244,7 +244,7 @@ module.exports = (() => {
 		that.refreshTriggerHistory = function() {
 			that.triggers.removeAll();
 
-			return alertManager.getAlertTriggerStatuses({ user_id: userId, alert_system: system, trigger_date: getDateBackwards(7).getTime() })
+			return alertManager.retrieveTriggers({ user_id: userId, alert_system: system, trigger_date: getDateBackwards(7).getTime() })
 				.then(function(triggers) {
 					that.triggerUpdates(0);
 
@@ -259,7 +259,7 @@ module.exports = (() => {
 		that.changeTriggersStatus = function(status) {
 			that.triggers.removeAll();
 
-			return alertManager.updateAlertTriggerStatuses({ user_id: currentUserId, alert_system: currentSystem, trigger_status: status })
+			return alertManager.updateTriggers({ user_id: currentUserId, alert_system: currentSystem, trigger_status: status })
 				.then(() => {})
 				.catch((error) => { console.log(error); })
 				.then(() => {
@@ -302,7 +302,7 @@ module.exports = (() => {
 			payload.trigger_date = that.date.getTime();
 			payload.trigger_status = getOppositeStatus(that.status());
 
-			return alertManager.updateAlertTriggerStatus(payload)
+			return alertManager.updateTrigger(payload)
 				.then(() => {
 					that.status(payload.trigger_status);
 
