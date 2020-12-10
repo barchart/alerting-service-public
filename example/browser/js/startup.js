@@ -1189,6 +1189,10 @@ module.exports = (() => {
 			}).then(() => {
 				var pageModel = new PageModel(host, system, userId);
 
+				if (mode) {
+					pageModel.mode(mode);
+				}
+
 				var initializePromise;
 
 				if (alertManager) {
