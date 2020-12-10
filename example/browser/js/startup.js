@@ -53,7 +53,9 @@ module.exports = (() => {
 		that.publisherSettings = ko.observable();
 		that.marketDataSettings = ko.observable();
 		that.providerDescription = ko.observable(alertManager !== null ? alertManager.toString() : '');
+
 		that.triggers = ko.observableArray([ ]);
+		that.triggerUpdates = ko.observable(0);
 		that.triggersFormatted = ko.computed(function() {
 			const triggers = that.triggers().slice(0);
 
@@ -227,17 +229,42 @@ module.exports = (() => {
 		that.handleAlertTrigger = function(triggeredAlert) {
 			that.handleAlertChange(triggeredAlert);
 
-			console.log(triggeredAlert);
+			that.triggerUpdates(that.triggerUpdates() + 1);
 
 			toastr.info('Alert Triggered: ' + triggeredAlert.name);
 		};
 		that.handleAlertDelete = function(deletedAlert) {
 			var modelToRemove = getModel(deletedAlert);
 
+			that.triggerUpdates(that.triggerUpdates() + 1);
+
 			that.alerts.remove(modelToRemove);
+		};
+
+		that.refreshTriggerHistory = function() {
+			that.triggers.removeAll();
+
+			return alertManager.getAlertTriggerStatuses({ user_id: userId, alert_system: system, trigger_date: getDateBackwards(7).getTime() })
+				.then(function(triggers) {
+					that.triggerUpdates(0);
+
+					triggers.forEach((trigger) => {
+						that.addTrigger(trigger);
+					});
+				});
 		};
 		that.addTrigger = function(trigger) {
 			that.triggers.push(new AlertTriggerModel(trigger));
+		};
+		that.changeTriggersStatus = function(status) {
+			that.triggers.removeAll();
+
+			return alertManager.updateAlertTriggerStatuses({ user_id: currentUserId, alert_system: currentSystem, trigger_status: status })
+				.then(() => {})
+				.catch((error) => { console.log(error); })
+				.then(() => {
+					that.refreshTriggerHistory();
+				});
 		};
 	}
 	function AlertTriggerModel(trigger) {
@@ -247,7 +274,7 @@ module.exports = (() => {
 		that.date = new Date(parseInt(trigger.trigger_date));
 		that.name = trigger.trigger_name;
 		that.status = ko.observable(trigger.trigger_status);
-		that.statusDate = new Date(parseInt(trigger.trigger_status_date)); // null?
+		that.statusDate = new Date(parseInt(trigger.trigger_status_date));
 
 		that.loading = ko.observable(false);
 
@@ -1269,12 +1296,7 @@ module.exports = (() => {
 							);
 
 							startupPromises.push(
-								alertManager.getAlertTriggerStatuses({ user_id: userId, alert_system: system, trigger_date: getDateBackwards(7).getTime() })
-									.then(function(triggers) {
-										triggers.forEach((trigger) => {
-											pageModel.addTrigger(trigger);
-										});
-									})
+								pageModel.refreshTriggerHistory()
 							);
 
 							return Promise.all(startupPromises)

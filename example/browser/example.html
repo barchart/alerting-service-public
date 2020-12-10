@@ -517,11 +517,20 @@
     </script>
 
     <script type="text/html" id="trigger-history-template">
+        <div class="trigger-history-controls">
+            <div class="trigger-history-updates"><span data-bind="text: triggerUpdates"></span></div>
+            <div class="trigger-history-update-btn text-button text-button-black glyphicon glyphicon-refresh" data-bind="click: refreshTriggerHistory"></div>
+        </div>
+
         <table class="table table-triggers table-striped small">
             <thead>
                 <th class="center col-md-3">ID</th>
                 <th class="left col-md-2">Name</th>
-                <th class="center col-md-1">Read</th>
+                <th class="center col-md-1">
+                    <span class="text-button text-button-black glyphicon glyphicon-collapse-down" data-bind="click: () => changeTriggersStatus('Read')"></span>
+                    <span style="padding: 0 5px">Read</span>
+                    <span class="text-button text-button-black glyphicon glyphicon-unchecked" data-bind="click: () => changeTriggersStatus('Unread')"></span>
+                </th>
                 <th class="center col-md-2">Trigger Date</th>
                 <th class="center col-md-2">Trigger Status Date</th>
             </thead>
