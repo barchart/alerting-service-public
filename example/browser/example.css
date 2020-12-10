@@ -182,3 +182,7 @@ input.percent.form-control {
 .barchart-logo span {
     margin-left: 110px;
 }
+
+.table-triggers td {
+  vertical-align: middle !important;
+}

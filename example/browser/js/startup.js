@@ -6,7 +6,11 @@ const AdapterForHttp = require('./../../../lib/adapters/AdapterForHttp'),
 const JwtProvider = require('./../../../lib/security/JwtProvider'),
 	getJwtGenerator = require('./../../../lib/security/demo/getJwtGenerator');
 
-const timezone = require('@barchart/common-js/lang/timezone');
+const array = require('@barchart/common-js/lang/array'),
+	timezone = require('@barchart/common-js/lang/timezone');
+
+const ComparatorBuilder = require('@barchart/common-js/collections/sorting/ComparatorBuilder'),
+	comparators = require('@barchart/common-js/collections/sorting/comparators');
 
 module.exports = (() => {
 	'use strict';
@@ -28,7 +32,7 @@ module.exports = (() => {
 	function PageModel(host, system, userId) {
 		var that = this;
 
-		that.host = ko.observable(host || 'alerts-management-demo.barchart.com');
+		that.host = ko.observable(host || 'localhost');
 		that.system = ko.observable(system || 'barchart.com');
 		that.userId = ko.observable(userId || 'me');
 		that.mode = ko.observable('socket.io');
@@ -49,6 +53,41 @@ module.exports = (() => {
 		that.publisherSettings = ko.observable();
 		that.marketDataSettings = ko.observable();
 		that.providerDescription = ko.observable(alertManager !== null ? alertManager.toString() : '');
+		that.triggers = ko.observableArray([ ]);
+		that.triggersFormatted = ko.computed(function() {
+			const triggers = that.triggers().slice(0);
+
+			triggers.sort(comparatorForAlertTriggers);
+
+			triggers.forEach((trigger) => {
+				trigger.first = ko.observable(false);
+				trigger.rowSpan = 1;
+			});
+
+			const grouped = triggers.reduce((accumulator, trigger) => {
+				const group = accumulator.find(a => a.alertId === trigger.alertId) || null;
+
+				if (group === null) {
+					accumulator.push({ alertId: trigger.alertId, triggers: [ trigger ] });
+				} else {
+					group.triggers.push(trigger);
+				}
+
+				return accumulator;
+			}, [ ]);
+
+			grouped.forEach((group) => {
+				group.triggers[0].first(true);
+				group.triggers[0].rowSpan = group.triggers.length;
+			});
+
+			const flattened = grouped.reduce((acc, g) => {
+				return acc.concat(g.triggers);
+			}, [ ]);
+
+			return flattened;
+		});
+		that.triggersFormatted.extend({ rateLimit: 100 });
 
 		that.activeTemplate = ko.observable('alert-disconnected');
 
@@ -142,6 +181,13 @@ module.exports = (() => {
 
 			that.activeTemplate('alert-preferences-template');
 		};
+		that.changeToHistory = function() {
+			if (!that.connected()) {
+				return;
+			}
+
+			that.activeTemplate('trigger-history-template');
+		};
 
 		that.deleteAlert = function(alertDisplayModel) {
 			alertDisplayModel.processing(true);
@@ -181,6 +227,8 @@ module.exports = (() => {
 		that.handleAlertTrigger = function(triggeredAlert) {
 			that.handleAlertChange(triggeredAlert);
 
+			console.log(triggeredAlert);
+
 			toastr.info('Alert Triggered: ' + triggeredAlert.name);
 		};
 		that.handleAlertDelete = function(deletedAlert) {
@@ -188,13 +236,62 @@ module.exports = (() => {
 
 			that.alerts.remove(modelToRemove);
 		};
+		that.addTrigger = function(trigger) {
+			that.triggers.push(new AlertTriggerModel(trigger));
+		};
+	}
+	function AlertTriggerModel(trigger) {
+		var that = this;
+
+		that.alertId = trigger.alert_id;
+		that.date = new Date(parseInt(trigger.trigger_date));
+		that.name = trigger.trigger_name;
+		that.status = ko.observable(trigger.trigger_status);
+		that.statusDate = new Date(parseInt(trigger.trigger_status_date)); // null?
+
+		that.loading = ko.observable(false);
+
+		var formatDate = function(field) {
+			var returnRef;
+
+			if (that[field]) {
+				returnRef = that[field].toLocaleString();
+			} else {
+				returnRef = 'never';
+			}
+
+			return returnRef;
+		};
+
+		that.dateDisplay = ko.computed(function() { return formatDate('date'); });
+		that.statusDateDisplay = ko.computed(function() { return formatDate('statusDate'); });
+
+		that.toggle = function() {
+			that.loading(true);
+
+			const payload = { };
+
+			payload.alert_id = that.alertId;
+			payload.trigger_date = that.date.getTime();
+			payload.trigger_status = getOppositeStatus(that.status());
+
+			return alertManager.updateAlertTriggerStatus(payload)
+				.then(() => {
+					that.status(payload.trigger_status);
+
+					that.loading(false);
+				});
+		};
+
+		function getOppositeStatus(status) {
+			return status === 'Read' ? 'Unread' : 'Read';
+		}
 	}
 	function AlertDisplayModel(alert) {
 		var that = this;
 
 		that.alert = ko.observable(alert);
 		that.processing = ko.observable(false);
-		that.readLoading = ko.observable(false);
 
 		that.lastTriggerDateDisplay = ko.computed(function() {
 			var alert = that.alert();
@@ -321,7 +418,6 @@ module.exports = (() => {
 				user_id: currentUserId,
 				alert_system: currentSystem,
 				automatic_reset: that.automaticReset(),
-				read: false,
 				conditions: _.map(that.conditions(), function(condition) {
 					var property = condition.property();
 					var operator = condition.operator();
@@ -1172,6 +1268,15 @@ module.exports = (() => {
 									})
 							);
 
+							startupPromises.push(
+								alertManager.getAlertTriggerStatuses({ user_id: userId, alert_system: system, trigger_date: getDateBackwards(7).getTime() })
+									.then(function(triggers) {
+										triggers.forEach((trigger) => {
+											pageModel.addTrigger(trigger);
+										});
+									})
+							);
+
 							return Promise.all(startupPromises)
 								.then(() => {
 									pageModel.connected(true);
@@ -1202,6 +1307,19 @@ module.exports = (() => {
 					ko.applyBindings(pageModel, $('body')[0]);
 				});
 			});
+	};
+
+	var comparatorForAlertTriggers =	ComparatorBuilder
+		.startWith((a, b) => comparators.compareDates(b.date, a.date))
+		.toComparator();
+
+	var getDateBackwards = function(days) {
+		const now = new Date();
+		const past = now.getDate() - days;
+
+		now.setDate(past);
+
+		return now;
 	};
 
 	$(document).ready(function() {
