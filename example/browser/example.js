@@ -7,8 +7,7 @@ const AdapterForHttp = require('./../../../lib/adapters/AdapterForHttp'),
 const JwtProvider = require('./../../../lib/security/JwtProvider'),
       getJwtGenerator = require('./../../../lib/security/demo/getJwtGenerator');
 
-const array = require('@barchart/common-js/lang/array'),
-      timezone = require('@barchart/common-js/lang/timezone');
+const timezone = require('@barchart/common-js/lang/timezone');
 
 const ComparatorBuilder = require('@barchart/common-js/collections/sorting/ComparatorBuilder'),
       comparators = require('@barchart/common-js/collections/sorting/comparators');
@@ -1135,13 +1134,18 @@ module.exports = (() => {
       }
     }).then(() => {
       var pageModel = new PageModel(host, system, userId);
+
+      if (mode) {
+        pageModel.mode(mode);
+      }
+
       var initializePromise;
 
       if (alertManager) {
         pageModel.connecting(true);
         var jwtGenerator = getJwtGenerator(userId, system);
-        var jwtPovider = new JwtProvider(jwtGenerator, 60000, 'demo');
-        initializePromise = alertManager.connect(jwtPovider).then(function () {
+        var jwtProvider = new JwtProvider(jwtGenerator, 60000, 'demo');
+        initializePromise = alertManager.connect(jwtProvider).then(function () {
           if (!(system === 'barchart.com' || system === 'grains.com' || system === 'webstation.barchart.com' || system === 'gos.agricharts.com' || system === 'gbemembers.com' || system === 'cmdtymarketplace.com')) {
             throw 'Invalid system, please re-enter...';
           }
@@ -1253,7 +1257,7 @@ module.exports = (() => {
   });
 })();
 
-},{"./../../../lib/AlertManager":2,"./../../../lib/adapters/AdapterForHttp":4,"./../../../lib/adapters/AdapterForSocketIo":5,"./../../../lib/security/JwtProvider":15,"./../../../lib/security/demo/getJwtGenerator":16,"@barchart/common-js/collections/sorting/ComparatorBuilder":38,"@barchart/common-js/collections/sorting/comparators":39,"@barchart/common-js/lang/array":48,"@barchart/common-js/lang/timezone":55}],2:[function(require,module,exports){
+},{"./../../../lib/AlertManager":2,"./../../../lib/adapters/AdapterForHttp":4,"./../../../lib/adapters/AdapterForSocketIo":5,"./../../../lib/security/JwtProvider":15,"./../../../lib/security/demo/getJwtGenerator":16,"@barchart/common-js/collections/sorting/ComparatorBuilder":38,"@barchart/common-js/collections/sorting/comparators":39,"@barchart/common-js/lang/timezone":55}],2:[function(require,module,exports){
 const array = require('@barchart/common-js/lang/array'),
       assert = require('@barchart/common-js/lang/assert'),
       is = require('@barchart/common-js/lang/is'),
