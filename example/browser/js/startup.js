@@ -1195,9 +1195,9 @@ module.exports = (() => {
 					pageModel.connecting(true);
 
 					var jwtGenerator = getJwtGenerator(userId, system);
-					var jwtPovider = new JwtProvider(jwtGenerator, 60000, 'demo');
+					var jwtProvider = new JwtProvider(jwtGenerator, 60000, 'demo');
 
-					initializePromise = alertManager.connect(jwtPovider)
+					initializePromise = alertManager.connect(jwtProvider)
 						.then(function() {
 							if (!(system === 'barchart.com' || system === 'grains.com' || system === 'webstation.barchart.com' || system === 'gos.agricharts.com' || system === 'gbemembers.com' || system === 'cmdtymarketplace.com')) {
 								throw 'Invalid system, please re-enter...';
