@@ -45,13 +45,12 @@ module.exports = (() => {
     that.marketDataSettings = ko.observable();
     that.providerDescription = ko.observable(alertManager !== null ? alertManager.toString() : '');
     that.triggers = ko.observableArray([]);
-    that.triggerUpdates = ko.observable(0);
     that.triggersFormatted = ko.computed(function () {
       const triggers = that.triggers().slice(0);
       triggers.sort(comparatorForAlertTriggers);
       triggers.forEach(trigger => {
-        trigger.first = ko.observable(false);
-        trigger.rowSpan = 1;
+        trigger.display.first(false);
+        trigger.display.rowSpan(1);
       });
       const grouped = triggers.reduce((accumulator, trigger) => {
         const group = accumulator.find(a => a.alertId === trigger.alertId) || null;
@@ -68,8 +67,8 @@ module.exports = (() => {
         return accumulator;
       }, []);
       grouped.forEach(group => {
-        group.triggers[0].first(true);
-        group.triggers[0].rowSpan = group.triggers.length;
+        group.triggers[0].display.first(true);
+        group.triggers[0].display.rowSpan(group.triggers.length);
       });
       const flattened = grouped.reduce((acc, g) => {
         return acc.concat(g.triggers);
@@ -81,15 +80,21 @@ module.exports = (() => {
     });
     that.activeTemplate = ko.observable('alert-disconnected');
 
-    var getModel = function (alert) {
+    var getAlertModel = function (alert) {
       return _.find(that.alerts(), function (model) {
         return model.alert().alert_id === alert.alert_id;
       });
     };
 
-    var sortModels = function () {
+    var sortAlertModels = function () {
       that.alerts.sort(function (a, b) {
         return a.alert().name.localeCompare(b.alert().name);
+      });
+    };
+
+    var getTriggerModel = function (trigger) {
+      return _.find(that.triggers(), function (model) {
+        return model.alertId === trigger.alert_id && model.raw.trigger_date === trigger.trigger_date;
       });
     };
 
@@ -201,35 +206,47 @@ module.exports = (() => {
     };
 
     that.handleAlertCreate = function (createdAlert) {
-      var existingModel = getModel(createdAlert);
+      var existingModel = getAlertModel(createdAlert);
 
       if (!existingModel) {
         that.alerts.push(new AlertDisplayModel(createdAlert));
-        sortModels();
+        sortAlertModels();
       }
     };
 
     that.handleAlertChange = function (changedAlert) {
-      var existingModel = getModel(changedAlert);
+      var existingModel = getAlertModel(changedAlert);
 
       if (existingModel) {
         existingModel.alert(changedAlert);
       } else {
         that.alerts.push(new AlertDisplayModel(changedAlert));
-        sortModels();
+        sortAlertModels();
       }
     };
 
     that.handleAlertTrigger = function (triggeredAlert) {
       that.handleAlertChange(triggeredAlert);
-      that.triggerUpdates(that.triggerUpdates() + 1);
       toastr.info('Alert Triggered: ' + triggeredAlert.name);
     };
 
     that.handleAlertDelete = function (deletedAlert) {
-      var modelToRemove = getModel(deletedAlert);
-      that.triggerUpdates(that.triggerUpdates() + 1);
+      var modelToRemove = getAlertModel(deletedAlert);
       that.alerts.remove(modelToRemove);
+    };
+
+    that.handleTriggerCreate = function (createdTrigger) {
+      that.triggers.push(new AlertTriggerModel(createdTrigger));
+    };
+
+    that.handleTriggerChange = function (changedTrigger) {
+      var existingModel = getTriggerModel(changedTrigger);
+
+      if (existingModel) {
+        that.triggers.replace(existingModel, new AlertTriggerModel(changedTrigger));
+      } else {
+        that.triggers.push(new AlertTriggerModel(changedTrigger));
+      }
     };
 
     that.refreshTriggerHistory = function () {
@@ -239,15 +256,10 @@ module.exports = (() => {
         alert_system: system,
         trigger_date: getDateBackwards(7).getTime()
       }).then(function (triggers) {
-        that.triggerUpdates(0);
         triggers.forEach(trigger => {
-          that.addTrigger(trigger);
+          that.handleTriggerCreate(trigger);
         });
       });
-    };
-
-    that.addTrigger = function (trigger) {
-      that.triggers.push(new AlertTriggerModel(trigger));
     };
 
     that.changeTriggersStatus = function (status) {
@@ -266,10 +278,11 @@ module.exports = (() => {
 
   function AlertTriggerModel(trigger) {
     var that = this;
+    that.raw = trigger;
     that.alertId = trigger.alert_id;
     that.date = new Date(parseInt(trigger.trigger_date));
     that.name = trigger.trigger_name;
-    that.status = ko.observable(trigger.trigger_status);
+    that.status = trigger.trigger_status;
     that.statusDate = new Date(parseInt(trigger.trigger_status_date));
     that.loading = ko.observable(false);
 
@@ -285,21 +298,24 @@ module.exports = (() => {
       return returnRef;
     };
 
-    that.dateDisplay = ko.computed(function () {
-      return formatDate('date');
-    });
-    that.statusDateDisplay = ko.computed(function () {
-      return formatDate('statusDate');
-    });
+    that.display = {
+      date: ko.computed(function () {
+        return formatDate('date');
+      }),
+      statusDate: ko.computed(function () {
+        return formatDate('statusDate');
+      }),
+      first: ko.observable(1),
+      rowSpan: ko.observable(1)
+    };
 
     that.toggle = function () {
       that.loading(true);
       const payload = {};
       payload.alert_id = that.alertId;
       payload.trigger_date = that.date.getTime();
-      payload.trigger_status = getOppositeStatus(that.status());
+      payload.trigger_status = getOppositeStatus(that.status);
       return alertManager.updateTrigger(payload).then(() => {
-        that.status(payload.trigger_status);
         that.loading(false);
       });
     };
@@ -1167,6 +1183,16 @@ module.exports = (() => {
           }, function (triggeredAlert) {
             pageModel.handleAlertTrigger(triggeredAlert);
           });
+          alertManager.subscribeTriggers({
+            user_id: userId,
+            alert_system: system
+          }, function (changedTrigger) {
+            pageModel.handleTriggerChange(changedTrigger);
+          }, function (deletedTrigger) {
+            console.log('Trigger Deleted', JSON.stringify(deletedTrigger));
+          }, function (createdTrigger) {
+            pageModel.handleTriggerCreate(createdTrigger);
+          });
           startupPromises.push(alertManager.getUser().then(function (data) {
             if (data.user_id && data.alert_system) {
               pageModel.authenticatedUser(`${data.user_id}@${data.alert_system}`);
@@ -1213,7 +1239,6 @@ module.exports = (() => {
           }).then(function (mdc) {
             marketDataConfiguration(mdc);
           }));
-          startupPromises.push(pageModel.refreshTriggerHistory());
           return Promise.all(startupPromises).then(() => {
             pageModel.connected(true);
             pageModel.changeToGrid();
@@ -1322,6 +1347,7 @@ module.exports = (() => {
       this._adapterClazz = adapterClazz;
       this._connectPromise = null;
       this._alertSubscriptionMap = {};
+      this._triggerSubscriptionMap = {};
     }
     /**
      * Attempts to establish a connection to the backend. This function should be invoked
@@ -1342,7 +1368,7 @@ module.exports = (() => {
         if (this._connectPromise === null) {
           const alertAdapterPromise = Promise.resolve().then(() => {
             const AdapterClazz = this._adapterClazz;
-            const adapter = new AdapterClazz(this._host, this._port, this._secure, onAlertCreated.bind(this), onAlertMutated.bind(this), onAlertDeleted.bind(this), onAlertTriggered.bind(this));
+            const adapter = new AdapterClazz(this._host, this._port, this._secure, onAlertCreated.bind(this), onAlertMutated.bind(this), onAlertDeleted.bind(this), onAlertTriggered.bind(this), onTriggerCreated.bind(this), onTriggerMutated.bind(this), onTriggerDeleted.bind(this));
             return timeout(adapter.connect(jwtProvider), 10000, 'Alert service is temporarily unavailable. Please try again later.');
           });
           this._connectPromise = Promise.all([alertAdapterPromise]).then(results => {
@@ -1550,7 +1576,7 @@ module.exports = (() => {
         checkStatus(this, 'enable alert');
         validate.alert.forQuery(alert);
       }).then(() => {
-        const clone = Object.assign(alert);
+        const clone = Object.assign({}, alert);
         clone.alert_state = 'Starting';
         onAlertMutated.call(this, clone);
         return this._adapter.updateAlert({
@@ -1595,7 +1621,7 @@ module.exports = (() => {
         checkStatus(this, 'disable alert');
         validate.alert.forQuery(alert);
       }).then(() => {
-        const clone = Object.assign(alert);
+        const clone = Object.assign({}, alert);
         clone.alert_state = 'Stopping';
         onAlertMutated.call(this, clone);
         return this._adapter.updateAlert({
@@ -1831,13 +1857,13 @@ module.exports = (() => {
      * @param {String} query.alert_system
      * @param {String=} query.trigger_date
      * @param {String=} query.trigger_status
-     * @returns {Promise<Schema.AlertTriggerStatus[]>}
+     * @returns {Promise<Schema.Trigger[]>}
      */
 
 
     retrieveTriggers(query) {
       return Promise.resolve().then(() => {
-        checkStatus(this, 'retrieve alert trigger statuses');
+        checkStatus(this, 'retrieve alert triggers');
         validate.trigger.forQuery(query);
       }).then(() => {
         return this._adapter.retrieveTriggers(query);
@@ -1851,13 +1877,13 @@ module.exports = (() => {
      * @param {String} query.alert_id
      * @param {String=} query.trigger_date
      * @param {String=} query.trigger_status
-     * @returns {Promise<Schema.AlertTriggerStatus>}
+     * @returns {Promise<Schema.Trigger>}
      */
 
 
     updateTrigger(query) {
       return Promise.resolve().then(() => {
-        checkStatus(this, 'updates alert trigger status');
+        checkStatus(this, 'updates alert trigger');
         validate.trigger.forUpdate(query);
       }).then(() => {
         return this._adapter.updateTrigger(query);
@@ -1871,16 +1897,72 @@ module.exports = (() => {
      * @param {String} query.user_id
      * @param {String=} query.alert_system
      * @param {String=} query.trigger_status
-     * @returns {Promise<Schema.AlertTriggerStatus[]>}
+     * @returns {Promise<Schema.Trigger[]>}
      */
 
 
     updateTriggers(query) {
       return Promise.resolve().then(() => {
-        checkStatus(this, 'updates alert trigger statuses');
+        checkStatus(this, 'updates alert triggers');
         validate.trigger.forBatch(query);
       }).then(() => {
         return this._adapter.updateTriggers(query);
+      });
+    }
+    /**
+     *
+     * @param {Object} query
+     * @param {String} query.user_id
+     * @param {String=} query.alert_system
+     * @param {Callbacks.TriggerMutatedCallback} changeCallback
+     * @param {Callbacks.TriggerDeletedCallback} deleteCallback
+     * @param {Callbacks.TriggerCreatedCallback} createCallback
+     * @returns {Disposable}
+     */
+
+
+    subscribeTriggers(query, changeCallback, deleteCallback, createCallback) {
+      checkStatus(this, 'subscribe triggers');
+      validate.trigger.forUser(query);
+      assert.argumentIsRequired(changeCallback, 'changeCallback', Function);
+      assert.argumentIsRequired(deleteCallback, 'deleteCallback', Function);
+      assert.argumentIsRequired(createCallback, 'createCallback', Function);
+      const userId = query.user_id;
+      const alertSystem = query.alert_system;
+
+      if (!this._triggerSubscriptionMap.hasOwnProperty(userId)) {
+        this._triggerSubscriptionMap[userId] = {};
+      }
+
+      if (!this._triggerSubscriptionMap[userId].hasOwnProperty(alertSystem)) {
+        this._triggerSubscriptionMap[userId][alertSystem] = {
+          createEvent: new Event(this),
+          changeEvent: new Event(this),
+          deleteEvent: new Event(this),
+          subscribers: 0
+        };
+      }
+
+      const subscriptionData = this._triggerSubscriptionMap[userId][alertSystem];
+
+      if (subscriptionData.subscribers === 0) {
+        subscriptionData.implementationBinding = this._adapter.subscribeTriggers(query);
+      }
+
+      subscriptionData.subscribers = subscriptionData.subscribers + 1;
+      const createRegistration = subscriptionData.createEvent.register(createCallback);
+      const changeRegistration = subscriptionData.changeEvent.register(changeCallback);
+      const deleteRegistration = subscriptionData.deleteEvent.register(deleteCallback);
+      return Disposable.fromAction(() => {
+        subscriptionData.subscribers = subscriptionData.subscribers - 1;
+
+        if (subscriptionData.subscribers === 0) {
+          subscriptionData.implementationBinding.dispose();
+        }
+
+        createRegistration.dispose();
+        changeRegistration.dispose();
+        deleteRegistration.dispose();
       });
     }
 
@@ -2029,7 +2111,7 @@ module.exports = (() => {
     const data = getMutationEvents(this._alertSubscriptionMap, alert);
 
     if (data) {
-      data.createEvent.fire(Object.assign(alert));
+      data.createEvent.fire(cloneAlert(alert));
     }
   }
 
@@ -2038,10 +2120,10 @@ module.exports = (() => {
       return;
     }
 
-    const data = getMutationEvents(this._alertSubscriptionMap, alert);
+    const data = getMutationEvents(this._alertSubscriptionMap, cloneAlert(alert));
 
     if (data) {
-      data.changeEvent.fire(Object.assign(alert));
+      data.changeEvent.fire(alert);
     }
   }
 
@@ -2050,7 +2132,7 @@ module.exports = (() => {
       return;
     }
 
-    const data = getMutationEvents(this._alertSubscriptionMap, alert);
+    const data = getMutationEvents(this._alertSubscriptionMap, cloneAlert(alert));
 
     if (data) {
       data.deleteEvent.fire(alert);
@@ -2062,10 +2144,46 @@ module.exports = (() => {
       return;
     }
 
-    const data = getMutationEvents(this._alertSubscriptionMap, alert);
+    const data = getMutationEvents(this._alertSubscriptionMap, cloneAlert(alert));
 
     if (data) {
       data.triggerEvent.fire(alert);
+    }
+  }
+
+  function onTriggerCreated(trigger) {
+    if (!trigger) {
+      return;
+    }
+
+    const data = getMutationEvents(this._triggerSubscriptionMap, trigger);
+
+    if (data) {
+      data.createEvent.fire(trigger);
+    }
+  }
+
+  function onTriggerMutated(trigger) {
+    if (!trigger) {
+      return;
+    }
+
+    const data = getMutationEvents(this._triggerSubscriptionMap, trigger);
+
+    if (data) {
+      data.changeEvent.fire(trigger);
+    }
+  }
+
+  function onTriggerDeleted(trigger) {
+    if (!trigger) {
+      return;
+    }
+
+    const data = getMutationEvents(this._triggerSubscriptionMap, trigger);
+
+    if (data) {
+      data.deleteEvent.fire(trigger);
     }
   }
 
@@ -2075,6 +2193,10 @@ module.exports = (() => {
         rejectCallback(description);
       }, duration);
     })]);
+  }
+
+  function cloneAlert(alert) {
+    return alert;
   }
 
   const instrumentLookupEndpoint = EndpointBuilder.for('lookup-instrument', 'lookup instrument').withVerb(VerbType.GET).withProtocol(ProtocolType.HTTPS).withHost('instruments-prod.aws.barchart.com').withPort(443).withPathBuilder(pb => {
@@ -2117,10 +2239,13 @@ module.exports = (() => {
    * @param {Callbacks.AlertMutatedCallback} onAlertMutated
    * @param {Callbacks.AlertDeletedCallback} onAlertDeleted
    * @param {Callbacks.AlertTriggeredCallback} onAlertTriggered
+   * @param {Callbacks.TriggerCreatedCallback=} onTriggerCreated
+   * @param {Callbacks.TriggerMutatedCallback=} onTriggerMutated
+   * @param {Callbacks.TriggerDeletedCallback=} onTriggerDeleted
    */
 
   class AdapterBase extends Disposable {
-    constructor(host, port, secure, onAlertCreated, onAlertMutated, onAlertDeleted, onAlertTriggered) {
+    constructor(host, port, secure, onAlertCreated, onAlertMutated, onAlertDeleted, onAlertTriggered, onTriggerCreated, onTriggerMutated, onTriggerDeleted) {
       super();
       assert.argumentIsRequired(host, 'host', String);
       assert.argumentIsRequired(port, 'port', Number);
@@ -2129,6 +2254,9 @@ module.exports = (() => {
       assert.argumentIsRequired(onAlertMutated, 'onAlertMutated', Function);
       assert.argumentIsRequired(onAlertDeleted, 'onAlertDeleted', Function);
       assert.argumentIsRequired(onAlertTriggered, 'onAlertTriggered', Function);
+      assert.argumentIsOptional(onTriggerCreated, 'onTriggerCreated', Function);
+      assert.argumentIsOptional(onTriggerMutated, 'onTriggerMutated', Function);
+      assert.argumentIsOptional(onTriggerDeleted, 'onTriggerDeleted', Function);
       this._host = host;
       this._port = port;
       this._secure = secure;
@@ -2136,6 +2264,9 @@ module.exports = (() => {
       this._onAlertMutated = onAlertMutated;
       this._onAlertDeleted = onAlertDeleted;
       this._onAlertTriggered = onAlertTriggered;
+      this._onTriggerCreated = onTriggerCreated || emptyCallback;
+      this._onTriggerMutated = onTriggerMutated || emptyCallback;
+      this._onTriggerDeleted = onTriggerDeleted || emptyCallback;
     }
     /**
      * The hostname of the Barchart Alert Service.
@@ -2267,10 +2398,18 @@ module.exports = (() => {
       return null;
     }
 
+    subscribeTriggers(query) {
+      return null;
+    }
+
     toString() {
       return '[AdapterBase]';
     }
 
+  }
+
+  function emptyCallback(data) {
+    return;
   }
 
   return AdapterBase;
@@ -2308,8 +2447,8 @@ module.exports = (() => {
    */
 
   class AdapterForHttp extends AdapterBase {
-    constructor(host, port, secure, onAlertCreated, onAlertMutated, onAlertDeleted, onAlertTriggered) {
-      super(host, port, secure, onAlertCreated, onAlertMutated, onAlertDeleted, onAlertTriggered);
+    constructor(host, port, secure, onAlertCreated, onAlertMutated, onAlertDeleted, onAlertTriggered, onTriggerCreated, onTriggerMutated, onTriggerDeleted) {
+      super(host, port, secure, onAlertCreated, onAlertMutated, onAlertDeleted, onAlertTriggered, onTriggerCreated, onTriggerMutated, onTriggerDeleted);
       assert.argumentIsOptional(host, 'host', String);
       assert.argumentIsOptional(port, 'port', Number);
       assert.argumentIsOptional(secure, 'secure', Boolean);
@@ -2506,6 +2645,10 @@ module.exports = (() => {
 
     updateTriggers(query) {
       return Gateway.invoke(this._updateTriggersEndpoint, query);
+    }
+
+    subscribeTriggers(query) {
+      throw new Error('Implementation of the AdapterForHttp.subscribeTriggers function is pending...');
     }
 
     _onDispose() {
@@ -2743,12 +2886,13 @@ module.exports = (() => {
    */
 
   class AdapterForSocketIo extends AdapterBase {
-    constructor(host, port, secure, onAlertCreated, onAlertMutated, onAlertDeleted, onAlertTriggered) {
-      super(host, port, secure, onAlertCreated, onAlertMutated, onAlertDeleted, onAlertTriggered);
+    constructor(host, port, secure, onAlertCreated, onAlertMutated, onAlertDeleted, onAlertTriggered, onTriggerCreated, onTriggerMutated, onTriggerDeleted) {
+      super(host, port, secure, onAlertCreated, onAlertMutated, onAlertDeleted, onAlertTriggered, onTriggerCreated, onTriggerMutated, onTriggerDeleted);
       this._socket = null;
       this._connectionState = ConnectionState.Disconnected;
       this._requestMap = {};
-      this._subscriberMap = {};
+      this._alertSubscriberMap = {};
+      this._triggerSubscriberMap = {};
       this._jwtProvider = null;
     }
 
@@ -2784,7 +2928,10 @@ module.exports = (() => {
 
           this._socket.on('reconnect', () => {
             changeConnectionState.call(this, ConnectionState.Connected);
-            getSubscribers(this._subscriberMap).forEach(subscriber => {
+            getSubscribers(this._alertSubscriberMap).forEach(subscriber => {
+              subscriber.subscribe();
+            });
+            getSubscribers(this._triggerSubscriberMap).forEach(subscriber => {
               subscriber.subscribe();
             });
           });
@@ -2817,6 +2964,18 @@ module.exports = (() => {
           this._socket.on('alert/triggered', alert => {
             this._onAlertTriggered(alert);
           });
+
+          this._socket.on('trigger/created', trigger => {
+            this._onTriggerCreated(trigger);
+          });
+
+          this._socket.on('trigger/mutated', trigger => {
+            this._onTriggerMutated(trigger);
+          });
+
+          this._socket.on('trigger/deleted', trigger => {
+            this._onTriggerDeleted(trigger);
+          });
         } else {
           rejectCallback('Unable to connect.');
         }
@@ -2848,15 +3007,15 @@ module.exports = (() => {
     }
 
     subscribeAlerts(query) {
-      if (getSubscriber(this._subscriberMap, query) !== null) {
-        throw new Error('A subscriber already exists');
+      if (getSubscriber(this._alertSubscriberMap, query) !== null) {
+        throw new Error('An alert subscriber already exists');
       }
 
       const subscriber = new AlertSubscriber(this, query);
       subscriber.subscribe();
-      putSubscriber(this._subscriberMap, subscriber);
+      putSubscriber(this._alertSubscriberMap, subscriber);
       return Disposable.fromAction(() => {
-        deleteSubscriber(this._subscriberMap, subscriber);
+        deleteSubscriber(this._alertSubscriberMap, subscriber);
         subscriber.dispose();
       });
     }
@@ -2917,12 +3076,29 @@ module.exports = (() => {
       return sendRequestToServer.call(this, 'alert/triggers/update/user', query, true);
     }
 
+    subscribeTriggers(query) {
+      if (getSubscriber(this._triggerSubscriberMap, query) !== null) {
+        throw new Error('A trigger subscriber already exists');
+      }
+
+      const subscriber = new TriggerSubscriber(this, query);
+      subscriber.subscribe();
+      putSubscriber(this._triggerSubscriberMap, subscriber);
+      return Disposable.fromAction(() => {
+        deleteSubscriber(this._triggerSubscriberMap, subscriber);
+        subscriber.dispose();
+      });
+    }
+
     _onDispose() {
       if (this._socket) {
         this._socket.disconnect();
 
         this._socket = null;
       }
+
+      this._alertSubscriberMap = {};
+      this._triggerSubscriberMap = {};
     }
 
     toString() {
@@ -3055,6 +3231,53 @@ module.exports = (() => {
           });
         });
       });
+    }
+
+    _onDispose() {}
+
+    toString() {
+      return '[AdapterForSocketIo.AlertSubscriber]';
+    }
+
+  }
+
+  class TriggerSubscriber extends Disposable {
+    constructor(parent, query) {
+      super();
+      this._parent = parent;
+      this._query = query;
+    }
+
+    getQuery() {
+      return this._query;
+    }
+
+    subscribe() {
+      if (this.getIsDisposed()) {
+        throw new Error('The subscriber has been disposed.');
+      }
+
+      sendSubscriptionToServer.call(this._parent, 'triggers/events', this._query, true).then(() => {
+        if (this.getIsDisposed()) {
+          return;
+        }
+
+        this._parent.retrieveTriggers(this._query).then(triggers => {
+          if (this.getIsDisposed()) {
+            return;
+          }
+
+          triggers.forEach(trigger => {
+            this._parent._onTriggerCreated(trigger);
+          });
+        });
+      });
+    }
+
+    _onDispose() {}
+
+    toString() {
+      return '[AdapterForSocketIo.TriggerSubscriber]';
     }
 
   }
@@ -3291,8 +3514,7 @@ module.exports = (() => {
   const validator = {
     forQuery: (query, description) => {
       const d = getDescription(description);
-      assert.argumentIsRequired(query.user_id, `${d}.user_id`, String);
-      assert.argumentIsRequired(query.alert_system, `${d}.alert_system`, String);
+      validator.forUser(query, description);
       assert.argumentIsOptional(query.trigger_date, `${d}.trigger_date`, Number);
       assert.argumentIsOptional(query.trigger_status, `${d}.trigger_status`, String);
     },
@@ -3304,9 +3526,14 @@ module.exports = (() => {
     },
     forBatch: (query, description) => {
       const d = getDescription(description);
+      validator.forUser(query, description);
+      assert.argumentIsOptional(query.trigger_status, `${d}.trigger_status`, String);
+    },
+    forUser: (query, description) => {
+      const d = getDescription(description);
+      assert.argumentIsRequired(query, d, Object);
       assert.argumentIsRequired(query.user_id, `${d}.user_id`, String);
       assert.argumentIsRequired(query.alert_system, `${d}.alert_system`, String);
-      assert.argumentIsOptional(query.trigger_status, `${d}.trigger_status`, String);
     }
   };
 
@@ -3314,7 +3541,7 @@ module.exports = (() => {
     if (is.string(description)) {
       return description;
     } else {
-      return 'alert';
+      return 'trigger';
     }
   }
 
@@ -37077,7 +37304,7 @@ module.exports={
   "_resolved": "https://registry.npmjs.org/elliptic/-/elliptic-6.5.3.tgz",
   "_shasum": "cb59eb2efdaf73a0bd78ccd7015a62ad6e0f93d6",
   "_spec": "elliptic@^6.5.3",
-  "_where": "/Users/bryan/Documents/git/alerts-client-js/node_modules/browserify-sign",
+  "_where": "/home/igor/projects/bch/alerts-client-js/node_modules/browserify-sign",
   "author": {
     "name": "Fedor Indutny",
     "email": "fedor@indutny.com"
@@ -42116,7 +42343,7 @@ var y = d * 365.25;
  * @api public
  */
 
-module.exports = function (val, options) {
+module.exports = function(val, options) {
   options = options || {};
   var type = typeof val;
   if (type === 'string' && val.length > 0) {
