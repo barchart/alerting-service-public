@@ -1228,6 +1228,18 @@ module.exports = (() => {
 								}
 							);
 
+							alertManager.subscribeTriggers({ user_id: userId, alert_system: system },
+								function(changedTrigger) {
+									console.log('Trigger Changed', JSON.stringify(changedTrigger));
+								},
+								function(deletedTrigger) {
+									console.log('Trigger Deleted', JSON.stringify(deletedTrigger));
+								},
+								function(createdTrigger) {
+									console.log('Trigger Created', JSON.stringify(createdTrigger));
+								}
+							);
+
 							startupPromises.push(
 								alertManager.getUser()
 									.then(function(data) {
