@@ -54,15 +54,14 @@ module.exports = (() => {
 		that.providerDescription = ko.observable(alertManager !== null ? alertManager.toString() : '');
 
 		that.triggers = ko.observableArray([ ]);
-		that.triggerUpdates = ko.observable(0);
 		that.triggersFormatted = ko.computed(function() {
 			const triggers = that.triggers().slice(0);
 
 			triggers.sort(comparatorForAlertTriggers);
 
 			triggers.forEach((trigger) => {
-				trigger.first = ko.observable(false);
-				trigger.rowSpan = 1;
+				trigger.display.first(false);
+				trigger.display.rowSpan(1);
 			});
 
 			const grouped = triggers.reduce((accumulator, trigger) => {
@@ -78,8 +77,8 @@ module.exports = (() => {
 			}, [ ]);
 
 			grouped.forEach((group) => {
-				group.triggers[0].first(true);
-				group.triggers[0].rowSpan = group.triggers.length;
+				group.triggers[0].display.first(true);
+				group.triggers[0].display.rowSpan(group.triggers.length);
 			});
 
 			const flattened = grouped.reduce((acc, g) => {
@@ -92,14 +91,19 @@ module.exports = (() => {
 
 		that.activeTemplate = ko.observable('alert-disconnected');
 
-		var getModel = function(alert) {
+		var getAlertModel = function(alert) {
 			return _.find(that.alerts(), function(model) {
 				return model.alert().alert_id === alert.alert_id;
 			});
 		};
-		var sortModels = function() {
+		var sortAlertModels = function() {
 			that.alerts.sort(function(a, b) {
 				return a.alert().name.localeCompare(b.alert().name);
+			});
+		};
+		var getTriggerModel = function(trigger) {
+			return _.find(that.triggers(), function(model) {
+				return model.alertId === trigger.alert_id && model.raw.trigger_date === trigger.trigger_date;
 			});
 		};
 
@@ -206,38 +210,46 @@ module.exports = (() => {
 		};
 
 		that.handleAlertCreate = function(createdAlert) {
-			var existingModel = getModel(createdAlert);
+			var existingModel = getAlertModel(createdAlert);
 
 			if (!existingModel) {
 				that.alerts.push(new AlertDisplayModel(createdAlert));
 
-				sortModels();
+				sortAlertModels();
 			}
 		};
 		that.handleAlertChange = function(changedAlert) {
-			var existingModel = getModel(changedAlert);
+			var existingModel = getAlertModel(changedAlert);
 
 			if (existingModel) {
 				existingModel.alert(changedAlert);
 			} else {
 				that.alerts.push(new AlertDisplayModel(changedAlert));
 
-				sortModels();
+				sortAlertModels();
 			}
 		};
 		that.handleAlertTrigger = function(triggeredAlert) {
 			that.handleAlertChange(triggeredAlert);
 
-			that.triggerUpdates(that.triggerUpdates() + 1);
-
 			toastr.info('Alert Triggered: ' + triggeredAlert.name);
 		};
 		that.handleAlertDelete = function(deletedAlert) {
-			var modelToRemove = getModel(deletedAlert);
-
-			that.triggerUpdates(that.triggerUpdates() + 1);
+			var modelToRemove = getAlertModel(deletedAlert);
 
 			that.alerts.remove(modelToRemove);
+		};
+		that.handleTriggerCreate = function(createdTrigger) {
+			that.triggers.push(new AlertTriggerModel(createdTrigger));
+		};
+		that.handleTriggerChange = function(changedTrigger) {
+			var existingModel = getTriggerModel(changedTrigger);
+
+			if (existingModel) {
+				that.triggers.replace(existingModel, new AlertTriggerModel(changedTrigger));
+			} else {
+				that.triggers.push(new AlertTriggerModel(changedTrigger));
+			}
 		};
 
 		that.refreshTriggerHistory = function() {
@@ -245,15 +257,10 @@ module.exports = (() => {
 
 			return alertManager.retrieveTriggers({ user_id: userId, alert_system: system, trigger_date: getDateBackwards(7).getTime() })
 				.then(function(triggers) {
-					that.triggerUpdates(0);
-
 					triggers.forEach((trigger) => {
-						that.addTrigger(trigger);
+						that.handleTriggerCreate(trigger);
 					});
 				});
-		};
-		that.addTrigger = function(trigger) {
-			that.triggers.push(new AlertTriggerModel(trigger));
 		};
 		that.changeTriggersStatus = function(status) {
 			that.triggers.removeAll();
@@ -269,10 +276,12 @@ module.exports = (() => {
 	function AlertTriggerModel(trigger) {
 		var that = this;
 
+		that.raw = trigger;
+
 		that.alertId = trigger.alert_id;
 		that.date = new Date(parseInt(trigger.trigger_date));
 		that.name = trigger.trigger_name;
-		that.status = ko.observable(trigger.trigger_status);
+		that.status = trigger.trigger_status;
 		that.statusDate = new Date(parseInt(trigger.trigger_status_date));
 
 		that.loading = ko.observable(false);
@@ -289,8 +298,12 @@ module.exports = (() => {
 			return returnRef;
 		};
 
-		that.dateDisplay = ko.computed(function() { return formatDate('date'); });
-		that.statusDateDisplay = ko.computed(function() { return formatDate('statusDate'); });
+		that.display = {
+			date: ko.computed(function() { return formatDate('date'); }),
+			statusDate: ko.computed(function() { return formatDate('statusDate'); }),
+			first: ko.observable(1),
+			rowSpan: ko.observable(1)
+		};
 
 		that.toggle = function() {
 			that.loading(true);
@@ -299,12 +312,10 @@ module.exports = (() => {
 
 			payload.alert_id = that.alertId;
 			payload.trigger_date = that.date.getTime();
-			payload.trigger_status = getOppositeStatus(that.status());
+			payload.trigger_status = getOppositeStatus(that.status);
 
 			return alertManager.updateTrigger(payload)
 				.then(() => {
-					that.status(payload.trigger_status);
-
 					that.loading(false);
 				});
 		};
@@ -1230,13 +1241,13 @@ module.exports = (() => {
 
 							alertManager.subscribeTriggers({ user_id: userId, alert_system: system },
 								function(changedTrigger) {
-									console.log('Trigger Changed', JSON.stringify(changedTrigger));
+									pageModel.handleTriggerChange(changedTrigger);
 								},
 								function(deletedTrigger) {
 									console.log('Trigger Deleted', JSON.stringify(deletedTrigger));
 								},
 								function(createdTrigger) {
-									console.log('Trigger Created', JSON.stringify(createdTrigger));
+									pageModel.handleTriggerCreate(createdTrigger);
 								}
 							);
 
@@ -1310,10 +1321,6 @@ module.exports = (() => {
 									})
 							);
 
-							startupPromises.push(
-								pageModel.refreshTriggerHistory()
-							);
-
 							return Promise.all(startupPromises)
 								.then(() => {
 									pageModel.connected(true);
@@ -1346,7 +1353,7 @@ module.exports = (() => {
 			});
 	};
 
-	var comparatorForAlertTriggers =	ComparatorBuilder
+	var comparatorForAlertTriggers = ComparatorBuilder
 		.startWith((a, b) => comparators.compareDates(b.date, a.date))
 		.toComparator();
 

@@ -195,16 +195,6 @@ input.percent.form-control {
     padding-right: 30px;
 }
 
-.trigger-history-updates {
-    color: whitesmoke;
-    background-color: rgb(0, 79, 136);
-    border-radius: 50%;
-    margin-right: 15px;
-    min-width: 20px;
-    padding: 0 5px;
-    text-align: center;
-}
-
 .trigger-history-update-btn {
     font-size: 16px;
 }

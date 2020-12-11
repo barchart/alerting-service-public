@@ -518,7 +518,6 @@
 
     <script type="text/html" id="trigger-history-template">
         <div class="trigger-history-controls">
-            <div class="trigger-history-updates"><span data-bind="text: triggerUpdates"></span></div>
             <div class="trigger-history-update-btn text-button text-button-black glyphicon glyphicon-refresh" data-bind="click: refreshTriggerHistory"></div>
         </div>
 
@@ -536,13 +535,13 @@
             </thead>
             <tbody data-bind="foreach: triggersFormatted">
                 <tr>
-                    <td class="center col-md-3" data-bind="{ visible: first, attr: { rowspan: rowSpan }, text: alertId }"></td>
+                    <td class="center col-md-3" data-bind="{ visible: display.first, attr: { rowspan: display.rowSpan }, text: alertId }"></td>
                     <td class="left col-md-3" data-bind="text: name"></td>
                     <td class="center col-md-2">
-                        <input type="checkbox" data-bind="enable: !loading(), click: () => toggle(), checked: status() === 'Read'">
+                        <input type="checkbox" data-bind="enable: !loading(), click: () => toggle(), checked: status === 'Read'">
                     </td>
-                    <td class="center col-md-2" data-bind="text: dateDisplay"></td>
-                    <td class="center col-md-2" data-bind="text: statusDateDisplay"></td>
+                    <td class="center col-md-2" data-bind="text: display.date"></td>
+                    <td class="center col-md-2" data-bind="text: display.statusDate"></td>
                 </tr>
             </tbody>
         </table>
