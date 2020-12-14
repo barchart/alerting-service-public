@@ -517,28 +517,24 @@
     </script>
 
     <script type="text/html" id="trigger-history-template">
-        <div class="trigger-history-controls">
-            <div class="trigger-history-update-btn text-button text-button-black glyphicon glyphicon-refresh" data-bind="click: refreshTriggerHistory"></div>
-        </div>
-
         <table class="table table-triggers table-striped small">
             <thead>
                 <th class="center col-md-3">ID</th>
                 <th class="left col-md-2">Name</th>
                 <th class="center col-md-1">
-                    <span class="text-button text-button-black glyphicon glyphicon-collapse-down" data-bind="click: () => changeTriggersStatus('Read')"></span>
+                    <span class="text-button text-button-black glyphicon glyphicon-collapse-down" data-bind="click: () => updateTriggers('Read')"></span>
                     <span style="padding: 0 5px">Read</span>
-                    <span class="text-button text-button-black glyphicon glyphicon-unchecked" data-bind="click: () => changeTriggersStatus('Unread')"></span>
+                    <span class="text-button text-button-black glyphicon glyphicon-unchecked" data-bind="click: () => updateTriggers('Unread')"></span>
                 </th>
                 <th class="center col-md-2">Trigger Date</th>
                 <th class="center col-md-2">Trigger Status Date</th>
             </thead>
             <tbody data-bind="foreach: triggersFormatted">
                 <tr>
-                    <td class="center col-md-3" data-bind="{ visible: display.first, attr: { rowspan: display.rowSpan }, text: alertId }"></td>
-                    <td class="left col-md-3" data-bind="text: name"></td>
+                    <td class="center col-md-3" data-bind="{ visible: display.first, attr: { rowspan: display.rowSpan }, text: trigger().alert_id }"></td>
+                    <td class="left col-md-3" data-bind="text: trigger().trigger_name"></td>
                     <td class="center col-md-2">
-                        <input type="checkbox" data-bind="enable: !loading(), click: () => toggle(), checked: status === 'Read'">
+                        <input type="checkbox" data-bind="enable: !loading(), click: () => toggle(), checked: display.read()">
                     </td>
                     <td class="center col-md-2" data-bind="text: display.date"></td>
                     <td class="center col-md-2" data-bind="text: display.statusDate"></td>

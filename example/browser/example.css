@@ -186,15 +186,3 @@ input.percent.form-control {
 .table-triggers td {
   vertical-align: middle !important;
 }
-
-.trigger-history-controls {
-    align-items: center;
-    display: flex;
-    justify-content: flex-end;
-    margin-bottom: 10px;
-    padding-right: 30px;
-}
-
-.trigger-history-update-btn {
-    font-size: 16px;
-}

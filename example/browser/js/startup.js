@@ -55,22 +55,22 @@ module.exports = (() => {
 
 		that.triggers = ko.observableArray([ ]);
 		that.triggersFormatted = ko.computed(function() {
-			const triggers = that.triggers().slice(0);
+			const models = that.triggers().slice(0);
 
-			triggers.sort(comparatorForAlertTriggers);
+			models.sort(comparatorForAlertTriggers);
 
-			triggers.forEach((trigger) => {
-				trigger.display.first(false);
-				trigger.display.rowSpan(1);
+			models.forEach((model) => {
+				model.display.first(false);
+				model.display.rowSpan(1);
 			});
 
-			const grouped = triggers.reduce((accumulator, trigger) => {
-				const group = accumulator.find(a => a.alertId === trigger.alertId) || null;
+			const grouped = models.reduce((accumulator, model) => {
+				const group = accumulator.find(a => a.alert_id === model.trigger().alert_id) || null;
 
 				if (group === null) {
-					accumulator.push({ alertId: trigger.alertId, triggers: [ trigger ] });
+					accumulator.push({ alert_id: model.trigger().alert_id, triggers: [ model ] });
 				} else {
-					group.triggers.push(trigger);
+					group.triggers.push(model);
 				}
 
 				return accumulator;
@@ -103,7 +103,7 @@ module.exports = (() => {
 		};
 		var getTriggerModel = function(trigger) {
 			return _.find(that.triggers(), function(model) {
-				return model.alertId === trigger.alert_id && model.raw.trigger_date === trigger.trigger_date;
+				return model.trigger().alert_id === trigger.alert_id && model.trigger().trigger_date === trigger.trigger_date;
 			});
 		};
 
@@ -238,6 +238,10 @@ module.exports = (() => {
 			var modelToRemove = getAlertModel(deletedAlert);
 
 			that.alerts.remove(modelToRemove);
+
+			that.triggers.remove(function(triggerModel) {
+				return triggerModel.trigger().alert_id === modelToRemove.alert().alert_id;
+			});
 		};
 		that.handleTriggerCreate = function(createdTrigger) {
 			that.triggers.push(new AlertTriggerModel(createdTrigger));
@@ -246,51 +250,36 @@ module.exports = (() => {
 			var existingModel = getTriggerModel(changedTrigger);
 
 			if (existingModel) {
-				that.triggers.replace(existingModel, new AlertTriggerModel(changedTrigger));
+				existingModel.trigger(changedTrigger);
 			} else {
 				that.triggers.push(new AlertTriggerModel(changedTrigger));
 			}
 		};
 
-		that.refreshTriggerHistory = function() {
-			that.triggers.removeAll();
-
-			return alertManager.retrieveTriggers({ user_id: userId, alert_system: system, trigger_date: getDateBackwards(7).getTime() })
-				.then(function(triggers) {
-					triggers.forEach((trigger) => {
-						that.handleTriggerCreate(trigger);
-					});
-				});
-		};
-		that.changeTriggersStatus = function(status) {
-			that.triggers.removeAll();
-
+		that.updateTriggers = function(status) {
 			return alertManager.updateTriggers({ user_id: currentUserId, alert_system: currentSystem, trigger_status: status })
-				.then(() => {})
-				.catch((error) => { console.log(error); })
-				.then(() => {
-					that.refreshTriggerHistory();
+				.then((updatedTriggers) => {
+					updatedTriggers.forEach((trigger) => {
+						that.handleTriggerChange(trigger);
+					});
 				});
 		};
 	}
 	function AlertTriggerModel(trigger) {
 		var that = this;
 
-		that.raw = trigger;
+		that.trigger = ko.observable(trigger);
 
-		that.alertId = trigger.alert_id;
-		that.date = new Date(parseInt(trigger.trigger_date));
-		that.name = trigger.trigger_name;
-		that.status = trigger.trigger_status;
-		that.statusDate = new Date(parseInt(trigger.trigger_status_date));
+		that.date = ko.computed(function() { return new Date(parseInt(that.trigger().trigger_date)); });
+		that.statusDate = ko.computed(function() { return new Date(parseInt(that.trigger().trigger_status_date)); });
 
 		that.loading = ko.observable(false);
 
-		var formatDate = function(field) {
+		var formatDate = function(date) {
 			var returnRef;
 
-			if (that[field]) {
-				returnRef = that[field].toLocaleString();
+			if (date) {
+				returnRef = date.toLocaleString();
 			} else {
 				returnRef = 'never';
 			}
@@ -299,10 +288,11 @@ module.exports = (() => {
 		};
 
 		that.display = {
-			date: ko.computed(function() { return formatDate('date'); }),
-			statusDate: ko.computed(function() { return formatDate('statusDate'); }),
+			date: ko.computed(function() { return formatDate(that.date()); }),
 			first: ko.observable(1),
-			rowSpan: ko.observable(1)
+			read: ko.computed(function() { return that.trigger().trigger_status === 'Read'; }),
+			rowSpan: ko.observable(1),
+			statusDate: ko.computed(function() { return formatDate(that.statusDate()); })
 		};
 
 		that.toggle = function() {
@@ -310,9 +300,9 @@ module.exports = (() => {
 
 			const payload = { };
 
-			payload.alert_id = that.alertId;
-			payload.trigger_date = that.date.getTime();
-			payload.trigger_status = getOppositeStatus(that.status);
+			payload.alert_id = that.trigger().alert_id;
+			payload.trigger_date = that.date().getTime();
+			payload.trigger_status = getOppositeStatus(that.trigger().trigger_status);
 
 			return alertManager.updateTrigger(payload)
 				.then(() => {
@@ -1354,7 +1344,7 @@ module.exports = (() => {
 	};
 
 	var comparatorForAlertTriggers = ComparatorBuilder
-		.startWith((a, b) => comparators.compareDates(b.date, a.date))
+		.startWith((modelA, modelB) => comparators.compareDates(modelB.date(), modelA.date()))
 		.toComparator();
 
 	var getDateBackwards = function(days) {
