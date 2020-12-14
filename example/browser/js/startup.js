@@ -31,7 +31,7 @@ module.exports = (() => {
 	function PageModel(host, system, userId) {
 		var that = this;
 
-		that.host = ko.observable(host || 'localhost');
+		that.host = ko.observable(host || 'localhost' || 'alerts-management-demo.barchart.com');
 		that.system = ko.observable(system || 'barchart.com');
 		that.userId = ko.observable(userId || 'me');
 		that.mode = ko.observable('socket.io');
@@ -1210,7 +1210,7 @@ module.exports = (() => {
 					pageModel.connecting(true);
 
 					var jwtGenerator = getJwtGenerator(userId, system);
-					var jwtProvider = new JwtProvider(jwtGenerator, 60000, 'demo');
+					var jwtProvider = new JwtProvider(jwtGenerator, 60000);
 
 					initializePromise = alertManager.connect(jwtProvider)
 						.then(function() {

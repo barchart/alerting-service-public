@@ -1,10 +1,5 @@
 ## System Integration
 
-As a consumer of the Barchart Alert Service, your software will:
-
-* Create alerts, and
-* Observe and maintain those alerts.
-
 The Barchart Alert Service uses commercially reasonable procedures to ensure your data is safe. All data is encrypted before transmission (using HTTP over SSL/TLS). Furthermore, each interaction is authorized using a [JSON Web Token](https://en.wikipedia.org/wiki/JSON_Web_Token).
 
 ## Token Generation
