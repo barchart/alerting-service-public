@@ -243,26 +243,32 @@ module.exports = (() => {
 				return triggerModel.trigger().alert_id === modelToRemove.alert().alert_id;
 			});
 		};
-		that.handleTriggerCreate = function(createdTrigger) {
-			that.triggers.push(new AlertTriggerModel(createdTrigger));
+		that.handleTriggersCreate = function(triggers) {
+			triggers.forEach((trigger) => {
+				that.triggers.push(new AlertTriggerModel(trigger));
+			});
 		};
-		that.handleTriggerChange = function(changedTrigger) {
-			var existingModel = getTriggerModel(changedTrigger);
+		that.handleTriggersChange = function(triggers) {
+			triggers.forEach((trigger) => {
+				const existingModel = getTriggerModel(trigger);
 
-			if (existingModel) {
-				existingModel.trigger(changedTrigger);
-			} else {
-				that.triggers.push(new AlertTriggerModel(changedTrigger));
-			}
+				if (existingModel) {
+					existingModel.trigger(trigger);
+				} else {
+					that.triggers.push(new AlertTriggerModel(trigger));
+				}
+			});
+		};
+		that.handleTriggersDelete = function(triggers) {
+			const existingModels = triggers
+				.map(t => getTriggerModel(t) || null)
+				.filter(t => t !== null);
+
+			that.triggers.removeAll(existingModels);
 		};
 
 		that.updateTriggers = function(status) {
-			return alertManager.updateTriggers({ user_id: currentUserId, alert_system: currentSystem, trigger_status: status })
-				.then((updatedTriggers) => {
-					updatedTriggers.forEach((trigger) => {
-						that.handleTriggerChange(trigger);
-					});
-				});
+			return alertManager.updateTriggers({ user_id: currentUserId, alert_system: currentSystem, trigger_status: status });
 		};
 	}
 	function AlertTriggerModel(trigger) {
@@ -301,7 +307,7 @@ module.exports = (() => {
 			const payload = { };
 
 			payload.alert_id = that.trigger().alert_id;
-			payload.trigger_date = that.date().getTime();
+			payload.trigger_date = that.date().getTime().toString();
 			payload.trigger_status = getOppositeStatus(that.trigger().trigger_status);
 
 			return alertManager.updateTrigger(payload)
@@ -1230,14 +1236,14 @@ module.exports = (() => {
 							);
 
 							alertManager.subscribeTriggers({ user_id: userId, alert_system: system },
-								function(changedTrigger) {
-									pageModel.handleTriggerChange(changedTrigger);
+								function(changedTriggers) {
+									pageModel.handleTriggersChange(changedTriggers);
 								},
-								function(deletedTrigger) {
-									console.log('Trigger Deleted', JSON.stringify(deletedTrigger));
+								function(deletedTriggers) {
+									pageModel.handleTriggersDelete(deletedTriggers);
 								},
-								function(createdTrigger) {
-									pageModel.handleTriggerCreate(createdTrigger);
+								function(createdTriggers) {
+									pageModel.handleTriggersCreate(createdTriggers);
 								}
 							);
 
