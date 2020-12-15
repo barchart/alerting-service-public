@@ -334,7 +334,7 @@ module.exports = (() => {
 			if (alert.last_trigger_date) {
 				var lastTriggerDate = new Date(parseInt(alert.last_trigger_date));
 
-				returnRef = lastTriggerDate.toString();
+				returnRef = lastTriggerDate.toLocaleString();
 			} else {
 				returnRef = 'never';
 			}
