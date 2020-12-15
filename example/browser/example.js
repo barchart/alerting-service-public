@@ -2416,7 +2416,8 @@ module.exports = (() => {
 },{"@barchart/common-js/lang/Disposable":44,"@barchart/common-js/lang/assert":49}],4:[function(require,module,exports){
 const array = require('@barchart/common-js/lang/array'),
       assert = require('@barchart/common-js/lang/assert'),
-      Disposable = require('@barchart/common-js/lang/Disposable');
+      Disposable = require('@barchart/common-js/lang/Disposable'),
+      object = require('@barchart/common-js/lang/object');
 
 const EndpointBuilder = require('@barchart/common-js/api/http/builders/EndpointBuilder'),
       ErrorInterceptor = require('@barchart/common-js/api/http/interceptors/ErrorInterceptor'),
@@ -2523,7 +2524,8 @@ module.exports = (() => {
         pb.withLiteralParameter('server', 'server').withLiteralParameter('version', 'version');
       }).withResponseInterceptor(ResponseInterceptor.DATA).withErrorInterceptor(ErrorInterceptor.GENERAL).endpoint;
       this._scheduler = new Scheduler();
-      this._subscribers = {};
+      this._alertSubscriberMap = {};
+      this._triggerSubscriberMap = {};
     }
 
     connect(jwtProvider) {
@@ -2560,7 +2562,7 @@ module.exports = (() => {
 
     retrieveAlerts(query) {
       return Gateway.invoke(this._queryEndpoint, query).then(alerts => {
-        const subscriber = getSubscriber(this._subscribers, query);
+        const subscriber = getSubscriber(this._alertSubscriberMap, query);
 
         if (subscriber) {
           const clones = alerts.map(alert => {
@@ -2576,15 +2578,15 @@ module.exports = (() => {
     }
 
     subscribeAlerts(query) {
-      if (getSubscriber(this._subscribers, query) !== null) {
-        throw new Error('A subscriber already exists');
+      if (getSubscriber(this._alertSubscriberMap, query) !== null) {
+        throw new Error('An alert subscriber already exists');
       }
 
       const subscriber = new AlertSubscriber(this, query);
       subscriber.start();
-      putSubscriber(this._subscribers, subscriber);
+      putSubscriber(this._alertSubscriberMap, subscriber);
       return Disposable.fromAction(() => {
-        deleteSubscriber(this._subscribers, subscriber);
+        deleteSubscriber(this._alertSubscriberMap, subscriber);
         subscriber.dispose();
       });
     }
@@ -2634,7 +2636,20 @@ module.exports = (() => {
     }
 
     retrieveTriggers(query) {
-      return Gateway.invoke(this._retrieveTriggersEndpoint, query);
+      return Gateway.invoke(this._retrieveTriggersEndpoint, query).then(triggers => {
+        const subscriber = getSubscriber(this._triggerSubscriberMap, query);
+
+        if (subscriber) {
+          const clones = triggers.map(trigger => {
+            return object.clone(trigger);
+          });
+          subscriber.processTriggers(clones);
+        }
+
+        return triggers;
+      }).catch(e => {
+        console.log(e);
+      });
     }
 
     updateTrigger(query) {
@@ -2646,14 +2661,25 @@ module.exports = (() => {
     }
 
     subscribeTriggers(query) {
-      throw new Error('Implementation of the AdapterForHttp.subscribeTriggers function is pending...');
+      if (getSubscriber(this._triggerSubscriberMap, query) !== null) {
+        throw new Error('A trigger subscriber already exists');
+      }
+
+      const subscriber = new TriggerSubscriber(this, query);
+      subscriber.start();
+      putSubscriber(this._triggerSubscriberMap, subscriber);
+      return Disposable.fromAction(() => {
+        deleteSubscriber(this._triggerSubscriberMap, subscriber);
+        subscriber.dispose();
+      });
     }
 
     _onDispose() {
-      getSubscribers(this._subscribers).forEach(subscriber => {
+      getSubscribers(this._alertSubscriberMap).forEach(subscriber => {
         subscriber.dispose();
       });
-      this._subscribers = null;
+      this._alertSubscriberMap = null;
+      this._triggerSubscriberMap = null;
 
       this._scheduler.dispose();
 
@@ -2790,6 +2816,79 @@ module.exports = (() => {
 
   }
 
+  class TriggerSubscriber extends Disposable {
+    constructor(parent, query) {
+      super();
+      this._parent = parent;
+      this._query = query;
+      this._triggers = {};
+      this._started = false;
+    }
+
+    getQuery() {
+      return this._query;
+    }
+
+    processTriggers(triggers) {
+      const extractKey = trigger => `${trigger.alert_id}-${trigger.trigger_date}`;
+
+      const currentTriggers = array.indexBy(triggers, trigger => extractKey(trigger));
+      const createdTriggers = Object.keys(currentTriggers).filter(key => !this._triggers.hasOwnProperty(key)).map(key => currentTriggers[key]);
+      const deletedTriggers = Object.keys(this._triggers).filter(key => !currentTriggers.hasOwnProperty(key)).map(key => this._triggers[key]);
+      const mutatedTriggers = triggers.filter(trigger => {
+        let returnVal = true;
+        const key = extractKey(trigger);
+
+        if (this._triggers.hasOwnProperty(key)) {
+          const existing = this._triggers[key];
+          returnVal = existing.trigger_status !== trigger.trigger_status || existing.trigger_status_date !== trigger.trigger_status_date;
+        }
+
+        return returnVal;
+      });
+      createdTriggers.forEach(trigger => {
+        this._triggers[extractKey(trigger)] = trigger;
+      });
+      mutatedTriggers.forEach(trigger => {
+        this._triggers[extractKey(trigger)] = trigger;
+      });
+      deletedTriggers.forEach(trigger => {
+        delete this._triggers[extractKey(trigger)];
+      });
+
+      if (createdTriggers.length > 0) {
+        this._parent._onTriggersCreated(createdTriggers);
+      }
+
+      if (mutatedTriggers.length > 0) {
+        this._parent._onTriggersMutated(mutatedTriggers);
+      }
+
+      if (deletedTriggers.length > 0) {
+        this._parent._onTriggersDeleted(deletedTriggers);
+      }
+    }
+
+    start() {
+      if (this._started) {
+        throw new Error('The trigger subscriber has already been started.');
+      }
+
+      this._started = true;
+
+      const poll = delay => {
+        this._parent._scheduler.schedule(() => {
+          return this._parent.retrieveTriggers(this._query).catch(e => {}).then(() => {
+            poll(delay || 5000);
+          });
+        }, delay);
+      };
+
+      poll(0);
+    }
+
+  }
+
   function getRequestInterceptorForJwt() {
     return RequestInterceptor.fromDelegate((options, endpoint) => {
       const getFailure = e => {
@@ -2816,7 +2915,7 @@ module.exports = (() => {
   return AdapterForHttp;
 })();
 
-},{"../security/JwtProvider":15,"./AdapterBase":3,"@barchart/common-js/api/failures/FailureReason":17,"@barchart/common-js/api/failures/FailureType":19,"@barchart/common-js/api/http/Gateway":20,"@barchart/common-js/api/http/builders/EndpointBuilder":22,"@barchart/common-js/api/http/definitions/ProtocolType":28,"@barchart/common-js/api/http/definitions/VerbType":29,"@barchart/common-js/api/http/interceptors/ErrorInterceptor":33,"@barchart/common-js/api/http/interceptors/RequestInterceptor":34,"@barchart/common-js/api/http/interceptors/ResponseInterceptor":35,"@barchart/common-js/lang/Disposable":44,"@barchart/common-js/lang/array":48,"@barchart/common-js/lang/assert":49,"@barchart/common-js/timing/Scheduler":62}],5:[function(require,module,exports){
+},{"../security/JwtProvider":15,"./AdapterBase":3,"@barchart/common-js/api/failures/FailureReason":17,"@barchart/common-js/api/failures/FailureType":19,"@barchart/common-js/api/http/Gateway":20,"@barchart/common-js/api/http/builders/EndpointBuilder":22,"@barchart/common-js/api/http/definitions/ProtocolType":28,"@barchart/common-js/api/http/definitions/VerbType":29,"@barchart/common-js/api/http/interceptors/ErrorInterceptor":33,"@barchart/common-js/api/http/interceptors/RequestInterceptor":34,"@barchart/common-js/api/http/interceptors/ResponseInterceptor":35,"@barchart/common-js/lang/Disposable":44,"@barchart/common-js/lang/array":48,"@barchart/common-js/lang/assert":49,"@barchart/common-js/lang/object":53,"@barchart/common-js/timing/Scheduler":62}],5:[function(require,module,exports){
 const io = require('socket.io-client'),
       uuid = require('uuid');
 
