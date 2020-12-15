@@ -1,8 +1,8 @@
 **This page lists discrete actions which can be executed.** Each action described here includes:
 
-* a ink to SDK reference,
+* a link to the SDK reference,
 * an example invocation using SDK,
-* a link to Open API definition, and
+* a link to the Open API definition, and
 * an example cURL request to the API
 
 ## Metadata Lookup
