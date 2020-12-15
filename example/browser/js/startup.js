@@ -1235,7 +1235,7 @@ module.exports = (() => {
 								}
 							);
 
-							alertManager.subscribeTriggers({ user_id: userId, alert_system: system },
+							alertManager.subscribeTriggers({ user_id: userId, alert_system: system, trigger_date: getDateBackwards(7).getTime() },
 								function(changedTriggers) {
 									pageModel.handleTriggersChange(changedTriggers);
 								},
