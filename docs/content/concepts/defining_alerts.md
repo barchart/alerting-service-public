@@ -35,7 +35,7 @@ You can visualize the **condition** for Apple stock reaching $600, as follows:
 
 Finally, a **publisher** describes instructions for notifying the alert's owner when the alert's conditions are met. In most cases, an alert will not have publisher objects. Instead, it's common to define universal notification instructions on a user-by-user basis.
 
-Finally, here is the *actual* JSON object, representing the alert:
+Finally, here is the actual JSON object, representing the alert:
 
 ```json
 {
