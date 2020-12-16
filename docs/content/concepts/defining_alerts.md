@@ -16,7 +16,7 @@ An **alert** is our top-level object. Here is a visualization of an alert, showi
 │   ├── Publisher(s)
 ```
 
-Each alert has at least one **condition** which defines:
+Every alert has at least one **condition** which defines:
 
 * the type of data feed we connect to (i.e. the **target** object),
 * the attribute of the data stream we want to observe (i.e. the **property** object), and
