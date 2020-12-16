@@ -1,9 +1,9 @@
 * [Overview](/content/product_overview)
 * [Quick Start](/content/quick_start)
 * Key Concepts
-	* [Connecting To Barchart](/content/concepts/connecting)
-	* [Securing The Connection](/content/concepts/security)
-	* [JSON Data Structures](/content/concepts/data_structures)
+	* [Connecting to Barchart](/content/concepts/connecting)
+	* [Securing the Connection](/content/concepts/security)
+	* [Defining Alerts](/content/concepts/defining_alerts)
 	* [Metadata Operations](/content/concepts/operations)
 	* [Alert Operations](/content/concepts/operations)
 	* [Monitoring Alerts and Triggers](/content/concepts/triggers)

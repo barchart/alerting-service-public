@@ -4,7 +4,6 @@
 **New Features**
 
 * Alerts can now be flagged as read (or unread).
-* Updated the documentation — improved the `Key Concepts: Alert Notifications` section.
 
 **Technical Enhancements**
 
