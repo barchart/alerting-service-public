@@ -43,8 +43,8 @@ In the the _production_ environment, you must exchange a _"secret"_  with Barcha
 
 Regardless of environment, the token payload uses two fields:
 
-* ```user_id``` is the unique identifier of the current user
-* ```alert_system``` is a unique identifier for your organization (use "barchart.com" in the _demo_ environment).
+* ```alert_system``` — a unique identifier for your organization (use "barchart.com" in the _demo_ environment).
+* ```user_id``` — the unique identifier of the current user. 
 
 ## Connecting
 
@@ -52,7 +52,7 @@ Regardless of environment, the token payload uses two fields:
 
 The SDK provides an easy-to-use, promise-based mechanism for sending (and receiving) data. It does not require you to have knowledge of the transport layer.
 
-We connect, using the adapter for HTTP transport, as follows:
+Connect to the remote service, using the adapter for HTTP transport, as follows:
 
 ```js
 const AlertManager = require('@barchart/alerts-client-js/lib/AlertManager'),
@@ -81,9 +81,7 @@ If you choose to work directly with the REST interface, you won't need to perfor
 
 ## Defining an Alert
 
-First, we must construct an object which conforms to the [```Alert```](/content/sdk/lib-data?id=schemaalert) schema. To accommodate a wide variety of features, this schema is non-trivial.
-
-For now, here is simple ```Alert``` object with one condition - _notify me when Apple stock trades over $600 per share_:
+First, we must construct an object which conforms to the [```Alert```](/content/sdk/lib-data?id=schemaalert) schema. By way of example, here is simple ```Alert``` object with one condition - _notify me when Apple stock trades over $600 per share:_
 
 ```json
 {
@@ -113,11 +111,11 @@ Glancing at this object probably raises more questions that it answers, for exam
 * What is a ```Property```?
 * What is a ```Target```?
 
-You can find an in-depth discussion of these topics in the [Key Concepts: Alert Data Structures](/content/concepts/alert_data_structure) section.
+Refer to the [Key Concepts: Data Structures](/content/concepts/data_structures) section for an in-depth discussion of these objects.
 
 ## Creating an Alert
 
-Assuming we've defined an alert (see above), the first thing we need to do is save it. The backend will assign an ```alert_id``` value and return a _complete_ ```Alert``` object to you.
+Assuming we've defined an alert (see above), we need to save it. The backend will assign an ```alert_id``` value and return a _complete_ ```Alert``` object to you.
 
 #### Using the SDK
 
@@ -141,7 +139,7 @@ curl 'https://alerts-management-demo.barchart.com/alerts' \
 
 ## Starting an Alert
 
-After an ```Alert``` has been saved, its ```alert_state``` will be ```Inactive```. We must start the alert to begin _tracking_ its conditions.
+After an ```Alert``` has been saved, its ```alert_state``` will be ```Inactive```. To begin _tracking_ an alert's conditions, we must start the alert.
 
 #### Using the SDK
 
@@ -189,18 +187,18 @@ curl 'https://alerts-management-demo.barchart.com/alerts/ef5acb88-d747-48d2-b8d2
 
 ## Sample Applications
 
-Two sample applications were built with this SDK. They could provide some insight into SDK features and usage.
+Two sample applications were built with this SDK.
 
 ### Web Application
 
-A single-page HTML application allows you to dynamically construct, save, start, stop, edit, delete, and monitor alerts.
+A single-page HTML application allows you to dynamically build, save, edit, start, monitor, stop, edit, and delete alerts.
 
 You can find the source code here:
 
-* */example/browser/example.html*
-* */example/browser/js/startup.js*
+* [/example/browser/example.html](https://github.com/barchart/alerts-client-js/blob/master/example/browser/example.html)
+* [/example/browser/js/startup.js](https://github.com/barchart/alerts-client-js/blob/master/example/browser/js/startup.js)
 
-This application is also hosted at:
+The application is hosted at:
 
 https://examples.aws.barchart.com/alerts-client-js/example.html
 
@@ -208,7 +206,7 @@ https://examples.aws.barchart.com/alerts-client-js/example.html
 
 A simple Node.js script connects to the _demo_ environment and retrieves a list of alerts. You can find the source code here:
 
-* */example/node/example.js*
+* [/example/node/example.js](https://github.com/barchart/alerts-client-js/blob/master/example/node/example.js)
 
 To run the script, make sure required dependencies are installed:
 
