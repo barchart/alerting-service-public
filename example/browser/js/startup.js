@@ -54,38 +54,50 @@ module.exports = (() => {
 		that.providerDescription = ko.observable(alertManager !== null ? alertManager.toString() : '');
 
 		that.triggers = ko.observableArray([ ]);
+		that.triggersGrouped = ko.observable(false);
 		that.triggersFormatted = ko.computed(function() {
 			const models = that.triggers().slice(0);
 
 			models.sort(comparatorForAlertTriggers);
 
-			models.forEach((model) => {
-				model.display.first(false);
-				model.display.rowSpan(1);
-			});
+			let sorted;
 
-			const grouped = models.reduce((accumulator, model) => {
-				const group = accumulator.find(a => a.alert_id === model.trigger().alert_id) || null;
+			if (that.triggersGrouped()) {
+				models.forEach((model) => {
+					model.display.first(false);
+					model.display.rowSpan(1);
+				});
 
-				if (group === null) {
-					accumulator.push({ alert_id: model.trigger().alert_id, triggers: [ model ] });
-				} else {
-					group.triggers.push(model);
-				}
+				const grouped = models.reduce((accumulator, model) => {
+					const group = accumulator.find(a => a.alert_id === model.trigger().alert_id) || null;
 
-				return accumulator;
-			}, [ ]);
+					if (group === null) {
+						accumulator.push({ alert_id: model.trigger().alert_id, triggers: [ model ] });
+					} else {
+						group.triggers.push(model);
+					}
 
-			grouped.forEach((group) => {
-				group.triggers[0].display.first(true);
-				group.triggers[0].display.rowSpan(group.triggers.length);
-			});
+					return accumulator;
+				}, [ ]);
 
-			const flattened = grouped.reduce((acc, g) => {
-				return acc.concat(g.triggers);
-			}, [ ]);
+				grouped.forEach((group) => {
+					group.triggers[0].display.first(true);
+					group.triggers[0].display.rowSpan(group.triggers.length);
+				});
 
-			return flattened;
+				sorted = grouped.reduce((acc, g) => {
+					return acc.concat(g.triggers);
+				}, [ ]);
+			} else {
+				models.forEach((model) => {
+					model.display.first(true);
+					model.display.rowSpan(1);
+				});
+
+				sorted = models;
+			}
+
+			return sorted;
 		});
 		that.triggersFormatted.extend({ rateLimit: 100 });
 

@@ -186,3 +186,13 @@ input.percent.form-control {
 .table-triggers td {
   vertical-align: middle !important;
 }
+
+.sort-controls {
+  font-weight: normal;
+  margin-left: 5px;
+}
+
+.sort-controls input {
+  vertical-align: middle;
+  margin: 0;
+}

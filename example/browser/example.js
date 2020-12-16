@@ -45,35 +45,47 @@ module.exports = (() => {
     that.marketDataSettings = ko.observable();
     that.providerDescription = ko.observable(alertManager !== null ? alertManager.toString() : '');
     that.triggers = ko.observableArray([]);
+    that.triggersGrouped = ko.observable(false);
     that.triggersFormatted = ko.computed(function () {
       const models = that.triggers().slice(0);
       models.sort(comparatorForAlertTriggers);
-      models.forEach(model => {
-        model.display.first(false);
-        model.display.rowSpan(1);
-      });
-      const grouped = models.reduce((accumulator, model) => {
-        const group = accumulator.find(a => a.alert_id === model.trigger().alert_id) || null;
+      let sorted;
 
-        if (group === null) {
-          accumulator.push({
-            alert_id: model.trigger().alert_id,
-            triggers: [model]
-          });
-        } else {
-          group.triggers.push(model);
-        }
+      if (that.triggersGrouped()) {
+        models.forEach(model => {
+          model.display.first(false);
+          model.display.rowSpan(1);
+        });
+        const grouped = models.reduce((accumulator, model) => {
+          const group = accumulator.find(a => a.alert_id === model.trigger().alert_id) || null;
 
-        return accumulator;
-      }, []);
-      grouped.forEach(group => {
-        group.triggers[0].display.first(true);
-        group.triggers[0].display.rowSpan(group.triggers.length);
-      });
-      const flattened = grouped.reduce((acc, g) => {
-        return acc.concat(g.triggers);
-      }, []);
-      return flattened;
+          if (group === null) {
+            accumulator.push({
+              alert_id: model.trigger().alert_id,
+              triggers: [model]
+            });
+          } else {
+            group.triggers.push(model);
+          }
+
+          return accumulator;
+        }, []);
+        grouped.forEach(group => {
+          group.triggers[0].display.first(true);
+          group.triggers[0].display.rowSpan(group.triggers.length);
+        });
+        sorted = grouped.reduce((acc, g) => {
+          return acc.concat(g.triggers);
+        }, []);
+      } else {
+        models.forEach(model => {
+          model.display.first(true);
+          model.display.rowSpan(1);
+        });
+        sorted = models;
+      }
+
+      return sorted;
     });
     that.triggersFormatted.extend({
       rateLimit: 100
@@ -1445,7 +1457,7 @@ module.exports = (() => {
      * deleted, changed, or triggered.
      *
      * @param {Object} query
-     * @param {String} query.alert_id
+     * @param {String} query.user_id
      * @param {String} query.alert_system
      * @param {Callbacks.AlertMutatedCallback} changeCallback
      * @param {Callbacks.AlertDeletedCallback} deleteCallback
@@ -1740,7 +1752,7 @@ module.exports = (() => {
      * deleted, changed.
      *
      * @param {Object} query
-     * @param {String} query.alert_id
+     * @param {String} query.user_id
      * @param {String} query.alert_system
      * @param {Callbacks.TriggersMutatedCallback} changeCallback
      * @param {Callbacks.TriggersDeletedCallback} deleteCallback
