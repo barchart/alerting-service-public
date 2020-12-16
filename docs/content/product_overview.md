@@ -27,29 +27,25 @@ Here's how it works:
 
 ## Data Feed Catalog
 
-Barchart offers an exhaustive array of real-time **market data** feeds from exchanges around the world — consult our [website](https://www.barchart.com/solutions/data/market) for specifics. Furthermore, Barchart offers supplemental/derived data feeds like news articles, technical analysis, and opinions.
+Barchart offers an exhaustive array of real-time **market data** feeds from exchanges around the world — consult our [website](https://www.barchart.com/solutions/data/market) for specifics. Furthermore, Barchart offers supplemental/derived data feeds like news articles, technical analysis, and opinions. The Barchart Alerting Service can monitor any of these feeds.
 
-The Barchart Alerting Service can monitor any of these feeds. Refer to the [Appendix: Data Feed Catalog](/content/appendices/data_feeds) for full listing. Here are some examples:
+Refer to the [Appendix: Data Feed Catalog](/content/appendices/data_feeds) section for a complete listing of feed attributes which can be monitored. Here are some examples:
 
-* Price Data (real-time or delayed)
+* Price Dat
 	* Trades and Quotes
 	* New Highs and Lows
 	* Prior Day Prices and Gaps
-	* More...
 * Technical Analysis Data
 	* Support and Resistance
 	* Moving averages
 	* Stochastic indicators
-	* More...
 * News Feeds
 	* Associated Press
 	* Comtex News Network
 	* PR Newswire
-	* More...
 * Commodity Cash Bid Data
 	* Grain Basis Prices
 	* Grain Cash Prices
-	* More...
 
 ## Supported Environments
 
