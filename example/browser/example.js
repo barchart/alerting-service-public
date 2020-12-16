@@ -1315,14 +1315,14 @@ module.exports = (() => {
   regex.hosts.production = /(prod)/i;
   /**
    * The **central component of the SDK**. It is responsible for connecting to Barchart's
-   * Alert Service, querying existing alerts, creating new alerts, and monitoring the status
+   * Alerting Service, querying existing alerts, creating new alerts, and monitoring the status
    * of existing alerts.
    *
    * @public
    * @exported
    * @extends {Disposable}
-   * @param {String} host - Barchart Alert Service's hostname.
-   * @param {Number} port - Barchart Alert Service's TCP port number.
+   * @param {String} host - Barchart Alerting Service's hostname.
+   * @param {Number} port - Barchart Alerting Service's TCP port number.
    * @param {Boolean} secure - If true, the transport layer will use encryption (e.g. HTTPS, WSS, etc).
    * @param {Function} adapterClazz - The transport strategy. Specifically, the constructor function for a class extending {@link AdapterBase}.
    */
@@ -2285,7 +2285,7 @@ module.exports = (() => {
       this._onTriggersDeleted = onTriggersDeleted || emptyCallback;
     }
     /**
-     * The hostname of the Barchart Alert Service.
+     * The hostname of the Barchart Alerting Service.
      *
      * @public
      * @returns {String}
@@ -2296,7 +2296,7 @@ module.exports = (() => {
       return this._host;
     }
     /**
-     * The TCP port number of the Barchart Alert Service.
+     * The TCP port number of the Barchart Alerting Service.
      *
      * @public
      * @returns {String}
