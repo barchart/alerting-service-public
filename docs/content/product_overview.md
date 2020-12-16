@@ -16,8 +16,8 @@ Here's how it works:
 * You _start_ the alert:
 	* Barchart's Alerting Service will continuously monitor your conditions
 	* Once your conditions are met, notifications are dispatched
-* The _Barchart Alerting Service_ continuously monitors alert conditions
-* The _Barchart Alerting Service_ dispatches notifications when alert conditions are met
+* The _Barchart Alerting Service_ continuously monitors alert conditions.
+* The _Barchart Alerting Service_ dispatches notifications when alert conditions are met.
 
 ## Sample Notifications
 
@@ -53,7 +53,7 @@ This SDK provides a convenient way to interact with the Barchart Alerting Servic
 
 #### Web Browsers
 
-This SDK can be distributed as part of your browser-based applications. The source code is written in [ES2018](https://en.wikipedia.org/wiki/ECMAScript#9th_Edition_%E2%80%93_ECMAScript_2018). Consequently, transpilation (or polyfill use) is recommended before distribution.
+This SDK can be distributed as part of your browser-based applications. The source code is written in [ES2018](https://en.wikipedia.org/wiki/ECMAScript#9th_Edition_%E2%80%93_ECMAScript_2018). Consequently, transpilation is recommended before distribution.
 
 #### Node.js
 
@@ -61,7 +61,7 @@ This SDK is compatible with Node.js.
 
 #### Direct Access
 
-The Barchart Alerting Service implements a REST interface over HTTP(S). By using the REST interface, you can bypass this SDK entirely. See the [API Reference](/content/api_reference) section, which contains [OpenAPI](https://www.openapis.org/) specification.
+The Barchart Alerting Service implements a REST interface over HTTPS, allowing you to bypass this SDK entirely. Refer to the [API Reference](/content/api_reference), which contains [OpenAPI](https://www.openapis.org/) specification, for more information.
 
 #### Other
 
