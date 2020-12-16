@@ -133,7 +133,7 @@ Here is an example — using the fewest fields necessary — to create a new ale
 	"user_id": "me",
 	"alert_system": "barchart.com",
 	"name": "My First Alert"
-	"conditions": [ /* See below */ ]
+	"conditions": [ { /* See below */ } ]
 }
 ```
 
@@ -141,7 +141,7 @@ _Refer to [```Schema.Alert```](/content/sdk/lib-data?id=schemaalert) for a forma
 
 ### Condition
 
-**A "condition" is a logical statement which is repeatedly evaluated as streaming data is processed.** For example, "The price of Apple stock is higher than $600" is a condition. A "condition" belongs to an alert.
+**A "condition" is a logical statement which is continuously evaluated as a data feed processed.** Waiting for the price of Apple stock to exceed $600 is a condition.
 
 Here is an example — using the fewest fields necessary — to create a condition (for use with an alert):
 
@@ -156,7 +156,7 @@ _Refer to [```Schema.Condition```](/content/sdk/lib-data?id=schemacondition) for
 
 ### Property
 
-**A "property" is the observed attribute of the streaming data source**. For example, the _last price_ (of a stock quote) is a property.
+**A "property" is the observed attribute of the streaming data source**. For example, the last price (of a stock quote) is a property.
 
 Here is an example — using the fewest fields necessary — to create a property (for use with a condition):
 
@@ -171,7 +171,7 @@ _Refer to [```Schema.Property```](/content/sdk/lib-data?id=schemaproperty) for a
 
 ### Target
 
-**A "target" identifies a specific entity.** For example, Apple stock is a target. Microsoft stock is a different target. They are differentiated by the ```identifier``` property value.
+**A "target" identifies a specific entity.** For example, Apple stock is a target. Microsoft stock is a different target. Targets are differentiated using the ```identifier``` attribute.
 
 Here is an example — using the fewest fields necessary — to create a target (for use a property):
 
@@ -185,7 +185,7 @@ _Refer to [```Schema.Target```](/content/sdk/lib-data?id=schematarget) for a for
 
 ### Operator
 
-**An "operator" refers to mechanism for comparison.** For example, _greater than_, _less than_, and _equals_ are operators. Operator objects include an ```operand``` property. The operand is used to complete the right-hand side of an expression (e.g. "greater than $600").
+**An "operator" refers to mechanism for comparison.** For example, greater than, less than, and equals are operators. Operator objects include an ```operand``` property. The operand is used to complete the right-hand side of an expression (e.g. "greater than $600").
 
 Here is an example — using the fewest fields necessary — to create an operator (for use with a condition):
 
