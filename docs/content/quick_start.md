@@ -81,7 +81,7 @@ If you choose to work directly with the REST interface, you won't need to perfor
 
 ## Defining an Alert
 
-First, we must construct an object which conforms to the [```Alert```](/content/sdk/lib-data?id=schemaalert) schema. By way of example, here is simple ```Alert``` object with one condition - _notify me when Apple stock trades over $600 per share:_
+First, we must construct an object which conforms to the [```Alert```](/content/sdk/lib-data?id=schemaalert) schema. By way of example, here is simple ```Alert``` object with one condition — _notify me when Apple stock trades over $600 per share:_
 
 ```json
 {
