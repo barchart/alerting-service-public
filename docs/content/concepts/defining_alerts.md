@@ -41,7 +41,7 @@ Here is an actual JSON object, representing an alert:
 {
 	"user_id": "me",
 	"alert_system": "barchart.com",
-	"name": "My First Alert"
+	"name": "My First Alert",
 	"conditions": [
 		{
 			"property": {
@@ -81,7 +81,7 @@ const promises = [
 ];
 
 return Promise.all(promises)
-	.then(results) => {
+	.then((results) => {
 		const availableTargets = results[0];
 		const availableProperties = results[1];
 		const availableOperators = results[2];
