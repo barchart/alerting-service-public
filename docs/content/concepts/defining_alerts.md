@@ -1,35 +1,41 @@
-## Synopsis
+## Data Format
 
 The Barchart Alerting Service communicates using [JSON](https://en.wikipedia.org/wiki/JSON) data. You send JSON-formatted objects to the backend. You receive JSON-formatted in response. **This section describes the schema for these JSON objects.**
 
-The top-level object is called an  _alert_. Here is a visualization of an alert, showing important component structures:
+## Alert Structure Concepts
+
+An **alert** is our top-level object. Here is a visualization of an alert, showing its important internal structures:
 
 ```text
 ├── Alert
 │   ├── Condition(s)
-│   │   ├── Property
-│   │   │   └── Target
-│   │   ├── Operator
-│   │   │   └── Operand
+│   │   ├── Property
+│   │   │   └── Target
+│   │   ├── Operator
+│   │   │   └── Operand
 │   ├── Publisher(s)
 ```
 
-Assume we want to create an alert with the following condition:
+Each alert has at least one **condition** which defines:
 
-* Apple stock's last price is greater than $600
+* the type of data feed we connect to (i.e. the **target** object),
+* the attribute of the data stream we want to observe (i.e. the **property** object), and
+* the conditional logic we apply to the data feed (i.e. the **operator** and **operand** objects).
 
-We can extend our structural visualization, as follows:
+You can visualize the **condition** for Apple stock reaching $600, as follows:
 
 ```text
-├── Alert
-│   ├── Condition 1:
-│   │   ├── Property: (Last Price)
-│   │   │   └── Target: (AAPL)
-│   │   ├── Operator: (Greater Than)
-│   │   │   └── Operand: ($600)
+
+├── Condition 1:
+│   ├── Property: (Last Price)
+│   │   └── Target: (AAPL stock)
+│   ├── Operator: (Greater Than)
+│   │   └── Operand: ($600)
 ```
 
-Here is the *actual* JSON object representing the alert:
+Finally, a **publisher** defines the notification instructions for a specific alert. In most cases, an alert will not have publisher objects. Instead, it's common to define default notification rules which apply to all the alerts owned by a specific user.
+
+Finally, here is the *actual* JSON object, representing the alert:
 
 ```json
 {
@@ -52,6 +58,8 @@ Here is the *actual* JSON object representing the alert:
 	]
 }
 ```
+
+## Building Alerts
 
 ## Building Conditions
 
