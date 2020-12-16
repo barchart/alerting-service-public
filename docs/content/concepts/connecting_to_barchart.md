@@ -1,6 +1,6 @@
 ## Protocol Options
 
-The Barcahrt Alerting Service supports two secure protocols:
+The Barchart Alerting Service supports two secure protocols:
 
 * **WebSockets**
   * Recommended for interactive clients.
