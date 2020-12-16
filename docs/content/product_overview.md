@@ -71,9 +71,9 @@ If JavaScript isn't suitable for your environment, and you're not interested in 
 
 ## User Privacy
 
-**Privacy is important to Barchart.** We do not wish to transmit or collect personally identifiable information about your users. We encourage consumers of the Alerts Service to avoid sharing identifying information.
+**Privacy is important to Barchart.** We don't want to transmit or collect personally identifiable information for your users.
 
-Here's how:
+Avoid sharing identifying information, as follows:
 
 * Each alert has an owner. You must provide Barchart with a way to distinguish one owner from another. However, identity can be concealed by using meaningless identifiers.
 * Authorization is handled using JSON Web Tokens. These tokens provide security without the need for passwords.
