@@ -69,10 +69,10 @@ If you require an SDK for an alternate platform, please contact us at solutions@
 
 ## User Privacy
 
-**Privacy is important to Barchart.** We don't want to transmit or collect personally identifiable information for your users.
+**Privacy is important to Barchart.** 
 
-Avoid sharing identifying information, as follows:
+We don't want to collect or transmit any personally identifiable information. You can integrate with the Barchart Alerting Service without sending any sensitive information to Barchart, as follows:
 
-* Each alert has an owner. You must provide Barchart with a way to distinguish one owner from another. However, identity can be concealed by using meaningless identifiers.
-* Authorization is handled using JSON Web Tokens. These tokens provide security without the need for passwords.
-* Notifications can be handled entirely by your systems (via webhooks). In this scenario, Barchart will not require contact information for your users.
+* You must provide Barchart with user identifiers. However, these identifiers can be meaningless — as long as they are unique.
+* Passwords are not used. Instead, you generate cryptographic tokens which allow Barchart to verify user identity.
+* Contact information (e.g. phone number and email address) can be withheld, assuming you want to handle the "last mile" of user notification.
