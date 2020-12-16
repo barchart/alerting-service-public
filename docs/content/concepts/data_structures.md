@@ -107,7 +107,7 @@ Using the same example — Apple stock's last price is greater than $600 — our
 
 ### Natural Language Text
 
-At present, you must construct JSON objects which conform to the [Condition]() schema. However, natural language conditional statements will be supported soon. As of yet, the syntax is has not been finalized; however, it will look something like this:
+At present, you must construct JSON objects which conform to the [Condition](/content/sdk/lib-data?id=schemacondition) schema. However, natural language conditional statements will be supported soon. As of yet, the syntax is has not been finalized; however, it will look something like this:
 
 * "AAPL.last-price > 600"
 * "AAPL.bid-size < AAPL.ask-size"
@@ -116,11 +116,9 @@ At present, you must construct JSON objects which conform to the [Condition]() s
 
 ### Alert
 
-_Refer to [```Schema.Alert```](/content/sdk/lib-data?id=schemaalert) for a formal definition._
+**An "alert" is essentially a container for conditions.** It has an owner. It always exists one, mutually-exclusive state (e.g. inactive, starting, started, or triggered). All conditions must evaluate to true before the alert will trigger.
 
-**An "alert" is essentially a container for conditions.** It has an owner. It always exists in one state (e.g.inactive, started, triggered). All conditions must evaluate to true before the alert will trigger.
-
-Here is an object — using the fewest fields necessary — to create a new alert:
+Here is an example — using the fewest fields necessary — to create a new alert:
 
 ```json (psuedo)
 {
@@ -131,13 +129,13 @@ Here is an object — using the fewest fields necessary — to create a new aler
 }
 ```
 
+_Refer to [```Schema.Alert```](/content/sdk/lib-data?id=schemaalert) for a formal definition._
+
 ### Condition
 
-_Refer to [```Schema.Condition```](/content/sdk/lib-data?id=schemacondition) for a formal definition._
+**A "condition" is a logical statement which is repeatedly evaluated as streaming data is processed.** For example, "The price of Apple stock is higher than $600" is a condition. A "condition" belongs to an alert.
 
-**A "condition" is a statement that is evaluated by the backend (as streaming data is processed).** For example, "Apple stock's last price is higher than $600" is a condition. A "condition" belongs to an alert.
-
-Here is an object — using the fewest fields necessary — to create a condition (for use with a new alert):
+Here is an example — using the fewest fields necessary — to create a condition (for use with an alert):
 
 ```json (psuedo)
 {
@@ -146,13 +144,13 @@ Here is an object — using the fewest fields necessary — to create a conditio
 }
 ```
 
+_Refer to [```Schema.Condition```](/content/sdk/lib-data?id=schemacondition) for a formal definition._
+
 ### Property
 
-_Refer to [```Schema.Property```](/content/sdk/lib-data?id=schemaproperty) for a formal definition._
+**A "property" is the observed attribute of the streaming data source**. For example, the _last price_ (of a stock quote) is a property.
 
-**A "property" is an attribute of a "condition" referring to a streaming data source**, including a target. For example, the **last price** of a stock quote is a property. Then, we target Apple stock, as opposed to some other company.
-
-Here is an object — using the fewest fields necessary — to create a property (for use with a new alert):
+Here is an example — using the fewest fields necessary — to create a property (for use with a condition):
 
 ```json (psuedo)
 {
@@ -161,13 +159,13 @@ Here is an object — using the fewest fields necessary — to create a property
 }
 ```
 
+_Refer to [```Schema.Property```](/content/sdk/lib-data?id=schemaproperty) for a formal definition._
+
 ### Target
 
-_Refer to [```Schema.Target```](/content/sdk/lib-data?id=schematarget) for a formal definition._
+**A "target" identifies a specific entity.** For example, Apple stock is a target. Microsoft stock is a different target. They are differentiated by the ```identifier``` property value.
 
-**A "target" identifies a specific entity.** For example, Apple stock is a target. Microsoft stock is a different target. They are differenciated by the ```identifier``` property value.
-
-Here is an object — using the fewest fields necessary — to create a target (for use with a new alert):
+Here is an example — using the fewest fields necessary — to create a target (for use a property):
 
 ```json
 {
@@ -175,13 +173,13 @@ Here is an object — using the fewest fields necessary — to create a target (
 }
 ```
 
+_Refer to [```Schema.Target```](/content/sdk/lib-data?id=schematarget) for a formal definition._
+
 ### Operator
 
-_Refer to [```Schema.Operator```](/content/sdk/lib-data?id=schemaoperator) for a formal definition._
+**An "operator" refers to mechanism for comparison.** For example, _greater than_, _less than_, and _equals_ are operators. Operator objects include an ```operand``` property. The operand is used to complete the right-hand side of an expression (e.g. "greater than $600").
 
-**An operator refers to mechanism for comparison.** For example, _greater than_, _less than_, and _equals_ are operators. Operator objects include an ```operand``` property. The operand is used to complete the right-hand side of an expression (e.g. "greater than $600").
-
-Here is an object — using the fewest fields necessary — to create a operator (for use with a new alert):
+Here is an example — using the fewest fields necessary — to create an operator (for use with a condition):
 
 ```json
 {
@@ -190,10 +188,6 @@ Here is an object — using the fewest fields necessary — to create a operator
 }
 ```
 
-### Publisher
-
-_Refer to [```Schema.Publisher```](/content/sdk/lib-data?id=schemapublisher) for a formal definition._
-
-**A publisher defines a set of rules for notifying the owner of an alert.**
+_Refer to [```Schema.Operator```](/content/sdk/lib-data?id=schemaoperator) for a formal definition._
 
 
