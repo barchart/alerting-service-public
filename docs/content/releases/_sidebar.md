@@ -1,12 +1,13 @@
 * [Overview](/content/product_overview)
 * [Quick Start](/content/quick_start)
 * Key Concepts
-	* [Connecting](/content/concepts/connecting)
-	* [Security](/content/concepts/security)
-	* [Data Structures](/content/concepts/data_structures)
-	* [Operations](/content/concepts/operations)
-	* [Notifications](/content/concepts/notifications)
-	* [Triggers](/content/concepts/triggers)
+	* [Connecting To Barchart](/content/concepts/connecting)
+	* [Securing The Connection](/content/concepts/security)
+	* [JSON Data Structures](/content/concepts/data_structures)
+	* [Metadata Lookup](/content/concepts/operations)
+	* [Alert Operations](/content/concepts/operations)
+	* [Monitoring Alerts and Triggers](/content/concepts/triggers)
+	* [Configuring Notifications](/content/concepts/notifications)
 * Appendices
 	* [Data Feed List](/content/appendices/data_feeds)
 <!-- sdk_open -->
