@@ -1,9 +1,4 @@
-**This page lists discrete actions which can be executed.** Each action described here includes:
-
-* a link to the SDK reference,
-* an example invocation using SDK,
-* a link to the Open API definition, and
-* an example cURL request to the API
+**This page lists discrete actions**  which can be executed with the SDK or a direct call to the REST API. 
 
 ## Metadata Lookup
 
@@ -35,7 +30,7 @@ curl 'https://alerts-management-demo.barchart.com/alert/targets' \
 ```
 ### List Available Properties
 
-A [```Property```](/content/concepts/alert_data_structure?id=property) an observable attribute of a target. This operation returns a listing of available properties.
+A [```Property```](/content/concepts/data_structures?id=property) an observable attribute of a target. This operation returns a listing of available properties.
 
 **SDK**
 
