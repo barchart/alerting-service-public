@@ -87,7 +87,7 @@ First, we must construct an object which conforms to the [```Alert```](/content/
 {
 	"user_id": "me",
 	"alert_system": "barchart.com",
-	"name": "My First Alert"
+	"name": "My First Alert",
 	"conditions": [
 		{
 			"property": {
