@@ -111,7 +111,7 @@ Glancing at this object probably raises more questions that it answers, for exam
 * What is a ```Property```?
 * What is a ```Target```?
 
-Refer to the [Key Concepts: JSON Data Structures](/content/concepts/data_structures) section for an in-depth discussion of these objects.
+Refer to the [Key Concepts: Defining Alerts](/content/concepts/defining_alerts) section for an in-depth discussion of these objects.
 
 ## Creating an Alert
 
