@@ -107,7 +107,7 @@ First, we must construct an object which conforms to the [```Alert```](/content/
 			"type": {
 				"publisher_type_id": 2
 			},
-			"recipient":"example@gmail.com",
+			"recipient": "example@gmail.com",
 			"use_default_recipient": false
 		}
 	]
@@ -144,7 +144,7 @@ curl 'https://alerts-management-demo.barchart.com/alerts' \
   -H 'Accept: application/json' \
   -H 'Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoibWUiLCJhbGVydF9zeXN0ZW0iOiJiYXJjaGFydC5jb20iLCJpYXQiOjE1ODk0MTEyNzl9.SxyC8s_CKhPyzcNmM_h_TRMiNSx3YstKGmAb2IOWqgM' \
   -H 'Content-Type: application/json;charset=UTF-8' \
-  --data-binary '{"user_id":"me","alert_system":"barchart.com","name":"My First Alert","conditions":[{"property":{"property_id":1,"target":{"identifier":"AAPL"}},"operator":{"operator_id":2,"operand":"600"}}]}'
+  --data-binary '{"user_id":"me","alert_system":"barchart.com","name":"My First Alert","conditions":[{"property":{"property_id":1,"target":{"identifier":"AAPL"}},"operator":{"operator_id":2,"operand":"600"}}],"publishers":[{"type":{"publisher_type_id":2},"recipient":"example@gmail.com","use_default_recipient": false}]}'
 ```
 
 ## Starting an Alert
