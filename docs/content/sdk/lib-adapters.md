@@ -43,7 +43,7 @@
 * * *
 
 ### adapterBase.host :id=adapterbasehost
-> The hostname of the Barchart Alert Service.
+> The hostname of the Barchart Alerting Service.
 
 **Kind**: instance property of [<code>AdapterBase</code>](#AdapterBase)  
 **Returns**: <code>String</code>  
@@ -52,7 +52,7 @@
 * * *
 
 ### adapterBase.port :id=adapterbaseport
-> The TCP port number of the Barchart Alert Service.
+> The TCP port number of the Barchart Alerting Service.
 
 **Kind**: instance property of [<code>AdapterBase</code>](#AdapterBase)  
 **Returns**: <code>String</code>  
@@ -124,7 +124,7 @@
 * * *
 
 ### adapterForHttp.host :id=adapterforhttphost
-> The hostname of the Barchart Alert Service.
+> The hostname of the Barchart Alerting Service.
 
 **Kind**: instance property of [<code>AdapterForHttp</code>](#AdapterForHttp)  
 **Overrides**: [<code>host</code>](#AdapterBasehost)  
@@ -134,7 +134,7 @@
 * * *
 
 ### adapterForHttp.port :id=adapterforhttpport
-> The TCP port number of the Barchart Alert Service.
+> The TCP port number of the Barchart Alerting Service.
 
 **Kind**: instance property of [<code>AdapterForHttp</code>](#AdapterForHttp)  
 **Overrides**: [<code>port</code>](#AdapterBaseport)  
@@ -189,7 +189,7 @@
 * * *
 
 ### adapterForSocketIo.host :id=adapterforsocketiohost
-> The hostname of the Barchart Alert Service.
+> The hostname of the Barchart Alerting Service.
 
 **Kind**: instance property of [<code>AdapterForSocketIo</code>](#AdapterForSocketIo)  
 **Overrides**: [<code>host</code>](#AdapterBasehost)  
@@ -199,7 +199,7 @@
 * * *
 
 ### adapterForSocketIo.port :id=adapterforsocketioport
-> The TCP port number of the Barchart Alert Service.
+> The TCP port number of the Barchart Alerting Service.
 
 **Kind**: instance property of [<code>AdapterForSocketIo</code>](#AdapterForSocketIo)  
 **Overrides**: [<code>port</code>](#AdapterBaseport)  
@@ -253,7 +253,7 @@
 * * *
 
 ### adapterForWebSockets.host :id=adapterforwebsocketshost
-> The hostname of the Barchart Alert Service.
+> The hostname of the Barchart Alerting Service.
 
 **Kind**: instance property of [<code>AdapterForWebSockets</code>](#AdapterForWebSockets)  
 **Overrides**: [<code>host</code>](#AdapterBasehost)  
@@ -263,7 +263,7 @@
 * * *
 
 ### adapterForWebSockets.port :id=adapterforwebsocketsport
-> The TCP port number of the Barchart Alert Service.
+> The TCP port number of the Barchart Alerting Service.
 
 **Kind**: instance property of [<code>AdapterForWebSockets</code>](#AdapterForWebSockets)  
 **Overrides**: [<code>port</code>](#AdapterBaseport)  

@@ -1,6 +1,6 @@
 ## AlertManager :id=alertmanager
 > The <strong>central component of the SDK</strong>. It is responsible for connecting to Barchart's
-> Alert Service, querying existing alerts, creating new alerts, and monitoring the status
+> Alerting Service, querying existing alerts, creating new alerts, and monitoring the status
 > of existing alerts.
 
 **Kind**: global class  
@@ -358,8 +358,8 @@
 
 | Param | Type | Description |
 | --- | --- | --- |
-| host | <code>String</code> | <p>Barchart Alert Service's hostname.</p> |
-| port | <code>Number</code> | <p>Barchart Alert Service's TCP port number.</p> |
+| host | <code>String</code> | <p>Barchart Alerting Service's hostname.</p> |
+| port | <code>Number</code> | <p>Barchart Alerting Service's TCP port number.</p> |
 | secure | <code>Boolean</code> | <p>If true, the transport layer will use encryption (e.g. HTTPS, WSS, etc).</p> |
 | adapterClazz | <code>function</code> | <p>The transport strategy. Specifically, the constructor function for a class extending [AdapterBase](/content/sdk/lib-adapters?id=adapterbase).</p> |
 

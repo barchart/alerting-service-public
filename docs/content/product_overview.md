@@ -1,6 +1,6 @@
 ## Purpose
 
-**This SDK connects your applications to the Barchart Alert Service,** which allows you to set up conditions for continuous monitoring and receive notifications when those conditions are met. 
+**This SDK connects your applications to the Barchart Alerting Service,** which allows you to set up conditions for continuous monitoring and receive notifications when those conditions are met. 
 
 Here's how it works:
 
@@ -14,7 +14,7 @@ Here's how it works:
 	* Receive notifications via SMS messages
 	* Receive notifications via push to your mobile applications
 * You _start_ the alert:
-	* Barchart's Alert Service will continuously monitor your conditions
+	* Barchart's Alerting Service will continuously monitor your conditions
 	* Once your conditions are met, notifications are dispatched
 
 ## Sample Notifications
@@ -51,7 +51,7 @@ Consult our [website](https://www.barchart.com/solutions/data/market) for more i
 
 ## Supported Environments
 
-This SDK provides a convenient way to interact with the Barchart Alert Service. We recommend using it in JavaScript environments.
+This SDK provides a convenient way to interact with the Barchart Alerting Service. We recommend using it in JavaScript environments.
 
 #### Web Browsers
 
@@ -63,7 +63,7 @@ This SDK is compatible with Node.js.
 
 #### Direct Access
 
-The Barchart Alert Service implements a REST interface over HTTP(S). By using the REST interface, you can bypass this SDK entirely. See the [API Reference](/content/api_reference) section, which contains [OpenAPI](https://www.openapis.org/) specification.
+The Barchart Alerting Service implements a REST interface over HTTP(S). By using the REST interface, you can bypass this SDK entirely. See the [API Reference](/content/api_reference) section, which contains [OpenAPI](https://www.openapis.org/) specification.
 
 #### Other
 

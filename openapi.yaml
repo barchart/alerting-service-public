@@ -1,7 +1,7 @@
 openapi: 3.0.0
 
 info:
-  title: "Barchart Alert Service"
+  title: "Barchart Alerting Service"
   description: "Define and manage alert conditions and notifications using Barchart's REST-ful web service"
   version: 4.0.1
 

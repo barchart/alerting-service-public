@@ -1,6 +1,6 @@
 ## Setup
 
-As a consumer of the Barchart Alert Service, you have two options:
+As a consumer of the Barchart Alerting Service, you have two options:
 
 1. Connect and communicate with the backend _by embedding this SDK in your software_, or
 2. Connect and communicate with the backend _by direct interaction with the REST interface_.
@@ -15,7 +15,7 @@ npm install @barchart/alerts-client-js -S
 
 ## Environments
 
-Two instances of the Barchart Alert Service are always running:
+Two instances of the Barchart Alerting Service are always running:
 
 #### Demo
 
