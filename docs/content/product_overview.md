@@ -31,7 +31,7 @@ Barchart offers an exhaustive array of real-time **market data** feeds from exch
 
 Refer to the [Appendix: Data Feed Catalog](/content/appendices/data_feeds) section for a complete listing of feed attributes which can be monitored. Here are some examples:
 
-* Price Dat
+* Price Data
 	* Trades and Quotes
 	* New Highs and Lows
 	* Prior Day Prices and Gaps
