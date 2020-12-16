@@ -1383,6 +1383,127 @@ module.exports = (() => {
       });
     }
     /**
+     * Gets a single alert by its identifier.
+     *
+     * @public
+     * @param {Schema.Alert|Schema.AlertIdentifier} alert
+     * @returns {Promise<Schema.Alert>}
+     */
+
+
+    retrieveAlert(alert) {
+      return Promise.resolve().then(() => {
+        checkStatus(this, 'retrieve alert');
+        validate.alert.forQuery(alert);
+      }).then(() => {
+        return this._adapter.retrieveAlert(alert);
+      });
+    }
+    /**
+     * Gets a set of alerts, matching query criteria.
+     *
+     * @public
+     * @param {Schema.AlertQuery} query
+     * @returns {Promise<Schema.Alert[]>}
+     */
+
+
+    retrieveAlerts(query) {
+      return Promise.resolve().then(() => {
+        checkStatus(this, 'retrieve alerts');
+        validate.alert.forUser(query);
+      }).then(() => {
+        return this._adapter.retrieveAlerts(query);
+      }).then(results => {
+        if (query.filter && query.filter.alert_type) {
+          return results.filter(result => result.alert_type === query.filter.alert_type);
+        } else {
+          return results;
+        }
+      }).then(results => {
+        if (query.filter && query.filter.symbol) {
+          return results.filter(result => result.conditions.some(c => c.property.target.type === 'symbol' && c.property.target.identifier === query.filter.symbol || c.property.type === 'symbol' && c.operator.operand === query.filter.symbol));
+        } else {
+          return results;
+        }
+      }).then(results => {
+        if (query.filter && query.filter.target && query.filter.target.identifier) {
+          return results.filter(result => result.conditions.some(c => c.property.target.identifier === query.filter.target.identifier));
+        } else {
+          return results;
+        }
+      }).then(results => {
+        if (query.filter && query.filter.condition && (typeof query.filter.condition.operand === 'string' || typeof query.filter.condition.operand === 'number')) {
+          return results.filter(result => result.conditions.some(c => c.operator.operand === query.filter.condition.operand.toString()));
+        } else {
+          return results;
+        }
+      });
+    }
+    /**
+     * Registers four separate callbacks which will be invoked when alerts are created,
+     * deleted, changed, or triggered.
+     *
+     * @param {Object} query
+     * @param {String} query.alert_id
+     * @param {String} query.alert_system
+     * @param {Callbacks.AlertMutatedCallback} changeCallback
+     * @param {Callbacks.AlertDeletedCallback} deleteCallback
+     * @param {Callbacks.AlertCreatedCallback} createCallback
+     * @param {Callbacks.AlertTriggeredCallback}  triggerCallback
+     * @returns {Disposable}
+     */
+
+
+    subscribeAlerts(query, changeCallback, deleteCallback, createCallback, triggerCallback) {
+      checkStatus(this, 'subscribe alerts');
+      validate.alert.forUser(query);
+      assert.argumentIsRequired(changeCallback, 'changeCallback', Function);
+      assert.argumentIsRequired(deleteCallback, 'deleteCallback', Function);
+      assert.argumentIsRequired(createCallback, 'createCallback', Function);
+      assert.argumentIsRequired(triggerCallback, 'triggerCallback', Function);
+      const userId = query.user_id;
+      const alertSystem = query.alert_system;
+
+      if (!this._alertSubscriptionMap.hasOwnProperty(userId)) {
+        this._alertSubscriptionMap[userId] = {};
+      }
+
+      if (!this._alertSubscriptionMap[userId].hasOwnProperty(alertSystem)) {
+        this._alertSubscriptionMap[userId][alertSystem] = {
+          createEvent: new Event(this),
+          changeEvent: new Event(this),
+          deleteEvent: new Event(this),
+          triggerEvent: new Event(this),
+          subscribers: 0
+        };
+      }
+
+      const subscriptionData = this._alertSubscriptionMap[userId][alertSystem];
+
+      if (subscriptionData.subscribers === 0) {
+        subscriptionData.implementationBinding = this._adapter.subscribeAlerts(query);
+      }
+
+      subscriptionData.subscribers = subscriptionData.subscribers + 1;
+      const createRegistration = subscriptionData.createEvent.register(createCallback);
+      const changeRegistration = subscriptionData.changeEvent.register(changeCallback);
+      const deleteRegistration = subscriptionData.deleteEvent.register(deleteCallback);
+      const triggerRegistration = subscriptionData.triggerEvent.register(triggerCallback);
+      return Disposable.fromAction(() => {
+        subscriptionData.subscribers = subscriptionData.subscribers - 1;
+
+        if (subscriptionData.subscribers === 0) {
+          subscriptionData.implementationBinding.dispose();
+        }
+
+        createRegistration.dispose();
+        changeRegistration.dispose();
+        deleteRegistration.dispose();
+        triggerRegistration.dispose();
+      });
+    }
+    /**
      * Creates a new alert.
      *
      * @public
@@ -1504,64 +1625,6 @@ module.exports = (() => {
       });
     }
     /**
-     * Gets a single alert by its identifier.
-     *
-     * @public
-     * @param {Schema.Alert|Schema.AlertIdentifier} alert
-     * @returns {Promise<Schema.Alert>}
-     */
-
-
-    retrieveAlert(alert) {
-      return Promise.resolve().then(() => {
-        checkStatus(this, 'retrieve alert');
-        validate.alert.forQuery(alert);
-      }).then(() => {
-        return this._adapter.retrieveAlert(alert);
-      });
-    }
-    /**
-     * Gets the set of alerts which match a query.
-     *
-     * @public
-     * @param {Schema.AlertQuery} query
-     * @returns {Promise<Schema.Alert[]>}
-     */
-
-
-    retrieveAlerts(query) {
-      return Promise.resolve().then(() => {
-        checkStatus(this, 'retrieve alerts');
-        validate.alert.forUser(query);
-      }).then(() => {
-        return this._adapter.retrieveAlerts(query);
-      }).then(results => {
-        if (query.filter && query.filter.alert_type) {
-          return results.filter(result => result.alert_type === query.filter.alert_type);
-        } else {
-          return results;
-        }
-      }).then(results => {
-        if (query.filter && query.filter.symbol) {
-          return results.filter(result => result.conditions.some(c => c.property.target.type === 'symbol' && c.property.target.identifier === query.filter.symbol || c.property.type === 'symbol' && c.operator.operand === query.filter.symbol));
-        } else {
-          return results;
-        }
-      }).then(results => {
-        if (query.filter && query.filter.target && query.filter.target.identifier) {
-          return results.filter(result => result.conditions.some(c => c.property.target.identifier === query.filter.target.identifier));
-        } else {
-          return results;
-        }
-      }).then(results => {
-        if (query.filter && query.filter.condition && (typeof query.filter.condition.operand === 'string' || typeof query.filter.condition.operand === 'number')) {
-          return results.filter(result => result.conditions.some(c => c.operator.operand === query.filter.condition.operand.toString()));
-        } else {
-          return results;
-        }
-      });
-    }
-    /**
      * Sends a request to transition an alert to the ```Active``` state.
      *
      * @public
@@ -1651,42 +1714,73 @@ module.exports = (() => {
         return true;
       });
     }
+    /**
+     * Gets a set of alert triggers, matching query criteria.
+     *
+     * @public
+     * @param {Object} query
+     * @param {String} query.user_id
+     * @param {String} query.alert_system
+     * @param {String=} query.trigger_date
+     * @param {String=} query.trigger_status
+     * @returns {Promise<Schema.Trigger[]>}
+     */
 
-    subscribeAlerts(query, changeCallback, deleteCallback, createCallback, triggerCallback) {
-      checkStatus(this, 'subscribe alerts');
-      validate.alert.forUser(query);
+
+    retrieveTriggers(query) {
+      return Promise.resolve().then(() => {
+        checkStatus(this, 'retrieve alert triggers');
+        validate.trigger.forQuery(query);
+      }).then(() => {
+        return this._adapter.retrieveTriggers(query);
+      });
+    }
+    /**
+     * Registers three separate callbacks which will be invoked when triggers are created,
+     * deleted, changed.
+     *
+     * @param {Object} query
+     * @param {String} query.alert_id
+     * @param {String} query.alert_system
+     * @param {Callbacks.TriggersMutatedCallback} changeCallback
+     * @param {Callbacks.TriggersDeletedCallback} deleteCallback
+     * @param {Callbacks.TriggersCreatedCallback} createCallback
+     * @returns {Disposable}
+     */
+
+
+    subscribeTriggers(query, changeCallback, deleteCallback, createCallback) {
+      checkStatus(this, 'subscribe triggers');
+      validate.trigger.forUser(query);
       assert.argumentIsRequired(changeCallback, 'changeCallback', Function);
       assert.argumentIsRequired(deleteCallback, 'deleteCallback', Function);
       assert.argumentIsRequired(createCallback, 'createCallback', Function);
-      assert.argumentIsRequired(triggerCallback, 'triggerCallback', Function);
       const userId = query.user_id;
       const alertSystem = query.alert_system;
 
-      if (!this._alertSubscriptionMap.hasOwnProperty(userId)) {
-        this._alertSubscriptionMap[userId] = {};
+      if (!this._triggerSubscriptionMap.hasOwnProperty(userId)) {
+        this._triggerSubscriptionMap[userId] = {};
       }
 
-      if (!this._alertSubscriptionMap[userId].hasOwnProperty(alertSystem)) {
-        this._alertSubscriptionMap[userId][alertSystem] = {
+      if (!this._triggerSubscriptionMap[userId].hasOwnProperty(alertSystem)) {
+        this._triggerSubscriptionMap[userId][alertSystem] = {
           createEvent: new Event(this),
           changeEvent: new Event(this),
           deleteEvent: new Event(this),
-          triggerEvent: new Event(this),
           subscribers: 0
         };
       }
 
-      const subscriptionData = this._alertSubscriptionMap[userId][alertSystem];
+      const subscriptionData = this._triggerSubscriptionMap[userId][alertSystem];
 
       if (subscriptionData.subscribers === 0) {
-        subscriptionData.implementationBinding = this._adapter.subscribeAlerts(query);
+        subscriptionData.implementationBinding = this._adapter.subscribeTriggers(query);
       }
 
       subscriptionData.subscribers = subscriptionData.subscribers + 1;
       const createRegistration = subscriptionData.createEvent.register(createCallback);
       const changeRegistration = subscriptionData.changeEvent.register(changeCallback);
       const deleteRegistration = subscriptionData.deleteEvent.register(deleteCallback);
-      const triggerRegistration = subscriptionData.triggerEvent.register(triggerCallback);
       return Disposable.fromAction(() => {
         subscriptionData.subscribers = subscriptionData.subscribers - 1;
 
@@ -1697,7 +1791,47 @@ module.exports = (() => {
         createRegistration.dispose();
         changeRegistration.dispose();
         deleteRegistration.dispose();
-        triggerRegistration.dispose();
+      });
+    }
+    /**
+     * Updates the status (i.e. read/unread) for a single alert trigger.
+     *
+     * @public
+     * @param {Object} query
+     * @param {String} query.alert_id
+     * @param {String=} query.trigger_date
+     * @param {String=} query.trigger_status
+     * @returns {Promise<Schema.Trigger>}
+     */
+
+
+    updateTrigger(query) {
+      return Promise.resolve().then(() => {
+        checkStatus(this, 'updates alert trigger');
+        validate.trigger.forUpdate(query);
+      }).then(() => {
+        return this._adapter.updateTrigger(query);
+      });
+    }
+    /**
+     * Updates the status (i.e. read/unread) for all alert triggers which match
+     * the query criteria.
+     *
+     * @public
+     * @param {Object} query
+     * @param {String} query.user_id
+     * @param {String=} query.alert_system
+     * @param {String=} query.trigger_status
+     * @returns {Promise<Schema.Trigger[]>}
+     */
+
+
+    updateTriggers(query) {
+      return Promise.resolve().then(() => {
+        checkStatus(this, 'updates alert triggers');
+        validate.trigger.forBatch(query);
+      }).then(() => {
+        return this._adapter.updateTriggers(query);
       });
     }
     /**
@@ -1845,123 +1979,6 @@ module.exports = (() => {
         checkStatus(this, 'get authenticated user');
       }).then(() => {
         return this._adapter.getUser();
-      });
-    }
-    /**
-     * Gets alerts trigger statuses.
-     *
-     * @public
-     * @param {Object} query
-     * @param {String} query.user_id
-     * @param {String} query.alert_system
-     * @param {String=} query.trigger_date
-     * @param {String=} query.trigger_status
-     * @returns {Promise<Schema.Trigger[]>}
-     */
-
-
-    retrieveTriggers(query) {
-      return Promise.resolve().then(() => {
-        checkStatus(this, 'retrieve alert triggers');
-        validate.trigger.forQuery(query);
-      }).then(() => {
-        return this._adapter.retrieveTriggers(query);
-      });
-    }
-    /**
-     * Updates specific alert trigger status.
-     *
-     * @public
-     * @param {Object} query
-     * @param {String} query.alert_id
-     * @param {String=} query.trigger_date
-     * @param {String=} query.trigger_status
-     * @returns {Promise<Schema.Trigger>}
-     */
-
-
-    updateTrigger(query) {
-      return Promise.resolve().then(() => {
-        checkStatus(this, 'updates alert trigger');
-        validate.trigger.forUpdate(query);
-      }).then(() => {
-        return this._adapter.updateTrigger(query);
-      });
-    }
-    /**
-     * Updates all alerts trigger statuses.
-     *
-     * @public
-     * @param {Object} query
-     * @param {String} query.user_id
-     * @param {String=} query.alert_system
-     * @param {String=} query.trigger_status
-     * @returns {Promise<Schema.Trigger[]>}
-     */
-
-
-    updateTriggers(query) {
-      return Promise.resolve().then(() => {
-        checkStatus(this, 'updates alert triggers');
-        validate.trigger.forBatch(query);
-      }).then(() => {
-        return this._adapter.updateTriggers(query);
-      });
-    }
-    /**
-     *
-     * @param {Object} query
-     * @param {String} query.user_id
-     * @param {String=} query.alert_system
-     * @param {Callbacks.TriggersMutatedCallback} changeCallback
-     * @param {Callbacks.TriggersDeletedCallback} deleteCallback
-     * @param {Callbacks.TriggersCreatedCallback} createCallback
-     * @returns {Disposable}
-     */
-
-
-    subscribeTriggers(query, changeCallback, deleteCallback, createCallback) {
-      checkStatus(this, 'subscribe triggers');
-      validate.trigger.forUser(query);
-      assert.argumentIsRequired(changeCallback, 'changeCallback', Function);
-      assert.argumentIsRequired(deleteCallback, 'deleteCallback', Function);
-      assert.argumentIsRequired(createCallback, 'createCallback', Function);
-      const userId = query.user_id;
-      const alertSystem = query.alert_system;
-
-      if (!this._triggerSubscriptionMap.hasOwnProperty(userId)) {
-        this._triggerSubscriptionMap[userId] = {};
-      }
-
-      if (!this._triggerSubscriptionMap[userId].hasOwnProperty(alertSystem)) {
-        this._triggerSubscriptionMap[userId][alertSystem] = {
-          createEvent: new Event(this),
-          changeEvent: new Event(this),
-          deleteEvent: new Event(this),
-          subscribers: 0
-        };
-      }
-
-      const subscriptionData = this._triggerSubscriptionMap[userId][alertSystem];
-
-      if (subscriptionData.subscribers === 0) {
-        subscriptionData.implementationBinding = this._adapter.subscribeTriggers(query);
-      }
-
-      subscriptionData.subscribers = subscriptionData.subscribers + 1;
-      const createRegistration = subscriptionData.createEvent.register(createCallback);
-      const changeRegistration = subscriptionData.changeEvent.register(changeCallback);
-      const deleteRegistration = subscriptionData.deleteEvent.register(deleteCallback);
-      return Disposable.fromAction(() => {
-        subscriptionData.subscribers = subscriptionData.subscribers - 1;
-
-        if (subscriptionData.subscribers === 0) {
-          subscriptionData.implementationBinding.dispose();
-        }
-
-        createRegistration.dispose();
-        changeRegistration.dispose();
-        deleteRegistration.dispose();
       });
     }
 
