@@ -3,7 +3,7 @@
 * Key Concepts
 	* [Connecting to Barchart](/content/concepts/connecting_to_barchart)
 	* [Securing the Connection](/content/concepts/securing_the_connection)
-	* [Defining Alerts](/content/concepts/defining_alerts)
+	* [Composing Alerts](/content/concepts/composing_alerts)
 	* [Managing Alerts](/content/concepts/managing_alerts)
 	* [Monitoring Alerts](/content/concepts/monitoring_alerts)
 	* [Monitoring Triggers](/content/concepts/monitoring_triggers)

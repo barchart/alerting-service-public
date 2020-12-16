@@ -121,7 +121,7 @@ Glancing at this object probably raises more questions that it answers, for exam
 * What is a ```Target```?
 * What is a ```Publisher```?
 
-Refer to the [Key Concepts: Defining Alerts](/content/concepts/defining_alerts) section for an in-depth discussion of these objects.
+Refer to [Key Concepts: Composing Alerts](/content/concepts/composing_alerts) for an in-depth discussion of these objects.
 
 ## Creating an Alert
 
