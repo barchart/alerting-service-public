@@ -42,7 +42,7 @@ Consult our [website](https://www.barchart.com/solutions/data/market) for more i
 * News Feeds
 	* Associated Press
 	* Comtex News Network
-	* PR Newwire
+	* PR Newswire
 	* More...
 * Commodity Cash Bid Data
 	* Grain Basis Prices
