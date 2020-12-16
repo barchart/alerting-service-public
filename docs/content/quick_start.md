@@ -101,6 +101,15 @@ First, we must construct an object which conforms to the [```Alert```](/content/
 				"operand": "600"
 			}
 		}
+	],
+	"publishers": [
+		{
+			"type": {
+				"publisher_type_id": 2
+			},
+			"recipient":"example@gmail.com",
+			"use_default_recipient": false
+		}
 	]
 }
 ```
@@ -110,6 +119,7 @@ Glancing at this object probably raises more questions that it answers, for exam
 * What is a ```Condition```?
 * What is a ```Property```?
 * What is a ```Target```?
+* What is a ```Publisher```?
 
 Refer to the [Key Concepts: Defining Alerts](/content/concepts/defining_alerts) section for an in-depth discussion of these objects.
 
