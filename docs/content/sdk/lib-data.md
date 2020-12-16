@@ -211,7 +211,7 @@
 | trigger_date | <code>String</code> | <p>The time the alert was triggered (milliseconds since epoch).</p> |
 | trigger_status | [<code>TriggerStatus</code>](#EnumsTriggerStatus) | <p>The status of the trigger.</p> |
 | trigger_status_date | <code>String</code> | <p>The last time the alert trigger status was updated (milliseconds since epoch).</p> |
-| trigger_name | <code>String</code> | <p>A human-readable description of the trigger.</p> |
+| trigger_description | <code>String</code> | <p>A human-readable description of the trigger.</p> |
 
 
 * * *

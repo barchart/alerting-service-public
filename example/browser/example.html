@@ -520,7 +520,7 @@
         <table class="table table-triggers table-striped small">
             <thead>
                 <th class="center col-md-3">ID</th>
-                <th class="left col-md-2">Name</th>
+                <th class="left col-md-2">Description</th>
                 <th class="center col-md-1">
                     <span class="text-button text-button-black glyphicon glyphicon-collapse-down" data-bind="click: () => updateTriggers('Read')"></span>
                     <span style="padding: 0 5px">Read</span>
@@ -532,7 +532,7 @@
             <tbody data-bind="foreach: triggersFormatted">
                 <tr>
                     <td class="center col-md-3" data-bind="{ visible: display.first, attr: { rowspan: display.rowSpan }, text: trigger().alert_id }"></td>
-                    <td class="left col-md-3" data-bind="text: trigger().trigger_name"></td>
+                    <td class="left col-md-3" data-bind="text: trigger().trigger_description"></td>
                     <td class="center col-md-2">
                         <input type="checkbox" data-bind="enable: !loading(), click: () => toggle(), checked: display.read()">
                     </td>
