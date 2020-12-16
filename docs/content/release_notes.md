@@ -1,6 +1,6 @@
 # Release Notes
 
-## 4.10.0
+## 4.20.0
 **New Features**
 
 * Alerts can now be flagged as read (or unread).

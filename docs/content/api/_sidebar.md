@@ -3,10 +3,10 @@
 * Key Concepts
 	* [Connecting](/content/concepts/connecting)
 	* [Security](/content/concepts/security)
-	* [Alert Data Structure](/content/concepts/alert_data_structure)
-	* [Alert Data Sources](/content/concepts/alert_data_sources)
-	* [Alert Operations](/content/concepts/alert_operations)
-	* [Alert Notifications](/content/concepts/alert_notifications)
+	* [Data Structures](/content/concepts/data_structures)
+	* [Data Sources](/content/concepts/data_sources)
+	* [Operations](/content/concepts/operations)
+	* [Notifications](/content/concepts/notifications)
 <!-- sdk_open -->
 * [SDK Reference](/content/sdk_reference)
 <!-- sdk_close -->

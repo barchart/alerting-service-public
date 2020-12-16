@@ -14,6 +14,7 @@
 * [Components](#Components)
 * [Paths](#Paths)
 
+
 ## Servers {docsify-ignore}
 
 * [https://alerts-management-demo.barchart.com](https://alerts-management-demo.barchart.com)  - Demo (evaluation and testing only)
@@ -33,6 +34,11 @@
 * [Condition](/content/api/components?id=schemasCondition)
 * [Property](/content/api/components?id=schemasProperty)
 * [Target](/content/api/components?id=schemasTarget)
+* [AlertTriggerStatus](/content/api/components?id=schemasAlertTriggerStatus)
+
+### Security 
+
+* [JWT](/content/api/components?id=securityJWT)
 
 ## Paths {docsify-ignore}
 
@@ -52,3 +58,6 @@
 * [GET /alert/publishers](/content/api/paths?id=get-alertpublishers)
 * [GET /alert/publishers/default/{alert_system}/{user_id}](/content/api/paths?id=get-alertpublishersdefaultalert_systemuser_id)
 * [PUT /alert/publishers/default/{alert_system}/{user_id}/{publisher_type_id}](/content/api/paths?id=put-alertpublishersdefaultalert_systemuser_idpublisher_type_id)
+* [GET /alerts/trigger/status](/content/api/paths?id=get-alertstriggerstatus)
+* [PUT /alerts/trigger/status](/content/api/paths?id=put-alertstriggerstatus)
+* [PUT /alerts/trigger/statuses](/content/api/paths?id=put-alertstriggerstatuses)
