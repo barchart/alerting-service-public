@@ -4,10 +4,11 @@
 	* [Connecting](/content/concepts/connecting)
 	* [Security](/content/concepts/security)
 	* [Data Structures](/content/concepts/data_structures)
-	* [Data Sources](/content/concepts/data_sources)
 	* [Operations](/content/concepts/operations)
 	* [Notifications](/content/concepts/notifications)
 	* [Triggers](/content/concepts/triggers)
+* Appendices
+	* [Data Feed List](/content/appendices/data_feeds)
 <!-- sdk_open -->
 * [SDK Reference](/content/sdk_reference)
 <!-- sdk_close -->

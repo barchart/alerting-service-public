@@ -94,7 +94,7 @@
 | Param | Type |
 | --- | --- |
 | query | <code>Object</code> | 
-| query.alert_id | <code>String</code> | 
+| query.user_id | <code>String</code> | 
 | query.alert_system | <code>String</code> | 
 | changeCallback | [<code>Callbacks.AlertMutatedCallback</code>](/content/sdk/lib-callbacks?id=callbacksalertmutatedcallback) | 
 | deleteCallback | [<code>Callbacks.AlertDeletedCallback</code>](/content/sdk/lib-callbacks?id=callbacksalertdeletedcallback) | 
@@ -232,7 +232,7 @@
 | Param | Type |
 | --- | --- |
 | query | <code>Object</code> | 
-| query.alert_id | <code>String</code> | 
+| query.user_id | <code>String</code> | 
 | query.alert_system | <code>String</code> | 
 | changeCallback | [<code>Callbacks.TriggersMutatedCallback</code>](/content/sdk/lib-callbacks?id=callbackstriggersmutatedcallback) | 
 | deleteCallback | [<code>Callbacks.TriggersDeletedCallback</code>](/content/sdk/lib-callbacks?id=callbackstriggersdeletedcallback) | 
