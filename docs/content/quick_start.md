@@ -30,7 +30,7 @@ The _production_ environment does not permit permit anonymous connections. **Con
 
 ## Authorization
 
-[JSON Web Tokens](https://en.wikipedia.org/wiki/JSON_Web_Token) — called JWT — are used for authorization. Each request made to the backend must include a token. Generating these tokens is surprisingly easy -- refer to the [Key Concepts: Security](/content/concepts/security) section for details.
+[JSON Web Tokens](https://en.wikipedia.org/wiki/JSON_Web_Token) — called JWT — are used for authorization. Each request made to the backend must include a token. Generating these tokens is surprisingly easy -- refer to the [Key Concepts: Securing the Connection](/content/concepts/security) section for details.
 
 In the _demo_ environment, token generation follows these rules:
 
@@ -111,7 +111,7 @@ Glancing at this object probably raises more questions that it answers, for exam
 * What is a ```Property```?
 * What is a ```Target```?
 
-Refer to the [Key Concepts: Data Structures](/content/concepts/data_structures) section for an in-depth discussion of these objects.
+Refer to the [Key Concepts: JSON Data Structures](/content/concepts/data_structures) section for an in-depth discussion of these objects.
 
 ## Creating an Alert
 
