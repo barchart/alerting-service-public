@@ -1,6 +1,6 @@
 ## System Integration
 
-The Barchart Alerting Service uses commercially reasonable procedures to ensure your data is safe. All data is encrypted before transmission (using HTTP over SSL/TLS). Furthermore, each interaction is authorized using a [JSON Web Token](https://en.wikipedia.org/wiki/JSON_Web_Token).
+The Barchart Alerting Service uses commercially reasonable procedures to ensure your data is safe. All data is encrypted during transmission (using HTTP over SSL/TLS). Furthermore, each interaction is authorized using a [JSON Web Token](https://en.wikipedia.org/wiki/JSON_Web_Token).
 
 ## Token Generation
 
@@ -9,12 +9,10 @@ The Barchart Alerting Service uses commercially reasonable procedures to ensure 
 Your system is responsible for authentication, for example:
 
 * Perhaps users are identified by username and password.
-* Perhaps users are identified using an SSO technology.
+* Perhaps users are identified by an SSO technology.
 * Perhaps users are assumed to be valid because your software runs in a trusted environment.
 
-**Since your system authenticated the user, it is responsible for token generation.**
-
-Each interaction with the Barchart Alerting Service will include a token. Barchart will _decode_ your token and _verify_ its authenticity (using a shared secret).
+Each interaction with the Barchart Alerting Service must include a cryptographic token. **Since your system authenticated the user, it is responsible for generating a token.** Barchart will _decode_ your token and _verify_ its authenticity (using a shared secret).
 
 #### Token Payload
 
@@ -23,7 +21,7 @@ The token payload must include two claims:
 * The user's identifier (selected by you).
 * The user's organization (provided to you).
 
-Both claims should have ```String``` values and two different formats are acceptable:
+Two formats are acceptable:
 
 **Preferred**
 
@@ -45,11 +43,11 @@ Both claims should have ```String``` values and two different formats are accept
 
 #### Token Signing Secrets
 
-Each environment uses different algorithms and signing secrets.
+Each environment uses different cryptographic algorithms and signing secrets.
 
 **Demo Environment:**
 
-Since the _demo_ environment is intended for testing and evaluation purposes only, the secret is intentionally publicized (see below). Data saved in the _demo_ environment can be viewed and manipulated by anyone. Do not store sensitive data in the _demo_ environment.
+Since the _demo_ environment is intended for testing and evaluation purposes only, the secret is intentionally publicized (see below). Data saved to the _demo_ environment can be viewed and manipulated by anyone. Do not store sensitive data in the _demo_ environment.
 
 * Hostname:```alerts-management-demo.barchart.com```
 * Port: ```443```
@@ -63,13 +61,13 @@ When you're ready to move to production, you'll need to generate a [public/priva
 * Hostname:```alerts-management-prod.barchart.com```
 * Port: ```443```
 * Algorithm: Agreed upon when your account is configured
-* Secret: Agreed upon when your account is configured
+* Secret: Exchanged when your account is configured
 
 **Contact us at solutions@barchart.com or (866) 333-7587 for assistance configuring your account.**
 
 #### Token Signing Example
 
-Token signing should be done such that:
+Here are guidelines for token generation:
 
 * The signing secret (e.g. private key or secret string) is not exposed.
 * The signing system should be trusted to keep time correctly.
@@ -93,13 +91,13 @@ const token = jwt.sign(claims, secret, { algorithm: 'HS256', expiresIn: '2 days'
 
 #### Using the SDK
 
-First, write a function that signs and returns a token. The function must conform to the [```Schema.JwtTokenGenerator```](/content/sdk/lib-security?id=callbacksjwttokengenerator) contract — which accepts no arguments and returns a ```String``` (synchronously or asynchronously). For example:
+First, write a function that retrieves a signed token from a trusted source. The function must conform to the [```Schema.JwtTokenGenerator```](/content/sdk/lib-security?id=callbacksjwttokengenerator) contract — which accepts no arguments and returns a ```String``` (synchronously or asynchronously). For example:
 
 ```js
 function getJwtToken() {
 	return Promise.resolve()
 		.then(() => {
-			// Generate a signed token and return it. You'll probably want to delegate
+			// Retreive a signed token and return it. You'll probably want to delegate
 			// the actual work to a remote service. This helps to ensure your JWT signing
 			// secret cannot be compromised.
 
@@ -142,9 +140,6 @@ When using this token, we can only interact with alerts owned by ```me@barchart.
 
 ## Best Practices
 
-Under no circumstances should your JWT secret be accessible to anyone outside of your organization. If someone obtains your signing secret, they could interact with the Barchart Alerting Service on your behalf.
+Under no circumstances should your JWT secret be accessible to anyone outside your organization. Anyone who has your signing secret could interact with the Barchart Alerting Service, impersonating your users.
 
-If you are developing a web application, you should not generate tokens inside the web browser. A clever user could read your JWT secret (from the web browser) and use it to impersonate other users.
-
-Your secret should be protected. Tokens should only be generated by a trusted backend.
-
+If you are developing a web application, you should not generate tokens inside the web browser. A clever user could read your JWT secret. Instead, your web application should retrieve tokens from a trusted backend.
