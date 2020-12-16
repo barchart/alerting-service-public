@@ -1,5 +1,20 @@
 # Release Notes
 
+## 4.10.0
+**New Features**
+
+* Alerts can now be flagged as read (or unread).
+* Updated the documentation — improved the `Key Concepts: Alert Notifications` section.
+
+**Technical Enhancements**
+
+* The `JwtPayload.forSigning` function will not emit an object which uses standard Barchart properties (i.e. `userId` instead of `user_id` and `contextId` instead of `alert_system`).
+* The `getJwtGenrator` function no longer signs tokens. Instead, it delegates token signing to a web service.
+* The `refreshInterval` parameter of the `JwtProvider` constructor is now optional.
+* The `JwtProvider` now applies some jitter to the `refreshInterval` parameter.
+
+
+
 ## 4.0.6
 **No functional changes**
 

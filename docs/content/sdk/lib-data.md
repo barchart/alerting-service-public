@@ -22,6 +22,7 @@
         * [.AlertIdentifier](#SchemaAlertIdentifier) : <code>Object</code>
         * [.AlertQuery](#SchemaAlertQuery) : <code>Object</code>
         * [.UserIdentifier](#SchemaUserIdentifier) : <code>Object</code>
+        * [.Trigger](#SchemaTrigger) : <code>Object</code>
 
 
 * * *
@@ -54,6 +55,7 @@
 | [publishers] | <code>Array.&lt;Schema.Publisher&gt;</code> | <p>The rules for publishing a notification. This is optional. In most cases, it's best to rely on the default rules bound to the alert's owner.</p> |
 | [effectivePublishers] | <code>Array.&lt;Schema.Publisher&gt;</code> | <p>A read-only property added by the backend listing the &quot;effective&quot; rules which will be used to publish notifications. Any rules in the &quot;publishers&quot; property take precedence, then the default rules for the alert's owner are applied.</p> |
 | [schedules] | <code>Array.&lt;AlertResetSchedule&gt;</code> |  |
+| read | <code>Boolean</code> | <p>shows whether the alert has been read.</p> |
 
 
 * * *
@@ -193,6 +195,27 @@
 
 * * *
 
+### Schema.Trigger :id=schematrigger
+> When all of an alert's conditions are met, the alert triggers. An alert
+> may be triggered multiple times. This object contains information
+> regarding an alert trigger and can be marked as read (or unread).
+
+**Kind**: static typedef of [<code>Schema</code>](#Schema)  
+**Properties**
+
+| Name | Type | Description |
+| --- | --- | --- |
+| alert_id | <code>String</code> | <p>The alert's unique identifier.</p> |
+| user_id | <code>String</code> | <p>The alert owner's unique identifier.</p> |
+| alert_system | <code>String</code> | <p>The alert owner's domain.</p> |
+| trigger_date | <code>String</code> | <p>The time the alert was triggered (milliseconds since epoch).</p> |
+| trigger_status | [<code>TriggerStatus</code>](#EnumsTriggerStatus) | <p>The status of the trigger.</p> |
+| trigger_status_date | <code>String</code> | <p>The last time the alert trigger status was updated (milliseconds since epoch).</p> |
+| trigger_name | <code>String</code> | <p>A human-readable description of the trigger.</p> |
+
+
+* * *
+
 ## Enums :id=enums
 > A namespace for enumerations.
 
@@ -206,6 +229,7 @@
         * [.OperandType](#EnumsOperandType) : <code>enum</code>
         * [.OperatorType](#EnumsOperatorType) : <code>enum</code>
         * [.TargetType](#EnumsTargetType) : <code>enum</code>
+        * [.TriggerStatus](#EnumsTriggerStatus) : <code>enum</code>
 
 
 * * *
@@ -296,6 +320,21 @@
 | --- | --- | --- |
 | string | <code>String</code> | <p>The target's identifier is a simple string.</p> |
 | symbol | <code>String</code> | <p>The target's identifier is an instrument symbol (e.g. &quot;AAPL&quot; for Apple stock).</p> |
+
+
+* * *
+
+### Enums.TriggerStatus :id=enumstriggerstatus
+> Describes whether an alert has been acknowledged (in the same way an email
+> can be marked as &quot;read&quot; or &quot;unread&quot;).
+
+**Kind**: static enum of [<code>Enums</code>](#Enums)  
+**Properties**
+
+| Name | Type | Description |
+| --- | --- | --- |
+| read | <code>String</code> | <p>The alert trigger has been acknowledged.</p> |
+| unread | <code>String</code> | <p>The alert trigger has not been acknowledged.</p> |
 
 
 * * *

@@ -81,8 +81,11 @@
 * [JwtProvider](#JwtProvider)
     * _instance_
         * [.getToken()](#JwtProvidergetToken) ⇒ <code>Promise.&lt;String&gt;</code>
+    * _static_
+        * [.fromTokenGenerator(tokenGenerator, [refreshInterval])](#JwtProviderfromTokenGenerator) ⇒ [<code>JwtProvider</code>](#JwtProvider)
+        * [.forDemo(userId, alertSystem, [refreshInterval])](#JwtProviderforDemo) ⇒ [<code>JwtProvider</code>](#JwtProvider)
     * _constructor_
-        * [new JwtProvider(generator, interval)](#new_JwtProvider_new)
+        * [new JwtProvider(tokenGenerator, [refreshInterval])](#new_JwtProvider_new)
 
 
 * * *
@@ -96,13 +99,48 @@
 
 * * *
 
-### new JwtProvider(generator, interval) :id=new_jwtprovider_new
+### JwtProvider.fromTokenGenerator(tokenGenerator, [refreshInterval]) :id=jwtproviderfromtokengenerator
+> A factory for [JwtProvider](/content/sdk/lib-security?id=jwtprovider) which is an alternative to the constructor.
+
+**Kind**: static method of [<code>JwtProvider</code>](#JwtProvider)  
+**Returns**: [<code>JwtProvider</code>](#JwtProvider)  
+**Access**: public  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| tokenGenerator | [<code>JwtTokenGenerator</code>](#CallbacksJwtTokenGenerator) | <p>An anonymous function which returns a signed JWT token.</p> |
+| [refreshInterval] | <code>Number</code> | <p>The number of milliseconds which must pass before a new JWT token is generated. A zero value means the token should never be refreshed. A null or undefined value means the token is not cached.</p> |
+
+
+* * *
+
+### JwtProvider.forDemo(userId, alertSystem, [refreshInterval]) :id=jwtproviderfordemo
+> Builds a [JwtProvider](/content/sdk/lib-security?id=jwtprovider) which will generate tokens impersonating the specified
+> user. These tokens will only work in the &quot;test&quot; environment.</p>
+> <p>Recall, the &quot;test&quot; environment is not &quot;secure&quot; -- any data saved here can be accessed
+> by anyone (using this feature). Furthermore, data is periodically purged from the
+> test environment.
+
+**Kind**: static method of [<code>JwtProvider</code>](#JwtProvider)  
+**Returns**: [<code>JwtProvider</code>](#JwtProvider)  
+**Access**: public  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| userId | <code>String</code> | <p>The identifier of the user to impersonate.</p> |
+| alertSystem | <code>String</code> | <p>The domain of the user who will be impersonated.</p> |
+| [refreshInterval] | <code>Number</code> | <p>The number of milliseconds which must pass before a new JWT token is generated. A null or undefined value means the token is not cached.</p> |
+
+
+* * *
+
+### new JwtProvider(tokenGenerator, [refreshInterval]) :id=new_jwtprovider_new
 **Kind**: constructor of [<code>JwtProvider</code>](#JwtProvider)  
 
 | Param | Type | Description |
 | --- | --- | --- |
-| generator | [<code>JwtTokenGenerator</code>](#CallbacksJwtTokenGenerator) | <p>An anonymous function which returns a signed JWT token.</p> |
-| interval | <code>Number</code> | <p>The number of milliseconds which must pass before a new JWT token is generated.</p> |
+| tokenGenerator | [<code>JwtTokenGenerator</code>](#CallbacksJwtTokenGenerator) | <p>An anonymous function which returns a signed JWT token.</p> |
+| [refreshInterval] | <code>Number</code> | <p>The number of milliseconds which must pass before a new JWT token is generated. A null or undefined value means the token is not cached.</p> |
 
 
 * * *

@@ -12,15 +12,20 @@
 * [AlertManager](#AlertManager) ⇐ <code>Disposable</code>
     * _instance_
         * [.connect(jwtProvider)](#AlertManagerconnect) ⇒ [<code>Promise.&lt;AlertManager&gt;</code>](#AlertManager)
+        * [.retrieveAlert(alert)](#AlertManagerretrieveAlert) ⇒ [<code>Promise.&lt;Schema.Alert&gt;</code>](/content/sdk/lib-data?id=schemaalert)
+        * [.retrieveAlerts(query)](#AlertManagerretrieveAlerts) ⇒ [<code>Promise.&lt;Array.&lt;Schema.Alert&gt;&gt;</code>](/content/sdk/lib-data?id=schemaalert)
+        * [.subscribeAlerts(query, changeCallback, deleteCallback, createCallback, triggerCallback)](#AlertManagersubscribeAlerts) ⇒ <code>Disposable</code>
         * [.createAlert(alert)](#AlertManagercreateAlert) ⇒ [<code>Promise.&lt;Schema.Alert&gt;</code>](/content/sdk/lib-data?id=schemaalert)
         * [.editAlert(alert)](#AlertManagereditAlert) ⇒ [<code>Promise.&lt;Schema.Alert&gt;</code>](/content/sdk/lib-data?id=schemaalert)
         * [.deleteAlert(alert)](#AlertManagerdeleteAlert) ⇒ [<code>Promise.&lt;Schema.Alert&gt;</code>](/content/sdk/lib-data?id=schemaalert)
-        * [.retrieveAlert(alert)](#AlertManagerretrieveAlert) ⇒ [<code>Promise.&lt;Schema.Alert&gt;</code>](/content/sdk/lib-data?id=schemaalert)
-        * [.retrieveAlerts(query)](#AlertManagerretrieveAlerts) ⇒ [<code>Promise.&lt;Array.&lt;Schema.Alert&gt;&gt;</code>](/content/sdk/lib-data?id=schemaalert)
         * [.enableAlert(alert)](#AlertManagerenableAlert) ⇒ [<code>Promise.&lt;Schema.Alert&gt;</code>](/content/sdk/lib-data?id=schemaalert)
         * [.enableAlerts(query)](#AlertManagerenableAlerts) ⇒ <code>Promise.&lt;Boolean&gt;</code>
         * [.disableAlert(alert)](#AlertManagerdisableAlert) ⇒ [<code>Promise.&lt;Schema.Alert&gt;</code>](/content/sdk/lib-data?id=schemaalert)
         * [.disableAlerts(query)](#AlertManagerdisableAlerts) ⇒ <code>Promise.&lt;Boolean&gt;</code>
+        * [.retrieveTriggers(query)](#AlertManagerretrieveTriggers) ⇒ [<code>Promise.&lt;Array.&lt;Schema.Trigger&gt;&gt;</code>](/content/sdk/lib-data?id=schematrigger)
+        * [.subscribeTriggers(query, changeCallback, deleteCallback, createCallback)](#AlertManagersubscribeTriggers) ⇒ <code>Disposable</code>
+        * [.updateTrigger(query)](#AlertManagerupdateTrigger) ⇒ [<code>Promise.&lt;Schema.Trigger&gt;</code>](/content/sdk/lib-data?id=schematrigger)
+        * [.updateTriggers(query)](#AlertManagerupdateTriggers) ⇒ [<code>Promise.&lt;Array.&lt;Schema.Trigger&gt;&gt;</code>](/content/sdk/lib-data?id=schematrigger)
         * [.checkSymbol(symbol)](#AlertManagercheckSymbol) ⇒ <code>Promise.&lt;String&gt;</code>
         * [.getTargets()](#AlertManagergetTargets) ⇒ [<code>Promise.&lt;Array.&lt;Schema.Target&gt;&gt;</code>](/content/sdk/lib-data?id=schematarget)
         * [.getProperties()](#AlertManagergetProperties) ⇒ [<code>Promise.&lt;Array.&lt;Schema.Property&gt;&gt;</code>](/content/sdk/lib-data?id=schemaproperty)
@@ -47,6 +52,54 @@
 | Param | Type | Description |
 | --- | --- | --- |
 | jwtProvider | [<code>JwtProvider</code>](/content/sdk/lib-security?id=jwtprovider) | <p>Your implementation of [JwtProvider](/content/sdk/lib-security?id=jwtprovider).</p> |
+
+
+* * *
+
+### alertManager.retrieveAlert(alert) :id=alertmanagerretrievealert
+> Gets a single alert by its identifier.
+
+**Kind**: instance method of [<code>AlertManager</code>](#AlertManager)  
+**Returns**: [<code>Promise.&lt;Schema.Alert&gt;</code>](/content/sdk/lib-data?id=schemaalert)  
+**Access**: public  
+
+| Param | Type |
+| --- | --- |
+| alert | [<code>Schema.Alert</code>](/content/sdk/lib-data?id=schemaalert) \| [<code>Schema.AlertIdentifier</code>](/content/sdk/lib-data?id=schemaalertidentifier) | 
+
+
+* * *
+
+### alertManager.retrieveAlerts(query) :id=alertmanagerretrievealerts
+> Gets a set of alerts, matching query criteria.
+
+**Kind**: instance method of [<code>AlertManager</code>](#AlertManager)  
+**Returns**: [<code>Promise.&lt;Array.&lt;Schema.Alert&gt;&gt;</code>](/content/sdk/lib-data?id=schemaalert)  
+**Access**: public  
+
+| Param | Type |
+| --- | --- |
+| query | [<code>Schema.AlertQuery</code>](/content/sdk/lib-data?id=schemaalertquery) | 
+
+
+* * *
+
+### alertManager.subscribeAlerts(query, changeCallback, deleteCallback, createCallback, triggerCallback) :id=alertmanagersubscribealerts
+> Registers four separate callbacks which will be invoked when alerts are created,
+> deleted, changed, or triggered.
+
+**Kind**: instance method of [<code>AlertManager</code>](#AlertManager)  
+**Returns**: <code>Disposable</code>  
+
+| Param | Type |
+| --- | --- |
+| query | <code>Object</code> | 
+| query.alert_id | <code>String</code> | 
+| query.alert_system | <code>String</code> | 
+| changeCallback | [<code>Callbacks.AlertMutatedCallback</code>](/content/sdk/lib-callbacks?id=callbacksalertmutatedcallback) | 
+| deleteCallback | [<code>Callbacks.AlertDeletedCallback</code>](/content/sdk/lib-callbacks?id=callbacksalertdeletedcallback) | 
+| createCallback | [<code>Callbacks.AlertCreatedCallback</code>](/content/sdk/lib-callbacks?id=callbacksalertcreatedcallback) | 
+| triggerCallback | [<code>Callbacks.AlertTriggeredCallback</code>](/content/sdk/lib-callbacks?id=callbacksalerttriggeredcallback) | 
 
 
 * * *
@@ -91,34 +144,6 @@
 | Param | Type |
 | --- | --- |
 | alert | [<code>Schema.Alert</code>](/content/sdk/lib-data?id=schemaalert) | 
-
-
-* * *
-
-### alertManager.retrieveAlert(alert) :id=alertmanagerretrievealert
-> Gets a single alert by its identifier.
-
-**Kind**: instance method of [<code>AlertManager</code>](#AlertManager)  
-**Returns**: [<code>Promise.&lt;Schema.Alert&gt;</code>](/content/sdk/lib-data?id=schemaalert)  
-**Access**: public  
-
-| Param | Type |
-| --- | --- |
-| alert | [<code>Schema.Alert</code>](/content/sdk/lib-data?id=schemaalert) \| [<code>Schema.AlertIdentifier</code>](/content/sdk/lib-data?id=schemaalertidentifier) | 
-
-
-* * *
-
-### alertManager.retrieveAlerts(query) :id=alertmanagerretrievealerts
-> Gets the set of alerts which match a query.
-
-**Kind**: instance method of [<code>AlertManager</code>](#AlertManager)  
-**Returns**: [<code>Promise.&lt;Array.&lt;Schema.Alert&gt;&gt;</code>](/content/sdk/lib-data?id=schemaalert)  
-**Access**: public  
-
-| Param | Type |
-| --- | --- |
-| query | [<code>Schema.AlertQuery</code>](/content/sdk/lib-data?id=schemaalertquery) | 
 
 
 * * *
@@ -175,6 +200,78 @@
 | Param | Type |
 | --- | --- |
 | query | [<code>Schema.AlertQuery</code>](/content/sdk/lib-data?id=schemaalertquery) | 
+
+
+* * *
+
+### alertManager.retrieveTriggers(query) :id=alertmanagerretrievetriggers
+> Gets a set of alert triggers, matching query criteria.
+
+**Kind**: instance method of [<code>AlertManager</code>](#AlertManager)  
+**Returns**: [<code>Promise.&lt;Array.&lt;Schema.Trigger&gt;&gt;</code>](/content/sdk/lib-data?id=schematrigger)  
+**Access**: public  
+
+| Param | Type |
+| --- | --- |
+| query | <code>Object</code> | 
+| query.user_id | <code>String</code> | 
+| query.alert_system | <code>String</code> | 
+| [query.trigger_date] | <code>String</code> | 
+| [query.trigger_status] | <code>String</code> | 
+
+
+* * *
+
+### alertManager.subscribeTriggers(query, changeCallback, deleteCallback, createCallback) :id=alertmanagersubscribetriggers
+> Registers three separate callbacks which will be invoked when triggers are created,
+> deleted, changed.
+
+**Kind**: instance method of [<code>AlertManager</code>](#AlertManager)  
+**Returns**: <code>Disposable</code>  
+
+| Param | Type |
+| --- | --- |
+| query | <code>Object</code> | 
+| query.alert_id | <code>String</code> | 
+| query.alert_system | <code>String</code> | 
+| changeCallback | [<code>Callbacks.TriggersMutatedCallback</code>](/content/sdk/lib-callbacks?id=callbackstriggersmutatedcallback) | 
+| deleteCallback | [<code>Callbacks.TriggersDeletedCallback</code>](/content/sdk/lib-callbacks?id=callbackstriggersdeletedcallback) | 
+| createCallback | [<code>Callbacks.TriggersCreatedCallback</code>](/content/sdk/lib-callbacks?id=callbackstriggerscreatedcallback) | 
+
+
+* * *
+
+### alertManager.updateTrigger(query) :id=alertmanagerupdatetrigger
+> Updates the status (i.e. read/unread) for a single alert trigger.
+
+**Kind**: instance method of [<code>AlertManager</code>](#AlertManager)  
+**Returns**: [<code>Promise.&lt;Schema.Trigger&gt;</code>](/content/sdk/lib-data?id=schematrigger)  
+**Access**: public  
+
+| Param | Type |
+| --- | --- |
+| query | <code>Object</code> | 
+| query.alert_id | <code>String</code> | 
+| [query.trigger_date] | <code>String</code> | 
+| [query.trigger_status] | <code>String</code> | 
+
+
+* * *
+
+### alertManager.updateTriggers(query) :id=alertmanagerupdatetriggers
+> Updates the status (i.e. read/unread) for all alert triggers which match
+> the query criteria.
+
+**Kind**: instance method of [<code>AlertManager</code>](#AlertManager)  
+**Returns**: [<code>Promise.&lt;Array.&lt;Schema.Trigger&gt;&gt;</code>](/content/sdk/lib-data?id=schematrigger)  
+**Access**: public  
+
+| Param | Type |
+| --- | --- |
+| query | <code>Object</code> | 
+| query.user_id | <code>String</code> | 
+| [query.alert_system] | <code>String</code> | 
+| [query.trigger_status] | <code>String</code> | 
 
 
 * * *
