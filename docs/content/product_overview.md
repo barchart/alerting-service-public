@@ -1,6 +1,6 @@
 ## Purpose
 
-**This SDK connects your applications to the Barchart Alerting Service,** which allows you to set up conditions for continuous monitoring and receive notifications when those conditions are met. 
+**This SDK connects your applications to the Barchart Alerting Service.** 
 
 Here's how it works:
 
@@ -23,11 +23,11 @@ Here's how it works:
 | -------- | --------|
 | ![SMS Screen Capture Image](images/sms.jpg) | ![Email Screen Capture Image](images/email.jpg)  |
 
-## Streaming Data Catalog
+## Data Feed Catalog
 
-Any data streams within the Barchart ecosystem can be used to build alert conditions. Barchart offers an exhaustive array of market data for multiple asset classes which trade on exchanges around the world. 
+Barchart offers an exhaustive array of **market data** feeds from exchanges around the world — consult our [website](https://www.barchart.com/solutions/data/market) for specifics. Furthermore, Barchart offers supplemental/derived data feeds like news articles, technical analysis, and opinions.
 
-Consult our [website](https://www.barchart.com/solutions/data/market) for more information, but here are some examples:
+The Barchart Alerting Service can monitor any of these feeds. Refer to the [Appendix: Data Feed Catalog](/content/appendices/data_feeds) for full listing. Here are some examples:
 
 * Price Data (real-time or delayed)
 	* Trades and Quotes
@@ -77,4 +77,4 @@ Avoid sharing identifying information, as follows:
 
 * Each alert has an owner. You must provide Barchart with a way to distinguish one owner from another. However, identity can be concealed by using meaningless identifiers.
 * Authorization is handled using JSON Web Tokens. These tokens provide security without the need for passwords.
-* Notifications can be handled entirely by your systems (via webhooks). In this scenario, Barchart will not require contact infomation for your users.
+* Notifications can be handled entirely by your systems (via webhooks). In this scenario, Barchart will not require contact information for your users.
