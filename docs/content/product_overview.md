@@ -4,10 +4,10 @@
 
 Here's how it works:
 
-* You _define_ an alert. Each alert has one or more conditions, for example:
+* You _define_ an alert with one or more conditions, for example:
 	* Apple common stock trades over $500.00 per share
-	* Apple common stock achieves a new 30 high
-	* A news article, mentioning Apple common stock, was just published
+	* Apple common stock achieves a new 30-day high
+	* A news article, mentioning Apple common stock, is released
 * You _choose_ the notification mechanism(s):
 	* Receive notifications via webhook (and you handle the last mile)
 	* Receive notifications via email
@@ -16,6 +16,8 @@ Here's how it works:
 * You _start_ the alert:
 	* Barchart's Alerting Service will continuously monitor your conditions
 	* Once your conditions are met, notifications are dispatched
+* The _Barchart Alerting Service_ continuously monitors alert conditions
+* The _Barchart Alerting Service_ dispatches notifications when alert conditions are met
 
 ## Sample Notifications
 
