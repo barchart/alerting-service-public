@@ -63,11 +63,11 @@ This SDK is compatible with Node.js.
 
 #### Direct Access
 
-The Barchart Alert Service implements a REST interface over HTTP(S). This allows you to interact with the service directly — bypassing this SDK entirely. An [OpenAPI](https://www.openapis.org/) specification of the REST interface can be found in the [API Reference](/content/api_reference) section.
+The Barchart Alert Service implements a REST interface over HTTP(S). By using the REST interface, you can bypass this SDK entirely. See the [API Reference](/content/api_reference) section, which contains [OpenAPI](https://www.openapis.org/) specification.
 
 #### Other
 
-If JavaScript isn't suitable for your environment, and you're not interested in direct access, please contact us at solutions@barchart.com or (866) 333-7587.
+If JavaScript isn't suitable for your environment, and you're not interested in direct access — please contact us at solutions@barchart.com or (866) 333-7587.
 
 ## User Privacy
 
