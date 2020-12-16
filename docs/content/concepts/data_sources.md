@@ -7,8 +7,8 @@ A _target_ is a category of streaming data source. Two primary categories exist:
 
 You can retrieve an up-to-date listings as follows:
 
-* [List Target Metadata](/content/concepts/alert_operations?id=list-available-targets)
-* [List Property Metadata](content/concepts/alert_operations?id=list-available-properties)
+* [List Target Metadata](/content/concepts/operations?id=list-available-targets)
+* [List Property Metadata](content/concepts/operations?id=list-available-properties)
 
 ## Quotes: Prices & Volume
 
