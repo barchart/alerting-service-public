@@ -39,7 +39,7 @@ In the _demo_ environment, token generation follows these rules:
 
 Since the signing secret is available to everyone (see above), there can be no expectation of privacy; the _demo_ environment is for testing and evaluation only.
 
-In the the _production_ environment, you must exchange a _"secret"_  with Barchart — in the form of a [public/private key pair](https://en.wikipedia.org/wiki/Public-key_cryptography). Consequently, your data will be secure.
+In the _production_ environment, you must exchange a _"secret"_  with Barchart — in the form of a [public/private key pair](https://en.wikipedia.org/wiki/Public-key_cryptography). Consequently, your data will be secure.
 
 Regardless of environment, the token payload uses two fields:
 
