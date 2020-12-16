@@ -33,7 +33,7 @@ You can visualize the **condition** for Apple stock reaching $600, as follows:
 │   │   └── Operand: ($600)
 ```
 
-Finally, a **publisher** defines the notification instructions for a specific alert. In most cases, an alert will not have publisher objects. Instead, it's common to define default notification rules which apply to all the alerts owned by a specific user.
+Finally, a **publisher** describes instructions for notifying the alert's owner when the alert's conditions are met. In most cases, an alert will not have publisher objects. Instead, it's common to define universal notification instructions on a user-by-user basis.
 
 Finally, here is the *actual* JSON object, representing the alert:
 
