@@ -4,15 +4,15 @@
 
 Here's how it works:
 
+* You _define_ an alert(S). Each alert has one or more conditions, for example:
+	* Apple common stock trades over $500.00 per share
+	* Apple common stock achieves a new 30 high
+	* A news article, mentioning Apple common stock, was just published
 * You _choose_ notification mechanism(s):
 	* Receive notifications to your web service, via HTTP POST (you handle last mile)
 	* Receive notifications via email
 	* Receive notifications via SMS messages
-	* Receive push notifications to your mobile applications (coming soon)
-* You _define_ an alert. Each alert has one or more conditions, for example:
-	* Apple common stock trades over $500.00 per share
-	* Apple common stock achieves a new 30 high
-	* A news article, mentioning Apple common stock, was just published
+	* Receive push notifications to your mobile applications
 * You _start_ the alert:
 	* Barchart's Alert Service will continuously monitor your conditions
 	* Once your conditions are met, notifications are dispatched
