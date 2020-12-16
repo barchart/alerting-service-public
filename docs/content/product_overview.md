@@ -9,7 +9,7 @@ Here's how it works:
 	* Apple common stock achieves a new 30 high
 	* A news article, mentioning Apple common stock, was just published
 * You _choose_ the notification mechanism(s):
-	* Receive notifications via webhook (you can the last mile)
+	* Receive notifications via webhook (and you handle the last mile)
 	* Receive notifications via email
 	* Receive notifications via SMS messages
 	* Receive notifications via push to your mobile applications
