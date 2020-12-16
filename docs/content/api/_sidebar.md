@@ -4,7 +4,7 @@
 	* [Connecting to Barchart](/content/concepts/connecting)
 	* [Securing the Connection](/content/concepts/security)
 	* [Defining Alerts](/content/concepts/defining_alerts)
-	* [Alert Operations](/content/concepts/alert_operations)
+	* [Controlling Alerts](/content/concepts/alert_operations)
 	* [Monitoring Alerts and Triggers](/content/concepts/triggers)
 	* [Configuring Notifications](/content/concepts/notifications)
 * Appendices
