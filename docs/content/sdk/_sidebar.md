@@ -7,6 +7,7 @@
 	* [Data Sources](/content/concepts/data_sources)
 	* [Operations](/content/concepts/operations)
 	* [Notifications](/content/concepts/notifications)
+	* [Triggers](/content/concepts/triggers)
 <!-- sdk_open -->
 * [SDK Reference](/content/sdk_reference)
 	* [lib](/content/sdk/lib)
