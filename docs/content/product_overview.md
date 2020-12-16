@@ -27,7 +27,7 @@ Here's how it works:
 
 ## Data Feed Catalog
 
-Barchart offers an exhaustive array of **market data** feeds from exchanges around the world — consult our [website](https://www.barchart.com/solutions/data/market) for specifics. Furthermore, Barchart offers supplemental/derived data feeds like news articles, technical analysis, and opinions.
+Barchart offers an exhaustive array of real-time **market data** feeds from exchanges around the world — consult our [website](https://www.barchart.com/solutions/data/market) for specifics. Furthermore, Barchart offers supplemental/derived data feeds like news articles, technical analysis, and opinions.
 
 The Barchart Alerting Service can monitor any of these feeds. Refer to the [Appendix: Data Feed Catalog](/content/appendices/data_feeds) for full listing. Here are some examples:
 
