@@ -20,4 +20,4 @@ Refer to the [documentation](https://barchart.github.io/alerts-client-js/#/conte
 
 ### Package Managers
 
-This library has been published as a _public_ module to NPM as [@barchart/alerts-client-js](https://www.npmjs.com/package/@barchart/alerts-client-js).
+This library has been published as a _public_ package to NPM as [@barchart/alerts-client-js](https://www.npmjs.com/package/@barchart/alerts-client-js).
