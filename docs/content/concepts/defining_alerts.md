@@ -197,5 +197,3 @@ Here is an example — using the fewest fields necessary — to create an operat
 ```
 
 _Refer to [```Schema.Operator```](/content/sdk/lib-data?id=schemaoperator) for a formal definition._
-
-
