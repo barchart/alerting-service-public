@@ -8,6 +8,7 @@ npm-debug.log
 
 docs
 example
+test
 
 openapi.yml
 gulpfile.js
