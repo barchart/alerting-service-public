@@ -224,9 +224,3 @@
 | 137 | 60-Day CCI | Strength | = |
 | 150 | 60-Day CCI | Direction | = |
 | 212 | 60-Day CCI | Makes New Signal | = |
-
-## Additional Stream Types
-
-More esoteric streams are available:
-
-* Cash Bid Prices for Commodities (e.g. corn, soybeans, etc)
