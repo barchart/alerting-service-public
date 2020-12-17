@@ -9,7 +9,7 @@
 	* [Monitoring Triggers](/content/concepts/monitoring_triggers)
 	* [Configuring Notifications](/content/concepts/configuring_notifications)
 * Appendices
-	* [Data Feeds and Attributes](/content/appendices/data_feeds_and_attributes)
+	* [Data Feed Glossary](/content/appendices/data_feed_glossary)
 	* [Data Structure Glossary](/content/appendices/data_structure_glossary)
 <!-- sdk_open -->
 * [SDK Reference](/content/sdk_reference)
