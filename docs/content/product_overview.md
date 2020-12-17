@@ -29,7 +29,7 @@ Here's how it works:
 
 Barchart offers an exhaustive array of real-time **market data** feeds from exchanges around the world — consult our [website](https://www.barchart.com/solutions/data/market) for specifics. Furthermore, Barchart offers supplemental/derived data feeds like news articles, technical analysis, and opinions. The Barchart Alerting Service can monitor any of these feeds.
 
-Refer to [Appendix: Data Feed Catalog](/content/appendices/data_feeds) for a complete listing of feed attributes which can be monitored. Here are some examples:
+Refer to [Appendix: Data Feeds and Attributes](/content/appendices/data_feeds_and_attributes) for a complete listing of feed attributes which can be monitored. Here are some examples:
 
 * Price Data
 	* Trades and Quotes
