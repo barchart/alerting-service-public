@@ -1,10 +1,10 @@
 ## Data Format
 
-The Barchart Alerting Service communicates using [JSON](https://en.wikipedia.org/wiki/JSON) data. You send JSON-formatted objects to the backend. You receive JSON-formatted in response. **This section describes the schema for these JSON objects.**
+The Barchart Alerting Service communicates using [JSON](https://en.wikipedia.org/wiki/JSON) data. You send JSON-formatted objects to the backend. You receive JSON-formatted in response. **This section describes the schema of these JSON objects.**
 
 ## Alert Structure Basics
 
-An **alert** is our top-level object. Here is a visualization of an alert, showing its important internal structures:
+An _alert_ is our top-level object. Here is a visualization of an alert, showing its important internal structures:
 
 ```text
 ├── Alert
@@ -16,13 +16,13 @@ An **alert** is our top-level object. Here is a visualization of an alert, showi
 │   ├── Publisher(s)
 ```
 
-Every alert has at least one **condition** which defines:
+Every alert has at least one _condition_ which defines:
 
-* the type of data feed we connect to (i.e. the **target** object),
-* the attribute of the data stream we want to observe (i.e. the **property** object), and
-* the conditional logic we apply to the data feed (i.e. the **operator** and **operand** objects).
+* the type of data feed we connect to (i.e. the _target_ object),
+* the attribute of the data stream we want to observe (i.e. the _property_ object), and
+* the conditional logic we apply to the data feed (i.e. the _operator_ and _operand_ objects).
 
-You can visualize the **condition** for Apple stock reaching $600, as follows:
+You can visualize the _condition_ for Apple stock reaching $600, as follows:
 
 ```text
 
@@ -33,7 +33,7 @@ You can visualize the **condition** for Apple stock reaching $600, as follows:
 │   │   └── Operand: ($600)
 ```
 
-Finally, a **publisher** describes instructions for notifying the alert's owner when the alert's conditions are met. In most cases, an alert will not have publisher objects. Instead, it's common to define universal notification instructions on a user-by-user basis.
+Finally, a _publisher_ describes instructions for notifying the alert's owner when the alert's conditions are met. In most cases, an alert will not have publisher objects. Instead, it's common to define universal notification instructions on a user-by-user basis.
 
 Here is an actual JSON object, representing an alert:
 
