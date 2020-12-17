@@ -23,11 +23,11 @@
 	        <h4 class="pull-left header-text barchart-logo"><span>[Alerts SDK Example]</span></h4>
 
             <div class="header-action-buttons pull-right">
-                <span class="text-button glyphicon glyphicon-th-list" data-bind="click: changeToGrid, visible: canDisconnect"></span>
-                <span class="text-button glyphicon glyphicon-book" data-bind="click: changeToHistory, visible: canDisconnect"></span>
-                <span class="text-button glyphicon glyphicon-plus" data-bind="click: changeToCreate, visible: canDisconnect"></span>
-                <span class="text-button glyphicon glyphicon-user" data-bind="click: changeToPreferences, visible: canDisconnect"></span>
-                <span class="text-button glyphicon glyphicon-remove" data-bind="click: disconnect, visible: canDisconnect"></span>
+                <span class="text-button glyphicon glyphicon-th-list" data-bind="click: changeToGrid, visible: canDisconnect" data-toggle="tooltip" data-placement="top" title="View Alerts"></span>
+                <span class="text-button glyphicon glyphicon-book" data-bind="click: changeToHistory, visible: canDisconnect" data-toggle="tooltip" data-placement="top" title="View Triggers"></span>
+                <span class="text-button glyphicon glyphicon-plus" data-bind="click: changeToCreate, visible: canDisconnect" data-toggle="tooltip" data-placement="top" title="Create Alert"></span>
+                <span class="text-button glyphicon glyphicon-user" data-bind="click: changeToPreferences, visible: canDisconnect" data-toggle="tooltip" data-placement="top" title="Configure User Options"></span>
+                <span class="text-button glyphicon glyphicon-remove" data-bind="click: disconnect, visible: canDisconnect" data-toggle="tooltip" data-placement="top" title="Log Out"></span>
             </div>
         </div>
     </script>
@@ -82,9 +82,10 @@
                     <span style="padding-left: 10px;">State</span>
                     <span class="text-button text-button-black glyphicon glyphicon-stop" data-bind="click: disableAlerts"></span>
                 </th>
+                <th class="center col-md-2">Create Date</th>
                 <th class="center col-md-2">Last Triggered</th>
             </thead>
-            <tbody data-bind="template: { name: 'alert-grid-item-template', foreach: alerts }"></tbody>
+            <tbody data-bind="template: { name: 'alert-grid-item-template', foreach: alertsFormatted }"></tbody>
         </table>
     </script>
 
@@ -106,6 +107,7 @@
                 <span data-bind="text: alert().alert_state"></span>
                 </div>
             </td>
+            <td class="center col-md-2" data-bind="text: createDateDisplay"></td>
             <td class="center col-md-2" data-bind="text: lastTriggerDateDisplay"></td>
         </tr>
     </script>
@@ -517,16 +519,15 @@
     </script>
 
     <script type="text/html" id="trigger-history-template">
+        <div class="table-controls">
+            <div class="order-control">
+                <select class="form-control" data-bind="options: triggersSortOptions, value: triggersSelectedSort"></select>
+            </div>
+        </div>
+
         <table class="table table-triggers table-striped small">
             <thead>
-                <th class="center col-md-3">
-                    <span>ID</span>
-                    <span class="sort-controls">
-                        <span>(</span>
-                        <input type="checkbox" data-bind="checked: triggersGrouped">
-                        <span>group by alert)</span>
-                    </span>
-                </th>
+                <th class="center col-md-3">ID</th>
                 <th class="left col-md-2">Description</th>
                 <th class="center col-md-1">
                     <span class="text-button text-button-black glyphicon glyphicon-collapse-down" data-bind="click: () => updateTriggers('Read')"></span>

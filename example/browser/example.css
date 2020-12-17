@@ -187,12 +187,12 @@ input.percent.form-control {
   vertical-align: middle !important;
 }
 
-.sort-controls {
-  font-weight: normal;
-  margin-left: 5px;
+.table-controls {
+    display: flex;
+    justify-content: flex-end;
+    margin-bottom: 20px;
 }
 
-.sort-controls input {
-  vertical-align: middle;
-  margin: 0;
+.table-controls .order-control {
+    width: 200px;
 }
