@@ -3,7 +3,7 @@
 ## 4.20.0
 **New Features**
 
-* Each time an alert is triggered a persistent ```Trigger``` object is created.
+* Each time an alert is triggered, a persistent ```Trigger``` object is created.
 * Queries for ```Trigger``` objects are now supported.
 * Subscriptions for ```Trigger``` creation, mutation, and deletion was added.
 * The status of a ```Trigger``` can be updated, between read/unread.
