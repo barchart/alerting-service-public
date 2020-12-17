@@ -41,17 +41,23 @@ module.exports = (() => {
     that.message = ko.observable('Waiting to connect...');
     that.alert = ko.observable();
     that.alerts = ko.observableArray([]);
+    that.alertsFormatted = ko.computed(function () {
+      const models = that.alerts().slice(0);
+      models.sort(comparatorForAlerts);
+      return models;
+    });
     that.publisherSettings = ko.observable();
     that.marketDataSettings = ko.observable();
     that.providerDescription = ko.observable(alertManager !== null ? alertManager.toString() : '');
     that.triggers = ko.observableArray([]);
-    that.triggersGrouped = ko.observable(false);
+    that.triggersSortOptions = ko.observableArray([triggersOrderOptions.BY_ALERT, triggersOrderOptions.BY_DATE]);
+    that.triggersSelectedSort = ko.observable(triggersOrderOptions.BY_DATE);
     that.triggersFormatted = ko.computed(function () {
       const models = that.triggers().slice(0);
-      models.sort(comparatorForAlertTriggers);
       let sorted;
 
-      if (that.triggersGrouped()) {
+      if (that.triggersSelectedSort() === triggersOrderOptions.BY_ALERT) {
+        models.sort(comparatorForTriggersByAlert);
         models.forEach(model => {
           model.display.first(false);
           model.display.rowSpan(1);
@@ -77,11 +83,14 @@ module.exports = (() => {
         sorted = grouped.reduce((acc, g) => {
           return acc.concat(g.triggers);
         }, []);
-      } else {
+      } else if (that.triggersSelectedSort() === triggersOrderOptions.BY_DATE) {
+        models.sort(comparatorForTriggersByDate);
         models.forEach(model => {
           model.display.first(true);
           model.display.rowSpan(1);
         });
+        sorted = models;
+      } else {
         sorted = models;
       }
 
@@ -239,7 +248,6 @@ module.exports = (() => {
 
     that.handleAlertTrigger = function (triggeredAlert) {
       that.handleAlertChange(triggeredAlert);
-      toastr.info('Alert Triggered: ' + triggeredAlert.name);
     };
 
     that.handleAlertDelete = function (deletedAlert) {
@@ -251,9 +259,28 @@ module.exports = (() => {
     };
 
     that.handleTriggersCreate = function (triggers) {
+      let model;
       triggers.forEach(trigger => {
-        that.triggers.push(new AlertTriggerModel(trigger));
+        model = new AlertTriggerModel(trigger);
+        that.triggers.push(model);
       });
+
+      if (triggers.length === 1) {
+        const onclick = (() => {
+          let clicked = false;
+          return () => {
+            if (!clicked) {
+              model.toggle();
+              clicked = true;
+            }
+          };
+        })();
+
+        toastr.info(triggers[0].trigger_description, triggers[0].trigger_title, {
+          onclick: onclick,
+          progressBar: true
+        });
+      }
     };
 
     that.handleTriggersChange = function (triggers) {
@@ -339,6 +366,30 @@ module.exports = (() => {
     var that = this;
     that.alert = ko.observable(alert);
     that.processing = ko.observable(false);
+    that.createDate = ko.computed(function () {
+      var alert = that.alert();
+      var returnRef;
+
+      if (alert.create_date) {
+        returnRef = new Date(parseInt(alert.create_date));
+      } else {
+        returnRef = new Date(0);
+      }
+
+      return returnRef;
+    });
+    that.createDateDisplay = ko.computed(function () {
+      var nullDate = new Date(0);
+      var returnRef;
+
+      if (that.createDate().getTime() === nullDate.getTime()) {
+        returnRef = 'Undefined';
+      } else {
+        returnRef = that.createDate().toLocaleString();
+      }
+
+      return returnRef;
+    });
     that.lastTriggerDateDisplay = ko.computed(function () {
       var alert = that.alert();
       var returnRef;
@@ -1279,7 +1330,13 @@ module.exports = (() => {
     });
   };
 
-  var comparatorForAlertTriggers = ComparatorBuilder.startWith((modelA, modelB) => comparators.compareDates(modelB.date(), modelA.date())).toComparator();
+  var triggersOrderOptions = {
+    BY_ALERT: 'Order by Alert',
+    BY_DATE: 'Order by Date'
+  };
+  var comparatorForAlerts = ComparatorBuilder.startWith((modelA, modelB) => comparators.compareDates(modelB.createDate(), modelA.createDate())).toComparator();
+  var comparatorForTriggersByAlert = ComparatorBuilder.startWith((modelA, modelB) => comparators.compareStrings(modelA.trigger().alert_id, modelB.trigger().alert_id)).thenBy((modelA, modelB) => comparators.compareDates(modelB.date(), modelA.date())).toComparator();
+  var comparatorForTriggersByDate = ComparatorBuilder.startWith((modelA, modelB) => comparators.compareDates(modelB.date(), modelA.date())).toComparator();
 
   var getDateBackwards = function (days) {
     const now = new Date();
@@ -1811,7 +1868,7 @@ module.exports = (() => {
      * @public
      * @param {Object} query
      * @param {String} query.alert_id
-     * @param {String=} query.trigger_date
+     * @param {String} query.trigger_date
      * @param {String=} query.trigger_status
      * @returns {Promise<Schema.Trigger>}
      */
@@ -1832,7 +1889,7 @@ module.exports = (() => {
      * @public
      * @param {Object} query
      * @param {String} query.user_id
-     * @param {String=} query.alert_system
+     * @param {String} query.alert_system
      * @param {String=} query.trigger_status
      * @returns {Promise<Schema.Trigger[]>}
      */
@@ -3394,7 +3451,7 @@ module.exports = (() => {
             return;
           }
 
-          this._parent._onTriggersCreated(triggers);
+          this._parent._onTriggersMutated(triggers);
         });
       });
     }

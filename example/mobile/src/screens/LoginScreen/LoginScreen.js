@@ -19,7 +19,7 @@ const registerDevice = async (userId) => {
 		return setTimeout(() => registerDevice(userId), 100);
 	}
 	
-	return axios.post('https://rtfdyn3gtj.execute-api.us-east-1.amazonaws.com/stage/v1/apns/registerDevice', {
+	return axios.post('https://push-notifications-stage.aws.barchart.com/v1/apns/registerDevice', {
 		deviceID: token,
 		bundleID: 'com.barchart.alerts-client-demo',
 		userID: userId,
