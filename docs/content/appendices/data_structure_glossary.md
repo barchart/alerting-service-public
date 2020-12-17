@@ -1,6 +1,6 @@
 ## Alert
 
-**An "alert" is essentially a container for conditions.** It has an owner. It always exists one, mutually-exclusive state (e.g. inactive, starting, started, or triggered). All child conditions must evaluate to true before the alert will trigger.
+**An "alert" is a container for [conditions](#Condition).** It is a top-level, stand-alone object. It has an owner. It exists in a mutually-exclusive state (e.g. inactive, starting, started, or triggered). All child conditions must evaluate to true before the alert will trigger.
 
 Here is an example — using the fewest fields necessary — to create a new alert:
 
@@ -17,9 +17,9 @@ _Refer to [```Schema.Alert```](/content/sdk/lib-data?id=schemaalert) for a forma
 
 ## Condition
 
-**A "condition" is a logical statement which is continuously evaluated as a data feed processed.** Waiting for the price of Apple stock to exceed $600 is a condition. A condition is always contained within an alert.
+**A "condition" constitutes a logical expression which is repeatedly evaluated as a data feed is processed.** A condition is always contained within an [alert](#Alert).
 
-Here is an example — using the fewest fields necessary — to create a condition (for use with an alert):
+Here is an example — using the fewest fields necessary — to create a condition (for use within an [alert](#Alert)):
 
 ```json (psuedo)
 {
@@ -32,9 +32,9 @@ _Refer to [```Schema.Condition```](/content/sdk/lib-data?id=schemacondition) for
 
 ## Operator
 
-**An "operator" refers to mechanism for comparison.** For example, greater than, less than, and equals are operators. Operator objects include an ```operand``` property. The operand is used to complete the right-hand side of an expression (e.g. "greater than $600"). An operator is a component of a condition.
+**An "operator" refers to a mechanism for comparison.** For example, greater than, less than, and equals are operators. Operator objects include an ```operand``` property. The operand is used to complete the right-hand side of an expression (e.g. "greater than $600"). An operator is a component of a [condition](#Condition).
 
-Here is an example — using the fewest fields necessary — to create an operator (for use with a condition):
+Here is an example — using the fewest fields necessary — to create an operator (for use as part of a [condition](#Condition)):
 
 ```json
 {
@@ -47,9 +47,9 @@ _Refer to [```Schema.Operator```](/content/sdk/lib-data?id=schemaoperator) for a
 
 ## Property
 
-**A "property" is the observed attribute of the streaming data source**. For example, the last price (of a stock quote) is a property. An operator is a component of a condition.
+**A "property" is the observed attribute of the streaming data source**. For example, the last price (of a stock quote) is a property. A property is a component of a [condition](#Condition).
 
-Here is an example — using the fewest fields necessary — to create a property (for use with a condition):
+Here is an example — using the fewest fields necessary — to create a property (for use as part of a [condition](#Condition)):
 
 ```json (psuedo)
 {
@@ -62,9 +62,9 @@ _Refer to [```Schema.Property```](/content/sdk/lib-data?id=schemaproperty) for a
 
 ## Target
 
-**A "target" identifies a specific entity.** For example, Apple stock is a target. Microsoft stock is a different target. Targets are differentiated using the ```identifier``` attribute.
+**A "target" identifies a specific entity.** For example, Apple stock is a target. Microsoft stock is a different target. Specific targets are differentiated using the ```identifier``` attribute.
 
-Here is an example — using the fewest fields necessary — to create a target (for use a property):
+Here is an example — using the fewest fields necessary — to create a target (for use as part of a [property](#Property)):
 
 ```json
 {
