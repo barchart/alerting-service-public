@@ -40,8 +40,8 @@ const secure = true;
 const manager = new AlertManager(host, port, secure, AdapterForHttp);
 ```
 
-Tip: Only ```require``` (or ```import```) the adapter you intend to use — this will reduce the size of your bundled code.
+Once the ```AlertManager``` has been instantiated, the ```start``` function should be invoked, passing a ```JwtProvider``` instance. A discussion of the ```JwtProvider``` can be found in the next section — [Key Concepts: Securing the Connection](/content/concepts/securing_the_connection).
 
 ## Using the API
 
-There is no need to perform a _connect_ action when using the REST-ful API — each request is completely independent.
+There is no need to perform a _connect_ action when using the REST-ful API — each request is completely independent. However, each request must include a JWT token as the ```Authorization``` header. Details can be found in the next section — [Key Concepts: Securing the Connection](/content/concepts/securing_the_connection)
