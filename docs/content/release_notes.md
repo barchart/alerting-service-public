@@ -5,8 +5,8 @@
 
 * Each time an alert is triggered, a persistent ```Trigger``` object is created.
 * Queries for ```Trigger``` objects are now supported.
-* Subscriptions for ```Trigger``` creation, mutation, and deletion was added.
-* The status of a ```Trigger``` can be updated, between read/unread.
+* Subscriptions to ```Trigger``` creation, mutation, and deletion are now supported.
+* The status of a ```Trigger``` can be set to _Read_ or _Unread_.
 
 **Technical Enhancements**
 
@@ -14,6 +14,7 @@
 * The `getJwtGenrator` function no longer signs tokens. Instead, it delegates token signing to a web service.
 * The `refreshInterval` parameter of the `JwtProvider` constructor is now optional.
 * The `JwtProvider` now applies some jitter to the `refreshInterval` parameter.
+* Added `.npmrc` file to reduce the clutter contained in a published NPM package.
 
 **Other**
 

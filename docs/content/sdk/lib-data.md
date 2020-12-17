@@ -136,7 +136,7 @@
 
 | Name | Type | Description |
 | --- | --- | --- |
-| operator_id | <code>Number</code> | <p>The operators's unique identifier (assigned by the backend).</p> |
+| operator_id | <code>Number</code> | <p>The operator's unique identifier (assigned by the backend).</p> |
 | [operator_name] | <code>String</code> | <p>A description of the operator. Managed by the backend.</p> |
 | [operator_type] | [<code>OperatorType</code>](#EnumsOperatorType) | <p>Managed by the backend.</p> |
 | [operand_type] | [<code>OperandType</code>](#EnumsOperandType) | <p>Describes the data type for an operand (e.g. for $600, the type is &quot;number&quot;). Managed by the backend.</p> |
@@ -211,7 +211,8 @@
 | trigger_date | <code>String</code> | <p>The time the alert was triggered (milliseconds since epoch).</p> |
 | trigger_status | [<code>TriggerStatus</code>](#EnumsTriggerStatus) | <p>The status of the trigger.</p> |
 | trigger_status_date | <code>String</code> | <p>The last time the alert trigger status was updated (milliseconds since epoch).</p> |
-| trigger_description | <code>String</code> | <p>A human-readable description of the trigger.</p> |
+| trigger_title | <code>String</code> | <p>A human-readable title.</p> |
+| trigger_description | <code>String</code> | <p>A human-readable description.</p> |
 
 
 * * *
@@ -333,8 +334,8 @@
 
 | Name | Type | Description |
 | --- | --- | --- |
-| read | <code>String</code> | <p>The alert trigger has been acknowledged.</p> |
-| unread | <code>String</code> | <p>The alert trigger has not been acknowledged.</p> |
+| Read | <code>String</code> | <p>The alert trigger has been acknowledged.</p> |
+| Unread | <code>String</code> | <p>The alert trigger has not been acknowledged.</p> |
 
 
 * * *

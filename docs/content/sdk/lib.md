@@ -252,7 +252,7 @@
 | --- | --- |
 | query | <code>Object</code> | 
 | query.alert_id | <code>String</code> | 
-| [query.trigger_date] | <code>String</code> | 
+| query.trigger_date | <code>String</code> | 
 | [query.trigger_status] | <code>String</code> | 
 
 
@@ -270,7 +270,7 @@
 | --- | --- |
 | query | <code>Object</code> | 
 | query.user_id | <code>String</code> | 
-| [query.alert_system] | <code>String</code> | 
+| query.alert_system | <code>String</code> | 
 | [query.trigger_status] | <code>String</code> | 
 
 
