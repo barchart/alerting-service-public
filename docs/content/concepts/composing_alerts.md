@@ -2,7 +2,7 @@
 
 The Barchart Alerting Service communicates using [JSON](https://en.wikipedia.org/wiki/JSON) data. You send JSON-formatted objects to the backend. You receive JSON-formatted in response. **This section describes the schema for these JSON objects.**
 
-## Alert Structure Concepts
+## Alert Structure Basics
 
 An **alert** is our top-level object. Here is a visualization of an alert, showing its important internal structures:
 
@@ -58,20 +58,15 @@ Here is an actual JSON object, representing an alert:
 	]
 }
 ```
+## Downloading Metadata
 
-## Building Alerts
+In order to compose _condition_ objects, for your alerts, you'll need the listings of:
 
-## Building Conditions
-
-### Required Metadata For Conditions
-
-In order to build conditional statements, you'll need the listings of:
-
-* _targets_ — things which can be observed (e.g. a stock quote)
-* _properties_ — attributes of the object being observed (e.g. last price)
+* _targets_ — data feeds which can be observed (e.g. a stock quote)
+* _properties_ — attributes of the data feed being observed (e.g. last price)
 * _operators_ — comparisons which can be applied to properties (e.g. greater than)
 
-Request listings of this metadata as follows:
+#### Using the SDK
 
 ```js
 const promises = [
@@ -88,17 +83,40 @@ return Promise.all(promises)
 	});
 ```
 
-### JSON Format For Conditions
+#### Using the API
+
+```shell
+curl 'https://alerts-management-demo.barchart.com/alert/targets' \
+  -X 'GET' \
+  -H 'Accept: application/json'
+```
+
+```shell
+curl 'https://alerts-management-demo.barchart.com/alert/targets/properties' \
+  -X 'GET' \
+  -H 'Accept: application/json'
+```
+
+```shell
+curl 'https://alerts-management-demo.barchart.com/alert/operators' \
+  -X 'GET' \
+  -H 'Accept: application/json'
+```
+
+## Composing Alerts
+
+## Composing Conditions
 
 In order to define a conditional statement as a JSON object, you need to:
 
-* Specify the desired _property_ using the numeric ```property_id``` value,
-* Specify the desired _target_ using a string value (usually a stock symbol),
-* Specify the desired _operator_ using the numeric ```operator_id``` value,
+* Specify a _target_ identifier, using a ```String``` value — usually a stock symbol,
+* Specify the desired _property_, using the numeric ```property_id``` value,
+* Specify the desired _operator_, using the numeric ```operator_id``` value, and
+* Specify an _operand_ value — usually a ```Number``` value.
 
 Using the same example — Apple stock's last price is greater than $600 — our JSON object looks like this (comments added):
 
-```json (psuedo)
+```
 {
 	"property": {
 		"property_id": 1, <-- The numeric identifier of the "last price" property (see metadata for properties)
@@ -107,18 +125,18 @@ Using the same example — Apple stock's last price is greater than $600 — our
 		}
 	},
 	"operator": {
-		"operator_id": 2, <-- The numeric value of the "greater than" operator (see metadata for operators)
-		"operand": "600" <-- The value to use
+		"operator_id": 2, <-- The numeric identifier of the "greater than" operator (see metadata for operators)
+		"operand": "600" <-- A value complete our logical expression, (AAPL.last-price > 600)
 	}
 }
 ```
 
 ### Natural Language Text
 
-At present, you must construct JSON objects which conform to the [Condition](/content/sdk/lib-data?id=schemacondition) schema. However, natural language conditional statements will be supported soon. As of yet, the syntax is has not been finalized; however, it will look something like this:
+In some cases, composing JSON objects to represent conditions may be tedious. Our development team has plans to add support for expressions written in a more natural ```String``` format. For example:
 
-* "AAPL.last-price > 600"
-* "AAPL.bid-size < AAPL.ask-size"
+* AAPL.last-price > 600
+* AAPL.bid-size < AAPL.ask-size
 
 ## Structure Glossary
 
