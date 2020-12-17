@@ -12,6 +12,10 @@
 * The `refreshInterval` parameter of the `JwtProvider` constructor is now optional.
 * The `JwtProvider` now applies some jitter to the `refreshInterval` parameter.
 
+**Other**
+
+* The [documentation site](https://docs.barchart.com/alerts/#/) has been expanded, clarified, and improved.
+
 
 
 ## 4.0.6
