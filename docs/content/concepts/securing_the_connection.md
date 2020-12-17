@@ -140,6 +140,6 @@ When using this token, we can only interact with alerts owned by ```me@barchart.
 
 ## Best Practices
 
-Under no circumstances should your JWT secret be accessible to anyone outside your organization. Anyone who has your signing secret could interact with the Barchart Alerting Service, impersonating your users.
+Under no circumstances should your JWT signing secret be accessible to anyone outside your organization. Anyone who has your secret could connect to Barchart and impersonate your users.
 
 If you are developing a web application, you should not generate tokens inside the web browser. A clever user could read your JWT secret. Instead, your web application should retrieve tokens from a trusted backend.

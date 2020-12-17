@@ -1,15 +1,3 @@
-## Primary Stream Types
-
-A _target_ is a category of streaming data source. Two primary categories exist:
-
-* Market Data Feeds (stocks, funds, ETF, forex, futures, etc)
-* News Feeds (Associated Press, Press Releases, Comtex, etc)
-
-You can retrieve an up-to-date listings as follows:
-
-* [List Target Metadata](/content/concepts/operations?id=list-available-targets)
-* [List Property Metadata](content/concepts/operations?id=list-available-properties)
-
 ## Quotes: Prices & Volume
 
 | ID | Description | Time Frame | Valid Operators |
@@ -236,9 +224,3 @@ You can retrieve an up-to-date listings as follows:
 | 137 | 60-Day CCI | Strength | = |
 | 150 | 60-Day CCI | Direction | = |
 | 212 | 60-Day CCI | Makes New Signal | = |
-
-## Additional Stream Types
-
-More esoteric streams are available:
-
-* Cash Bid Prices for Commodities (e.g. corn, soybeans, etc)

@@ -519,7 +519,14 @@
     <script type="text/html" id="trigger-history-template">
         <table class="table table-triggers table-striped small">
             <thead>
-                <th class="center col-md-3">ID</th>
+                <th class="center col-md-3">
+                    <span>ID</span>
+                    <span class="sort-controls">
+                        <span>(</span>
+                        <input type="checkbox" data-bind="checked: triggersGrouped">
+                        <span>group by alert)</span>
+                    </span>
+                </th>
                 <th class="left col-md-2">Description</th>
                 <th class="center col-md-1">
                     <span class="text-button text-button-black glyphicon glyphicon-collapse-down" data-bind="click: () => updateTriggers('Read')"></span>

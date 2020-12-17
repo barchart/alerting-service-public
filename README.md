@@ -6,8 +6,8 @@
 
 This SDK connects your applications to the  **[Barchart](https://www.barchart.com) Alerting Service**.
 
-* Define conditional statements based on market data feeds (or other data streams),
-* Ask our remote service to continuously track those conditions on your behalf, and
+* Define conditional expressions based on market data feeds (or other data streams),
+* Ask our remote service to continuously track those expressions on your behalf, and
 * Receive immediate notifications when those conditions are met.
 
 ### Documentation

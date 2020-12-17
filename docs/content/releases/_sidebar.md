@@ -1,13 +1,16 @@
 * [Overview](/content/product_overview)
 * [Quick Start](/content/quick_start)
 * Key Concepts
-	* [Connecting](/content/concepts/connecting)
-	* [Security](/content/concepts/security)
-	* [Data Structures](/content/concepts/data_structures)
-	* [Data Sources](/content/concepts/data_sources)
-	* [Operations](/content/concepts/operations)
-	* [Notifications](/content/concepts/notifications)
-	* [Triggers](/content/concepts/triggers)
+	* [Connecting to Barchart](/content/concepts/connecting_to_barchart)
+	* [Securing the Connection](/content/concepts/securing_the_connection)
+	* [Composing Alerts](/content/concepts/composing_alerts)
+	* [Managing Alerts](/content/concepts/managing_alerts)
+	* [Monitoring Alerts](/content/concepts/monitoring_alerts)
+	* [Monitoring Triggers](/content/concepts/monitoring_triggers)
+	* [Configuring Notifications](/content/concepts/configuring_notifications)
+* Appendices
+	* [Data Feed Glossary](/content/appendices/data_feed_glossary)
+	* [Data Structure Glossary](/content/appendices/data_structure_glossary)
 <!-- sdk_open -->
 * [SDK Reference](/content/sdk_reference)
 <!-- sdk_close -->
