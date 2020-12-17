@@ -105,6 +105,8 @@ curl 'https://alerts-management-demo.barchart.com/alert/operators' \
 
 ## Composing Alerts
 
+Coming soon.
+
 ## Composing Conditions
 
 In order to define a conditional statement as a JSON object, you need to:
@@ -137,3 +139,7 @@ In some cases, composing JSON objects to represent conditions may be tedious. Ou
 
 * AAPL.last-price > 600
 * AAPL.bid-size < AAPL.ask-size
+
+## Using Advanced Features
+
+Coming soon.
