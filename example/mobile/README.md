@@ -17,6 +17,7 @@ Here is a step-by-step guide how to run and test the application:
 1. Run `npm install` command in the root folder of the repository.
 2. Run `yarn install` command in the `example/mobile` folder.
 3. Run `npx pod-install` command in the `example/mobile/ios` folder.
+   3.1 If you have got an error `SDK "iphoneos" cannot be located`, read this [article](https://www.ryadel.com/en/xcode-sdk-iphoneos-cannot-be-located-mac-osx-error-fix/).
 4. Run `brew install watchman` command.
 5. Open `example/mobile/ios/alertclientmobile.xcworkspace` file with XCode.
 6. Go to `XCode -> Preferences` and make sure that you are in the Barchart Development Team.
