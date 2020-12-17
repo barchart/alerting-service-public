@@ -1,0 +1,12 @@
+{
+  "name": "Barchart Alert Client Demo",
+  "displayName": "Barchart Alert Client Demo",
+  "expo": {
+    "name": "Barchart Alert Client Demo",
+    "slug": "alert-client-mobile",
+    "version": "1.0.0",
+    "assetBundlePatterns": [
+      "**/*"
+    ]
+  }
+}
