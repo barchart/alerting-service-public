@@ -30,6 +30,7 @@
         * [.getTargets()](#AlertManagergetTargets) ⇒ [<code>Promise.&lt;Array.&lt;Schema.Target&gt;&gt;</code>](/content/sdk/lib-data?id=schematarget)
         * [.getProperties()](#AlertManagergetProperties) ⇒ [<code>Promise.&lt;Array.&lt;Schema.Property&gt;&gt;</code>](/content/sdk/lib-data?id=schemaproperty)
         * [.getOperators()](#AlertManagergetOperators) ⇒ [<code>Promise.&lt;Array.&lt;Schema.Operator&gt;&gt;</code>](/content/sdk/lib-data?id=schemaoperator)
+        * [.getPublisherTypes()](#AlertManagergetPublisherTypes) ⇒ [<code>Promise.&lt;Array.&lt;Schema.PublisherType&gt;&gt;</code>](/content/sdk/lib-data?id=schemapublishertype)
         * [.getServerVersion()](#AlertManagergetServerVersion) ⇒ <code>Promise.&lt;String&gt;</code>
         * [.getUser()](#AlertManagergetUser) ⇒ [<code>Promise.&lt;Schema.UserIdentifier&gt;</code>](/content/sdk/lib-data?id=schemauseridentifier)
     * _static_
@@ -321,6 +322,16 @@
 
 **Kind**: instance method of [<code>AlertManager</code>](#AlertManager)  
 **Returns**: [<code>Promise.&lt;Array.&lt;Schema.Operator&gt;&gt;</code>](/content/sdk/lib-data?id=schemaoperator)  
+**Access**: public  
+
+* * *
+
+### alertManager.getPublisherTypes() :id=alertmanagergetpublishertypes
+> Retrieves the entire list of strategies that can be used to notify
+> users when an alert is triggered.
+
+**Kind**: instance method of [<code>AlertManager</code>](#AlertManager)  
+**Returns**: [<code>Promise.&lt;Array.&lt;Schema.PublisherType&gt;&gt;</code>](/content/sdk/lib-data?id=schemapublishertype)  
 **Access**: public  
 
 * * *

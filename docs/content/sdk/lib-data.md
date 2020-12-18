@@ -22,6 +22,7 @@
         * [.AlertIdentifier](#SchemaAlertIdentifier) : <code>Object</code>
         * [.AlertQuery](#SchemaAlertQuery) : <code>Object</code>
         * [.UserIdentifier](#SchemaUserIdentifier) : <code>Object</code>
+        * [.PublisherType](#SchemaPublisherType) : <code>Object</code>
         * [.Trigger](#SchemaTrigger) : <code>Object</code>
 
 
@@ -191,6 +192,21 @@
 | --- | --- | --- |
 | user_id | <code>String</code> | <p>The alert owner's unique identifier.</p> |
 | alert_system | <code>String</code> | <p>The alert owner's domain.</p> |
+
+
+* * *
+
+### Schema.PublisherType :id=schemapublishertype
+> An object which describes a notification strategy.
+
+**Kind**: static typedef of [<code>Schema</code>](#Schema)  
+**Properties**
+
+| Name | Type | Description |
+| --- | --- | --- |
+| publisher_type_id | <code>Number</code> | <p>The identifier of the notification strategy.</p> |
+| transport | <code>String</code> | <p>A description of the notification strategy.</p> |
+| provider | <code>String</code> | <p>A description of the mechanism used to deliver the notification.</p> |
 
 
 * * *
