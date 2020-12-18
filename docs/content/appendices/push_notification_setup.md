@@ -32,6 +32,13 @@ Make a slight change to your mobile app. Each time a user logs in, collect the f
 * ```BundleID``` — Refers to the app itself.
 * ```DeviceID``` — Refers to the device and installation (can be obtained from your app at runtime)
 
+Two enviroments exist, use the appropriate one:
+
+* Production — push-notifications.aws.barchart.com
+* Demo — push-notifications-stage.aws.barchart.com
+
+Here is an example:
+
 ```curl
 curl 'https://push-notifications-stage.aws.barchart.com/v1/apns/registerDevice' \
   -X 'POST' \
