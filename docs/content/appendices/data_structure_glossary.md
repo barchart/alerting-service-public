@@ -9,7 +9,7 @@ Here is an example — using the fewest fields necessary — to create a new ale
 	"user_id": "me",
 	"alert_system": "barchart.com",
 	"name": "My First Alert"
-	"conditions": [ { /* See below */ } ]
+	"conditions": [ { /* See the "Condition" section */ } ]
 }
 ```
 
@@ -23,8 +23,8 @@ Here is an example — using the fewest fields necessary — to create a conditi
 
 ```json (psuedo)
 {
-	"property": { /* See below */ },
-	"operator": { /* See below */ }
+	"property": { /* See the "Property" section */ },
+	"operator": { /* See the "Operator" section */ }
 }
 ```
 
@@ -54,7 +54,7 @@ Here is an example — using the fewest fields necessary — to create a propert
 ```json (psuedo)
 {
 	"property_id": 1,
-	"target": { /* See below */ }
+	"target": { /* /* See the "Target" section */ */ }
 }
 ```
 
