@@ -15,7 +15,7 @@ An alert can be configured to publish notifications via some, all, or none of th
 
 ## Notification Selection Algorithm
 
-#### Route to a Specific Recipient
+#### 1. Route to a Specific Recipient
 
 ```json
 {
@@ -31,7 +31,7 @@ An alert can be configured to publish notifications via some, all, or none of th
 }
 ```
 
-#### Route to a Default Recipient
+#### 2. Route to a Default Recipient
 
 ```json
 {
@@ -46,7 +46,7 @@ An alert can be configured to publish notifications via some, all, or none of th
 }
 ```
 
-#### Route based on the Alert Type
+#### 3. Route based on the Alert Type
 
 ```json
 {
@@ -54,6 +54,23 @@ An alert can be configured to publish notifications via some, all, or none of th
   "publishers": [ ]
 }
 ```
+
+```json
+{
+	"publisher_type_id": 1,
+	"user_id": "me",
+	"alert_system": "barchart.com",
+	"default_recipient": "222-222-2222",
+	"allow_window_timezone": "America/Chicago",
+	"allow_window_start": null,
+	"allow_window_end": null,
+	"active_alert_types": [
+		"price"
+	]
+}
+```
+
+#### 3. Don't Send a Notification
 
 
 
