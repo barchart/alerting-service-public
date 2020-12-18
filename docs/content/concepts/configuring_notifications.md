@@ -46,7 +46,7 @@ curl 'https://alerts-management-demo.barchart.com/alert/publishers' \
 
 ## Loading User Preferences
 
-User preferences are stored as [```PublisherTypeDefault```](/content/sdk/lib-data?id=schemapublishertypedefult) objects, for example:
+User preferences are stored as [```PublisherTypeDefault```](/content/sdk/lib-data?id=schemapublishertypedefault) objects, for example:
 
 ```json
 {
@@ -59,7 +59,7 @@ User preferences are stored as [```PublisherTypeDefault```](/content/sdk/lib-dat
 	"default_recipient_hmac": null,
 	"allow_window_timezone": "America/Chicago",
 	"allow_window_start": "06:00",
-	"allow_window_end":"22:00",
+	"allow_window_end": "22:00",
 	"active_alert_types": [
 		"news","price"
 	]
@@ -74,7 +74,17 @@ The following information is conveyed:
 
 #### Using the SDK
 
-Coming soon.
+```js
+const query = { };
+
+query.user_id = 'me';
+query.alert_system = 'barchart.com';
+
+return alertManager.getPublisherTypeDefaults()
+	.then((publisherTypeDefaults) => {
+		console.log(`The user [ ${query.user_id} ] has [ ${publisherTypeDefaults.length} ] preference settings`);
+	});
+```
 
 #### Using the API
 
@@ -82,11 +92,25 @@ Coming soon.
 
 ## Setting User Preferences
 
-Coming soon.
-
 #### Using the SDK
 
-Coming soon.
+```js
+const ptd = { };
+
+ptd.publisher_type_id = 1;
+ptd.user_id = 'me';
+ptd.alert_system = 'barchart.com';
+ptd.default_recipient = '222-333-4444';
+ptd.allow_window_timezone = 'America/Chicago';
+ptd.allow_window_start = '08:00';
+ptd.allow_window_end = '17:00';
+ptd.active_alert_types = [ 'price' ];
+
+return alertManager.assignPublisherTypeDefault(ptd)
+	.then((saved) => {
+		console.log(saved);
+	});
+```
 
 #### Using the API
 

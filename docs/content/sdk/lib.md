@@ -32,6 +32,7 @@
         * [.getOperators()](#AlertManagergetOperators) ⇒ [<code>Promise.&lt;Array.&lt;Schema.Operator&gt;&gt;</code>](/content/sdk/lib-data?id=schemaoperator)
         * [.getPublisherTypes()](#AlertManagergetPublisherTypes) ⇒ [<code>Promise.&lt;Array.&lt;Schema.PublisherType&gt;&gt;</code>](/content/sdk/lib-data?id=schemapublishertype)
         * [.getPublisherTypeDefaults(query)](#AlertManagergetPublisherTypeDefaults) ⇒ [<code>Promise.&lt;Array.&lt;Schema.PublisherTypeDefault&gt;&gt;</code>](/content/sdk/lib-data?id=schemapublishertypedefault)
+        * [.assignPublisherTypeDefault(publisherTypeDefault)](#AlertManagerassignPublisherTypeDefault) ⇒ [<code>Promise.&lt;Schema.PublisherTypeDefault&gt;</code>](/content/sdk/lib-data?id=schemapublishertypedefault)
         * [.getServerVersion()](#AlertManagergetServerVersion) ⇒ <code>Promise.&lt;String&gt;</code>
         * [.getUser()](#AlertManagergetUser) ⇒ [<code>Promise.&lt;Schema.UserIdentifier&gt;</code>](/content/sdk/lib-data?id=schemauseridentifier)
     * _static_
@@ -349,6 +350,21 @@
 | query | <code>Object</code> | 
 | query.user_id | <code>String</code> | 
 | query.alert_system | <code>String</code> | 
+
+
+* * *
+
+### alertManager.assignPublisherTypeDefault(publisherTypeDefault) :id=alertmanagerassignpublishertypedefault
+> Saves a user's notification preferences for a single notification strategy (e.g. email
+> or text message).
+
+**Kind**: instance method of [<code>AlertManager</code>](#AlertManager)  
+**Returns**: [<code>Promise.&lt;Schema.PublisherTypeDefault&gt;</code>](/content/sdk/lib-data?id=schemapublishertypedefault)  
+**Access**: public  
+
+| Param | Type |
+| --- | --- |
+| publisherTypeDefault | [<code>Schema.PublisherTypeDefault</code>](/content/sdk/lib-data?id=schemapublishertypedefault) | 
 
 
 * * *
