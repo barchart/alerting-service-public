@@ -16,7 +16,7 @@
     "lint": "eslint --fix --config=.eslintrc.js './src/**/*.js'"
   },
   "dependencies": {
-    "@barchart/alerts-client-js": "file:../../",
+    "@barchart/alerts-client-js": "^4.1.0",
     "@barchart/common-js": "^3.22.0",
     "@barchart/common-node-js": "^3.22.0",
     "@react-native-async-storage/async-storage": "^1.13.2",
