@@ -46,6 +46,32 @@ curl 'https://alerts-management-demo.barchart.com/alert/publishers' \
 
 ## Loading User Preferences
 
+User preferences are stored as [PublisherTypeDefault]() objects, for example:
+
+```json
+{
+	"publisher_type_id": 1,
+	"transport": "sms",
+	"provider": "twilio",
+	"user_id": "me",
+	"alert_system": "barchart.com",
+	"default_recipient": "312-867-5309",
+	"default_recipient_hmac": null,
+	"allow_window_timezone": "America/Chicago",
+	"allow_window_start": "06:00",
+	"allow_window_end":"22:00",
+	"active_alert_types": [
+		"news","price"
+	]
+}
+```
+
+The following information is conveyed:
+
+* Send text messages to 312-867-5309, by default.
+* Do not send any messages between the hours of 10:00 PM and 06:00 PM (Chicago time).
+* Notifications for _price_ and _news_ alerts should be sent via text message, by default.
+
 #### Using the SDK
 
 Coming soon.
