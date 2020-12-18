@@ -2,38 +2,34 @@
 
 ### Overview
 
-A simple mobile application, written using this JavaScript SDK and [React Native](https://reactnative.dev/).
+A simple mobile application, written using [React Native](https://reactnative.dev/) and the [JavaScript SDK for the Barchart Alerting Service](https://github.com/barchart/alerts-client-js).
 
 ### Screen Captures
 
 ### Requirements
 
-The push notification feature of the application requires:
+Push notification feature of the application require you to:
 
 * Authorize Barchart to send push notifications on your behalf (see [below](#authorizing-push-notifications)).
-* Run the app on an actual device — not a simulator
+* Run the app on an actual device — not a simulator.
 
 ### Build and Execution Instructions
 
 #### Apple iOS
 
-First, 
-
-1. Install [Apple Xcode](https://developer.apple.com/xcode/)
-2. Open the `XCode > Preferences` menu and sign in with an Apple ID with membership to the valid team (see [below](#apple-developer-teams)).
+First, install [Apple Xcode](https://developer.apple.com/xcode/). Open Xcode and use the `XCode > Preferences` menu to sign in. Your Apple ID should be a member of a valid team (see [below](#apple-developer-teams)).
 
 ![Signing & Capabilities](.images/01_Xcode_preferences.png)
    
 Next, configure the project:
 
-1. Run `brew install watchman` command.
-2. Run `npm install` command from the root folder of the repository.
-3. Run `yarn install` command from the `example/mobile` folder.
+1. Run `brew install watchman`.
+2. Run `npm install` from the root folder of the repository.
+3. Run `yarn install` from the `example/mobile` folder.
 4. Run `npx pod-install` command from the `example/mobile/ios` folder.
    * If the command fails, consult this [article](https://stackoverflow.com/questions/51768515/cocoa-pods-install-on-ios-project-not-working).
 5. Open `example/mobile/ios/alertclientmobile.xcworkspace` file with XCode.
-
-6. Click on `alertclientmobile` on the left sidebar and go to the `Signing & Capabilities` section, then:
+6. Click on `alertclientmobile` and go to the `Signing & Capabilities` section, then:
    * Set your Team (e.g. `Barchart.com, Inc.`).
    * Set the Bundle Identifier (e.g. `com.barchart.alerts-client-demo`).
    * Ensure the `Remote Notifications` option is checked.
