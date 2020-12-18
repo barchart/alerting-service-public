@@ -44,7 +44,7 @@ curl 'https://push-notifications-stage.aws.barchart.com/v1/apns/registerDevice' 
   -X 'POST' \
   -H 'Accept: application/json' \
   -H 'Content-Type: application/json;charset=UTF-8' \
-  --data-binary '{"UserID":"me@barchart.com", "BundleID": "com.barchart.alert-demo-app", "DeviceID": "b1d86f93ea5468ebc32514cfbb4c8ea1ffa81107426552104476f530b534e025", "RealtimeUserID": "-"}'
+  --data-binary '{"UserID":"me@barchart.com", "BundleID": "com.barchart.alert-demo-app", "DeviceID": "b1d86f93ea5468ebc32514cfbb4c8ea1ffa81107426552104476f530b534e025", "RealtimeUserID": "me@barchart.com"}'
 ```
 
 #### Android
