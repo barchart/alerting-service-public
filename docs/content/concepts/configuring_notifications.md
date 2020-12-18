@@ -1,17 +1,54 @@
 ## Notification Options
 
-A running alert "triggers" when all of its conditions are met. When an alert triggers, notifications are published.
-
-The Barchart Alerting Service support four types of notifications:
+Once an alert's conditions are met, notifications are published. The Barchart Alerting Service support four notification options:
 
 * Email — transmitted via [Amazon SES](https://aws.amazon.com/ses/).
-* Text Message - transmitted via [Twilio](https://www.twilio.com/).
-* Mobile Push Notification - via [Apple APNS](https://en.wikipedia.org/wiki/Apple_Push_Notification_service) or [Google FCM](https://firebase.google.com/docs/cloud-messaging).
-* Web Hook - via an HTTP(S) POST to your web service.
+* Text Message — transmitted via [Twilio](https://www.twilio.com/).
+* Mobile Push Notification — via [Apple APNS](https://en.wikipedia.org/wiki/Apple_Push_Notification_service) or [Google FCM](https://firebase.google.com/docs/cloud-messaging).
+* Web Hook — via an HTTP(S) POST to your web service.
 
-An alert can be configured to publish notifications via some, all, or none of these strategies.
+When an alert triggers, notifications can be published using some or all of these strategies.
 
 ## Configuring User Preferences
+
+For each type of notification, a user can set default preferences, including:
+
+* The notification address — A phone number, an email address, etc.
+* Do-not-disturb rules — A window of time during which notification will not be dispatched, even if an alert triggers.
+
+Furthermore, the user may associate an ```alert_type``` with one (or more) notification strategies. For example:
+
+* A user might want all notifications for _price_ alerts to be sent via both email and text message. 
+* A user might want all notifications for _news_ alerts to be sent only via email.
+
+## Downloading Metadata
+
+In order to work with notifications, you'll need the listing of notification types — specifically, you'll need their identifiers.
+
+#### Using the SDK
+
+```js
+return alertManager.getPublisherTypes()
+	.then((publisherTypes) => {
+		publisherTypes.forEach((pt) => {
+			console.log(`[ ${pt.transport} ] has identifier [ ${pt.publisher_type_id} ]`);	
+		});	
+	});
+```
+
+#### Using the API
+
+```shell
+curl 'https://alerts-management-demo.barchart.com/alert/publishers' \ 
+  -X 'GET' \
+  -H 'Accept: application/json'
+```
+
+## Configuring User Preferences
+
+#### Using the SDK
+
+#### Using the API
 
 ## Notification Selection Algorithm
 
