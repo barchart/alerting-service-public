@@ -1,6 +1,6 @@
 # Release Notes
 
-## 4.20.0
+## 4.1.0
 **New Features**
 
 * Each time an alert is triggered, a persistent ```Trigger``` object is created.
