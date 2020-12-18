@@ -6,6 +6,10 @@ A simple mobile application, written using [React Native](https://reactnative.de
 
 ### Screen Captures
 
+| Login  | Alerts | Triggers |
+| -------- | --------| --------|
+| ![Login Screen](.images/examples/01_app_login.png) | ![Alert Screen](.images/examples/02_app_alerts.png)  | ![Trigger Screen](.images/examples/03_app_triggers.png)  |
+
 ### Requirements
 
 Push notification feature of the application require you to:
@@ -17,9 +21,9 @@ Push notification feature of the application require you to:
 
 #### Apple iOS
 
-First, install [Apple Xcode](https://developer.apple.com/xcode/). Open Xcode and use the `XCode > Preferences` menu to sign in. Your Apple ID should be a member of a valid team (see [below](#apple-developer-teams)).
+First, install [Apple Xcode](https://developer.apple.com/xcode/). Open Xcode and use the `XCode > Preferences` menu to sign in. Your Apple ID should be a member of a valid team (more on that [below](#apple-developer-teams)).
 
-![Signing & Capabilities](.images/01_Xcode_preferences.png)
+![Signing & Capabilities](.images/setup/01_Xcode_preferences.png)
    
 Next, configure the project:
 
@@ -39,7 +43,7 @@ Next, configure the project:
 9. Build and run the application using the play button. This may take several minutes.
 10. Once the application loads, grant it permissions to receive push notifications.
 
-![Signing & Capabilities](.images/02_Xcode_project_settings.png)
+![Signing & Capabilities](.images/setup/02_Xcode_project_settings.png)
 
 #### Android
 
