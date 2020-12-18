@@ -9,7 +9,7 @@ Once an alert's conditions are met, notifications are published. The Barchart Al
 
 When an alert triggers, notifications can be published using some or all of these strategies.
 
-## Configuring User Preferences
+## User Preferences
 
 For each type of notification, a user can set default preferences, including:
 
@@ -45,8 +45,6 @@ curl 'https://alerts-management-demo.barchart.com/alert/publishers' \
 ```
 
 ## Loading User Preferences
-
-Coming soon.
 
 #### Using the SDK
 
