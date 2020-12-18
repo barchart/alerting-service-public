@@ -139,7 +139,7 @@ alertManager.updateTriggers(data)
 Mark a single trigger as _Read_:
 
 ```shell
-curl 'https://alerts-management-demo.barchart.com/alert/triggers/96dbb6ea-38dd-4afc-a031-96df63c42300/1608126840556' \
+curl 'https://alerts-management-demo.barchart.com/alert/triggers/8814c5d7-6adc-4783-b94c-15cc668e68f2/1608176496477' \
   -X 'PUT' \
   -H 'Accept: application/json' \
   -H 'Content-Type: application/json;charset=UTF-8' \
