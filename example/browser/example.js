@@ -1978,6 +1978,14 @@ module.exports = (() => {
         return this._adapter.getModifiers();
       });
     }
+    /**
+     * Retrieves the entire list of strategies that can be used to notify
+     * users when an alert is triggered.
+     *
+     * @public
+     * @returns {Promise<Schema.PublisherType[]>}
+     */
+
 
     getPublisherTypes() {
       return Promise.resolve().then(() => {
@@ -1985,6 +1993,16 @@ module.exports = (() => {
         return this._adapter.getPublisherTypes();
       });
     }
+    /**
+     * Retrieves the notification preferences for a user.
+     *
+     * @public
+     * @param {Object} query
+     * @param {String} query.user_id
+     * @param {String} query.alert_system
+     * @returns {Promise<Schema.PublisherTypeDefault[]>}
+     */
+
 
     getPublisherTypeDefaults(query) {
       return Promise.resolve().then(() => {
@@ -1994,6 +2012,15 @@ module.exports = (() => {
         return this._adapter.getPublisherTypeDefaults(query);
       });
     }
+    /**
+     * Saves a user's notification preferences for a single notification strategy (e.g. email
+     * or text message).
+     *
+     * @public
+     * @param {Schema.PublisherTypeDefault} publisherTypeDefault
+     * @returns {Promise<Schema.PublisherTypeDefault>}
+     */
+
 
     assignPublisherTypeDefault(publisherTypeDefault) {
       return Promise.resolve().then(() => {
@@ -3756,7 +3783,7 @@ module.exports = (() => {
   'use strict';
 
   return {
-    version: '4.0.10'
+    version: '4.1.0'
   };
 })();
 
