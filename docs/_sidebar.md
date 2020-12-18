@@ -11,7 +11,7 @@
 * Appendices
 	* [Data Feed Glossary](/content/appendices/data_feed_glossary)
 	* [Data Structure Glossary](/content/appendices/data_structure_glossary)
-	* [Demo Applications](/content/appendices/demo_applications)
+	* [Demo Application Overview](/content/appendices/demo_application_overview)
 	* [Push Notification Setup](/content/appendices/push_notification_setup)
 <!-- sdk_open -->
 * [SDK Reference](/content/sdk_reference)
@@ -20,4 +20,3 @@
 * [API Reference](/content/api_reference)
 <!-- api_close -->
 * [Release Notes](/content/release_notes)
-

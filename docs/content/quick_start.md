@@ -203,7 +203,7 @@ Sometimes learning by example is best. Three applications were built using this 
 * A mobile application, compatible with iOS and Android devices, and
 * Simple Node.js scripts.
 
-You can load the web application by clicking [here](https://examples.aws.barchart.com/alerts-client-js/example.html). To explore the other applications, visit [Appendix: Demo Applications](/content/appendices/demo_applications).
+You can load the web application by clicking [here](https://examples.aws.barchart.com/alerts-client-js/example.html). To explore the other applications, visit [Appendix: Demo Application Overview](/content/appendices/demo_application_overviuew).
 
 
 
