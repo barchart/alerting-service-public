@@ -5,7 +5,7 @@ To enable support for push notifications to your mobile apps, you need to:
 * You need to authorize Barchart to send push notifications on your behalf, and
 * Your mobile app needs to register itself with Barchart each time a user logs in.
 
-## Authorize Barchart
+## Authorizing Barchart
 
 Barchart must be authorized to send push notifications on your behalf.
 
@@ -25,7 +25,7 @@ Refer to this article from Apple for more details:
 
 Coming soon.
 
-## Configure Your App
+## Registering User Devices
 
 Barchart requires specific information to properly route notifications to the correct users and devices. This routing information changes as users (a) install, (b) login to your mobile app.
 
