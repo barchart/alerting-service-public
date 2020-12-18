@@ -482,6 +482,8 @@
 | trigger_date | <code>String</code> | true | false |  |
 | trigger_status | <code>String</code> | true | false |  |
 | trigger_status_date | <code>String</code> | true | false |  |
+| trigger_description | <code>String</code> | true | false |  |
+| trigger_title | <code>String</code> | true | false |  |
 
 **Example**:
 
@@ -492,7 +494,9 @@
   "user_id": "barchart-test-user",
   "trigger_date": "1605874379489",
   "trigger_status": "Read",
-  "trigger_status_date": "1606227202480"
+  "trigger_status_date": "1606227202480",
+  "trigger_description": "MSFT traded for 214.86 at 10:34 ET on 12/14/20",
+  "trigger_title": "MSFT traded for 214.86 at 10:34 ET on 12/14/20"
 }
 ```
 

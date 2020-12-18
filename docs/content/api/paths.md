@@ -855,7 +855,7 @@
 
 * * *
 
-## GET /alerts/trigger/status 
+## GET /alert/triggers/users/{alert_system}/{user_id} 
 
 > Retrieves a list of alerts trigger statuses.
 
@@ -863,12 +863,17 @@
 
 **Security**: 
 [JWT](/content/api/components?id=securityJWT)
-#### Query Parameters
+#### Path Parameters
 
 | Name | Type | Required | Nullable | Description |
 | ---- | ---- | -------- | -------- | ----------- |
 | user_id | <code>String</code> | true | false | The user id. |
 | alert_system | <code>String</code> | true | false | The alert system. |
+
+#### Query Parameters
+
+| Name | Type | Required | Nullable | Description |
+| ---- | ---- | -------- | -------- | ----------- |
 | trigger_date | <code>String</code> | false | false | Gets alert trigger statuses after this date |
 | trigger_status | <code>String</code> | false | false | Gets triggers with this status |
 
@@ -884,14 +889,21 @@
 
 * * *
 
-## PUT /alerts/trigger/status 
+## PUT /alert/triggers/users/{alert_system}/{user_id} 
 
-> Updates specific alert trigger status.
+> Updates specific alert trigger statuses.
 
-**Summary**: Updates an alert trigger status
+**Summary**: Updates an alert trigger statuses
 
 **Security**: 
 [JWT](/content/api/components?id=securityJWT)
+#### Path Parameters
+
+| Name | Type | Required | Nullable | Description |
+| ---- | ---- | -------- | -------- | ----------- |
+| user_id | <code>String</code> | true | false | The user id. |
+| alert_system | <code>String</code> | true | false | The alert system. |
+
 #### Request Body
     
 **Content Type**: application/json
@@ -900,16 +912,12 @@
 
 | Name | Type | Required | Nullable | Description |
 | ---- | ---- | -------- | -------- | ----------- |
-| alert_id | <code>String</code> | false | false |  |
-| trigger_date | <code>Integer</code> | false | false |  |
 | trigger_status | <code>String</code> | false | false |  |
 
 **Example**:
 
 ```json
 {
-  "alert_id": "6bc32e9d-50ba-4f26-a633-a3cb3884b504",
-  "trigger_date": 1605874379489,
   "trigger_status": "Unread"
 }
 ```
@@ -930,7 +938,7 @@
 
 * * *
 
-## PUT /alerts/trigger/statuses 
+## PUT /alert/triggers/{alert_id}/{trigger_date} 
 
 > Updates all alert trigger status for the user.
 
@@ -938,6 +946,13 @@
 
 **Security**: 
 [JWT](/content/api/components?id=securityJWT)
+#### Path Parameters
+
+| Name | Type | Required | Nullable | Description |
+| ---- | ---- | -------- | -------- | ----------- |
+| alert_id | <code>String</code> | true | false | The alert id. |
+| trigger_date | <code>String</code> | true | false | The alert system. |
+
 #### Request Body
     
 **Content Type**: application/json
@@ -946,16 +961,12 @@
 
 | Name | Type | Required | Nullable | Description |
 | ---- | ---- | -------- | -------- | ----------- |
-| user_id | <code>String</code> | false | false |  |
-| alert_system | <code>String</code> | false | false |  |
 | trigger_status | <code>String</code> | false | false |  |
 
 **Example**:
 
 ```json
 {
-  "user_id": "barchart-test-user",
-  "alert_system": "barchart.com",
   "trigger_status": "Unread"
 }
 ```
