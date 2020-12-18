@@ -85,7 +85,13 @@ const query = { };
 query.user_id = 'me';
 query.alert_system = 'barchart.com';
 
-alertManager.subscribeTriggers(query, handleTriggersChanged, handleTriggersDeleted, handleTriggersCreated);
+const subscripton = alertManager.subscribeTriggers(query, handleTriggersChanged, handleTriggersDeleted, handleTriggersCreated);
+```
+
+To stop the subscription, do the following:
+
+```js
+subscription.dispose();
 ```
 
 #### Using the API
