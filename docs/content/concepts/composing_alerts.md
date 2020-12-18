@@ -133,13 +133,6 @@ Using the same example — Apple stock's last price is greater than $600 — our
 }
 ```
 
-### Natural Language Text
-
-In some cases, composing JSON objects to represent conditions may be tedious. Our development team has plans to add support for expressions written in a more natural ```String``` format. For example:
-
-* AAPL.last-price > 600
-* AAPL.bid-size < AAPL.ask-size
-
 ## Using Advanced Features
 
 Coming soon.
