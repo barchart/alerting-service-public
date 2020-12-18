@@ -88,7 +88,12 @@ return alertManager.getPublisherTypeDefaults()
 
 #### Using the API
 
-Coming soon.
+```shell
+curl 'https://alerts-management-demo.barchart.com/alert/publishers/default/barchart.com/me' \
+  -X 'GET' \
+  -H 'Accept: application/json' \
+  -H 'Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoibWUiLCJ1c2VySWQiOiJtZSIsImFsZXJ0X3N5c3RlbSI6ImJhcmNoYXJ0LmNvbSIsImNvbnRleHRJZCI6ImJhcmNoYXJ0LmNvbSIsImlhdCI6MTYwODI5MzQzM30.QFY6GphC1tGXJPNExJw2nqnjfU8heYTvKw16OKusQPw' 
+```
 
 ## Setting User Preferences
 
@@ -114,7 +119,14 @@ return alertManager.assignPublisherTypeDefault(ptd)
 
 #### Using the API
 
-Coming soon.
+```shell
+curl 'https://alerts-management-demo.barchart.com/alert/publishers/default/barchart.com/me/1' \
+  -X 'PUT' \
+  -H 'Accept: application/json' \
+  -H 'Content-Type: application/json;charset=UTF-8' \
+  -H 'Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoibWUiLCJ1c2VySWQiOiJtZSIsImFsZXJ0X3N5c3RlbSI6ImJhcmNoYXJ0LmNvbSIsImNvbnRleHRJZCI6ImJhcmNoYXJ0LmNvbSIsImlhdCI6MTYwODI5MzQzM30.QFY6GphC1tGXJPNExJw2nqnjfU8heYTvKw16OKusQPw' \
+  --data-binary '{"publisher_type_id": 1, "default_recipient": "222-333-4444", "allow_window_timezone":"America/Chicago"}'
+```
 
 ## Notification Selection Algorithm
 

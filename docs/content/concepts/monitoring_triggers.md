@@ -56,7 +56,12 @@ alertManager.retrieveTriggers(query)
 
 #### Using the API
 
-Coming soon.
+```shell
+curl 'https://alerts-management-demo.barchart.com/alert/triggers/users/barchart.com/me?trigger_date=1607688631989' \
+  -X 'GET' \
+  -H 'Accept: application/json' \
+  -H 'Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoibWUiLCJ1c2VySWQiOiJtZSIsImFsZXJ0X3N5c3RlbSI6ImJhcmNoYXJ0LmNvbSIsImNvbnRleHRJZCI6ImJhcmNoYXJ0LmNvbSIsImlhdCI6MTYwODI5MzQzM30.QFY6GphC1tGXJPNExJw2nqnjfU8heYTvKw16OKusQPw' 
+```
 
 ## Trigger Subscriptions
 
@@ -139,7 +144,21 @@ alertManager.updateTriggers(data)
 
 #### Using the API
 
-Coming soon.
+```shell
+curl 'https://alerts-management-demo.barchart.com/alert/triggers/96dbb6ea-38dd-4afc-a031-96df63c42300/1608126840556' \
+  -X 'PUT' \
+  -H 'Accept: application/json' \
+  -H 'Content-Type: application/json;charset=UTF-8' \
+  -H 'Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoibWUiLCJ1c2VySWQiOiJtZSIsImFsZXJ0X3N5c3RlbSI6ImJhcmNoYXJ0LmNvbSIsImNvbnRleHRJZCI6ImJhcmNoYXJ0LmNvbSIsImlhdCI6MTYwODI5MzQzM30.QFY6GphC1tGXJPNExJw2nqnjfU8heYTvKw16OKusQPw' \
+  --data-binary '{"trigger_status":"Read"}'
+
+curl 'https://alerts-management-demo.barchart.com/alert/triggers/users/barchart.com/me' \
+  -X 'PUT' \
+  -H 'Accept: application/json' \
+  -H 'Content-Type: application/json;charset=UTF-8' \
+  -H 'Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoibWUiLCJ1c2VySWQiOiJtZSIsImFsZXJ0X3N5c3RlbSI6ImJhcmNoYXJ0LmNvbSIsImNvbnRleHRJZCI6ImJhcmNoYXJ0LmNvbSIsImlhdCI6MTYwODI5MzQzM30.QFY6GphC1tGXJPNExJw2nqnjfU8heYTvKw16OKusQPw' \
+  --data-binary '{"trigger_status":"Read"}'
+```
 
 
 

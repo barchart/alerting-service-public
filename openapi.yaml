@@ -108,7 +108,7 @@ components:
           example: "123-456-7890"
         format:
           type: string
-          example: "It is a good time to buy Telsa stock."
+          example: "It is a good time to buy Tesla stock."
         timing:
           type: object
           properties:
@@ -284,8 +284,8 @@ components:
         type:
           type: string
           example: "symbol"
-          
-    AlertTriggerStatus:
+
+    Trigger:
       type: object
       description: An alert trigger status shows status of alert trigger.
       required:
@@ -317,10 +317,10 @@ components:
         trigger_status_date:
           type: string
           example: "1606227202480"
-        trigger_description:
-          type: string
-          example: "MSFT traded for 214.86 at 10:34 ET on 12/14/20"
         trigger_title:
+          type: string
+          example: "MSFT"
+        trigger_description:
           type: string
           example: "MSFT traded for 214.86 at 10:34 ET on 12/14/20"
 
@@ -1097,9 +1097,7 @@ paths:
                       example: ["price"]
                       items:
                         type: string
-                        
-                        
-                        
+
   /alert/triggers/users/{alert_system}/{user_id}:
     get:
       summary: "Retrieve Alert Trigger Statuses"
@@ -1116,7 +1114,7 @@ paths:
           schema:
             type: string
             example: "barchart-test-user"
-            
+
         - name: alert_system
           description: The alert system.
           in: path
@@ -1132,8 +1130,8 @@ paths:
           schema:
             type: string
             example: "1605874379489"
-            
-        
+
+
         - name: trigger_status
           description: Gets triggers with this status
           in: query
@@ -1149,8 +1147,7 @@ paths:
               schema:
                 type: array
                 items:
-                  $ref: '#/components/schemas/AlertTriggerStatus'
-                  
+                  $ref: '#/components/schemas/Trigger'
 
     put:
       summary: "Updates an alert trigger statuses"
@@ -1181,7 +1178,7 @@ paths:
             schema:
               type: object
               properties:
-                trigger_status: 
+                trigger_status:
                   type: string
                   example: "Unread"
       responses:
@@ -1190,7 +1187,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/AlertTriggerStatus'
+                $ref: '#/components/schemas/Trigger'
 
         '401':
           $ref: '#/components/responses/Unauthorized'
@@ -1236,8 +1233,8 @@ paths:
             application/json:
               schema:
                 type: array
-                items:  
-                  $ref: '#/components/schemas/AlertTriggerStatus'
+                items:
+                  $ref: '#/components/schemas/Trigger'
 
         '401':
           $ref: '#/components/responses/Unauthorized'
