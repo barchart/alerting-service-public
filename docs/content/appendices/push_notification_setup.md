@@ -1,5 +1,10 @@
 Your mobile apps can receive push notifications from the Barchart Alerting Service. However, some minor configuration is required.
 
+In a nutshell:
+
+* You need to authorize Barchart to send push notifications on your behalf, and
+* Your mobile app needs to register itself with Barchart each time a user logs in.
+
 ## Authorize Barchart
 
 Barchart must be authorized to send push notifications on your behalf.
@@ -32,7 +37,7 @@ Make a slight change to your mobile app. Each time a user logs in, collect the f
 * ```BundleID``` — Refers to the app itself.
 * ```DeviceID``` — Refers to the device and installation (can be obtained from your app at runtime)
 
-Two enviroments exist, use the appropriate one:
+Two environments exist, use the appropriate one:
 
 * Production — push-notifications.aws.barchart.com
 * Demo — push-notifications-stage.aws.barchart.com
