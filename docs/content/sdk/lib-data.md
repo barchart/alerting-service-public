@@ -23,6 +23,7 @@
         * [.AlertQuery](#SchemaAlertQuery) : <code>Object</code>
         * [.UserIdentifier](#SchemaUserIdentifier) : <code>Object</code>
         * [.PublisherType](#SchemaPublisherType) : <code>Object</code>
+        * [.PublisherTypeDefault](#SchemaPublisherTypeDefault) : <code>Object</code>
         * [.Trigger](#SchemaTrigger) : <code>Object</code>
 
 
@@ -207,6 +208,27 @@
 | publisher_type_id | <code>Number</code> | <p>The identifier of the notification strategy.</p> |
 | transport | <code>String</code> | <p>A description of the notification strategy.</p> |
 | provider | <code>String</code> | <p>A description of the mechanism used to deliver the notification.</p> |
+
+
+* * *
+
+### Schema.PublisherTypeDefault :id=schemapublishertypedefault
+> An object which describes a user's preferences for one type of
+> notification strategy (e.g. email or text messages).
+
+**Kind**: static typedef of [<code>Schema</code>](#Schema)  
+**Properties**
+
+| Name | Type | Description |
+| --- | --- | --- |
+| publisher_type_id | <code>Number</code> | <p>The identifier of the referenced [PublisherType](#schemapublishertype).</p> |
+| user_id | <code>String</code> | <p>The owner of the preference.</p> |
+| alert_system | <code>String</code> | <p>The domain of the user who owns the preference.</p> |
+| [default_recipient] | <code>String</code> | <p>Strategy-dependent routing instructions (e.g. a phone number or an email address).</p> |
+| [allow_window_start] | <code>String</code> | <p>The time of day, formatted as HH:MM, to begin allowing notifications to be sent.</p> |
+| [allow_window_end] | <code>String</code> | <p>The time of day, formatted as HH:MM, to stop allowing notifications to be sent.</p> |
+| [allow_window_timezone] | <code>String</code> | <p>The timezone which applies to allow_window_start and allow_window_end.</p> |
+| active_alert_types | <code>Array.&lt;String&gt;</code> | <p>Applies this rule to any alert any alert with a matching &quot;alert_type&quot; property value.</p> |
 
 
 * * *

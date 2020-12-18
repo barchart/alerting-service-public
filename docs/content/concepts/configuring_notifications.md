@@ -23,7 +23,7 @@ Furthermore, the user may associate an ```alert_type``` with one (or more) notif
 
 ## Downloading Metadata
 
-In order to work with notifications, you'll need the listing of notification types — specifically, you'll need their identifiers.
+Each notification option is represented as a [```PublisherType```](/content/sdk/lib-data?id=schemapublishertype) object. Download a listing, as follows:
 
 #### Using the SDK
 
@@ -46,7 +46,7 @@ curl 'https://alerts-management-demo.barchart.com/alert/publishers' \
 
 ## Loading User Preferences
 
-User preferences are stored as [PublisherTypeDefault]() objects, for example:
+User preferences are stored as [```PublisherTypeDefault```](/content/sdk/lib-data?id=schemapublishertypedefult) objects, for example:
 
 ```json
 {

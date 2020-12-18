@@ -31,6 +31,7 @@
         * [.getProperties()](#AlertManagergetProperties) ⇒ [<code>Promise.&lt;Array.&lt;Schema.Property&gt;&gt;</code>](/content/sdk/lib-data?id=schemaproperty)
         * [.getOperators()](#AlertManagergetOperators) ⇒ [<code>Promise.&lt;Array.&lt;Schema.Operator&gt;&gt;</code>](/content/sdk/lib-data?id=schemaoperator)
         * [.getPublisherTypes()](#AlertManagergetPublisherTypes) ⇒ [<code>Promise.&lt;Array.&lt;Schema.PublisherType&gt;&gt;</code>](/content/sdk/lib-data?id=schemapublishertype)
+        * [.getPublisherTypeDefaults(query)](#AlertManagergetPublisherTypeDefaults) ⇒ [<code>Promise.&lt;Array.&lt;Schema.PublisherTypeDefault&gt;&gt;</code>](/content/sdk/lib-data?id=schemapublishertypedefault)
         * [.getServerVersion()](#AlertManagergetServerVersion) ⇒ <code>Promise.&lt;String&gt;</code>
         * [.getUser()](#AlertManagergetUser) ⇒ [<code>Promise.&lt;Schema.UserIdentifier&gt;</code>](/content/sdk/lib-data?id=schemauseridentifier)
     * _static_
@@ -333,6 +334,22 @@
 **Kind**: instance method of [<code>AlertManager</code>](#AlertManager)  
 **Returns**: [<code>Promise.&lt;Array.&lt;Schema.PublisherType&gt;&gt;</code>](/content/sdk/lib-data?id=schemapublishertype)  
 **Access**: public  
+
+* * *
+
+### alertManager.getPublisherTypeDefaults(query) :id=alertmanagergetpublishertypedefaults
+> Retrieves the notification preferences for a user.
+
+**Kind**: instance method of [<code>AlertManager</code>](#AlertManager)  
+**Returns**: [<code>Promise.&lt;Array.&lt;Schema.PublisherTypeDefault&gt;&gt;</code>](/content/sdk/lib-data?id=schemapublishertypedefault)  
+**Access**: public  
+
+| Param | Type |
+| --- | --- |
+| query | <code>Object</code> | 
+| query.user_id | <code>String</code> | 
+| query.alert_system | <code>String</code> | 
+
 
 * * *
 
