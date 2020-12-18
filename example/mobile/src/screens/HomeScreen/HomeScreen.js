@@ -40,10 +40,7 @@ export const HomeScreen = ({ navigation }) => {
 
 	return (
 		<ScrollView style={styles.container}>
-			<Card>
-				{!alerts.length ? (<NoItems>You don't have alerts</NoItems>) : <AlertsList alerts={alerts}/>}
-			</Card>
-			<View style={{ width: '100%', marginTop: 10 }}>
+			<View style={{ width: '100%', marginBottom: 10 }}>
 				<Button
 					title="Notifications"
 					mode="contained"
@@ -54,6 +51,9 @@ export const HomeScreen = ({ navigation }) => {
 					Notifications
 				</Button>
 			</View>
+			<Card>
+				{!alerts.length ? (<NoItems>You don't have alerts</NoItems>) : <AlertsList alerts={alerts}/>}
+			</Card>
 		</ScrollView>
 	);
 };
