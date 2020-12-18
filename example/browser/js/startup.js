@@ -8,6 +8,9 @@ const JwtProvider = require('./../../../lib/security/JwtProvider'),
 
 const timezone = require('@barchart/common-js/lang/timezone');
 
+const ComparatorBuilder = require('@barchart/common-js/collections/sorting/ComparatorBuilder'),
+	comparators = require('@barchart/common-js/collections/sorting/comparators');
+
 module.exports = (() => {
 	'use strict';
 
@@ -46,20 +49,85 @@ module.exports = (() => {
 
 		that.alert = ko.observable();
 		that.alerts = ko.observableArray([ ]);
+		that.alertsFormatted = ko.computed(function() {
+			const models = that.alerts().slice(0);
+
+			models.sort(comparatorForAlerts);
+
+			return models;
+		});
 		that.publisherSettings = ko.observable();
 		that.marketDataSettings = ko.observable();
 		that.providerDescription = ko.observable(alertManager !== null ? alertManager.toString() : '');
 
+		that.triggers = ko.observableArray([ ]);
+		that.triggersSortOptions = ko.observableArray([ triggersOrderOptions.BY_ALERT, triggersOrderOptions.BY_DATE ]);
+		that.triggersSelectedSort = ko.observable(triggersOrderOptions.BY_DATE);
+		that.triggersFormatted = ko.computed(function() {
+			const models = that.triggers().slice(0);
+
+			let sorted;
+
+			if (that.triggersSelectedSort() === triggersOrderOptions.BY_ALERT) {
+				models.sort(comparatorForTriggersByAlert);
+
+				models.forEach((model) => {
+					model.display.first(false);
+					model.display.rowSpan(1);
+				});
+
+				const grouped = models.reduce((accumulator, model) => {
+					const group = accumulator.find(a => a.alert_id === model.trigger().alert_id) || null;
+
+					if (group === null) {
+						accumulator.push({ alert_id: model.trigger().alert_id, triggers: [ model ] });
+					} else {
+						group.triggers.push(model);
+					}
+
+					return accumulator;
+				}, [ ]);
+
+				grouped.forEach((group) => {
+					group.triggers[0].display.first(true);
+					group.triggers[0].display.rowSpan(group.triggers.length);
+				});
+
+				sorted = grouped.reduce((acc, g) => {
+					return acc.concat(g.triggers);
+				}, [ ]);
+			} else if (that.triggersSelectedSort() === triggersOrderOptions.BY_DATE) {
+				models.sort(comparatorForTriggersByDate);
+
+				models.forEach((model) => {
+					model.display.first(true);
+					model.display.rowSpan(1);
+				});
+
+				sorted = models;
+			} else {
+				sorted = models;
+			}
+
+			return sorted;
+		});
+		that.triggersFormatted.extend({ rateLimit: 100 });
+
 		that.activeTemplate = ko.observable('alert-disconnected');
 
-		var getModel = function(alert) {
+		var getAlertModel = function(alert) {
 			return _.find(that.alerts(), function(model) {
 				return model.alert().alert_id === alert.alert_id;
 			});
 		};
-		var sortModels = function() {
+		var sortAlertModels = function() {
 			that.alerts.sort(function(a, b) {
 				return a.alert().name.localeCompare(b.alert().name);
+			});
+		};
+		var getTriggerModel = function(trigger) {
+			return _.find(that.triggers(), function(model) {
+				return model.trigger().alert_id === trigger.alert_id && model.trigger().trigger_date === trigger.trigger_date;
 			});
 		};
 
@@ -142,6 +210,13 @@ module.exports = (() => {
 
 			that.activeTemplate('alert-preferences-template');
 		};
+		that.changeToHistory = function() {
+			if (!that.connected()) {
+				return;
+			}
+
+			that.activeTemplate('trigger-history-template');
+		};
 
 		that.deleteAlert = function(alertDisplayModel) {
 			alertDisplayModel.processing(true);
@@ -159,41 +234,167 @@ module.exports = (() => {
 		};
 
 		that.handleAlertCreate = function(createdAlert) {
-			var existingModel = getModel(createdAlert);
+			var existingModel = getAlertModel(createdAlert);
 
 			if (!existingModel) {
 				that.alerts.push(new AlertDisplayModel(createdAlert));
 
-				sortModels();
+				sortAlertModels();
 			}
 		};
 		that.handleAlertChange = function(changedAlert) {
-			var existingModel = getModel(changedAlert);
+			var existingModel = getAlertModel(changedAlert);
 
 			if (existingModel) {
 				existingModel.alert(changedAlert);
 			} else {
 				that.alerts.push(new AlertDisplayModel(changedAlert));
 
-				sortModels();
+				sortAlertModels();
 			}
 		};
 		that.handleAlertTrigger = function(triggeredAlert) {
 			that.handleAlertChange(triggeredAlert);
-
-			toastr.info('Alert Triggered: ' + triggeredAlert.name);
 		};
 		that.handleAlertDelete = function(deletedAlert) {
-			var modelToRemove = getModel(deletedAlert);
+			var modelToRemove = getAlertModel(deletedAlert);
 
 			that.alerts.remove(modelToRemove);
+
+			that.triggers.remove(function(triggerModel) {
+				return triggerModel.trigger().alert_id === modelToRemove.alert().alert_id;
+			});
 		};
+		that.handleTriggersCreate = function(triggers) {
+			let model;
+
+			triggers.forEach((trigger) => {
+				model = new AlertTriggerModel(trigger);
+
+				that.triggers.push(model);
+			});
+
+			if (triggers.length === 1) {
+				const onclick = (() => {
+					let clicked = false;
+
+					return () => {
+						if (!clicked) {
+							model.toggle();
+
+							clicked = true;
+						}
+					};
+				})();
+
+				toastr.info(triggers[0].trigger_description, triggers[0].trigger_title, { onclick: onclick, progressBar: true });
+			}
+		};
+		that.handleTriggersChange = function(triggers) {
+			triggers.forEach((trigger) => {
+				const existingModel = getTriggerModel(trigger);
+
+				if (existingModel) {
+					existingModel.trigger(trigger);
+				} else {
+					that.triggers.push(new AlertTriggerModel(trigger));
+				}
+			});
+		};
+		that.handleTriggersDelete = function(triggers) {
+			const existingModels = triggers
+				.map(t => getTriggerModel(t) || null)
+				.filter(t => t !== null);
+
+			that.triggers.removeAll(existingModels);
+		};
+
+		that.updateTriggers = function(status) {
+			return alertManager.updateTriggers({ user_id: currentUserId, alert_system: currentSystem, trigger_status: status });
+		};
+	}
+	function AlertTriggerModel(trigger) {
+		var that = this;
+
+		that.trigger = ko.observable(trigger);
+
+		that.date = ko.computed(function() { return new Date(parseInt(that.trigger().trigger_date)); });
+		that.statusDate = ko.computed(function() { return new Date(parseInt(that.trigger().trigger_status_date)); });
+
+		that.loading = ko.observable(false);
+
+		var formatDate = function(date) {
+			var returnRef;
+
+			if (date) {
+				returnRef = date.toLocaleString();
+			} else {
+				returnRef = 'never';
+			}
+
+			return returnRef;
+		};
+
+		that.display = {
+			date: ko.computed(function() { return formatDate(that.date()); }),
+			first: ko.observable(1),
+			read: ko.computed(function() { return that.trigger().trigger_status === 'Read'; }),
+			rowSpan: ko.observable(1),
+			statusDate: ko.computed(function() { return formatDate(that.statusDate()); })
+		};
+
+		that.toggle = function() {
+			that.loading(true);
+
+			const payload = { };
+
+			payload.alert_id = that.trigger().alert_id;
+			payload.trigger_date = that.date().getTime().toString();
+			payload.trigger_status = getOppositeStatus(that.trigger().trigger_status);
+
+			return alertManager.updateTrigger(payload)
+				.then(() => {
+					that.loading(false);
+				});
+		};
+
+		function getOppositeStatus(status) {
+			return status === 'Read' ? 'Unread' : 'Read';
+		}
 	}
 	function AlertDisplayModel(alert) {
 		var that = this;
 
 		that.alert = ko.observable(alert);
 		that.processing = ko.observable(false);
+
+		that.createDate = ko.computed(function() {
+			var alert = that.alert();
+
+			var returnRef;
+
+			if (alert.create_date) {
+				returnRef = new Date(parseInt(alert.create_date));
+			} else {
+				returnRef = new Date(0);
+			}
+
+			return returnRef;
+		});
+
+		that.createDateDisplay = ko.computed(function() {
+			var nullDate = new Date(0);
+
+			var returnRef;
+
+			if (that.createDate().getTime() === nullDate.getTime()) {
+				returnRef = 'Undefined';
+			} else {
+				returnRef = that.createDate().toLocaleString();
+			}
+
+			return returnRef;
+		});
 
 		that.lastTriggerDateDisplay = ko.computed(function() {
 			var alert = that.alert();
@@ -203,7 +404,7 @@ module.exports = (() => {
 			if (alert.last_trigger_date) {
 				var lastTriggerDate = new Date(parseInt(alert.last_trigger_date));
 
-				returnRef = lastTriggerDate.toString();
+				returnRef = lastTriggerDate.toLocaleString();
 			} else {
 				returnRef = 'never';
 			}
@@ -1065,15 +1266,19 @@ module.exports = (() => {
 			}).then(() => {
 				var pageModel = new PageModel(host, system, userId);
 
+				if (mode) {
+					pageModel.mode(mode);
+				}
+
 				var initializePromise;
 
 				if (alertManager) {
 					pageModel.connecting(true);
 
 					var jwtGenerator = getJwtGenerator(userId, system);
-					var jwtPovider = new JwtProvider(jwtGenerator, 60000, 'demo');
+					var jwtProvider = new JwtProvider(jwtGenerator, 60000);
 
-					initializePromise = alertManager.connect(jwtPovider)
+					initializePromise = alertManager.connect(jwtProvider)
 						.then(function() {
 							if (!(system === 'barchart.com' || system === 'grains.com' || system === 'webstation.barchart.com' || system === 'gos.agricharts.com' || system === 'gbemembers.com' || system === 'cmdtymarketplace.com')) {
 								throw 'Invalid system, please re-enter...';
@@ -1097,6 +1302,18 @@ module.exports = (() => {
 								},
 								function(triggeredAlert) {
 									pageModel.handleAlertTrigger(triggeredAlert);
+								}
+							);
+
+							alertManager.subscribeTriggers({ user_id: userId, alert_system: system, trigger_date: getDateBackwards(7).getTime() },
+								function(changedTriggers) {
+									pageModel.handleTriggersChange(changedTriggers);
+								},
+								function(deletedTriggers) {
+									pageModel.handleTriggersDelete(deletedTriggers);
+								},
+								function(createdTriggers) {
+									pageModel.handleTriggersCreate(createdTriggers);
 								}
 							);
 
@@ -1200,6 +1417,33 @@ module.exports = (() => {
 					ko.applyBindings(pageModel, $('body')[0]);
 				});
 			});
+	};
+
+	var triggersOrderOptions = {
+		BY_ALERT: 'Order by Alert',
+		BY_DATE: 'Order by Date'
+	};
+
+	var comparatorForAlerts = ComparatorBuilder
+		.startWith((modelA, modelB) => comparators.compareDates(modelB.createDate(), modelA.createDate()))
+		.toComparator();
+
+	var comparatorForTriggersByAlert = ComparatorBuilder
+		.startWith((modelA, modelB) => comparators.compareStrings(modelA.trigger().alert_id, modelB.trigger().alert_id))
+		.thenBy((modelA, modelB) => comparators.compareDates(modelB.date(), modelA.date()))
+		.toComparator();
+
+	var comparatorForTriggersByDate = ComparatorBuilder
+		.startWith((modelA, modelB) => comparators.compareDates(modelB.date(), modelA.date()))
+		.toComparator();
+
+	var getDateBackwards = function(days) {
+		const now = new Date();
+		const past = now.getDate() - days;
+
+		now.setDate(past);
+
+		return now;
 	};
 
 	$(document).ready(function() {

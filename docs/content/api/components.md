@@ -2,8 +2,7 @@
 
 ## Responses 
 
-### Unauthorized :id=ResponsesUnauthorized
-
+### Unauthorized :id=responsesunauthorized
 > The unauthorized access.
 
 **Content Type**: <code>application/json</code>
@@ -26,8 +25,7 @@
 
 ## Schemas 
 
-### Alert :id=SchemasAlert
-
+### Alert :id=schemasalert
 **Type**: <code>Object</code>
     
 | Name | Type | Required | Nullable | Description |
@@ -150,7 +148,7 @@
       "publisher_id": "9c864a19-ce77-4a87-8cd6-e0810ecb120e",
       "use_default_recipient": false,
       "recipient": "123-456-7890",
-      "format": "It is a good time to buy Telsa stock.",
+      "format": "It is a good time to buy Tesla stock.",
       "timing": {
         "timezon": "America/Chicago"
       },
@@ -170,7 +168,7 @@
       "publisher_id": "9c864a19-ce77-4a87-8cd6-e0810ecb120e",
       "use_default_recipient": false,
       "recipient": "123-456-7890",
-      "format": "It is a good time to buy Telsa stock.",
+      "format": "It is a good time to buy Tesla stock.",
       "timing": {
         "timezon": "America/Chicago"
       },
@@ -186,8 +184,7 @@
 
 * * *
 
-### Publisher :id=SchemasPublisher
-
+### Publisher :id=schemaspublisher
 **Type**: <code>Object</code>
     
 | Name | Type | Required | Nullable | Description |
@@ -210,7 +207,7 @@
   "publisher_id": "9c864a19-ce77-4a87-8cd6-e0810ecb120e",
   "use_default_recipient": false,
   "recipient": "123-456-7890",
-  "format": "It is a good time to buy Telsa stock.",
+  "format": "It is a good time to buy Tesla stock.",
   "timing": {
     "timezon": "America/Chicago"
   },
@@ -224,8 +221,7 @@
 
 * * *
 
-### Operator :id=SchemasOperator
-
+### Operator :id=schemasoperator
 **Type**: <code>Object</code>
     
 | Name | Type | Required | Nullable | Description |
@@ -277,8 +273,7 @@
 
 * * *
 
-### Condition :id=SchemasCondition
-
+### Condition :id=schemascondition
 **Type**: <code>Object</code>
     
 | Name | Type | Required | Nullable | Description |
@@ -373,8 +368,7 @@
 
 * * *
 
-### Property :id=SchemasProperty
-
+### Property :id=schemasproperty
 **Type**: <code>Object</code>
     
 | Name | Type | Required | Nullable | Description |
@@ -440,21 +434,20 @@
 
 * * *
 
-### Target :id=SchemasTarget
-
+### Target :id=schemastarget
 **Type**: <code>Object</code>
     
 | Name | Type | Required | Nullable | Description |
 | ---- | ---- | -------- | -------- | ----------- |
-| description | <code>String</code> | false | false |  |
+| description | <code>String</code> | true | false |  |
 | display | <code>String</code> | false | true |  |
 | identifier | <code>String</code> | false | false |  |
-| identifier_description | <code>String</code> | false | false |  |
+| identifier_description | <code>String</code> | true | false |  |
 | qualifier_descriptions | <code>Array</code> | false | false |  |
 | qualifier_descriptions[i] | <code>String</code> | false | false |  |
 | kind | <code>String</code> | false | true |  |
-| target_id | <code>Integer</code> | false | false |  |
-| type | <code>String</code> | false | false |  |
+| target_id | <code>Integer</code> | true | false |  |
+| type | <code>String</code> | true | false |  |
 
 **Example**:
 
@@ -475,6 +468,52 @@
   "type": "symbol"
 }
 ```
+
+* * *
+
+### Trigger :id=schemastrigger
+**Type**: <code>Object</code>
+    
+| Name | Type | Required | Nullable | Description |
+| ---- | ---- | -------- | -------- | ----------- |
+| alert_id | <code>String</code> | true | false |  |
+| alert_system | <code>String</code> | true | false |  |
+| user_id | <code>String</code> | true | false |  |
+| trigger_date | <code>String</code> | true | false |  |
+| trigger_status | <code>String</code> | true | false |  |
+| trigger_status_date | <code>String</code> | true | false |  |
+| trigger_title | <code>String</code> | true | false |  |
+| trigger_description | <code>String</code> | true | false |  |
+
+**Example**:
+
+```json
+{
+  "alert_id": "b78b30e3-8af5-48a5-8998-0989269ad9d0",
+  "alert_system": "barchart.com",
+  "user_id": "barchart-test-user",
+  "trigger_date": "1605874379489",
+  "trigger_status": "Read",
+  "trigger_status_date": "1606227202480",
+  "trigger_title": "MSFT",
+  "trigger_description": "MSFT traded for 214.86 at 10:34 ET on 12/14/20"
+}
+```
+
+* * *
+
+## Security 
+
+### JWT :id=securityjwt
+
+>The JWT authorization
+
+**Type**: http bearer
+    
+#### Headers
+| Name | Format | Example |
+| ---- | ------ | ------- |
+| Authorization | JWT | Authorization: Bearer <code>&lt;Token&gt;</code> |
 
 * * *
 

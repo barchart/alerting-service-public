@@ -1,0 +1,15 @@
+.gitignore
+.idea
+node_modules
+.DS_Store
+npm-debug.log
+.awspublish-barchart-examples
+.awspublish-docs.barchart.com
+
+docs
+example
+test
+
+openapi.yml
+gulpfile.js
+buildspec.yml

@@ -36,6 +36,8 @@
 
 **Summary**: Create Alert.
 
+**Security**: 
+[JWT](/content/api/components?id=securityJWT)
 #### Request Body
     
 **Content Type**: application/json
@@ -45,13 +47,13 @@
 | Name | Type | Required | Nullable | Description |
 | ---- | ---- | -------- | -------- | ----------- |
 | name | <code>String</code> | false | false |  |
-| user_id | <code>String</code> | false | false |  |
+| user_id | <code>String</code> | true | false |  |
 | alert_behavior | <code>String</code> | false | false |  |
-| alert_system | <code>String</code> | false | false |  |
+| alert_system | <code>String</code> | true | false |  |
 | alert_type | <code>String</code> | false | false |  |
 | user_notes | <code>String</code> | false | false |  |
 | automatic_reset | <code>Boolean</code> | false | false |  |
-| conditions | <code>Array&lt;object&gt;</code> | false | false |  |
+| conditions | <code>Array&lt;object&gt;</code> | true | false |  |
 | conditions[i].property | <code>Object</code> |  | false |  |
 | conditions[i].property.property_id | <code>Integer</code> | false | false |  |
 | conditions[i].property.target | <code>Object</code> |  | false |  |
@@ -120,7 +122,7 @@
 
 * * *
 
-**Status Code**: 401 - [Unauthorized](/content/api/components?id&#x3D;responsesunauthorized)
+**Status Code**: 401 - [Unauthorized](/content/api/components?id=responsesunauthorized)
 
 * * *
 
@@ -152,6 +154,8 @@
 
 **Summary**: Retrieve Alert.
 
+**Security**: 
+[JWT](/content/api/components?id=securityJWT)
 #### Path Parameters
 
 | Name | Type | Required | Nullable | Description |
@@ -198,6 +202,8 @@
 
 **Summary**: Delete Alert
 
+**Security**: 
+[JWT](/content/api/components?id=securityJWT)
 #### Path Parameters
 
 | Name | Type | Required | Nullable | Description |
@@ -244,6 +250,8 @@
 
 **Summary**: Start/Stop Alert.
 
+**Security**: 
+[JWT](/content/api/components?id=securityJWT)
 #### Path Parameters
 
 | Name | Type | Required | Nullable | Description |
@@ -332,6 +340,8 @@
 
 **Summary**: Retrieve Alerts For User.
 
+**Security**: 
+[JWT](/content/api/components?id=securityJWT)
 #### Path Parameters
 
 | Name | Type | Required | Nullable | Description |
@@ -379,6 +389,8 @@
 
 **Summary**: Start/Stop Multiple Alerts For User
 
+**Security**: 
+[JWT](/content/api/components?id=securityJWT)
 #### Path Parameters
 
 | Name | Type | Required | Nullable | Description |
@@ -448,6 +460,8 @@
 
 **Summary**: Retrieve Alerts By Remote System Key
 
+**Security**: 
+[JWT](/content/api/components?id=securityJWT)
 #### Path Parameters
 
 | Name | Type | Required | Nullable | Description |
@@ -496,6 +510,8 @@
 
 **Summary**: Retrieve Market Data Configuration For User
 
+**Security**: 
+[JWT](/content/api/components?id=securityJWT)
 #### Path Parameters
 
 | Name | Type | Required | Nullable | Description |
@@ -515,8 +531,8 @@
     
 | Name | Type | Required | Nullable | Description |
 | ---- | ---- | -------- | -------- | ----------- |
-| alert_system | <code>String</code> | false | false |  |
-| user_id | <code>String</code> | false | false |  |
+| alert_system | <code>String</code> | true | false |  |
+| user_id | <code>String</code> | true | false |  |
 | configuration_id | <code>String</code> | false | false |  |
 | market_data_id | <code>String</code> | false | false |  |
 
@@ -679,6 +695,8 @@
 
 **Summary**: Retrieve Publisher Type Defaults For User
 
+**Security**: 
+[JWT](/content/api/components?id=securityJWT)
 #### Path Parameters
 
 | Name | Type | Required | Nullable | Description |
@@ -741,6 +759,8 @@
 
 **Summary**: Save Publisher Type Defaults For User
 
+**Security**: 
+[JWT](/content/api/components?id=securityJWT)
 #### Path Parameters
 
 | Name | Type | Required | Nullable | Description |
@@ -832,6 +852,138 @@
   }
 ]
 ```
+
+* * *
+
+## GET /alert/triggers/users/{alert_system}/{user_id} 
+
+> Retrieves a list of alerts trigger statuses.
+
+**Summary**: Retrieve Alert Trigger Statuses
+
+**Security**: 
+[JWT](/content/api/components?id=securityJWT)
+#### Path Parameters
+
+| Name | Type | Required | Nullable | Description |
+| ---- | ---- | -------- | -------- | ----------- |
+| user_id | <code>String</code> | true | false | The user id. |
+| alert_system | <code>String</code> | true | false | The alert system. |
+
+#### Query Parameters
+
+| Name | Type | Required | Nullable | Description |
+| ---- | ---- | -------- | -------- | ----------- |
+| trigger_date | <code>String</code> | false | false | Gets alert trigger statuses after this date |
+| trigger_status | <code>String</code> | false | false | Gets triggers with this status |
+
+#### Responses
+
+**Status Code**: 200
+
+> A JSON document containing an array of alert trigger statuses
+
+**Content Type**: <code>application/json</code>
+
+**Response Type:** [<code>Array&lt;Trigger&gt;</code>](/content/api/components?id=schemasTrigger)
+
+* * *
+
+## PUT /alert/triggers/users/{alert_system}/{user_id} 
+
+> Updates specific alert trigger statuses.
+
+**Summary**: Updates an alert trigger statuses
+
+**Security**: 
+[JWT](/content/api/components?id=securityJWT)
+#### Path Parameters
+
+| Name | Type | Required | Nullable | Description |
+| ---- | ---- | -------- | -------- | ----------- |
+| user_id | <code>String</code> | true | false | The user id. |
+| alert_system | <code>String</code> | true | false | The alert system. |
+
+#### Request Body
+    
+**Content Type**: application/json
+
+**Type**: <code>Object</code>
+
+| Name | Type | Required | Nullable | Description |
+| ---- | ---- | -------- | -------- | ----------- |
+| trigger_status | <code>String</code> | false | false |  |
+
+**Example**:
+
+```json
+{
+  "trigger_status": "Unread"
+}
+```
+
+#### Responses
+
+**Status Code**: 200
+
+> A JSON document, conforming to the alert trigger status.
+
+**Content Type**: <code>application/json</code>
+
+**Response Type:** [<code>Array&lt;Trigger&gt;</code>](/content/api/components?id=schemasTrigger)
+
+* * *
+
+**Status Code**: 401 - [Unauthorized](/content/api/components?id=responsesunauthorized)
+
+* * *
+
+## PUT /alert/triggers/{alert_id}/{trigger_date} 
+
+> Updates all alert trigger status for the user.
+
+**Summary**: Updates an alert trigger statuses
+
+**Security**: 
+[JWT](/content/api/components?id=securityJWT)
+#### Path Parameters
+
+| Name | Type | Required | Nullable | Description |
+| ---- | ---- | -------- | -------- | ----------- |
+| alert_id | <code>String</code> | true | false | The alert id. |
+| trigger_date | <code>String</code> | true | false | The alert system. |
+
+#### Request Body
+    
+**Content Type**: application/json
+
+**Type**: <code>Object</code>
+
+| Name | Type | Required | Nullable | Description |
+| ---- | ---- | -------- | -------- | ----------- |
+| trigger_status | <code>String</code> | false | false |  |
+
+**Example**:
+
+```json
+{
+  "trigger_status": "Unread"
+}
+```
+
+#### Responses
+
+**Status Code**: 200
+
+> A JSON document, conforming to the alert trigger statuses.
+
+**Content Type**: <code>application/json</code>
+
+**Response Type:** [<code>Array&lt;Trigger&gt;</code>](/content/api/components?id=schemasTrigger)
+
+* * *
+
+**Status Code**: 401 - [Unauthorized](/content/api/components?id=responsesunauthorized)
 
 * * *
 

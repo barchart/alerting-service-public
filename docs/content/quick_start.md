@@ -1,6 +1,6 @@
 ## Setup
 
-As a consumer of the Barchart Alert Service, you have two options:
+As a consumer of the Barchart Alerting Service, you have two options:
 
 1. Connect and communicate with the backend _by embedding this SDK in your software_, or
 2. Connect and communicate with the backend _by direct interaction with the REST interface_.
@@ -15,7 +15,7 @@ npm install @barchart/alerts-client-js -S
 
 ## Environments
 
-Two instances of the Barchart Alert Service are always running:
+Two instances of the Barchart Alerting Service are always running:
 
 #### Demo
 
@@ -30,7 +30,7 @@ The _production_ environment does not permit permit anonymous connections. **Con
 
 ## Authorization
 
-[JSON Web Tokens](https://en.wikipedia.org/wiki/JSON_Web_Token) — called JWT — are used for authorization. Each request made to the backend must include a token. Generating these tokens is surprisingly easy -- refer to the [Key Concepts: Security](/content/concepts/security) section for details.
+[JSON Web Tokens](https://en.wikipedia.org/wiki/JSON_Web_Token) — called JWT — are used for authorization. Each request made to the backend must include a token. Generating these tokens is surprisingly easy -- refer to the [Key Concepts: Securing the Connection](/content/concepts/security) section for details.
 
 In the _demo_ environment, token generation follows these rules:
 
@@ -39,12 +39,12 @@ In the _demo_ environment, token generation follows these rules:
 
 Since the signing secret is available to everyone (see above), there can be no expectation of privacy; the _demo_ environment is for testing and evaluation only.
 
-In the the _production_ environment, you must exchange a _"secret"_  with Barchart — in the form of a [public/private key pair](https://en.wikipedia.org/wiki/Public-key_cryptography). Consequently, your data will be secure.
+In the _production_ environment, you must exchange a secret with Barchart — in the form of a [public/private key pair](https://en.wikipedia.org/wiki/Public-key_cryptography). Consequently, your data will be secure.
 
 Regardless of environment, the token payload uses two fields:
 
-* ```user_id``` is the unique identifier of the current user
-* ```alert_system``` is a unique identifier for your organization (use "barchart.com" in the _demo_ environment).
+* ```alert_system``` — a unique identifier for your organization (use "barchart.com" in the _demo_ environment).
+* ```user_id``` — the unique identifier of the current user. 
 
 ## Connecting
 
@@ -52,7 +52,7 @@ Regardless of environment, the token payload uses two fields:
 
 The SDK provides an easy-to-use, promise-based mechanism for sending (and receiving) data. It does not require you to have knowledge of the transport layer.
 
-We connect, using the adapter for HTTP transport, as follows:
+Connect to the remote service, using the adapter for HTTP transport, as follows:
 
 ```js
 const AlertManager = require('@barchart/alerts-client-js/lib/AlertManager'),
@@ -81,15 +81,13 @@ If you choose to work directly with the REST interface, you won't need to perfor
 
 ## Defining an Alert
 
-First, we must construct an object which conforms to the [```Alert```](/content/sdk/lib-data?id=schemaalert) schema. To accommodate a wide variety of features, this schema is non-trivial.
-
-For now, here is simple ```Alert``` object with one condition - _notify me when Apple stock trades over $600 per share_:
+First, we must construct an object which conforms to the [```Alert```](/content/sdk/lib-data?id=schemaalert) schema. By way of example, here is simple ```Alert``` object with one condition — _notify me when Apple stock trades over $600 per share:_
 
 ```json
 {
 	"user_id": "me",
 	"alert_system": "barchart.com",
-	"name": "My First Alert"
+	"name": "My First Alert",
 	"conditions": [
 		{
 			"property": {
@@ -103,6 +101,15 @@ For now, here is simple ```Alert``` object with one condition - _notify me when 
 				"operand": "600"
 			}
 		}
+	],
+	"publishers": [
+		{
+			"type": {
+				"publisher_type_id": 2
+			},
+			"recipient": "example@gmail.com",
+			"use_default_recipient": false
+		}
 	]
 }
 ```
@@ -112,12 +119,13 @@ Glancing at this object probably raises more questions that it answers, for exam
 * What is a ```Condition```?
 * What is a ```Property```?
 * What is a ```Target```?
+* What is a ```Publisher```?
 
-You can find an in-depth discussion of these topics in the [Key Concepts: Alert Data Structures](/content/concepts/alert_data_structure) section.
+Refer to [Key Concepts: Composing Alerts](/content/concepts/composing_alerts) for an in-depth discussion of these objects.
 
 ## Creating an Alert
 
-Assuming we've defined an alert (see above), the first thing we need to do is save it. The backend will assign an ```alert_id``` value and return a _complete_ ```Alert``` object to you.
+Assuming we've defined an alert (see above), we need to save it. The backend will assign an ```alert_id``` value and return a _complete_ ```Alert``` object to you.
 
 #### Using the SDK
 
@@ -136,12 +144,12 @@ curl 'https://alerts-management-demo.barchart.com/alerts' \
   -H 'Accept: application/json' \
   -H 'Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoibWUiLCJhbGVydF9zeXN0ZW0iOiJiYXJjaGFydC5jb20iLCJpYXQiOjE1ODk0MTEyNzl9.SxyC8s_CKhPyzcNmM_h_TRMiNSx3YstKGmAb2IOWqgM' \
   -H 'Content-Type: application/json;charset=UTF-8' \
-  --data-binary '{"user_id":"me","alert_system":"barchart.com","name":"My First Alert","conditions":[{"property":{"property_id":1,"target":{"identifier":"AAPL"}},"operator":{"operator_id":2,"operand":"600"}}]}'
+  --data-binary '{"user_id":"me","alert_system":"barchart.com","name":"My First Alert","conditions":[{"property":{"property_id":1,"target":{"identifier":"AAPL"}},"operator":{"operator_id":2,"operand":"600"}}],"publishers":[{"type":{"publisher_type_id":2},"recipient":"example@gmail.com","use_default_recipient": false}]}'
 ```
 
 ## Starting an Alert
 
-After an ```Alert``` has been saved, its ```alert_state``` will be ```Inactive```. We must start the alert to begin _tracking_ its conditions.
+After an ```Alert``` has been saved, its ```alert_state``` will be ```Inactive```. To begin _tracking_ an alert's conditions, we must start the alert.
 
 #### Using the SDK
 
@@ -187,37 +195,15 @@ curl 'https://alerts-management-demo.barchart.com/alerts/ef5acb88-d747-48d2-b8d2
   --data-binary '{"alert_id":"ef5acb88-d747-48d2-b8d2-713cf351c012","alert_state":"Stopping"}'
 ```
 
-## Sample Applications
+## Demo Applications
 
-Two sample applications were built with this SDK. They could provide some insight into SDK features and usage.
+Sometimes learning by example is best. Three applications were built using this SDK:
 
-### Web Application
+* A single-page, HTML5 web application,
+* A mobile application, compatible with iOS and Android devices, and
+* Simple Node.js scripts.
 
-A single-page HTML application allows you to dynamically construct, save, start, stop, edit, delete, and monitor alerts.
+You can load the web application by clicking [here](https://examples.aws.barchart.com/alerts-client-js/example.html). To explore the other applications, visit [Appendix: Demo Application Overview](/content/appendices/demo_application_overview).
 
-You can find the source code here:
 
-* */example/browser/example.html*
-* */example/browser/js/startup.js*
 
-This application is also hosted at:
-
-https://examples.aws.barchart.com/alerts-client-js/example.html
-
-### Node.js
-
-A simple Node.js script connects to the _demo_ environment and retrieves a list of alerts. You can find the source code here:
-
-* */example/node/example.js*
-
-To run the script, make sure required dependencies are installed:
-
-```shell
-npm install
-```
-
-Then, execute it:
-
-```shell
-node ./example/node/example.js {user_id}
-```

@@ -1,6 +1,6 @@
 # API Reference
 
-## Barchart Alert Service 4.0.1 {docsify-ignore}
+## Barchart Alerting Service 4.0.1 {docsify-ignore}
     
 > Define and manage alert conditions and notifications using Barchart&#x27;s REST-ful web service
 
@@ -13,6 +13,7 @@
 * [Servers](#Servers)
 * [Components](#Components)
 * [Paths](#Paths)
+
 
 ## Servers {docsify-ignore}
 
@@ -33,6 +34,11 @@
 * [Condition](/content/api/components?id=schemasCondition)
 * [Property](/content/api/components?id=schemasProperty)
 * [Target](/content/api/components?id=schemasTarget)
+* [Trigger](/content/api/components?id=schemasTrigger)
+
+### Security 
+
+* [JWT](/content/api/components?id=securityJWT)
 
 ## Paths {docsify-ignore}
 
@@ -52,3 +58,6 @@
 * [GET /alert/publishers](/content/api/paths?id=get-alertpublishers)
 * [GET /alert/publishers/default/{alert_system}/{user_id}](/content/api/paths?id=get-alertpublishersdefaultalert_systemuser_id)
 * [PUT /alert/publishers/default/{alert_system}/{user_id}/{publisher_type_id}](/content/api/paths?id=put-alertpublishersdefaultalert_systemuser_idpublisher_type_id)
+* [GET /alert/triggers/users/{alert_system}/{user_id}](/content/api/paths?id=get-alerttriggersusersalert_systemuser_id)
+* [PUT /alert/triggers/users/{alert_system}/{user_id}](/content/api/paths?id=put-alerttriggersusersalert_systemuser_id)
+* [PUT /alert/triggers/{alert_id}/{trigger_date}](/content/api/paths?id=put-alerttriggersalert_idtrigger_date)

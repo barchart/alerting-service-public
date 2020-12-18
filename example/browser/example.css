@@ -182,3 +182,17 @@ input.percent.form-control {
 .barchart-logo span {
     margin-left: 110px;
 }
+
+.table-triggers td {
+  vertical-align: middle !important;
+}
+
+.table-controls {
+    display: flex;
+    justify-content: flex-end;
+    margin-bottom: 20px;
+}
+
+.table-controls .order-control {
+    width: 200px;
+}

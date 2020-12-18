@@ -1,7 +1,7 @@
 openapi: 3.0.0
 
 info:
-  title: "Barchart Alert Service"
+  title: "Barchart Alerting Service"
   description: "Define and manage alert conditions and notifications using Barchart's REST-ful web service"
   version: 4.0.1
 
@@ -108,7 +108,7 @@ components:
           example: "123-456-7890"
         format:
           type: string
-          example: "It is a good time to buy Telsa stock."
+          example: "It is a good time to buy Tesla stock."
         timing:
           type: object
           properties:
@@ -285,6 +285,45 @@ components:
           type: string
           example: "symbol"
 
+    Trigger:
+      type: object
+      description: An alert trigger status shows status of alert trigger.
+      required:
+        - alert_id
+        - alert_system
+        - user_id
+        - trigger_date
+        - trigger_status
+        - trigger_status_date
+        - trigger_description
+        - trigger_title
+      properties:
+        alert_id:
+          type: string
+          format: uuid
+          example: "b78b30e3-8af5-48a5-8998-0989269ad9d0"
+        alert_system:
+          type: string
+          example: "barchart.com"
+        user_id:
+          type: string
+          example: "barchart-test-user"
+        trigger_date:
+          type: string
+          example: "1605874379489"
+        trigger_status:
+          type: string
+          example: "Read"
+        trigger_status_date:
+          type: string
+          example: "1606227202480"
+        trigger_title:
+          type: string
+          example: "MSFT"
+        trigger_description:
+          type: string
+          example: "MSFT traded for 214.86 at 10:34 ET on 12/14/20"
+
   responses:
     Unauthorized:
       description: The unauthorized access.
@@ -302,6 +341,8 @@ paths:
     get:
       summary: Get Server Version.
       description: Retrieves the current server version.
+      tags:
+        - System
       responses:
         '200':
           description: A JSON document, containing a single attribute called semver.
@@ -318,6 +359,8 @@ paths:
     post:
       summary: Create Alert.
       description: Creates a new alert.
+      tags:
+        - Alerts
       security:
         - JWT: []
       requestBody:
@@ -432,6 +475,8 @@ paths:
     get:
       summary: Retrieve Alert.
       description: Retrieves an existing alert.
+      tags:
+        - Alerts
       security:
         - JWT: []
       parameters:
@@ -465,6 +510,8 @@ paths:
     delete:
       summary: "Delete Alert"
       description: "Deletes an existing alert, stopping it, if necessary."
+      tags:
+        - Alerts
       security:
         - JWT: []
       parameters:
@@ -498,6 +545,8 @@ paths:
     put:
       summary: "Start/Stop Alert."
       description: "Starts or stops an alert."
+      tags:
+        - Alerts
       security:
         - JWT: []
       parameters:
@@ -555,6 +604,8 @@ paths:
     get:
       summary: "Retrieve Alerts For User."
       description: "Retrieves all alerts for a single user."
+      tags:
+        - Alerts
       security:
         - JWT: []
       parameters:
@@ -594,6 +645,8 @@ paths:
     put:
       summary: "Start/Stop Multiple Alerts For User"
       description: "Starts or stops an zero to many alerts for a single user."
+      tags:
+        - Alerts
       security:
         - JWT: []
       parameters:
@@ -651,6 +704,8 @@ paths:
     get:
       summary: "Retrieve Alerts By Remote System Key"
       description: Retrieves all alerts, for a single user, which have a specific "alert_system_key" property value.
+      tags:
+        - Alerts
       security:
         - JWT: []
       parameters:
@@ -698,6 +753,8 @@ paths:
     get:
       summary: "Retrieve Market Data Configuration For User"
       description: "Retrieves default publishing information for a single user."
+      tags:
+        - Market
       security:
         - JWT: []
       parameters:
@@ -742,6 +799,8 @@ paths:
     get:
       summary: "Retrieve Targets"
       description: "Retrieves a list of valid targets."
+      tags:
+        - Targets
       responses:
         200:
           description: "A JSON document containing an array of targets, conforming to the target schema."
@@ -756,6 +815,8 @@ paths:
     get:
       summary: "Retrieve Properties"
       description: "Retrieves a list of valid properties (of targets)."
+      tags:
+        - Targets
       responses:
         200:
           description: "A JSON document containing an array of properties, conforming to the property schema."
@@ -770,6 +831,8 @@ paths:
     get:
       summary: "Retrieve Operators"
       description: "Retrieves a list of operators (for use in conjunction with properties)."
+      tags:
+        - Operators
       responses:
         200:
           description: "A JSON document containing an array of operators, conforming to the operator schema."
@@ -782,6 +845,8 @@ paths:
     get:
       summary: "Retrieve Modifiers"
       description: "Retrieves a list of modifiers (for use in conjunction with properties)."
+      tags:
+        - Modifiers
       responses:
         200:
           description: "A JSON document containing an array of modifiers, conforming to the modifier schema."
@@ -824,6 +889,8 @@ paths:
     get:
       summary: "Retrieve Publisher Types"
       description: "Retrieves a list of publishers."
+      tags:
+        - Publishers
       responses:
         200:
           description: "A JSON document containing an array of publisher types, conforming to the publisher-type schema."
@@ -848,6 +915,8 @@ paths:
     get:
       summary: "Retrieve Publisher Type Defaults For User"
       description: "Retrieves default publishing information for a single user."
+      tags:
+        - Publishers
       security:
         - JWT: []
       parameters:
@@ -918,6 +987,8 @@ paths:
     put:
       summary: "Save Publisher Type Defaults For User"
       description: "Updates default publishing information for a single user."
+      tags:
+        - Publishers
       security:
         - JWT: []
       parameters:
@@ -1026,3 +1097,144 @@ paths:
                       example: ["price"]
                       items:
                         type: string
+
+  /alert/triggers/users/{alert_system}/{user_id}:
+    get:
+      summary: "Retrieve Alert Trigger Statuses"
+      description: "Retrieves a list of alerts trigger statuses."
+      tags:
+        - Triggers
+      security:
+        - JWT: []
+      parameters:
+        - name: user_id
+          description: The user id.
+          in: path
+          required: true
+          schema:
+            type: string
+            example: "barchart-test-user"
+
+        - name: alert_system
+          description: The alert system.
+          in: path
+          required: true
+          schema:
+            type: string
+            example: "barchart.com"
+
+        - name: trigger_date
+          description: Gets alert trigger statuses after this date
+          in: query
+          required: false
+          schema:
+            type: string
+            example: "1605874379489"
+
+
+        - name: trigger_status
+          description: Gets triggers with this status
+          in: query
+          required: false
+          schema:
+            type: string
+            example: "Read"
+      responses:
+        200:
+          description: "A JSON document containing an array of alert trigger statuses"
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Trigger'
+
+    put:
+      summary: "Updates an alert trigger statuses"
+      description: "Updates specific alert trigger statuses."
+      tags:
+        - Triggers
+      security:
+        - JWT: []
+      parameters:
+        - name: user_id
+          description: The user id.
+          in: path
+          required: true
+          schema:
+            type: string
+            example: "barchart-test-user"
+
+        - name: alert_system
+          description: The alert system.
+          in: path
+          required: true
+          schema:
+            type: string
+            example: "barchart.com"
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                trigger_status:
+                  type: string
+                  example: "Unread"
+      responses:
+        '200':
+          description: "A JSON document, conforming to the alert trigger status."
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Trigger'
+
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+
+  /alert/triggers/{alert_id}/{trigger_date}:
+    put:
+      summary: "Updates an alert trigger statuses"
+      description: "Updates all alert trigger status for the user."
+      tags:
+        - Triggers
+      security:
+        - JWT: []
+      parameters:
+        - name: alert_id
+          description: The alert id.
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+            example: "d2d4ec4e-f732-422e-801c-4637f1c9f21a"
+
+        - name: trigger_date
+          description: The alert system.
+          in: path
+          required: true
+          schema:
+            type: string
+            example: "1607960061721"
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                trigger_status:
+                  type: string
+                  example: "Unread"
+      responses:
+        '200':
+          description: "A JSON document, conforming to the alert trigger statuses."
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Trigger'
+
+        '401':
+          $ref: '#/components/responses/Unauthorized'

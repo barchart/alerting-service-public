@@ -8,8 +8,6 @@
 
 * [AdapterForWebSockets](#AdapterForWebSockets) 
 
-* [Callbacks](#Callbacks) 
-
 
 * * *
 
@@ -39,13 +37,13 @@
         * *[.secure](#AdapterBasesecure) ⇒ <code>String</code>*
         * *[.connect(jwtProvider)](#AdapterBaseconnect) ⇒ [<code>Promise.&lt;AdapterBase&gt;</code>](#AdapterBase)*
     * _constructor_
-        * *[new AdapterBase(host, port, secure, onAlertCreated, onAlertMutated, onAlertDeleted, onAlertTriggered)](#new_AdapterBase_new)*
+        * *[new AdapterBase(host, port, secure, onAlertCreated, onAlertMutated, onAlertDeleted, onAlertTriggered, [onTriggersCreated], [onTriggersMutated], [onTriggersDeleted])](#new_AdapterBase_new)*
 
 
 * * *
 
 ### adapterBase.host :id=adapterbasehost
-> The hostname of the Barchart Alert Service.
+> The hostname of the Barchart Alerting Service.
 
 **Kind**: instance property of [<code>AdapterBase</code>](#AdapterBase)  
 **Returns**: <code>String</code>  
@@ -54,7 +52,7 @@
 * * *
 
 ### adapterBase.port :id=adapterbaseport
-> The TCP port number of the Barchart Alert Service.
+> The TCP port number of the Barchart Alerting Service.
 
 **Kind**: instance property of [<code>AdapterBase</code>](#AdapterBase)  
 **Returns**: <code>String</code>  
@@ -85,7 +83,7 @@
 
 * * *
 
-### new AdapterBase(host, port, secure, onAlertCreated, onAlertMutated, onAlertDeleted, onAlertTriggered) :id=new_adapterbase_new
+### new AdapterBase(host, port, secure, onAlertCreated, onAlertMutated, onAlertDeleted, onAlertTriggered, [onTriggersCreated], [onTriggersMutated], [onTriggersDeleted]) :id=new_adapterbase_new
 **Kind**: constructor of [<code>AdapterBase</code>](#AdapterBase)  
 
 | Param | Type |
@@ -93,10 +91,13 @@
 | host | <code>String</code> | 
 | port | <code>Number</code> | 
 | secure | <code>Boolean</code> | 
-| onAlertCreated | [<code>AlertCreatedCallback</code>](#CallbacksAlertCreatedCallback) | 
-| onAlertMutated | [<code>AlertMutatedCallback</code>](#CallbacksAlertMutatedCallback) | 
-| onAlertDeleted | [<code>AlertDeletedCallback</code>](#CallbacksAlertDeletedCallback) | 
-| onAlertTriggered | [<code>AlertTriggeredCallback</code>](#CallbacksAlertTriggeredCallback) | 
+| onAlertCreated | [<code>Callbacks.AlertCreatedCallback</code>](/content/sdk/lib-callbacks?id=callbacksalertcreatedcallback) | 
+| onAlertMutated | [<code>Callbacks.AlertMutatedCallback</code>](/content/sdk/lib-callbacks?id=callbacksalertmutatedcallback) | 
+| onAlertDeleted | [<code>Callbacks.AlertDeletedCallback</code>](/content/sdk/lib-callbacks?id=callbacksalertdeletedcallback) | 
+| onAlertTriggered | [<code>Callbacks.AlertTriggeredCallback</code>](/content/sdk/lib-callbacks?id=callbacksalerttriggeredcallback) | 
+| [onTriggersCreated] | [<code>Callbacks.TriggersCreatedCallback</code>](/content/sdk/lib-callbacks?id=callbackstriggerscreatedcallback) | 
+| [onTriggersMutated] | [<code>Callbacks.TriggersMutatedCallback</code>](/content/sdk/lib-callbacks?id=callbackstriggersmutatedcallback) | 
+| [onTriggersDeleted] | [<code>Callbacks.TriggersDeletedCallback</code>](/content/sdk/lib-callbacks?id=callbackstriggersdeletedcallback) | 
 
 
 * * *
@@ -123,7 +124,7 @@
 * * *
 
 ### adapterForHttp.host :id=adapterforhttphost
-> The hostname of the Barchart Alert Service.
+> The hostname of the Barchart Alerting Service.
 
 **Kind**: instance property of [<code>AdapterForHttp</code>](#AdapterForHttp)  
 **Overrides**: [<code>host</code>](#AdapterBasehost)  
@@ -133,7 +134,7 @@
 * * *
 
 ### adapterForHttp.port :id=adapterforhttpport
-> The TCP port number of the Barchart Alert Service.
+> The TCP port number of the Barchart Alerting Service.
 
 **Kind**: instance property of [<code>AdapterForHttp</code>](#AdapterForHttp)  
 **Overrides**: [<code>port</code>](#AdapterBaseport)  
@@ -188,7 +189,7 @@
 * * *
 
 ### adapterForSocketIo.host :id=adapterforsocketiohost
-> The hostname of the Barchart Alert Service.
+> The hostname of the Barchart Alerting Service.
 
 **Kind**: instance property of [<code>AdapterForSocketIo</code>](#AdapterForSocketIo)  
 **Overrides**: [<code>host</code>](#AdapterBasehost)  
@@ -198,7 +199,7 @@
 * * *
 
 ### adapterForSocketIo.port :id=adapterforsocketioport
-> The TCP port number of the Barchart Alert Service.
+> The TCP port number of the Barchart Alerting Service.
 
 **Kind**: instance property of [<code>AdapterForSocketIo</code>](#AdapterForSocketIo)  
 **Overrides**: [<code>port</code>](#AdapterBaseport)  
@@ -233,7 +234,7 @@
 * * *
 
 ## AdapterForWebSockets :id=adapterforwebsockets
-> A backend communication adapter implemented with WebSockets. Coming in version 4.1.0.
+> A backend communication adapter implemented with WebSockets. Coming in version 4.3.0.
 
 **Kind**: global class  
 **Extends**: [<code>AdapterBase</code>](#AdapterBase)  
@@ -252,7 +253,7 @@
 * * *
 
 ### adapterForWebSockets.host :id=adapterforwebsocketshost
-> The hostname of the Barchart Alert Service.
+> The hostname of the Barchart Alerting Service.
 
 **Kind**: instance property of [<code>AdapterForWebSockets</code>](#AdapterForWebSockets)  
 **Overrides**: [<code>host</code>](#AdapterBasehost)  
@@ -262,7 +263,7 @@
 * * *
 
 ### adapterForWebSockets.port :id=adapterforwebsocketsport
-> The TCP port number of the Barchart Alert Service.
+> The TCP port number of the Barchart Alerting Service.
 
 **Kind**: instance property of [<code>AdapterForWebSockets</code>](#AdapterForWebSockets)  
 **Overrides**: [<code>port</code>](#AdapterBaseport)  
@@ -293,61 +294,6 @@
 | --- | --- |
 | jwtProvider | [<code>JwtProvider</code>](/content/sdk/lib-security?id=jwtprovider) | 
 
-
-* * *
-
-## Callbacks :id=callbacks
-> A meta namespace containing signatures of anonymous functions.
-
-**Kind**: global namespace  
-
-* [Callbacks](#Callbacks) : <code>object</code>
-    * _static_
-        * [.AlertCreatedCallback](#CallbacksAlertCreatedCallback) ⇒ [<code>Schema.Alert</code>](/content/sdk/lib-data?id=schemaalert)
-        * [.AlertMutatedCallback](#CallbacksAlertMutatedCallback) ⇒ [<code>Schema.Alert</code>](/content/sdk/lib-data?id=schemaalert)
-        * [.AlertDeletedCallback](#CallbacksAlertDeletedCallback) ⇒ [<code>Schema.Alert</code>](/content/sdk/lib-data?id=schemaalert)
-        * [.AlertTriggeredCallback](#CallbacksAlertTriggeredCallback) ⇒ [<code>Schema.Alert</code>](/content/sdk/lib-data?id=schemaalert)
-
-
-* * *
-
-### Callbacks.AlertCreatedCallback :id=callbacksalertcreatedcallback
-> The function signature for a callback which notifies the [AlertManager](/content/sdk/lib?id=alertmanager)
-> after a new alert has been created.
-
-**Kind**: static typedef of [<code>Callbacks</code>](#Callbacks)  
-**Returns**: [<code>Schema.Alert</code>](/content/sdk/lib-data?id=schemaalert)  
-**Access**: public  
-
-* * *
-
-### Callbacks.AlertMutatedCallback :id=callbacksalertmutatedcallback
-> The function signature for a callback which notifies the [AlertManager](/content/sdk/lib?id=alertmanager)
-> after an alert mutates (e.g. the <code>alert_state</code> property changes).
-
-**Kind**: static typedef of [<code>Callbacks</code>](#Callbacks)  
-**Returns**: [<code>Schema.Alert</code>](/content/sdk/lib-data?id=schemaalert)  
-**Access**: public  
-
-* * *
-
-### Callbacks.AlertDeletedCallback :id=callbacksalertdeletedcallback
-> The function signature for a callback which notifies the [AlertManager](/content/sdk/lib?id=alertmanager)
-> after an alert has been deleted.
-
-**Kind**: static typedef of [<code>Callbacks</code>](#Callbacks)  
-**Returns**: [<code>Schema.Alert</code>](/content/sdk/lib-data?id=schemaalert)  
-**Access**: public  
-
-* * *
-
-### Callbacks.AlertTriggeredCallback :id=callbacksalerttriggeredcallback
-> The function signature for a callback which notifies the [AlertManager](/content/sdk/lib?id=alertmanager)
-> after an alert has been triggered.
-
-**Kind**: static typedef of [<code>Callbacks</code>](#Callbacks)  
-**Returns**: [<code>Schema.Alert</code>](/content/sdk/lib-data?id=schemaalert)  
-**Access**: public  
 
 * * *
 

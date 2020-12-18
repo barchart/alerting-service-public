@@ -22,6 +22,9 @@
         * [.AlertIdentifier](#SchemaAlertIdentifier) : <code>Object</code>
         * [.AlertQuery](#SchemaAlertQuery) : <code>Object</code>
         * [.UserIdentifier](#SchemaUserIdentifier) : <code>Object</code>
+        * [.PublisherType](#SchemaPublisherType) : <code>Object</code>
+        * [.PublisherTypeDefault](#SchemaPublisherTypeDefault) : <code>Object</code>
+        * [.Trigger](#SchemaTrigger) : <code>Object</code>
 
 
 * * *
@@ -54,6 +57,7 @@
 | [publishers] | <code>Array.&lt;Schema.Publisher&gt;</code> | <p>The rules for publishing a notification. This is optional. In most cases, it's best to rely on the default rules bound to the alert's owner.</p> |
 | [effectivePublishers] | <code>Array.&lt;Schema.Publisher&gt;</code> | <p>A read-only property added by the backend listing the &quot;effective&quot; rules which will be used to publish notifications. Any rules in the &quot;publishers&quot; property take precedence, then the default rules for the alert's owner are applied.</p> |
 | [schedules] | <code>Array.&lt;AlertResetSchedule&gt;</code> |  |
+| read | <code>Boolean</code> | <p>shows whether the alert has been read.</p> |
 
 
 * * *
@@ -134,7 +138,7 @@
 
 | Name | Type | Description |
 | --- | --- | --- |
-| operator_id | <code>Number</code> | <p>The operators's unique identifier (assigned by the backend).</p> |
+| operator_id | <code>Number</code> | <p>The operator's unique identifier (assigned by the backend).</p> |
 | [operator_name] | <code>String</code> | <p>A description of the operator. Managed by the backend.</p> |
 | [operator_type] | [<code>OperatorType</code>](#EnumsOperatorType) | <p>Managed by the backend.</p> |
 | [operand_type] | [<code>OperandType</code>](#EnumsOperandType) | <p>Describes the data type for an operand (e.g. for $600, the type is &quot;number&quot;). Managed by the backend.</p> |
@@ -193,6 +197,64 @@
 
 * * *
 
+### Schema.PublisherType :id=schemapublishertype
+> An object which describes a notification strategy.
+
+**Kind**: static typedef of [<code>Schema</code>](#Schema)  
+**Properties**
+
+| Name | Type | Description |
+| --- | --- | --- |
+| publisher_type_id | <code>Number</code> | <p>The identifier of the notification strategy.</p> |
+| transport | <code>String</code> | <p>A description of the notification strategy.</p> |
+| provider | <code>String</code> | <p>A description of the mechanism used to deliver the notification.</p> |
+
+
+* * *
+
+### Schema.PublisherTypeDefault :id=schemapublishertypedefault
+> An object which describes a user's preferences for one type of
+> notification strategy (e.g. email or text messages).
+
+**Kind**: static typedef of [<code>Schema</code>](#Schema)  
+**Properties**
+
+| Name | Type | Description |
+| --- | --- | --- |
+| publisher_type_id | <code>Number</code> | <p>The identifier of the referenced [PublisherType](#schemapublishertype).</p> |
+| user_id | <code>String</code> | <p>The owner of the preference.</p> |
+| alert_system | <code>String</code> | <p>The domain of the user who owns the preference.</p> |
+| [default_recipient] | <code>String</code> | <p>Strategy-dependent routing instructions (e.g. a phone number or an email address).</p> |
+| [allow_window_start] | <code>String</code> | <p>The time of day, formatted as HH:MM, to begin allowing notifications to be sent.</p> |
+| [allow_window_end] | <code>String</code> | <p>The time of day, formatted as HH:MM, to stop allowing notifications to be sent.</p> |
+| [allow_window_timezone] | <code>String</code> | <p>The timezone which applies to allow_window_start and allow_window_end.</p> |
+| active_alert_types | <code>Array.&lt;String&gt;</code> | <p>Applies this rule to any alert any alert with a matching &quot;alert_type&quot; property value.</p> |
+
+
+* * *
+
+### Schema.Trigger :id=schematrigger
+> When all of an alert's conditions are met, the alert triggers. An alert
+> may be triggered multiple times. This object contains information
+> regarding an alert trigger and can be marked as read (or unread).
+
+**Kind**: static typedef of [<code>Schema</code>](#Schema)  
+**Properties**
+
+| Name | Type | Description |
+| --- | --- | --- |
+| alert_id | <code>String</code> | <p>The alert's unique identifier.</p> |
+| user_id | <code>String</code> | <p>The alert owner's unique identifier.</p> |
+| alert_system | <code>String</code> | <p>The alert owner's domain.</p> |
+| trigger_date | <code>String</code> | <p>The time the alert was triggered (milliseconds since epoch).</p> |
+| trigger_status | [<code>TriggerStatus</code>](#EnumsTriggerStatus) | <p>The status of the trigger.</p> |
+| trigger_status_date | <code>String</code> | <p>The last time the alert trigger status was updated (milliseconds since epoch).</p> |
+| trigger_title | <code>String</code> | <p>A human-readable title.</p> |
+| trigger_description | <code>String</code> | <p>A human-readable description.</p> |
+
+
+* * *
+
 ## Enums :id=enums
 > A namespace for enumerations.
 
@@ -206,6 +268,7 @@
         * [.OperandType](#EnumsOperandType) : <code>enum</code>
         * [.OperatorType](#EnumsOperatorType) : <code>enum</code>
         * [.TargetType](#EnumsTargetType) : <code>enum</code>
+        * [.TriggerStatus](#EnumsTriggerStatus) : <code>enum</code>
 
 
 * * *
@@ -296,6 +359,21 @@
 | --- | --- | --- |
 | string | <code>String</code> | <p>The target's identifier is a simple string.</p> |
 | symbol | <code>String</code> | <p>The target's identifier is an instrument symbol (e.g. &quot;AAPL&quot; for Apple stock).</p> |
+
+
+* * *
+
+### Enums.TriggerStatus :id=enumstriggerstatus
+> Describes whether an alert has been acknowledged (in the same way an email
+> can be marked as &quot;read&quot; or &quot;unread&quot;).
+
+**Kind**: static enum of [<code>Enums</code>](#Enums)  
+**Properties**
+
+| Name | Type | Description |
+| --- | --- | --- |
+| Read | <code>String</code> | <p>The alert trigger has been acknowledged.</p> |
+| Unread | <code>String</code> | <p>The alert trigger has not been acknowledged.</p> |
 
 
 * * *

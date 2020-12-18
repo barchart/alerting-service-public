@@ -3,7 +3,7 @@
 <head>
     <meta charset="utf-8"/>
 
-    <title>Barchart Alert SDK Example</title>
+    <title>Barchart Alerting SDK Example</title>
 
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" integrity="sha384-1q8mTJOASx8j1Au+a5WDVnPi2lkFfwwEAa8hDDdjZlpLegxhjVME1fgjWPGmkzs7" crossorigin="anonymous">
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap-theme.min.css" integrity="sha384-fLW2N01lMqjakBkx3l/M9EahuwpSfeNvV63J5ezn3uZzapT0u7EYsXMjQV+0En5r" crossorigin="anonymous">
@@ -11,7 +11,7 @@
     <link rel="stylesheet" href="example.css" type="text/css">
 
     <script src="https://code.jquery.com/jquery-2.1.4.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/knockout/3.4.0/knockout-min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/knockout/3.5.0/knockout-min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/lodash.js/4.0.0/lodash.min.js"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js" integrity="sha384-0mSbJDEHialfmuBBQP6A4Qrprq5OVfW37PRR3j5ELqxss1yVqOtnepnHVP9aJ7xS" crossorigin="anonymous"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
@@ -23,10 +23,11 @@
 	        <h4 class="pull-left header-text barchart-logo"><span>[Alerts SDK Example]</span></h4>
 
             <div class="header-action-buttons pull-right">
-                <span class="text-button glyphicon glyphicon-th-list" data-bind="click: changeToGrid, visible: canDisconnect"></span>
-                <span class="text-button glyphicon glyphicon-plus" data-bind="click: changeToCreate, visible: canDisconnect"></span>
-                <span class="text-button glyphicon glyphicon-user" data-bind="click: changeToPreferences, visible: canDisconnect"></span>
-                <span class="text-button glyphicon glyphicon-remove" data-bind="click: disconnect, visible: canDisconnect"></span>
+                <span class="text-button glyphicon glyphicon-th-list" data-bind="click: changeToGrid, visible: canDisconnect" data-toggle="tooltip" data-placement="top" title="View Alerts"></span>
+                <span class="text-button glyphicon glyphicon-book" data-bind="click: changeToHistory, visible: canDisconnect" data-toggle="tooltip" data-placement="top" title="View Triggers"></span>
+                <span class="text-button glyphicon glyphicon-plus" data-bind="click: changeToCreate, visible: canDisconnect" data-toggle="tooltip" data-placement="top" title="Create Alert"></span>
+                <span class="text-button glyphicon glyphicon-user" data-bind="click: changeToPreferences, visible: canDisconnect" data-toggle="tooltip" data-placement="top" title="Configure User Options"></span>
+                <span class="text-button glyphicon glyphicon-remove" data-bind="click: disconnect, visible: canDisconnect" data-toggle="tooltip" data-placement="top" title="Log Out"></span>
             </div>
         </div>
     </script>
@@ -81,11 +82,10 @@
                     <span style="padding-left: 10px;">State</span>
                     <span class="text-button text-button-black glyphicon glyphicon-stop" data-bind="click: disableAlerts"></span>
                 </th>
-                <th class="center col-md-1">Conditions</th>
-                <th class="center col-md-1">Publishers</th>
+                <th class="center col-md-2">Create Date</th>
                 <th class="center col-md-2">Last Triggered</th>
             </thead>
-            <tbody data-bind="template: { name: 'alert-grid-item-template', foreach: alerts }"></tbody>
+            <tbody data-bind="template: { name: 'alert-grid-item-template', foreach: alertsFormatted }"></tbody>
         </table>
     </script>
 
@@ -107,8 +107,7 @@
                 <span data-bind="text: alert().alert_state"></span>
                 </div>
             </td>
-            <td class="center col-md-1" data-bind="text: alert().conditions.length"></td>
-            <td class="center col-md-1" data-bind="text: alert().publishers.length"></td>
+            <td class="center col-md-2" data-bind="text: createDateDisplay"></td>
             <td class="center col-md-2" data-bind="text: lastTriggerDateDisplay"></td>
         </tr>
     </script>
@@ -518,6 +517,39 @@
             </td>
         </tr>
     </script>
+
+    <script type="text/html" id="trigger-history-template">
+        <div class="table-controls">
+            <div class="order-control">
+                <select class="form-control" data-bind="options: triggersSortOptions, value: triggersSelectedSort"></select>
+            </div>
+        </div>
+
+        <table class="table table-triggers table-striped small">
+            <thead>
+                <th class="center col-md-3">ID</th>
+                <th class="left col-md-2">Description</th>
+                <th class="center col-md-1">
+                    <span class="text-button text-button-black glyphicon glyphicon-collapse-down" data-bind="click: () => updateTriggers('Read')"></span>
+                    <span style="padding: 0 5px">Read</span>
+                    <span class="text-button text-button-black glyphicon glyphicon-unchecked" data-bind="click: () => updateTriggers('Unread')"></span>
+                </th>
+                <th class="center col-md-2">Trigger Date</th>
+                <th class="center col-md-2">Trigger Status Date</th>
+            </thead>
+            <tbody data-bind="foreach: triggersFormatted">
+                <tr>
+                    <td class="center col-md-3" data-bind="{ visible: display.first, attr: { rowspan: display.rowSpan }, text: trigger().alert_id }"></td>
+                    <td class="left col-md-3" data-bind="text: trigger().trigger_description"></td>
+                    <td class="center col-md-2">
+                        <input type="checkbox" data-bind="enable: !loading(), click: () => toggle(), checked: display.read()">
+                    </td>
+                    <td class="center col-md-2" data-bind="text: display.date"></td>
+                    <td class="center col-md-2" data-bind="text: display.statusDate"></td>
+                </tr>
+            </tbody>
+        </table>
+    </script>
 </head>
 <body>
     <div class="header" data-bind="template: { name: 'alert-header-template' }"></div>
@@ -526,9 +558,11 @@
         <h4 class="pull-left">
 	        <span data-bind="providerDescription"></span>
 	        <span data-bind="visible: connected">
-				<span data-bind="visible: connected"><span data-bind="text: authenticatedUser"></span></span>
+				<span data-bind="text: authenticatedUser"></span>
 				<span>::</span>
 				<span data-bind="text: host"></span>
+				<span>::</span>
+				<span data-bind="text: mode"></span>
 	        </span>
 		</h4>
         <h4 class="pull-right">
