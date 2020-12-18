@@ -17,7 +17,3 @@ Complete documentation for this SDK can be accessed [here](https://barchart.gith
 ### Example Applications
 
 Refer to the [documentation](https://barchart.github.io/alerts-client-js/#/content/quick_start?id=sample-applications) for more information.
-
-### Package Managers
-
-This library has been published as a _public_ package to NPM as [@barchart/alerts-client-js](https://www.npmjs.com/package/@barchart/alerts-client-js).
