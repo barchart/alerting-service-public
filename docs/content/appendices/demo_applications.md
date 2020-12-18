@@ -26,6 +26,10 @@ A dynamic, single-page HTML5 web application allows you to interact with the Bar
 * Review alert trigger history.
 * Mark alert triggers as read (or unread).
 
+You can quickly load the web application here:
+
+https://examples.aws.barchart.com/alerts-client-js/example.html
+
 ## The Mobile App
 
 Built with [React Native](https://reactnative.dev/), our mobile app is compatible with iOS and Android devices. It's features include:
