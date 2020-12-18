@@ -7,8 +7,10 @@ A simple mobile application, written using [React Native](https://reactnative.de
 ### Screen Captures
 
 | Login  | Alerts | Triggers |
-| -------- | --------| --------|
-| ![Login Screen](.images/examples/01_app_login.png) | ![Alert Screen](.images/examples/02_app_alerts.png)  | ![Trigger Screen](.images/examples/03_app_triggers.png)  |
+| -------- | -------- | -------- |
+| ![Login Screen](.images/examples/01_app_login.png) | ![Alert Screen](.images/examples/02_app_alerts.png) | ![Trigger Screen](.images/examples/03_app_triggers.png) |
+
+Here is a [video clip](.images/examples/04_app_push_notification.mov), showing receipt of a push notification.
 
 ### Requirements
 
