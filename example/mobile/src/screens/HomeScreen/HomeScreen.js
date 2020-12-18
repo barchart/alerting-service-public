@@ -3,7 +3,6 @@ import { Button, Card } from 'react-native-paper';
 import React, { useCallback, useEffect } from 'react';
 import { ScrollView, StyleSheet, View } from 'react-native';
 import { useDispatch, useSelector } from 'react-redux';
-import DisposableStack from '@barchart/common-js/collections/specialized/DisposableStack';
 
 import { setAlerts, setTriggers } from '../../redux/actions/alerts';
 import { getManager } from '../../utils/AlertManager';
@@ -32,23 +31,16 @@ export const HomeScreen = ({ navigation }) => {
 	}, [userID, system, manager, dispatch]);
 
 	useEffect(() => {
-		const disposables = new DisposableStack();
+		const disposables = [ ];
 
 		if (manager) {
-			const triggerDisposable = manager.subscribeTriggers({
-				user_id: userID,
-				alert_system: system
-			}, handleSubscribeTriggers, handleSubscribeTriggers, handleSubscribeTriggers);
-			const alertsDisposable = manager.subscribeAlerts({
-				user_id: userID,
-				alert_system: system
-			}, handleSubscribeAlerts, handleSubscribeAlerts, handleSubscribeAlerts, handleSubscribeTriggers);
-
-			disposables.push(triggerDisposable);
-			disposables.push(alertsDisposable);
+			disposables.push(manager.subscribeTriggers({ user_id: userID, alert_system: system }, handleSubscribeTriggers, handleSubscribeTriggers, handleSubscribeTriggers));
+			disposables.push(manager.subscribeAlerts({ user_id: userID, alert_system: system }, handleSubscribeAlerts, handleSubscribeAlerts, handleSubscribeAlerts, handleSubscribeTriggers));
 		}
 
-		return () => disposables.dispose();
+		return () => {
+			disposables.forEach(d => d.dispose());
+		};
 	}, []);
 
 	return (
