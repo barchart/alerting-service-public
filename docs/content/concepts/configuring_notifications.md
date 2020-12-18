@@ -82,7 +82,7 @@ query.alert_system = 'barchart.com';
 
 return alertManager.getPublisherTypeDefaults()
 	.then((publisherTypeDefaults) => {
-		console.log(`The user [ ${query.user_id} ] has [ ${publisherTypeDefaults.length} ] preference settings`);
+		console.log(`The user [ ${query.user_id} ] has [ ${publisherTypeDefaults.length} ] preferences`);
 	});
 ```
 
