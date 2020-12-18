@@ -1,6 +1,6 @@
-Your mobile apps can receive push notifications from the Barchart Alerting Service. However, some minor configuration is required.
+## Requirements
 
-In a nutshell:
+To enable support for push notifications to your mobile apps, you need to:
 
 * You need to authorize Barchart to send push notifications on your behalf, and
 * Your mobile app needs to register itself with Barchart each time a user logs in.
