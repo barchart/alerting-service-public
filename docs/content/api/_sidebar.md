@@ -11,6 +11,7 @@
 * Appendices
 	* [Data Feed Glossary](/content/appendices/data_feed_glossary)
 	* [Data Structure Glossary](/content/appendices/data_structure_glossary)
+	* [Demo Applications](/content/appendices/demo_applications)
 <!-- sdk_open -->
 * [SDK Reference](/content/sdk_reference)
 <!-- sdk_close -->

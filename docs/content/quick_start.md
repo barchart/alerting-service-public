@@ -195,37 +195,15 @@ curl 'https://alerts-management-demo.barchart.com/alerts/ef5acb88-d747-48d2-b8d2
   --data-binary '{"alert_id":"ef5acb88-d747-48d2-b8d2-713cf351c012","alert_state":"Stopping"}'
 ```
 
-## Sample Applications
+## Demo Applications
 
-Two sample applications were built with this SDK.
+Sometimes learning by example is best. Three applications were built using this SDK:
 
-### Web Application
+* A single-page, HTML5 web application,
+* A mobile application, compatible with iOS and Android devices, and
+* Simple Node.js scripts.
 
-A single-page HTML application allows you to dynamically build, save, edit, start, monitor, stop, edit, and delete alerts.
+You can load the web application by clicking [here](https://examples.aws.barchart.com/alerts-client-js/example.html). To explore the other applications, visit [Appendix: Demo Applications](/content/appendices/demo_applications) for more information.
 
-You can find the source code here:
 
-* [/example/browser/example.html](https://github.com/barchart/alerts-client-js/blob/master/example/browser/example.html)
-* [/example/browser/js/startup.js](https://github.com/barchart/alerts-client-js/blob/master/example/browser/js/startup.js)
 
-The application is hosted at:
-
-https://examples.aws.barchart.com/alerts-client-js/example.html
-
-### Node.js
-
-A simple Node.js script connects to the _demo_ environment and retrieves a list of alerts. You can find the source code here:
-
-* [/example/node/example.js](https://github.com/barchart/alerts-client-js/blob/master/example/node/example.js)
-
-To run the script, make sure required dependencies are installed:
-
-```shell
-npm install
-```
-
-Then, execute it:
-
-```shell
-node ./example/node/example.js {user_id}
-```
