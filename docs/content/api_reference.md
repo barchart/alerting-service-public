@@ -34,7 +34,7 @@
 * [Condition](/content/api/components?id=schemasCondition)
 * [Property](/content/api/components?id=schemasProperty)
 * [Target](/content/api/components?id=schemasTarget)
-* [AlertTriggerStatus](/content/api/components?id=schemasAlertTriggerStatus)
+* [Trigger](/content/api/components?id=schemasTrigger)
 
 ### Security 
 

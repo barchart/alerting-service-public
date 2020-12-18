@@ -22,21 +22,7 @@ A history of _trigger_ objects can be retrieved for a specific user. Also, they 
 
 #### Using the SDK
 
-Use the [```AlertManager.retrieveTriggers```](/content/sdk/lib?id=alertmanagerretrievetriggers) function, as follows:
-
-```js
-const query = { };
-
-query.user_id = 'me';
-query.alert_system = 'barchart.com';
-
-alertManager.retrieveTriggers(query)
-	.then((triggers) => {
-		triggers.forEach(t => console.log(t));
-	});
-```
-
-Alternately, you can include ```trigger_date``` and ```trigger_status``` attributes to filter the results:
+Use the [```AlertManager.retrieveTriggers```](/content/sdk/lib?id=alertmanagerretrievetriggers) function. You can include ```trigger_date``` and ```trigger_status``` attributes to filter the results:
 
 ```js
 const query = { };
@@ -57,7 +43,7 @@ alertManager.retrieveTriggers(query)
 #### Using the API
 
 ```shell
-curl 'https://alerts-management-demo.barchart.com/alert/triggers/users/barchart.com/me?trigger_date=1607688631989' \
+curl 'https://alerts-management-demo.barchart.com/alert/triggers/users/barchart.com/me?trigger_date=1606806000000&trigger_status=Unread' \
   -X 'GET' \
   -H 'Accept: application/json' \
   -H 'Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoibWUiLCJ1c2VySWQiOiJtZSIsImFsZXJ0X3N5c3RlbSI6ImJhcmNoYXJ0LmNvbSIsImNvbnRleHRJZCI6ImJhcmNoYXJ0LmNvbSIsImlhdCI6MTYwODI5MzQzM30.QFY6GphC1tGXJPNExJw2nqnjfU8heYTvKw16OKusQPw' 
@@ -144,6 +130,8 @@ alertManager.updateTriggers(data)
 
 #### Using the API
 
+Mark a single trigger as _Read_:
+
 ```shell
 curl 'https://alerts-management-demo.barchart.com/alert/triggers/96dbb6ea-38dd-4afc-a031-96df63c42300/1608126840556' \
   -X 'PUT' \
@@ -151,7 +139,11 @@ curl 'https://alerts-management-demo.barchart.com/alert/triggers/96dbb6ea-38dd-4
   -H 'Content-Type: application/json;charset=UTF-8' \
   -H 'Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoibWUiLCJ1c2VySWQiOiJtZSIsImFsZXJ0X3N5c3RlbSI6ImJhcmNoYXJ0LmNvbSIsImNvbnRleHRJZCI6ImJhcmNoYXJ0LmNvbSIsImlhdCI6MTYwODI5MzQzM30.QFY6GphC1tGXJPNExJw2nqnjfU8heYTvKw16OKusQPw' \
   --data-binary '{"trigger_status":"Read"}'
+```
 
+Mark all triggers as _Read_:
+
+```shell
 curl 'https://alerts-management-demo.barchart.com/alert/triggers/users/barchart.com/me' \
   -X 'PUT' \
   -H 'Accept: application/json' \

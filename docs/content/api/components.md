@@ -148,7 +148,7 @@
       "publisher_id": "9c864a19-ce77-4a87-8cd6-e0810ecb120e",
       "use_default_recipient": false,
       "recipient": "123-456-7890",
-      "format": "It is a good time to buy Telsa stock.",
+      "format": "It is a good time to buy Tesla stock.",
       "timing": {
         "timezon": "America/Chicago"
       },
@@ -168,7 +168,7 @@
       "publisher_id": "9c864a19-ce77-4a87-8cd6-e0810ecb120e",
       "use_default_recipient": false,
       "recipient": "123-456-7890",
-      "format": "It is a good time to buy Telsa stock.",
+      "format": "It is a good time to buy Tesla stock.",
       "timing": {
         "timezon": "America/Chicago"
       },
@@ -207,7 +207,7 @@
   "publisher_id": "9c864a19-ce77-4a87-8cd6-e0810ecb120e",
   "use_default_recipient": false,
   "recipient": "123-456-7890",
-  "format": "It is a good time to buy Telsa stock.",
+  "format": "It is a good time to buy Tesla stock.",
   "timing": {
     "timezon": "America/Chicago"
   },
@@ -471,7 +471,7 @@
 
 * * *
 
-### AlertTriggerStatus :id=schemasalerttriggerstatus
+### Trigger :id=schemastrigger
 **Type**: <code>Object</code>
     
 | Name | Type | Required | Nullable | Description |
@@ -482,8 +482,8 @@
 | trigger_date | <code>String</code> | true | false |  |
 | trigger_status | <code>String</code> | true | false |  |
 | trigger_status_date | <code>String</code> | true | false |  |
-| trigger_description | <code>String</code> | true | false |  |
 | trigger_title | <code>String</code> | true | false |  |
+| trigger_description | <code>String</code> | true | false |  |
 
 **Example**:
 
@@ -495,8 +495,8 @@
   "trigger_date": "1605874379489",
   "trigger_status": "Read",
   "trigger_status_date": "1606227202480",
-  "trigger_description": "MSFT traded for 214.86 at 10:34 ET on 12/14/20",
-  "trigger_title": "MSFT traded for 214.86 at 10:34 ET on 12/14/20"
+  "trigger_title": "MSFT",
+  "trigger_description": "MSFT traded for 214.86 at 10:34 ET on 12/14/20"
 }
 ```
 

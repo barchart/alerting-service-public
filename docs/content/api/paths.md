@@ -885,7 +885,7 @@
 
 **Content Type**: <code>application/json</code>
 
-**Response Type:** [<code>Array&lt;AlertTriggerStatus&gt;</code>](/content/api/components?id=schemasAlertTriggerStatus)
+**Response Type:** [<code>Array&lt;Trigger&gt;</code>](/content/api/components?id=schemasTrigger)
 
 * * *
 
@@ -930,7 +930,7 @@
 
 **Content Type**: <code>application/json</code>
 
-**Response Type:** [<code>Array&lt;AlertTriggerStatus&gt;</code>](/content/api/components?id=schemasAlertTriggerStatus)
+**Response Type:** [<code>Array&lt;Trigger&gt;</code>](/content/api/components?id=schemasTrigger)
 
 * * *
 
@@ -979,7 +979,7 @@
 
 **Content Type**: <code>application/json</code>
 
-**Response Type:** [<code>Array&lt;AlertTriggerStatus&gt;</code>](/content/api/components?id=schemasAlertTriggerStatus)
+**Response Type:** [<code>Array&lt;Trigger&gt;</code>](/content/api/components?id=schemasTrigger)
 
 * * *
 
