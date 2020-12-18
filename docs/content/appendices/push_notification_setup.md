@@ -11,13 +11,13 @@ Barchart must be authorized to send push notifications on your behalf.
 
 #### Apple (iOS)
 
-Push notifications from the Barchart Alerting Service are delivered via Apple Notification Service (APNs). Apple validates each notification using JSON Web Tokens. To generate a token, we require:
+Push notifications from the Barchart Alerting Service are delivered via Apple Notification Service (APNs). Apple validates each notification using a JSON Web Token. To generate a token, we require:
 
 * Your APNs token signing key — in the form of a ```.p8``` file.
 * Your ten character identifier for the aforementioned the signing key.
 * Your ten character identifier for your Apple Developer Team.
 
-Refer to this article from Apple for more details:
+This article explains how to get the required information:
 
 * [Establishing a Token-Based Connection to APNs](https://developer.apple.com/documentation/usernotifications/setting_up_a_remote_notification_server/establishing_a_token-based_connection_to_apns)
 
