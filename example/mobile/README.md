@@ -8,7 +8,7 @@ A simple mobile application, written using this JavaScript SDK and [React Native
 
 ### Requirements
 
-The app can be loaded; however, push notifications require the following:
+The push notification feature of the application requires:
 
 * Authorize Barchart to send push notifications on your behalf (see [below](#authorizing-push-notifications)).
 * Run the app on an actual device — not a simulator
