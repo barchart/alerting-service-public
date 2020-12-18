@@ -28,7 +28,7 @@ Barchart requires specific information to properly route notifications to the co
 
 Make a slight change to your mobile app. Each time a user logs in, collect the following information and send it to Barchart:
 
-* ```UserID``` — Combine the `user_id` and `alert_system` with an ampersand.
+* ```UserID``` — Combine `user_id` and `alert_system` with an ampersand.
 * ```BundleID``` — Refers to the app itself.
 * ```DeviceID``` — Refers to the device and installation (can be obtained from your app at runtime)
 
