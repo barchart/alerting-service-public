@@ -44,15 +44,35 @@ curl 'https://alerts-management-demo.barchart.com/alert/publishers' \
   -H 'Accept: application/json'
 ```
 
-## Configuring User Preferences
+## Loading User Preferences
+
+Coming soon.
 
 #### Using the SDK
 
+Coming soon.
+
 #### Using the API
+
+Coming soon.
+
+## Setting User Preferences
+
+Coming soon.
+
+#### Using the SDK
+
+Coming soon.
+
+#### Using the API
+
+Coming soon.
 
 ## Notification Selection Algorithm
 
 #### 1. Route to a Specific Recipient
+
+Coming soon.
 
 ```json
 {
@@ -70,6 +90,8 @@ curl 'https://alerts-management-demo.barchart.com/alert/publishers' \
 
 #### 2. Route to a Default Recipient
 
+Coming soon.
+
 ```json
 {
   "publishers": [
@@ -84,6 +106,8 @@ curl 'https://alerts-management-demo.barchart.com/alert/publishers' \
 ```
 
 #### 3. Route based on the Alert Type
+
+Coming soon.
 
 ```json
 {
@@ -109,6 +133,7 @@ curl 'https://alerts-management-demo.barchart.com/alert/publishers' \
 
 #### 3. Don't Send a Notification
 
+Coming soon.
 
 
 
