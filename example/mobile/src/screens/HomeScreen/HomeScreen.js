@@ -1,7 +1,9 @@
+/* eslint-disable camelcase */
 import { Button, Card } from 'react-native-paper';
-import React, { useCallback } from 'react';
+import React, { useCallback, useEffect } from 'react';
 import { ScrollView, StyleSheet, View } from 'react-native';
 import { useDispatch, useSelector } from 'react-redux';
+import DisposableStack from '@barchart/common-js/collections/specialized/DisposableStack';
 
 import { setAlerts, setTriggers } from '../../redux/actions/alerts';
 import { getManager } from '../../utils/AlertManager';
@@ -16,27 +18,38 @@ export const HomeScreen = ({ navigation }) => {
 	const dispatch = useDispatch();
 
 	const manager = getManager();
-	
+
 	const handleSubscribeTriggers = useCallback(() => {
-		// eslint-disable-next-line camelcase
 		manager.retrieveTriggers({ user_id: `${userID}`, alert_system: system }).then((triggers) => {
 			dispatch(setTriggers(triggers));
 		});
 	}, [userID, system, manager, dispatch]);
 
 	const handleSubscribeAlerts = useCallback(() => {
-		// eslint-disable-next-line camelcase
 		manager.retrieveAlerts({ user_id: `${userID}`, alert_system: system }).then((alerts) => {
 			dispatch(setAlerts(alerts));
 		});
 	}, [userID, system, manager, dispatch]);
 
-	if (manager) {
-		// eslint-disable-next-line camelcase
-		manager.subscribeTriggers({ user_id: userID, alert_system: system }, handleSubscribeTriggers, handleSubscribeTriggers, handleSubscribeTriggers);
-		// eslint-disable-next-line camelcase
-		manager.subscribeAlerts({ user_id: userID, alert_system: system }, handleSubscribeAlerts, handleSubscribeAlerts, handleSubscribeAlerts, handleSubscribeTriggers);
-	}
+	useEffect(() => {
+		const disposables = new DisposableStack();
+
+		if (manager) {
+			const triggerDisposable = manager.subscribeTriggers({
+				user_id: userID,
+				alert_system: system
+			}, handleSubscribeTriggers, handleSubscribeTriggers, handleSubscribeTriggers);
+			const alertsDisposable = manager.subscribeAlerts({
+				user_id: userID,
+				alert_system: system
+			}, handleSubscribeAlerts, handleSubscribeAlerts, handleSubscribeAlerts, handleSubscribeTriggers);
+
+			disposables.push(triggerDisposable);
+			disposables.push(alertsDisposable);
+		}
+
+		return () => disposables.dispose();
+	}, []);
 
 	return (
 		<ScrollView style={styles.container}>
