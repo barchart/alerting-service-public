@@ -11,3 +11,51 @@ An _alert_ is ```Inactive``` when it is created. Here are tne most common states
 Here is a visualization of possible state transitions:
 
 ![Alert State Diagram](../images/states.svg)
+
+## Alert Subscriptions
+
+The following events can occur during the life of a _alert_ object:
+
+* It is _created_ — in response to a user request
+* It is _updated_ — in response to a user request (or automatically by the system)
+* It is _deleted_ — in response to a user request
+* It is _triggered_ — when its conditions are met
+
+#### Using the SDK
+
+The [```AlertManager.subscribeAlerts```](/content/sdk/lib?id=alertmanagersubscribealerts) function registers callbacks, as follows:
+
+```js
+const handleAlertChanged = (alert) => {
+	console.log(`Alert [ ${alert.alert_id} ] changed status to [ ${a.alert_state} ]`);
+};
+
+const handleAlertDeleted = (alert) => {
+	console.log(`Alert [ ${alert.alert_id} ] was deleted`);
+};
+
+const handleAlertCreated = (alert) => {
+	console.log(`Alert [ ${alert.alert_id} ] was created`);
+};
+
+const handleAlertTriggered = (alert) => {
+	console.log(`Alert [ ${alert.alert_id} ] was triggered`);
+};
+
+const query = { };
+
+query.user_id = 'me';
+query.alert_system = 'barchart.com';
+
+const subscripton = alertManager.subscribeAlerts(query, handleAlertChanged, handleAlertDeleted, handleAlertCreated, handleAlertTriggered);
+```
+
+To stop the subscription, do the following:
+
+```js
+subscription.dispose();
+```
+
+#### Using the API
+
+Short polling must be used to simulate a subscription.
