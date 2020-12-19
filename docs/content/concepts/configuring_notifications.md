@@ -130,9 +130,20 @@ curl 'https://alerts-management-demo.barchart.com/alert/publishers/default/barch
 
 ## Notification Selection Algorithm
 
+When a running alert's conditions are met, it is said to _trigger_. Each time an alert triggers, one or more notifications are generated. Only one notification per type will be generated. For example, one email and one text message could be generated. However, two emails cannot be sent.
+
+For each type of notification, the following algorithm is used, stopping when the first rule is matched:
+
+1. Does the _alert_ have a _publisher_ for a specific recipient?
+2. Does the _alert_ have a _publisher_ for the default recipient?
+3. Does the _alert_ have an ```alert_type``` which matches the user preference?
+4. Do nothing. Don't use this notification type.
+
+Using this algorithm, an _alert_ can define its own notification rules; or it can rely on user preferences — without explicitly specifying any rules.
+
 #### 1. Route to a Specific Recipient
 
-Coming soon.
+Each _alert_ object may have a set of _publisher_ objects. Each _publisher_ object defines notification rules for a single notification type. The following _publisher_ object has the highest priority because the ```use_default_recipient``` property has a ```false``` value. The notification will be routed to the ```recipient``` — completely ignoring the user's preferences.
 
 ```json
 {
@@ -150,7 +161,7 @@ Coming soon.
 
 #### 2. Route to a Default Recipient
 
-Coming soon.
+The following publisher indicates a notification should be generated; however, the _default_recipient_ is taken from the user's preferences — assuming the user has a preference with a matching ```publisher_type_id``` value.
 
 ```json
 {
@@ -167,7 +178,7 @@ Coming soon.
 
 #### 3. Route based on the Alert Type
 
-Coming soon.
+Finally, in the case where an _alert_ has no _publisher_ objects:
 
 ```json
 {
@@ -175,6 +186,8 @@ Coming soon.
   "publishers": [ ]
 }
 ```
+
+The user's preferences will be used, if alert is classified with an ```alert_type``` that is contained within the preference object's ```active_alert_types``` array, as follows:
 
 ```json
 {
@@ -193,7 +206,7 @@ Coming soon.
 
 #### 3. Don't Send a Notification
 
-Coming soon.
+If none of the previous rules is matched, then no notification — for the given type — is generated.
 
 
 
