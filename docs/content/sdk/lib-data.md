@@ -19,6 +19,7 @@
         * [.Property](#SchemaProperty) : <code>Object</code>
         * [.Target](#SchemaTarget) : <code>Object</code>
         * [.Operator](#SchemaOperator) : <code>Object</code>
+        * [.Publisher](#SchemaPublisher) : <code>Object</code>
         * [.AlertIdentifier](#SchemaAlertIdentifier) : <code>Object</code>
         * [.AlertQuery](#SchemaAlertQuery) : <code>Object</code>
         * [.UserIdentifier](#SchemaUserIdentifier) : <code>Object</code>
@@ -54,8 +55,8 @@
 | [user_notes] | <code>String</code> | <p>Ad hoc text.</p> |
 | [alert_type] | <code>String</code> | <p>Used to classify the alert, controlling &quot;default&quot; publishing rules, if no publishers have been explicitly specified. This happens by matching the &quot;active_alert_type&quot; property of a [PublisherTypeDefault](#publishertypedefault).</p> |
 | conditions | [<code>Array.&lt;Condition&gt;</code>](#SchemaCondition) | <p>The conditions which cause an the alert to be triggered. If multiple conditions are present, they must all be satisfied before the alert will be triggered.</p> |
-| [publishers] | <code>Array.&lt;Schema.Publisher&gt;</code> | <p>The rules for publishing a notification. This is optional. In most cases, it's best to rely on the default rules bound to the alert's owner.</p> |
-| [effectivePublishers] | <code>Array.&lt;Schema.Publisher&gt;</code> | <p>A read-only property added by the backend listing the &quot;effective&quot; rules which will be used to publish notifications. Any rules in the &quot;publishers&quot; property take precedence, then the default rules for the alert's owner are applied.</p> |
+| [publishers] | [<code>Array.&lt;Publisher&gt;</code>](#SchemaPublisher) | <p>The rules for sending notifications when the alert is triggered. This is optional. In most cases, it's best to rely on the default rules bound to the alert's owner.</p> |
+| [effectivePublishers] | [<code>Array.&lt;Publisher&gt;</code>](#SchemaPublisher) | <p>A read-only property added by the backend listing the &quot;effective&quot; rules which will be used to publish notifications. Any rules in the &quot;publishers&quot; property take precedence, then the default rules for the alert's owner are applied.</p> |
 | [schedules] | <code>Array.&lt;AlertResetSchedule&gt;</code> |  |
 | read | <code>Boolean</code> | <p>shows whether the alert has been read.</p> |
 
@@ -148,6 +149,23 @@
 | [display.medium] | <code>String</code> | <p>A medium-length description of the operator. Managed by the backend.</p> |
 | [display.long] | <code>String</code> | <p>A full-length description of the operator. Managed by the backend.</p> |
 | [modifiers] | <code>Array</code> |  |
+
+
+* * *
+
+### Schema.Publisher :id=schemapublisher
+> A &quot;publisher&quot; describes the rules for sending a specific type of notification when an alert triggers.</p>
+> <p>Only required fields are necessary to create a publisher (for use with a new alert object).
+
+**Kind**: static typedef of [<code>Schema</code>](#Schema)  
+**Properties**
+
+| Name | Type | Description |
+| --- | --- | --- |
+| type | <code>Object</code> |  |
+| type.publisher_type_id | <code>Number</code> | <p>The identifier of the [PublisherType](#schemapublishertype) this rule applies to.</p> |
+| [recipient] | <code>String</code> | <p>The addressing data required to deliver a notification. For email notifications, an email address. For SMS notifications, a phone number.</p> |
+| [use_default_recipient] | <code>Boolean</code> | <p>If present (and true), the recipient property is ignored; in favor the of default_recipient from the user's corresponding [PublisherTypeDefault](#schemapublishertypedefault).</p> |
 
 
 * * *

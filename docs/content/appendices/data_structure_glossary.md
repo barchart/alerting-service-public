@@ -10,6 +10,7 @@ Here is an example — using the fewest fields necessary — to create a new ale
 	"alert_system": "barchart.com",
 	"name": "My First Alert"
 	"conditions": [ { /* See the "Condition" section */ } ]
+	"publishers": [ { /* See the "Publisher" section */ } ]
 }
 ```
 
@@ -73,3 +74,28 @@ Here is an example — using the fewest fields necessary — to create a target 
 ```
 
 _Refer to [```Schema.Target```](/content/sdk/lib-data?id=schematarget) for a formal definition._
+
+## Publisher
+
+**A "publisher" describes the rules for sending one type of notification (e.g. email) after an alert triggers** A publisher is always contained within an [alert](#Alert). If an alert has no publishers; notifications are controlled entirely by user preferences.
+
+Here is an example — using the fewest fields necessary — to create a publisher (for use within an [alert](#Alert)):
+
+```json (psuedo)
+{
+  "publishers": [
+	{
+	  "type": {
+		"publisher_type_id": 1
+	  },
+	  "use_default_recipient": false,
+	  "recipient": "312-867-5309"
+	}
+  ]
+}
+```
+
+_Refer to [```Schema.Publisher```](/content/sdk/lib-data?id=schemapublisher) for a formal definition._
+
+
+

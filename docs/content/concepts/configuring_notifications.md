@@ -139,7 +139,7 @@ For each type of notification, the following algorithm is used, stopping when th
 3. Does the _alert_ have an ```alert_type``` which matches the user preference?
 4. Do nothing. Don't use this notification type.
 
-Using this algorithm, an _alert_ can define its own notification rules; or it can rely on user preferences — without explicitly specifying any rules.
+Using this algorithm, an _alert_ can define its own notification rules; or it can rely on user preferences — without explicitly specifying any rules. **In most cases, relying entirely on a user's preferences is the best approach (i.e. option #3).**
 
 #### 1. Route to a Specific Recipient
 
