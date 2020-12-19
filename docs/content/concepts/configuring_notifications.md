@@ -125,7 +125,7 @@ curl 'https://alerts-management-demo.barchart.com/alert/publishers/default/barch
   -H 'Accept: application/json' \
   -H 'Content-Type: application/json;charset=UTF-8' \
   -H 'Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoibWUiLCJ1c2VySWQiOiJtZSIsImFsZXJ0X3N5c3RlbSI6ImJhcmNoYXJ0LmNvbSIsImNvbnRleHRJZCI6ImJhcmNoYXJ0LmNvbSIsImlhdCI6MTYwODI5MzQzM30.QFY6GphC1tGXJPNExJw2nqnjfU8heYTvKw16OKusQPw' \
-  --data-binary '{"publisher_type_id": 1, "default_recipient": "222-333-4444", "allow_window_timezone":"America/Chicago"}'
+  --data-binary '{"publisher_type_id": 1, "default_recipient": "222-333-4444", "allow_window_start": "08:00", "allow_window_end": "17:00", "allow_window_timezone": "America/Chicago", "active_alert_types": ["price"]}'
 ```
 
 ## Notification Selection Algorithm
