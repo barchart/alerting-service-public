@@ -55,6 +55,9 @@ Here is an actual JSON object, representing an alert:
 				"operand": "600"
 			}
 		}
+	],
+	"publishers": [
+
 	]
 }
 ```
