@@ -140,7 +140,7 @@ Using the same example — Apple stock's last price is greater than $600 — our
 
 ## Composing Publishers
 
-Most alerts do not define any publishers. Instead, most alerts rely on global user preferences to determine how notifications should be handled. 
+Most alerts do not use publishers. Instead, most alerts rely on user preferences to determine how notifications should be handled. 
 
 See the [Key Concepts: Configuring Notifications](/content/concepts/configuring_notifications) for more details.
 
