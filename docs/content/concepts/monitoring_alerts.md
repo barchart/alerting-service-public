@@ -1,6 +1,6 @@
 ## State Transitions
 
-An _alert_ is ```Inactive``` when it is created. Here are tne most common states for an alert:
+An _alert_ is ```Inactive``` when it is created. Here are the most common states for an alert:
 
 * ```Inactive``` - The alert is not processing. No notifications will be generated.
 * ```Starting``` - The alert is attempting to transition to the ```Active``` state.
