@@ -1,6 +1,11 @@
+The page contains a listing of _properties_ which can be observed. This metadata can be downloaded using:
+
+* the [```AlertManager.getProperties```](/content/sdk/lib?id=alertmanagergetproperties) and [```AlertManager.getOperators```](/content/sdk/lib?id=alertmanagergetproperties) functions, or
+* the [```/alert/targets/properties```](/content/api/paths?id=get-alerttargetsproperties) and [```/alert/operators```](/content/api/paths?id=get-alerttargetsproperties) endpoints.
+
 ## Quotes: Prices & Volume
 
-| ID | Description | Time Frame | Valid Operators |
+| Property ID | Description | Time Frame | Valid Operators |
 | :- | :--- | :--- | :--: |
 | 1 | Last | -- | >, <, >, < |
 | 3 | High | -- | >, <, >, < |
@@ -13,7 +18,7 @@
 
 ## Quotes: Prior Day Prices
 
-| ID | Description | Time Frame | Valid Operators |
+| Property ID | Description | Time Frame | Valid Operators |
 | :- | :--- | :--- | :--: |
 | 176 | Prev High | -- | >, <, >, < |
 | 177 | Prev Low | -- | >, <, >, < |
@@ -26,14 +31,14 @@
 
 ## Quotes: New Highs & Lows
 
-| ID | Description | Time Frame | Valid Operators |
+| Property ID | Description | Time Frame | Valid Operators |
 | :- | :--- | :--- | :--: |
 | 126 | Today's High | -- | makes new, within % |
 | 127 | Today's Low | -- | makes new, within % |
 
 ## Technicals: Prices & Volume
 
-| ID | Description | Time Frame | Valid Operators |
+| Property ID | Description | Time Frame | Valid Operators |
 | :- | :--- | :--- | :--: |
 | 167 | Price Change | 5-Day | >, <, >, < |
 | 168 | Price Change | 1-Month | >, <, >, < |
@@ -55,7 +60,7 @@
 
 ## Technicals: Technical Analysis
 
-| ID | Description | Time Frame | Valid Operators |
+| Property ID | Description | Time Frame | Valid Operators |
 | :- | :--- | :--- | :--: |
 | 15 | Average Volume | 5-Day | >, <, >, < |
 | 16 | Average Volume | 20-Day | >, <, >, < |
@@ -114,7 +119,7 @@
 
 ## Technicals: Support & Resistance
 
-| ID | Description | Time Frame | Valid Operators |
+| Property ID | Description | Time Frame | Valid Operators |
 | :- | :--- | :--- | :--: |
 | 121 | Pivot Point | -- | >, <, >, < |
 | 122 | Support L1 | -- | >, <, >, < |
@@ -124,7 +129,7 @@
 
 ## Opinions: Barchart Opinion
 
-| ID | Description | Side | Valid Operators |
+| Property ID | Description | Side | Valid Operators |
 | :- | :--- | :--- | :--: |
 | 108 | Overall Opinion | -- | = |
 | 220 | Overall Strength | -- | = |
@@ -152,7 +157,7 @@
 
 ## Opinions: Short-Term Indicators
 
-| ID | Description | Signal Type | Valid Operators |
+| Property ID | Description | Signal Type | Valid Operators |
 | :- | :--- | :--- | :--: |
 | 29 | 20 Day Mov Avg | Signal | = |
 | 131 | 20 Day Mov Avg | Strength | = |
@@ -173,7 +178,7 @@
 
 ## Opinions: Long-Term Indicators
 
-| ID | Description | Signal Type | Valid Operators |
+| Property ID | Description | Signal Type | Valid Operators |
 | :- | :--- | :--- | :--: |
 | 36 | 100 Day Mov Avg | Signal | = |
 | 138 | 100 Day Mov Avg | Strength | = |
@@ -194,7 +199,7 @@
 
 ## Opinions: Legacy Indicators
 
-| ID | Description | Signal Type | Valid Operators |
+| Property ID | Description | Signal Type | Valid Operators |
 | :- | :--- | :--- | :--: |
 | 27 | 7-Day ADX | Signal | = |
 | 129 | 7-Day ADX | Strength | = |
