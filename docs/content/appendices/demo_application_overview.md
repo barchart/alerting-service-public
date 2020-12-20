@@ -6,11 +6,11 @@ For demonstration purposes, three applications have been built with this SDK. Th
 git clone git@github.com:barchart/alerts-client-js.git
 ```
 
-Then, example the ```example``` folder, you will find three sub-folders:
+Then, the ```example/``` folder, you will find three sub-folders:
 
-* ```browser``` - The web application.
-* ```mobile``` - The mobile application.
-* ```node``` - The Node.js scripts.
+* ```example/browser/``` - The web application.
+* ```example/mobile``` - The mobile application.
+* ```example/node/``` - The Node.js scripts.
 
 Each of these folders contains a ```README.md``` file with detailed instructions for build and execution of the demo applications.
 
