@@ -1,4 +1,4 @@
-Once you have [composed an alert](/content/concepts/composing_alerts), it can be saved, started, stopped, and deleted.
+Once you have [composed an alert](/content/concepts/composing_alerts) in JSON format, it can be saved, started, stopped, and deleted.
 
 ## Saving an Alert
 
@@ -28,7 +28,7 @@ Let's define an _alert_ with one condition — _Apple stock trades over $600 per
 
 #### Using the SDK
 
-We can save it using the [```AlertManager.createAlert```](/content/sdk/lib?id=alertmanagercreatealert) function.
+We can save the _alert_ by calling the [```AlertManager.createAlert```](/content/sdk/lib?id=alertmanagercreatealert) function.
 
 ```js
 alertManager.createAlert(alertToCreate)
@@ -39,7 +39,7 @@ alertManager.createAlert(alertToCreate)
 
 #### Using the API
 
-Or, we can save it by sending a ```POST``` request to the [```/alerts```](/content/api/paths?id=post-alerts) endpoint.
+Or, we can save the _alert_ by sending a ```POST``` request to the [```/alerts```](/content/api/paths?id=post-alerts) endpoint.
 
 ```shell
 curl 'https://alerts-management-demo.barchart.com/alerts' \
@@ -132,7 +132,7 @@ One the _alert_ has been saved, it's echoed back to us with additional propertie
 
 ## Starting an Alert
 
-An _alert_ is inert until activated. Once activated, the backend will begin monitoring and evaluating its conditions.
+An _alert_ is inert until activated. Once activated, the backend will begin monitoring and evaluating its conditions. Only _alerts_ in the ```Inactive``` or ```Triggered``` states can be activated.
 
 #### Using the SDK
 
@@ -151,7 +151,7 @@ alertManager.enableAlert(abbreviated)
 
 #### Using the API
 
-Or, we can save it by sending a ```PUT``` request to the [```/alerts/{id}```](/content/api/paths?id=put-alertsalert_id) endpoint. We must specify the desired ```alert_state``` as ```Starting```.
+Or, we can activate an _alert_ by sending a ```PUT``` request to the [```/alerts/{id}```](/content/api/paths?id=put-alertsalert_id) endpoint. We must specify the desired ```alert_state``` proeprty as ```Starting```.
 
 ```json
 curl 'https://alerts-management-demo.barchart.com/alerts/3a36d266-875d-4eaf-8c24-05021c9208c4' \
@@ -168,12 +168,28 @@ One the start command it processed, the _alert_ is echoed back to us with update
 
 ## Stopping an Alert
 
+Coming soon.
+
 #### Using the SDK
 
+Coming soon.
+
 #### Using the API
+
+Coming soon.
+
+#### JSON Result
+
+One the stop command it processed, the _alert_ is echoed back to us with updated property values — most notably, the ```alert_state``` property.
 
 ## Deleting an Alert
 
+Coming soon.
+
 #### Using the SDK
 
+Coming soon.
+
 #### Using the API
+
+Coming soon.
