@@ -65,7 +65,7 @@ The Barchart Alerting Service implements a REST interface over HTTPS, allowing y
 
 #### Other Platforms
 
-If you require an SDK for an alternate platform, please contact us at solutions@barchart.com or (866) 333-7587.
+If you require an SDK for another platform, please contact us — solutions@barchart.com or (866) 333-7587.
 
 ## User Privacy
 
