@@ -39,7 +39,7 @@ alertManager.createAlert(alertToCreate)
 
 #### Using the API
 
-Or, we can save it using the [```/alerts```](/content/api/paths?id=post-alerts) endpoint.
+Or, we can save it by sending a ```POST``` request to the [```/alerts```](/content/api/paths?id=post-alerts) endpoint.
 
 ```shell
 curl 'https://alerts-management-demo.barchart.com/alerts' \
@@ -130,15 +130,43 @@ One the _alert_ has been saved, it's echoed back to us with additional propertie
   }
 ```
 
+## Starting an Alert
 
-
-## Stopping an Alert
+An _alert_ is inert until activated. Once activated, the backend will begin monitoring and evaluating its conditions.
 
 #### Using the SDK
 
+Call the [```AlertManager.enableAlert```](/content/sdk/lib?id=alertmanagerenablealert) function. Pass the entire alert. Or, pass an abbreviated object with an ```alert_id``` property.
+
+```js
+const abbreviated = { };
+
+abbreviated.alert_id = alert.alert_id;
+
+alertManager.enableAlert(abbreviated)
+	.then((updated) => {
+		console.log(`Alert [ ${updated.alert_id} ] state is now [ ${updated.alert_state} ]`);
+	});
+```
+
 #### Using the API
 
-## Starting an Alert
+Or, we can save it by sending a ```PUT``` request to the [```/alerts/{id}```](/content/api/paths?id=put-alertsalert_id) endpoint. We must specify the desired ```alert_state``` as ```Starting```.
+
+```json
+curl 'https://alerts-management-demo.barchart.com/alerts/3a36d266-875d-4eaf-8c24-05021c9208c4' \
+  -X 'PUT' \
+  -H 'Accept: application/json' \
+  -H 'Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoibWUiLCJhbGVydF9zeXN0ZW0iOiJiYXJjaGFydC5jb20iLCJpYXQiOjE1ODk0MTEyNzl9.SxyC8s_CKhPyzcNmM_h_TRMiNSx3YstKGmAb2IOWqgM' \
+  -H 'Content-Type: application/json;charset=UTF-8' \
+  --data-binary '{"alert_id":"3a36d266-875d-4eaf-8c24-05021c9208c4","alert_state":"Starting"}'
+```
+
+#### JSON Result
+
+One the start command it processed, the _alert_ is echoed back to us with updated property values — most notably, the ```alert_state``` property.
+
+## Stopping an Alert
 
 #### Using the SDK
 
