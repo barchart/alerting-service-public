@@ -52,7 +52,7 @@ curl 'https://alerts-management-demo.barchart.com/alerts' \
 
 #### JSON Result
 
-One the _alert_ has been created, it's echoed back to us, with some additional properties filled in — most notably, the ```alert_id``` property:
+One the _alert_ has been saved, it's echoed back to us with additional properties — most notably, the ```alert_id``` property:
 
 ```json
 {
