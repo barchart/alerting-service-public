@@ -71,7 +71,7 @@ If you require an SDK for another platform, please contact us — solutions@barc
 
 **Privacy is important to Barchart.** 
 
-We don't want to collect or transmit any personally identifiable information. Avoid sending sending sensitive information to Barchart, as follows:
+We don't want to collect or transmit any personally identifiable information. Avoid sending sensitive information to Barchart, as follows:
 
 * Use meaningless identifiers for your users — as long as they are unique.
 * Use cryptographic tokens which allow Barchart to verify user identity. Passwords are not necessary.
