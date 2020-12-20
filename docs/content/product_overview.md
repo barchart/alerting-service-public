@@ -73,6 +73,6 @@ If you require an SDK for an alternate platform, please contact us at solutions@
 
 We don't want to collect or transmit any personally identifiable information. Avoid sending sending sensitive information to Barchart, as follows:
 
-* You must provide Barchart with user identifiers. However, these identifiers can be meaningless — as long as they are unique.
-* Passwords are not used. Instead, you generate cryptographic tokens which allow Barchart to verify user identity.
-* Contact information (e.g. phone number and email address) can be withheld, assuming you want to handle the "last mile" of user notification.
+* Use meaningless identifiers for your users — as long as they are unique.
+* Use cryptographic tokens which allow Barchart to verify user identity. Passwords are not necessary.
+* Contact information can be withheld, if your systems handle the "last mile" of user notification.
