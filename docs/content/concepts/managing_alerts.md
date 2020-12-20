@@ -2,7 +2,7 @@ Once you have [composed an alert](/content/concepts/composing_alerts), it can be
 
 ## Saving an Alert
 
-Let's define an _alert_ with one condition — _notify me when Apple stock trades over $600 per share:_
+Let's define an _alert_ with one condition — _Apple stock trades over $600 per share:_
 
 ```json
 {
