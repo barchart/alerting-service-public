@@ -1,6 +1,8 @@
 ## State Transitions
 
-An _alert_ is ```Inactive``` when it is created. Here are the most common states for an alert:
+An _alert_ is ```Inactive``` when it is created. 
+
+Here are the most common states for an alert:
 
 * ```Inactive``` - The alert is not processing. No notifications will be generated.
 * ```Starting``` - The alert is attempting to transition to the ```Active``` state.
@@ -17,7 +19,7 @@ Here is a visualization of possible state transitions:
 The following events can occur during the life of a _alert_ object:
 
 * It is _created_ — in response to a user request
-* It is _updated_ — in response to a user request (or automatically by the system)
+* It is _updated_ — when its state changes — in response to a user request (or an automated system decision)
 * It is _deleted_ — in response to a user request
 * It is _triggered_ — when its conditions are met
 
