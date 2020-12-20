@@ -110,15 +110,35 @@ curl 'https://alerts-management-demo.barchart.com/alert/operators' \
 
 ## Composing Alerts
 
-Coming soon.
+Each _alert_ is represented by a JSON object. At a minimum, we must define (a) the _alert_ owner, and (b) a set of _conditions_ for the alert, as follows:
+
+```json
+{
+	"user_id": "me",
+	"alert_system": "barchart.com",
+	"conditions": [ ]
+}
+```
+
+Technically speaking, this _alert_ object is valid. However, it won't be useful without at least one _condition_ (more on that [below](#composing-conditions)).
+
+Additional properties are optional:
+
+* ```name``` — Ad hoc text.
+* ```user_notes``` — Ad hoc text.
+* ```alert_type``` — See the [Advanced Features](#using-advanced-features) section, below.
+* ```alert_behaviour``` — See the [Advanced Features](#using-advanced-features) section, below.
+* ```schedules``` — See the [Advanced Features](#using-advanced-features) section, below.
+
+Also, refer to [```Schema.Alert```](/content/sdk/lib-data?id=schemaalert) for a formal definition of the data structure.
 
 ## Composing Conditions
 
 In order to define a conditional statement as a JSON object, you need to:
 
-* Specify a _target_ identifier, using a ```String``` value — usually a stock symbol,
-* Specify the desired _property_, using the numeric ```property_id``` value,
-* Specify the desired _operator_, using the numeric ```operator_id``` value, and
+* Specify the identifier of the _target_, using a ```String``` value — usually a stock symbol,
+* Specify a _property_, using the numeric ```property_id``` value,
+* Specify an _operator_, using the numeric ```operator_id``` value, and
 * Specify an _operand_ value — usually a ```Number``` value.
 
 Using the same example — Apple stock's last price is greater than $600 — our JSON object looks like this (comments added):
@@ -137,6 +157,8 @@ Using the same example — Apple stock's last price is greater than $600 — our
 	}
 }
 ```
+
+Also, refer to [```Schema.Condition```](/content/sdk/lib-data?id=schemacondition) for a formal definition of the data structure.
 
 ## Composing Publishers
 

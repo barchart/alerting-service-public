@@ -8,7 +8,7 @@ Here is an example — using the fewest fields necessary — to create a new ale
 {
 	"user_id": "me",
 	"alert_system": "barchart.com",
-	"name": "My First Alert"
+	"name": "My First Alert",
 	"conditions": [ { /* See the "Condition" section */ } ]
 	"publishers": [ { /* See the "Publisher" section */ } ]
 }
