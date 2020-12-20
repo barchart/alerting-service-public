@@ -4,11 +4,11 @@ The Barchart Alerting Service supports two secure protocols:
 
 * **WebSockets**
   * Recommended for interactive clients.
-  * Persistent full-duplex communication between SDK and backend.
+  * Persistent, full-duplex communication between the SDK and the backend.
   * True subscriptions to state changes are possible. Events are pushed from the backend.
   * Supported by SDK, see [```AdapterForSocketIO```](/content/sdk/lib-adapters?id=adapterforsocketio) class.
 * **HTTPS**
-  * Recommended for non-interactive clients, events are not pushed from the server — subscriptions must be simulated with short polling.
+  * Recommended for non-interactive clients, since events are not pushed from the server.
   * Discrete, request/response communication model.
   * True subscriptions to state changes are not possible. However, short polling can be used to simulate subscriptions.
   * Supported by SDK, see [```AdapterForSocketHttp```](/content/sdk/lib-adapters?id=adapterforhttp) class.
