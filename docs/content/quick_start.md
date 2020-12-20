@@ -125,7 +125,7 @@ Refer to [Key Concepts: Composing Alerts](/content/concepts/composing_alerts) fo
 
 ## Creating an Alert
 
-Assuming we've defined an alert (see above), we need to save it. The backend will assign an ```alert_id``` value and return a _complete_ ```Alert``` object to you.
+Assuming we've defined an alert (see [above](#defining-an-alert)), we need to save it. The backend will assign an ```alert_id``` value and return a _complete_ ```Alert``` object to you.
 
 #### Using the SDK
 
