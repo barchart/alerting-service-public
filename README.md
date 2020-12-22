@@ -13,8 +13,8 @@ This SDK connects your applications to the  **[Barchart](https://www.barchart.co
 
 ### Documentation
 
-Complete documentation for this SDK can be accessed [here](https://barchart.github.io/alerts-client-js/).
+Complete documentation for this SDK can be accessed [here](https://docs.barchart.com/alerts/#/).
 
-### Example Applications
+### Demo Applications
 
-Refer to the [documentation](https://barchart.github.io/alerts-client-js/#/content/quick_start?id=sample-applications) for more information.
+Refer to the [documentation](https://docs.barchart.com/alerts/#/content/quick_start?id=demo-applications) for more information.
