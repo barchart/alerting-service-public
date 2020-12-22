@@ -153,7 +153,7 @@ alertManager.enableAlert(abbreviated)
 
 Or, we can activate an _alert_ by sending a ```PUT``` request to the [```/alerts/{id}```](/content/api/paths?id=put-alertsalert_id) endpoint. We must specify the desired ```alert_state``` proeprty as ```Starting```.
 
-```json
+```shell
 curl 'https://alerts-management-demo.barchart.com/alerts/3a36d266-875d-4eaf-8c24-05021c9208c4' \
   -X 'PUT' \
   -H 'Accept: application/json' \
@@ -164,7 +164,7 @@ curl 'https://alerts-management-demo.barchart.com/alerts/3a36d266-875d-4eaf-8c24
 
 #### JSON Result
 
-One the start command it processed, the _alert_ is echoed back to us with updated property values — most notably, the ```alert_state``` property.
+Once the start command it processed, the _alert_ is echoed back to us with updated property values — most notably, the ```alert_state``` property.
 
 ## Stopping an Alert
 
@@ -180,7 +180,7 @@ Coming soon.
 
 #### JSON Result
 
-One the stop command it processed, the _alert_ is echoed back to us with updated property values — most notably, the ```alert_state``` property.
+Once the stop command it processed, the _alert_ is echoed back to us with updated property values — most notably, the ```alert_state``` property.
 
 ## Deleting an Alert
 
