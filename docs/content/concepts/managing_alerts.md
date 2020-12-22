@@ -32,8 +32,8 @@ We can save the _alert_ by calling the [```AlertManager.createAlert```](/content
 
 ```js
 alertManager.createAlert(alertToCreate)
-	.then((alert) => {
-		console.log(`A new alert was created with ID: [ ${alert.alert_id} ]`);
+	.then((saved) => {
+		console.log(`A new alert was created with ID: [ ${saved.alert_id} ]`);
 	});
 ```
 
@@ -132,7 +132,7 @@ One the _alert_ has been saved, it's echoed back to us with additional propertie
 
 ## Starting an Alert
 
-An _alert_ is inert until activated. Once activated, the backend will begin monitoring and evaluating its conditions. Only _alerts_ in the ```Inactive``` or ```Triggered``` states can be activated.
+An _alert_ is inert until activated. Once activated, the backend will begin monitoring and evaluating its _conditions_. Only _alerts_ in the ```Inactive``` or ```Triggered``` states can be activated.
 
 #### Using the SDK
 
@@ -151,7 +151,7 @@ alertManager.enableAlert(abbreviated)
 
 #### Using the API
 
-Or, we can activate an _alert_ by sending a ```PUT``` request to the [```/alerts/{id}```](/content/api/paths?id=put-alertsalert_id) endpoint. We must specify the desired ```alert_state``` proeprty as ```Starting```.
+Or, we can activate an _alert_ by sending a ```PUT``` request to the [```/alerts/{id}```](/content/api/paths?id=put-alertsalert_id) endpoint. We must specify the desired ```alert_state``` property as ```Starting```.
 
 ```shell
 curl 'https://alerts-management-demo.barchart.com/alerts/3a36d266-875d-4eaf-8c24-05021c9208c4' \
@@ -168,15 +168,35 @@ Once the start command it processed, the _alert_ is echoed back to us with updat
 
 ## Stopping an Alert
 
-Coming soon.
+When ```Active``` _alert_ is stopped, the backend will cease monitoring and evaluating its _conditions_. 
 
 #### Using the SDK
 
-Coming soon.
+Call the [```AlertManager.disableAlert```](/content/sdk/lib?id=alertmanagerdisablealert) function. Pass the entire alert. Or, pass an abbreviated object with an ```alert_id``` property.
+
+```js
+const abbreviated = { };
+
+abbreviated.alert_id = alert.alert_id;
+
+alertManager.disableAlert(abbreviated)
+	.then((updated) => {
+		console.log(`Alert [ ${updated.alert_id} ] state is now [ ${updated.alert_state} ]`);
+	});
+```
 
 #### Using the API
 
-Coming soon.
+Or, we can deactivate an _alert_ by sending a ```PUT``` request to the [```/alerts/{id}```](/content/api/paths?id=put-alertsalert_id) endpoint. We must specify the desired ```alert_state``` property as ```Stopping```.
+
+```shell
+curl 'https://alerts-management-demo.barchart.com/alerts/3a36d266-875d-4eaf-8c24-05021c9208c4' \
+  -X 'PUT' \
+  -H 'Accept: application/json' \
+  -H 'Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoibWUiLCJhbGVydF9zeXN0ZW0iOiJiYXJjaGFydC5jb20iLCJpYXQiOjE1ODk0MTEyNzl9.SxyC8s_CKhPyzcNmM_h_TRMiNSx3YstKGmAb2IOWqgM' \
+  -H 'Content-Type: application/json;charset=UTF-8' \
+  --data-binary '{"alert_id":"3a36d266-875d-4eaf-8c24-05021c9208c4","alert_state":"Stopping"}'
+```
 
 #### JSON Result
 
@@ -184,12 +204,31 @@ Once the stop command it processed, the _alert_ is echoed back to us with update
 
 ## Deleting an Alert
 
-Coming soon.
+Any _alert_ can be deleted. If an ```Active``` alert is deleted, monitoring will stop immediately.
 
 #### Using the SDK
 
-Coming soon.
+Call the [```AlertManager.deleteAlert```](/content/sdk/lib?id=alertmanagerdeletealert) function. Pass the entire alert. Or, pass an abbreviated object with an ```alert_id``` property.
+
+```js
+const abbreviated = { };
+
+abbreviated.alert_id = alert.alert_id;
+
+alertManager.disableAlert(abbreviated)
+	.then((deleted) => {
+		console.log(`Alert [ ${deleted.alert_id} ] was deleted`);
+	});
+```
 
 #### Using the API
 
-Coming soon.
+Or, we can delete an _alert_ by sending a ```DELETE``` request to the [```/alerts/{id}```](/content/api/paths?id=delete-alertsalert_id) endpoint.
+
+```shell
+curl 'https://alerts-management-demo.barchart.com/alerts/3a36d266-875d-4eaf-8c24-05021c9208c4' \
+  -X 'PUT' \
+  -H 'Accept: application/json' \
+  -H 'Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoibWUiLCJhbGVydF9zeXN0ZW0iOiJiYXJjaGFydC5jb20iLCJpYXQiOjE1ODk0MTEyNzl9.SxyC8s_CKhPyzcNmM_h_TRMiNSx3YstKGmAb2IOWqgM' \
+  -H 'Content-Type: application/json;charset=UTF-8'
+```
