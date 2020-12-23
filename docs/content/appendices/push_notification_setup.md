@@ -35,7 +35,7 @@ Make a slight change to your mobile app. Each time a user logs in, collect the f
 
 * ```UserID``` — Combine `user_id` and `alert_system` with an ampersand.
 * ```BundleID``` — Refers to the app itself.
-* ```DeviceID``` — Refers to the device and installation (can be obtained from your app at runtime)
+* ```DeviceID``` — Refers to the device and installation (can be [obtained from your app at runtime](https://developer.apple.com/documentation/usernotifications/registering_your_app_with_apns))
 
 Two environments exist, use the appropriate one:
 
