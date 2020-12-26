@@ -26,7 +26,7 @@ The _demo_ environment can be used for integration and evaluation purposes. It c
 
 #### Production
 
-The _production_ environment does not permit permit anonymous connections. **Contact Barchart at solutions@barchart.com or (866) 333-7587 for assistance configuring your account.**
+The _production_ environment does not permit anonymous connections. **Contact Barchart at solutions@barchart.com or (866) 333-7587 for assistance configuring your account.**
 
 ## Authorization
 
