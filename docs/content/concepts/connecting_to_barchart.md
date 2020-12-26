@@ -45,3 +45,18 @@ Once the ```AlertManager``` has been instantiated, the ```start``` function shou
 ## Using the API
 
 There is no need to perform a _connect_ action when using the REST-ful API — each request is completely independent. However, each request must include a JWT token as the ```Authorization``` header. Details can be found in the next section — [Key Concepts: Securing the Connection](/content/concepts/securing_the_connection)
+
+## Environments
+
+Two instances of the Barchart Alerting Service are always running:
+
+#### Demo
+
+The _demo_ environment can be used for integration and evaluation purposes. It can be accessed at ```alerts-management-demo.barchart.com``` and has two significant limitations:
+
+* data saved in the _demo_ environment is **purged every four hours**, and
+* data saved in the _demo_ environment can be **accessed by anyone**.
+
+#### Production
+
+The _production_ environment does not permit anonymous connections. **Contact Barchart at solutions@barchart.com or (866) 333-7587 for assistance configuring your account.**

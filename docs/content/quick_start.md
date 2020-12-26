@@ -21,8 +21,8 @@ Two instances of the Barchart Alerting Service are always running:
 
 The _demo_ environment can be used for integration and evaluation purposes. It can be accessed at ```alerts-management-demo.barchart.com``` and has two significant limitations:
 
-* data saved in the _demo_ environment is purged nightly, and
-* data saved in the _demo_ environment can be accessed by anyone.
+* data saved in the _demo_ environment is **purged every four hours**, and
+* data saved in the _demo_ environment can be **accessed by anyone**.
 
 #### Production
 
