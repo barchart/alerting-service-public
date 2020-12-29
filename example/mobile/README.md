@@ -23,9 +23,9 @@ Push notification feature of the application require you to:
 
 #### Apple iOS
 
-First, install [Apple Xcode](https://developer.apple.com/xcode/). Open Xcode and use the `XCode > Preferences` menu to sign in. Your Apple ID should be a member of a valid team (more on that [below](#apple-developer-teams)).
+First, install [Apple Xcode](https://developer.apple.com/xcode/). Open Xcode and use the `Xcode > Preferences` menu to sign in. Your Apple ID should be a member of a valid team (more on that [below](#apple-developer-teams)).
 
-![Signing & Capabilities](.images/setup/01_Xcode_preferences.png)
+![Xcode preferences](.images/setup/01_Xcode_preferences.png)
    
 Next, configure the project:
 
@@ -34,7 +34,7 @@ Next, configure the project:
 3. Run `yarn install` from the `example/mobile` folder.
 4. Run `npx pod-install` command from the `example/mobile/ios` folder.
    * If the command fails, consult this [article](https://stackoverflow.com/questions/51768515/cocoa-pods-install-on-ios-project-not-working).
-5. Open `example/mobile/ios/alertclientmobile.xcworkspace` file with XCode.
+5. Open `example/mobile/ios/alertclientmobile.xcworkspace` file with Xcode.
 6. Click on `alertclientmobile` and go to the `Signing & Capabilities` section, then:
    * Set your Team (e.g. `Barchart.com, Inc.`).
    * Set the Bundle Identifier (e.g. `com.barchart.alerts-client-demo`).
