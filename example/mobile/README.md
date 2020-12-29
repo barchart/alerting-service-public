@@ -2,7 +2,7 @@
 
 ### Overview
 
-A simple mobile application, written using [React Native](https://reactnative.dev/) and the [JavaScript SDK for the Barchart Alerting Service](https://github.com/barchart/alerts-client-js).
+A simple mobile app, written using [React Native](https://reactnative.dev/) and the [JavaScript SDK for the Barchart Alerting Service](https://github.com/barchart/alerts-client-js).
 
 ### Screen Captures
 
@@ -14,7 +14,7 @@ Also, here is a [video clip](.images/examples/04_app_push_notification.mov), sho
 
 ### Requirements
 
-Push notification feature of the application require you to:
+The push notification feature of this app require you to:
 
 * Authorize Barchart to send push notifications on your behalf (see [below](#authorizing-push-notifications)).
 * Run the app on an actual device — not a simulator.
@@ -39,11 +39,11 @@ Next, configure the project:
    * Set your Team (e.g. `Barchart.com, Inc.`).
    * Set the Bundle Identifier (e.g. `com.barchart.alerts-client-demo`).
    * Ensure the `Remote Notifications` option is checked.
-   * Ensure the `Push Notifications` capability had been enabled.
-7. Connect your iOS device to the computer.
+   * Ensure the `Push Notifications` capability has been enabled.
+7. Connect your iOS device to your computer.
 8. Select your iOS device in Xcode.
-9. Build and run the application using the play button. This may take several minutes.
-10. Once the application loads, grant it permissions to receive push notifications.
+9. Build and run the app using the play button. This may take several minutes.
+10. Once the app loads, grant it permissions to receive push notifications.
 
 ![Signing & Capabilities](.images/setup/02_Xcode_project_settings.png)
 
