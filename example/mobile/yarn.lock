@@ -1039,8 +1039,10 @@
     lodash "^4.17.19"
     to-fast-properties "^2.0.0"
 
-"@barchart/alerts-client-js@file:../..":
-  version "4.0.20-beta.1"
+"@barchart/alerts-client-js@^4.1.0":
+  version "4.1.0"
+  resolved "https://registry.yarnpkg.com/@barchart/alerts-client-js/-/alerts-client-js-4.1.0.tgz#e675fa9bdad4ea3a3915e79def3eec391e7d255b"
+  integrity sha512-LhbbS1u4ODJ0RQDFJZqCu2Ody+Aw3mtHnSa7QQXOMgLRutJIW17Xkc7icJW42EkkQwxwFBIt7ZZLQ/9vaiNWQQ==
   dependencies:
     "@barchart/common-js" "^3.15.0"
     "@barchart/marketdata-api-js" "^5.1.5"
@@ -2267,10 +2269,10 @@ axios@^0.19.2:
   dependencies:
     follow-redirects "1.5.10"
 
-axios@^0.21.0:
-  version "0.21.0"
-  resolved "https://registry.yarnpkg.com/axios/-/axios-0.21.0.tgz#26df088803a2350dff2c27f96fef99fe49442aca"
-  integrity sha512-fmkJBknJKoZwem3/IKSSLpkdNXZeBu5Q7GA/aRsr2btgrptmSCxi2oFjZHqGdK9DoTil9PIHlPIZw2EcRJXRvw==
+axios@^0.21.1:
+  version "0.21.1"
+  resolved "https://registry.yarnpkg.com/axios/-/axios-0.21.1.tgz#22563481962f4d6bde9a76d516ef0e5d3c09b2b8"
+  integrity sha512-dKQiRHxGD9PPRIUNIWvZhPTPpl1rf/OxTYKsqKUDjBwYylTvV7SjSHJb9ratfyzM6wCdLCOYLzs73qpg5c4iGA==
   dependencies:
     follow-redirects "^1.10.0"
 
