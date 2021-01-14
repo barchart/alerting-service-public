@@ -156,6 +156,7 @@
 					13B07F861A680F5B00A75B9A = {
 						DevelopmentTeam = HM8YU2MF49;
 						LastSwiftMigration = 1120;
+						ProvisioningStyle = Automatic;
 					};
 				};
 			};
@@ -331,6 +332,8 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_ENTITLEMENTS = alertclientmobile/alertclientmobile.entitlements;
+				CODE_SIGN_IDENTITY = "Apple Development";
+				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = HM8YU2MF49;
 				ENABLE_BITCODE = NO;
@@ -348,6 +351,7 @@
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = "com.barchart.alerts-client-demo";
 				PRODUCT_NAME = alertclientmobile;
+				PROVISIONING_PROFILE_SPECIFIER = "";
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				SWIFT_VERSION = 5.0;
 				VERSIONING_SYSTEM = "apple-generic";
@@ -361,6 +365,8 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_ENTITLEMENTS = alertclientmobile/alertclientmobile.entitlements;
+				CODE_SIGN_IDENTITY = "Apple Development";
+				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = HM8YU2MF49;
 				INFOPLIST_FILE = alertclientmobile/Info.plist;
@@ -373,6 +379,7 @@
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = "com.barchart.alerts-client-demo";
 				PRODUCT_NAME = alertclientmobile;
+				PROVISIONING_PROFILE_SPECIFIER = "";
 				SWIFT_VERSION = 5.0;
 				VERSIONING_SYSTEM = "apple-generic";
 			};

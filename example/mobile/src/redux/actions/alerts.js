@@ -17,3 +17,8 @@ export const setSystem = (system) => ({
 	type: 'SET_SYSTEM',
 	payload: system
 });
+
+export const setPush = (push) => ({
+	type: 'SET_PUSH',
+	payload: push
+});

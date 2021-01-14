@@ -2,7 +2,8 @@ const INITIAL_STATE = {
 	alerts: [],
 	triggers: [],
 	userID: '00000000',
-	system: 'barchart.com'
+	system: 'barchart.com',
+	push: []
 };
 
 const alertsReducer = (state = INITIAL_STATE, action) => {
@@ -18,6 +19,9 @@ const alertsReducer = (state = INITIAL_STATE, action) => {
 		}
 		case 'SET_SYSTEM': {
 			return { ...state, system: action.payload };
+		}
+		case 'SET_PUSH': {
+			return { ...state, push: [...state.push, action.payload] };
 		}
 		default:
 			return state;

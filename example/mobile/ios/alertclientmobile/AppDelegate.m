@@ -57,19 +57,19 @@ static void InitializeFlipper(UIApplication *application) {
     controller.delegate = self;
     [controller startAndShowLaunchScreen:self.window];
   #endif
-
-  [super application:application didFinishLaunchingWithOptions:launchOptions];
   
-    
-    // Define UNUserNotificationCenter
-      UNUserNotificationCenter *center = [UNUserNotificationCenter currentNotificationCenter];
-      center.delegate = self;
+  // Define UNUserNotificationCenter
+  UNUserNotificationCenter *center = [UNUserNotificationCenter currentNotificationCenter];
+  center.delegate = self;
+  
+  [super application:application didFinishLaunchingWithOptions:launchOptions];
 
   return YES;
 }
 
 -(void)userNotificationCenter:(UNUserNotificationCenter *)center willPresentNotification:(UNNotification *)notification withCompletionHandler:(void (^)(UNNotificationPresentationOptions options))completionHandler
 {
+  [RNCPushNotificationIOS didReceiveRemoteNotification:notification.request.content.userInfo];
   completionHandler(UNNotificationPresentationOptionSound | UNNotificationPresentationOptionAlert | UNNotificationPresentationOptionBadge);
 }
 

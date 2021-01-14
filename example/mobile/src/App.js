@@ -5,9 +5,11 @@ import { createStackNavigator } from '@react-navigation/stack';
 import { NavigationContainer } from '@react-navigation/native';
 import { Provider } from 'react-redux';
 
-import { configureNotifications } from './utils/notifications';
+import { navigationRef } from './rootNavigation';
 
+import { AlertsScreen } from './screens/AlertsScreen/AlertsScreen';
 import { HomeScreen } from './screens/HomeScreen/HomeScreen';
+import { LatestPushNotification } from './screens/LatestPushScreen/LatestPushScreen';
 import { LoginScreen } from './screens/LoginScreen/LoginScreen';
 import { TriggersScreen } from './screens/TriggersScreen/TriggersScreen';
 
@@ -23,24 +25,23 @@ const theme = {
 	}
 };
 
-
 const Stack = createStackNavigator();
 
 export default function App() {
-	configureNotifications();
-
 	return (
 		<Provider store={store}>
 			<PaperProvider theme={theme}>
-				<NavigationContainer>
+				<NavigationContainer ref={navigationRef}>
 					<Stack.Navigator>
 						<Stack.Screen
 							name="Login"
 							component={LoginScreen}
 							options={{ title: 'Login' }}
 						/>
-						<Stack.Screen name="Alerts" component={HomeScreen}/>
-						<Stack.Screen name="Notifications" component={TriggersScreen}/>
+						<Stack.Screen name="Home" component={HomeScreen}/>
+						<Stack.Screen name="Triggered" options={{ title: 'Triggered Alerts' }} component={TriggersScreen}/>
+						<Stack.Screen name="Push" options={{ title: 'Latest Push Notifications' }} component={LatestPushNotification}/>
+						<Stack.Screen name="Alerts" component={AlertsScreen}/>
 					</Stack.Navigator>
 				</NavigationContainer>
 			</PaperProvider>

@@ -8,24 +8,38 @@ import { setAlerts, setSystem, setTriggers, setUser } from '../../redux/actions/
 import { createManager } from '../../utils/AlertManager';
 import { getPushToken } from '../../utils/notifications';
 
-const registerDevice = async (userId) => {
+const generateJwt = (user, context) => {
+	return axios.post('https://jwt-public-stage.aws.barchart.com/v1/tokens/impersonate/alerts/dev', {
+		userId: user,
+		contextId: context
+	}).then((response) => {
+		return response.data;
+	});
+};
+
+const registerDevice = async (userId, system) => {
 	const token = await getPushToken().then((token) => {
-		console.log('Stored token:', token);
+		console.info('Stored token:', token);
 
 		return token;
 	});
-	
+
 	if (!token) {
 		return setTimeout(() => registerDevice(userId), 100);
 	}
-	
-	return axios.post('https://push-notifications-stage.aws.barchart.com/v1/apns/registerDevice', {
-		deviceID: token,
-		bundleID: 'com.barchart.alerts-client-demo',
-		userID: userId,
-		realtimeUserID: userId
-	}).catch((err) => {
-		console.error(err);
+
+	return generateJwt(userId, system).then((jwtToken) => {
+		return axios.post('https://push-notifications-stage.aws.barchart.com/v1/apns/registerDevice', {
+			deviceID: token,
+			bundleID: 'com.barchart.alerts-client-demo',
+			userID: `${userId}@${system}`
+		}, {
+			headers: {
+				'Authorization': `Bearer ${jwtToken}`
+			}
+		}).catch((err) => {
+			console.error('Register device error:', err);
+		});
 	});
 };
 
@@ -35,7 +49,7 @@ export const LoginScreen = ({ navigation }) => {
 	const login = async (host, userId, system) => {
 		setLoading(true);
 		const manager = await createManager(host, userId, system);
-		
+
 		dispatch(setUser(userId));
 		dispatch(setSystem(system));
 
@@ -47,14 +61,14 @@ export const LoginScreen = ({ navigation }) => {
 		]).then((results) => {
 			dispatch(setTriggers(results[0]));
 			dispatch(setAlerts(results[1]));
-			
-			registerDevice(userId);
+
+			registerDevice(userId, system);
 
 			setLoading(false);
-			
+
 			navigation.reset({
 				index: 0,
-				routes: [{ name: 'Alerts' }]
+				routes: [{ name: 'Home' }]
 			});
 		});
 
@@ -64,7 +78,7 @@ export const LoginScreen = ({ navigation }) => {
 	const [host, setHost] = useState('alerts-management-demo.barchart.com');
 	const [userId, setUserId] = useState('00000000');
 	const [loading, setLoading] = useState(false);
-	const system = 'barchart.com';
+	const [alertSystem, setAlertSystem] = useState('barchart.com');
 
 	return (
 		<View style={styles.container}>
@@ -72,12 +86,13 @@ export const LoginScreen = ({ navigation }) => {
 				(<ActivityIndicator style={styles.loading} animation={true} size="large"/>) :
 				<Card style={styles.card}>
 					<TextInput disabled label="Host" value={host} onChangeText={(value) => setHost(value)} style={styles.margin}/>
+					<TextInput label="Alert System" disabled value={alertSystem} onChangeText={(value) => setAlertSystem(value)} style={styles.margin}/>
 					<TextInput label="User Id" value={userId} onChangeText={(value) => setUserId(value)} style={styles.margin}/>
 					<Button
 						title="Save"
 						mode="contained"
 						labelStyle={{ color: 'white' }}
-						onPress={() => (login(host, userId, system))}
+						onPress={() => (login(host, userId, alertSystem))}
 					>
 						Login
 					</Button>

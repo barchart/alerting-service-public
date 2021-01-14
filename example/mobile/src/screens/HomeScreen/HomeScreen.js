@@ -1,17 +1,16 @@
 /* eslint-disable camelcase */
-import { Button, Card } from 'react-native-paper';
 import React, { useCallback, useEffect } from 'react';
-import { ScrollView, StyleSheet, View } from 'react-native';
+import { StyleSheet, View } from 'react-native';
 import { useDispatch, useSelector } from 'react-redux';
+import { Button } from 'react-native-paper';
 
 import { setAlerts, setTriggers } from '../../redux/actions/alerts';
 import { getManager } from '../../utils/AlertManager';
 
-import AlertsList from '../../components/AlertsList/AlertsList';
-import NoItems from '../../components/NoItems/NoItems';
-
 export const HomeScreen = ({ navigation }) => {
-	const alerts = useSelector((state) => state.alerts.alerts.sort((b, a) => b.create_date - a.create_date));
+	const alerts = useSelector((state) => state.alerts.alerts);
+	const triggers = useSelector((state) => state.alerts.triggers);
+	const pushNotifications = useSelector((state) => state.alerts.push);
 	const userID = useSelector((state) => state.alerts.userID);
 	const system = useSelector((state) => state.alerts.system);
 	const dispatch = useDispatch();
@@ -31,7 +30,7 @@ export const HomeScreen = ({ navigation }) => {
 	}, [userID, system, manager, dispatch]);
 
 	useEffect(() => {
-		const disposables = [ ];
+		const disposables = [];
 
 		if (manager) {
 			disposables.push(manager.subscribeTriggers({ user_id: userID, alert_system: system }, handleSubscribeTriggers, handleSubscribeTriggers, handleSubscribeTriggers));
@@ -39,27 +38,44 @@ export const HomeScreen = ({ navigation }) => {
 		}
 
 		return () => {
-			disposables.forEach(d => d.dispose());
+			disposables.forEach((d) => d.dispose());
 		};
 	}, []);
 
 	return (
-		<ScrollView style={styles.container}>
+		<View style={styles.container}>
 			<View style={{ width: '100%', marginBottom: 10 }}>
 				<Button
-					title="Notifications"
+					title="Alerts"
+					mode="contained"
+					icon="format-list-bulleted"
+					labelStyle={{ color: 'white' }}
+					onPress={() => navigation.navigate('Alerts', { alerts: alerts })}
+					style={{ marginBottom: 10 }}
+				>
+					Alerts ({alerts.length})
+				</Button>
+				<Button
+					title="Triggered Alerts"
+					mode="contained"
+					icon="alert-circle-check"
+					labelStyle={{ color: 'white' }}
+					onPress={() => navigation.navigate({ name: 'Triggered' })}
+					style={{ marginBottom: 10 }}
+				>
+					Triggered Alerts ({triggers.length})
+				</Button>
+				<Button
+					title="Latest Push Notifications"
 					mode="contained"
 					icon="bell"
 					labelStyle={{ color: 'white' }}
-					onPress={() => navigation.navigate({ name: 'Notifications' })}
+					onPress={() => navigation.navigate({ name: 'Push' })}
 				>
-					Notifications
+					Latest Push Notification ({pushNotifications.length})
 				</Button>
 			</View>
-			<Card>
-				{!alerts.length ? (<NoItems>You don't have alerts</NoItems>) : <AlertsList alerts={alerts}/>}
-			</Card>
-		</ScrollView>
+		</View>
 	);
 };
 
