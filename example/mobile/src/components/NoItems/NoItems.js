@@ -1,16 +1,17 @@
 /* eslint-disable react/prop-types */
-import { Headline } from 'react-native-paper';
 import React from 'react';
 import { StyleSheet } from 'react-native';
+import { Text } from 'react-native-paper';
 
 const NoItems = (props) => {
-	return (<Headline style={styles.noItems}>{props.children}</Headline>);
+	return (<Text style={styles.noItems}>{props.children}</Text>);
 };
 
 const styles = StyleSheet.create({
 	noItems: {
-		marginTop: 10,
-		textAlign: 'center'
+		padding: 10,
+		textAlign: 'center',
+		fontSize: 16
 	}
 });
 

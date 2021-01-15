@@ -12,7 +12,7 @@ export const LatestPushNotification = () => {
 	return (
 		<ScrollView style={styles.container}>
 
-			{!latestPush.length ? (<Card><NoItems>You haven't received push notifications</NoItems></Card>) : (
+			{!latestPush.length ? (<Card><NoItems>You haven't received push notifications in this session</NoItems></Card>) : (
 				<View>
 					{latestPush.map((push) => {
 						const latestPushString = JSON.stringify(push, null, 2);
