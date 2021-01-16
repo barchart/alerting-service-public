@@ -2,8 +2,8 @@
 
 To enable support for push notifications to your mobile apps, you need to:
 
-* You need to authorize Barchart to send push notifications on your behalf, and
-* Your mobile app needs to register itself with Barchart each time a user logs in.
+* Authorize Barchart to send push notifications on your behalf, and
+* Adjust your mobile app needs to register itself with Barchart.
 
 ## Authorizing Barchart
 
@@ -27,7 +27,7 @@ Coming soon.
 
 ## Registering User Devices
 
-Barchart requires specific information to properly route notifications to the correct users and devices. This routing information changes as users (a) install, (b) login to your mobile app.
+Barchart requires specific information to properly route notifications to the correct users and devices.
 
 #### Apple (iOS)
 
@@ -56,6 +56,30 @@ curl 'https://push-notifications-stage.aws.barchart.com/v1/apns/registerDevice' 
 
 Coming soon.
 
+## Push Notification Payload
+
+#### Apple (iOS)
+
+```json
+{
+	aps: {
+		alert: {
+			"title": "Alert System",
+			"body": "Barchart.com ALERT ‒ TSLA traded for 823.50 at 18:59 ET on 01/15/21."
+		}
+	},
+	"custom-data": {
+		"alert_id":"a28fb91d-520a-485e-bd19-22dc6f0f6105",
+		"trigger_date":"1610755232945",
+		"trigger_title":"TSLA",
+		"trigger_description":"TSLA traded for 823.50 at 18:59 ET on 01/15/21"
+	}
+}
+```
+g
+#### Android
+
+Coming soon.
 
 
 
