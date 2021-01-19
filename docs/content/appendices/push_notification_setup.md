@@ -76,7 +76,7 @@ Coming soon.
 	}
 }
 ```
-g
+
 #### Android
 
 Coming soon.
