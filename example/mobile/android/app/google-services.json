@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "962028103584",
+    "project_id": "civic-depth-170118",
+    "storage_bucket": "civic-depth-170118.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:962028103584:android:5b5bae58f60ed0f58226c5",
+        "android_client_info": {
+          "package_name": "com.barchart.alertsclientdemo"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "962028103584-b87fv809vs474l91vblitg8jfmb0f8pv.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCw1UBe5QdChCWx8HWo4RuMxilbp1ZjT6c"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "962028103584-b87fv809vs474l91vblitg8jfmb0f8pv.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

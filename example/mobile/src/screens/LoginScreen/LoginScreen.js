@@ -1,7 +1,8 @@
 import { ActivityIndicator, Button, Card, TextInput } from 'react-native-paper';
+import { Platform, StyleSheet, View } from 'react-native';
 import React, { useState } from 'react';
-import { StyleSheet, View } from 'react-native';
 import axios from 'axios';
+import DeviceInfo from 'react-native-device-info';
 import { useDispatch } from 'react-redux';
 
 import { setAlerts, setSystem, setTriggers, setUser } from '../../redux/actions/alerts';
@@ -18,6 +19,20 @@ const generateJwt = (user, context) => {
 };
 
 const registerDevice = async (userId, system) => {
+	if (Platform.OS === 'ios') {
+		return registerDeviceIos(userId, system);
+	}
+	
+	if (Platform.OS === 'android') {
+		return registerDeviceAndroid(userId, system);
+	}
+};
+
+const registerDeviceAndroid = async (userId, system) => {
+	console.info(userId, system);
+};
+
+const registerDeviceIos = async (userId, system) => {
 	const token = await getPushToken().then((token) => {
 		console.info('Stored token:', token);
 
@@ -25,13 +40,15 @@ const registerDevice = async (userId, system) => {
 	});
 
 	if (!token) {
-		return setTimeout(() => registerDevice(userId), 100);
+		return setTimeout(() => registerDevice(userId), 500);
 	}
+	
+	const bundleId = DeviceInfo.getBundleId();
 
 	return generateJwt(userId, system).then((jwtToken) => {
 		return axios.post('https://push-notifications-stage.aws.barchart.com/v1/apns/registerDevice', {
 			deviceID: token,
-			bundleID: 'com.barchart.alerts-client-demo',
+			bundleID: bundleId,
 			userID: `${userId}@${system}`
 		}, {
 			headers: {
@@ -42,6 +59,7 @@ const registerDevice = async (userId, system) => {
 		});
 	});
 };
+
 
 export const LoginScreen = ({ navigation }) => {
 	const dispatch = useDispatch();
