@@ -27,7 +27,7 @@ export const getPushToken = async () => {
 export const configureNotifications = async () => {
 	if (Platform.OS === 'ios') {
 		console.info('IOS device');
-		await configureNotificationsIos();
+		configureNotificationsIos();
 	}
 
 	if (Platform.OS === 'android') {
@@ -36,11 +36,10 @@ export const configureNotifications = async () => {
 	}
 };
 
-async function getInstanceIdAndroid() {
+export async function getInstanceIdAndroid() {
 	let id;
 	try {
 		id = await iid().get();
-		console.info('Current Instance ID: ', id);
 	} catch (e) {
 		console.error(e);
 	}
@@ -48,12 +47,11 @@ async function getInstanceIdAndroid() {
 	return id;
 }
 
-async function getTokenAndroid() {
+export async function getTokenAndroid() {
 	let token;
 
 	try {
 		token = await iid().getToken();
-		console.info('Current token: ', token);
 	} catch (e) {
 		console.error(e);
 	}
@@ -63,10 +61,6 @@ async function getTokenAndroid() {
 
 const configureNotificationsAndroid = async () => {
 	configureNotificationsIos();
-	await getInstanceIdAndroid();
-	await getTokenAndroid();
-
-	return 0;
 };
 
 const configureNotificationsIos = () => {

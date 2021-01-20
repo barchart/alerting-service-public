@@ -36,15 +36,11 @@ export default function App() {
 			<PaperProvider theme={theme}>
 				<NavigationContainer ref={navigationRef}>
 					<Stack.Navigator>
-						<Stack.Screen
-							name="Login"
-							component={LoginScreen}
-							options={{ title: 'Login' }}
-						/>
-						<Stack.Screen name="Home" component={HomeScreen}/>
+						<Stack.Screen name="Login" options={{ title: 'Login' }} component={LoginScreen}/>
+						<Stack.Screen name="Home" options={{ title: 'Home' }} component={HomeScreen}/>
 						<Stack.Screen name="Triggered" options={{ title: 'Triggered Alerts' }} component={TriggersScreen}/>
 						<Stack.Screen name="Push" options={{ title: 'Latest Push Notifications' }} component={LatestPushNotification}/>
-						<Stack.Screen name="Alerts" component={AlertsScreen}/>
+						<Stack.Screen name="Alerts" options={{ title: 'Alerts' }} component={AlertsScreen}/>
 					</Stack.Navigator>
 				</NavigationContainer>
 			</PaperProvider>

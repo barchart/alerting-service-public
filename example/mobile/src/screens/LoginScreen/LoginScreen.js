@@ -5,9 +5,9 @@ import axios from 'axios';
 import DeviceInfo from 'react-native-device-info';
 import { useDispatch } from 'react-redux';
 
+import { getInstanceIdAndroid, getPushToken } from '../../utils/notifications';
 import { setAlerts, setSystem, setTriggers, setUser } from '../../redux/actions/alerts';
 import { createManager } from '../../utils/AlertManager';
-import { getPushToken } from '../../utils/notifications';
 
 const generateJwt = (user, context) => {
 	return axios.post('https://jwt-public-stage.aws.barchart.com/v1/tokens/impersonate/alerts/dev', {
@@ -29,7 +29,34 @@ const registerDevice = async (userId, system) => {
 };
 
 const registerDeviceAndroid = async (userId, system) => {
-	console.info(userId, system);
+	const token = await getPushToken().then((token) => {
+		console.info('Stored token:', token);
+
+		return token;
+	});
+
+	if (!token) {
+		return setTimeout(() => registerDevice(userId), 500);
+	}
+
+	const bundleId = DeviceInfo.getBundleId();
+
+	return generateJwt(userId, system).then(async (jwtToken) => {
+		const deviceID = await getInstanceIdAndroid();
+		
+		return axios.post('https://push-notifications-stage.aws.barchart.com/v1/fcm/registerDevice', {
+			deviceID: deviceID,
+			tokenID: token,
+			bundleID: bundleId,
+			userID: `${userId}@${system}`
+		}, {
+			headers: {
+				'Authorization': `Bearer ${jwtToken}`
+			}
+		}).catch((err) => {
+			console.error('Register device error:', err);
+		});
+	});
 };
 
 const registerDeviceIos = async (userId, system) => {
