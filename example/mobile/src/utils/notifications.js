@@ -1,28 +1,12 @@
-import AsyncStorage from '@react-native-async-storage/async-storage';
 import iid from '@react-native-firebase/iid';
 import { Platform } from 'react-native';
 import PushNotification from 'react-native-push-notification';
 import PushNotificationIOS from '@react-native-community/push-notification-ios';
 
 import * as RootNavigation from '../rootNavigation';
+import { getPushToken, savePushToken } from './asyncStore';
 import { setPush } from '../redux/actions/alerts';
 import store from '../redux';
-
-export const savePushToken = async (value) => {
-	try {
-		await AsyncStorage.setItem('@push-token', value);
-	} catch (e) {
-		console.error('cannot save @push-token');
-	}
-};
-
-export const getPushToken = async () => {
-	try {
-		return await AsyncStorage.getItem('@push-token');
-	} catch (e) {
-		return null;
-	}
-};
 
 export const configureNotifications = async () => {
 	if (Platform.OS === 'ios') {
