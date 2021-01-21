@@ -49,8 +49,6 @@ Next, configure the project:
 
 #### Android
 
-[comment]: <> (optional stuff)
-
 1. Run `brew install watchman`.
 2. Run `npm install` from the root folder of the repository.
 3. Run `yarn install` from the `example/mobile` folder.
