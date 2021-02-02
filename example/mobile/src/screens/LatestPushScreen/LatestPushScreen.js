@@ -18,7 +18,7 @@ export const LatestPushNotification = () => {
 						const latestPushString = JSON.stringify(push, null, 2);
 
 						return (
-							<Card key={push.data.notificationId} style={{ marginBottom: 10, padding: 10 }}>
+							<Card key={push.data.notificationId ? push.data.notificationId : push.id} style={{ marginBottom: 10, padding: 10 }}>
 								<Text style={{ fontSize: 16 }}>{latestPushString}</Text>
 							</Card>
 						);
