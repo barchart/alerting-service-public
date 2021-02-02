@@ -52,6 +52,11 @@ const configureNotificationsIos = () => {
 		onRegister: function (tokenData) {
 			const { token } = tokenData;
 			console.info('Token:', token);
+			if (Platform.OS === 'android') {
+				getInstanceIdAndroid().then((deviceID) => {
+					console.info('Instance ID:', deviceID);
+				});
+			}
 
 			getPushToken().then((pushToken) => {
 				if (!pushToken) {
