@@ -37,7 +37,7 @@ Next, configure the project:
 5. Open `example/mobile/ios/alertclientmobile.xcworkspace` file with Xcode.
 6. Click on `alertclientmobile` and go to the `Signing & Capabilities` section, then:
    * Set your Team (e.g. `Barchart.com, Inc.`).
-   * Set the Bundle Identifier (e.g. `com.barchart.alerts-client-demo`).
+   * Set the Bundle Identifier (e.g. `com.barchart.alertsclientdemo`).
    * Ensure the `Remote Notifications` option is checked.
    * Ensure the `Push Notifications` capability has been enabled.
 7. Connect your iOS device to your computer.
