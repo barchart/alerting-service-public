@@ -345,6 +345,13 @@ module.exports = (() => {
         return formatDate(that.statusDate());
       })
     };
+    that.news = {
+      isExist: false
+    };
+
+    if (that.trigger().trigger_additional_data && that.trigger().trigger_additional_data.type === 'news' && that.trigger().trigger_additional_data.data.link) {
+      that.news.isExist = true;
+    }
 
     that.toggle = function () {
       that.loading(true);
@@ -4095,15 +4102,10 @@ module.exports = (() => {
 
     format() {
       const reasons = this._head.toJSObj(item => {
-        const formatted = {};
-        formatted.code = item ? item.type.code : null;
-        formatted.message = item ? item.format(this._data) : null;
-
-        if (item && item.type.verbose) {
-          formatted.data = item.data;
-        }
-
-        return formatted;
+        return {
+          code: item ? item.type.code : null,
+          message: item ? item.format(this._data) : null
+        };
       });
 
       return reasons.children;
@@ -4155,19 +4157,6 @@ module.exports = (() => {
 
     toJSON() {
       return this.format();
-    }
-    /**
-     * @public
-     * @static
-     * @param {FailureType} type
-     * @param {Object=} data
-     * @returns {FailureReason}
-     */
-
-
-    static from(type, data) {
-      const reason = new FailureReason();
-      return reason.addItem(type, data);
     }
     /**
      * Factory function for creating instances of {@link FailureReason}.
@@ -4303,17 +4292,6 @@ module.exports = (() => {
       return this._type;
     }
     /**
-     * The data.
-     *
-     * @public
-     * @return {Object}
-     */
-
-
-    get data() {
-      return this._data;
-    }
-    /**
      * Formats a human-readable message, describing the failure.
      *
      * @public
@@ -4381,16 +4359,14 @@ module.exports = (() => {
    * @param {String} template - The template string for formatting human-readable messages.
    * @param {Boolean=} severe - Indicates if the failure is severe (default is true).
    * @param {Number=} error - The HTTP error code which should be used as part of an HTTP response.
-   * @param {Boolean=} verbose - Indicates if data object should be included when serialized.
    */
 
   class FailureType extends Enum {
-    constructor(code, template, severe, error, verbose) {
+    constructor(code, template, severe, error) {
       super(code, code);
       assert.argumentIsRequired(template, 'template', String);
       assert.argumentIsOptional(severe, 'severe', Boolean);
       assert.argumentIsOptional(error, 'error', Number);
-      assert.argumentIsOptional(verbose, 'verbose', Boolean);
       this._template = template;
 
       if (is.boolean(severe)) {
@@ -4400,7 +4376,6 @@ module.exports = (() => {
       }
 
       this._error = error || null;
-      this._verbose = verbose || false;
     }
     /**
      * The template string for formatting human-readable messages.
@@ -4434,17 +4409,6 @@ module.exports = (() => {
 
     get error() {
       return this._error;
-    }
-    /**
-     * Indicates if data object should be included when serialized.
-     *
-     * @public
-     * @return {boolean}
-     */
-
-
-    get verbose() {
-      return this._verbose;
     }
     /**
      * One or more data points is missing.
@@ -4543,18 +4507,6 @@ module.exports = (() => {
       return requestGeneralFailure;
     }
     /**
-     * Insufficient permission level to access the resource.
-     *
-     * @public
-     * @static
-     * @returns {FailureType}
-     */
-
-
-    static get ENTITLEMENTS_FAILED() {
-      return entitlementsFailed;
-    }
-    /**
      * Returns an HTTP status code that would be suitable for use with the
      * failure type.
      *
@@ -4594,7 +4546,6 @@ module.exports = (() => {
   const requestInputMalformed = new FailureType('REQUEST_INPUT_MALFORMED', 'An attempt to {L|root.endpoint.description} failed, the data structure is invalid.');
   const schemaValidationFailure = new FailureType('SCHEMA_VALIDATION_FAILURE', 'An attempt to read {U|schema} data failed (found "{L|key}" when expecting "{L|name}")');
   const requestGeneralFailure = new FailureType('REQUEST_GENERAL_FAILURE', 'An attempt to {L|root.endpoint.description} failed for unspecified reason(s).');
-  const entitlementsFailed = new FailureType('ENTITLEMENTS_FAILED', 'Action blocked. The current user requires elevated permissions or the current user has exceeded a quota.', false, 403, true);
   return FailureType;
 })();
 
@@ -10259,7 +10210,7 @@ module.exports = (() => {
     },
 
     /**
-     * Attempts to guess the timezone of the current computer.
+     * Attempts to guess the lock timezone.
      *
      * @public
      * @static
@@ -10281,7 +10232,6 @@ module.exports = (() => {
   /**
    * An implementation of the observer pattern.
    *
-   * @public
    * @param {*} sender - The object which owns the event.
    * @extends {Disposable}
    */
@@ -10355,7 +10305,6 @@ module.exports = (() => {
     /**
      * Returns true, if no handlers are currently registered.
      *
-     * @public
      * @returns {boolean}
      */
 
@@ -13797,7 +13746,9 @@ function fromByteArray (uint8) {
 
   // go through the array every three bytes, we'll deal with trailing stuff later
   for (var i = 0, len2 = len - extraBytes; i < len2; i += maxChunkLength) {
-    parts.push(encodeChunk(uint8, i, (i + maxChunkLength) > len2 ? len2 : (i + maxChunkLength)))
+    parts.push(encodeChunk(
+      uint8, i, (i + maxChunkLength) > len2 ? len2 : (i + maxChunkLength)
+    ))
   }
 
   // pad the end with zeros, but make sure to not forget the extra bytes

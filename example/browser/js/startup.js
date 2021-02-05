@@ -342,6 +342,14 @@ module.exports = (() => {
 			rowSpan: ko.observable(1),
 			statusDate: ko.computed(function() { return formatDate(that.statusDate()); })
 		};
+		
+		that.news = {
+			isExist: false
+		};
+		
+		if (that.trigger().trigger_additional_data && that.trigger().trigger_additional_data.type === 'news' && that.trigger().trigger_additional_data.data.link) {
+			that.news.isExist = true;
+		}
 
 		that.toggle = function() {
 			that.loading(true);

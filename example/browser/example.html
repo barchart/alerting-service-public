@@ -540,7 +540,14 @@
             <tbody data-bind="foreach: triggersFormatted">
                 <tr>
                     <td class="center col-md-3" data-bind="{ visible: display.first, attr: { rowspan: display.rowSpan }, text: trigger().alert_id }"></td>
+                    <!-- ko ifnot: news.isExist -->
                     <td class="left col-md-3" data-bind="text: trigger().trigger_description"></td>
+                    <!-- /ko -->
+                    <!-- ko if: news.isExist -->
+                    <td class="left col-md-3">
+                        <a target="_blank" data-bind="attr: { 'href': trigger().trigger_additional_data.data.link },text: trigger().trigger_description"></a>
+                    </td>
+                    <!-- /ko -->
                     <td class="center col-md-2">
                         <input type="checkbox" data-bind="enable: !loading(), click: () => toggle(), checked: display.read()">
                     </td>

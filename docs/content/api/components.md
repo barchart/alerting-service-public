@@ -1,6 +1,6 @@
 # Components
 
-## Responses 
+## Responses
 
 ### Unauthorized :id=responsesunauthorized
 > The unauthorized access.
@@ -23,7 +23,7 @@
 
 * * *
 
-## Schemas 
+## Schemas
 
 ### Alert :id=schemasalert
 **Type**: <code>Object</code>
@@ -484,6 +484,10 @@
 | trigger_status_date | <code>String</code> | true | false |  |
 | trigger_title | <code>String</code> | true | false |  |
 | trigger_description | <code>String</code> | true | false |  |
+| trigger_additional_data | <code>Object</code> |  | false |  |
+| trigger_additional_data.type | <code>String</code> | false | false |  |
+| trigger_additional_data.data | <code>Object</code> |  | false |  |
+| trigger_additional_data.data.url | <code>String</code> | false | false |  |
 
 **Example**:
 
@@ -496,13 +500,19 @@
   "trigger_status": "Read",
   "trigger_status_date": "1606227202480",
   "trigger_title": "MSFT",
-  "trigger_description": "MSFT traded for 214.86 at 10:34 ET on 12/14/20"
+  "trigger_description": "MSFT traded for 214.86 at 10:34 ET on 12/14/20",
+  "trigger_additional_data": {
+    "type": "news",
+    "data": {
+      "url": "https://barchart.com/story/stocks/quotes/TSLA/news/1085745/view"
+    }
+  }
 }
 ```
 
 * * *
 
-## Security 
+## Security
 
 ### JWT :id=securityjwt
 

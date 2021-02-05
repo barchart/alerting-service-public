@@ -323,6 +323,18 @@ components:
         trigger_description:
           type: string
           example: "MSFT traded for 214.86 at 10:34 ET on 12/14/20"
+        trigger_additional_data:
+          type: object
+          properties: 
+            type:
+              type: string
+              example: "news"
+            data:
+              type: object
+              properties: 
+                url:
+                  type: string
+                  example: "https://barchart.com/story/stocks/quotes/TSLA/news/1085745/view"
 
   responses:
     Unauthorized:

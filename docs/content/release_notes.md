@@ -1,5 +1,16 @@
 # Release Notes
 
+## 4.2.0
+**Other**
+
+* Added support of the `trigger_additional_data` field for the trigger status.
+* Updated OpenAPI file.
+
+## 4.1.1
+**Other**
+
+* The [documentation site](https://docs.barchart.com/alerts/#/) is now complete.
+
 ## 4.1.0
 **New Features**
 

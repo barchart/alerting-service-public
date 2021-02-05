@@ -58,7 +58,6 @@
 | [publishers] | [<code>Array.&lt;Publisher&gt;</code>](#SchemaPublisher) | <p>The rules for sending notifications when the alert is triggered. This is optional. In most cases, it's best to rely on the default rules bound to the alert's owner.</p> |
 | [effectivePublishers] | [<code>Array.&lt;Publisher&gt;</code>](#SchemaPublisher) | <p>A read-only property added by the backend listing the &quot;effective&quot; rules which will be used to publish notifications. Any rules in the &quot;publishers&quot; property take precedence, then the default rules for the alert's owner are applied.</p> |
 | [schedules] | <code>Array.&lt;AlertResetSchedule&gt;</code> |  |
-| read | <code>Boolean</code> | <p>shows whether the alert has been read.</p> |
 
 
 * * *
@@ -269,6 +268,7 @@
 | trigger_status_date | <code>String</code> | <p>The last time the alert trigger status was updated (milliseconds since epoch).</p> |
 | trigger_title | <code>String</code> | <p>A human-readable title.</p> |
 | trigger_description | <code>String</code> | <p>A human-readable description.</p> |
+| trigger_additional_data | <code>Object</code> | <p>An additional data.</p> |
 
 
 * * *
@@ -302,9 +302,11 @@
 | Inactive | <p>The alert is not processing. No notifications will be generated.</p> |
 | Starting | <p>The alert is attempting to transition to the <code>Active</code> state.</p> |
 | Active | <p>The alert is tracking; however, its conditions have not yet been met.</p> |
-| Scheduled | <p>The alert is not currently tracking; however, it is scheduled to become <code>Active</code> in the future.</p> |
 | Stopping | <p>The alert is attempting to transition to the <code>Inactive</code> state.</p> |
 | Triggered | <p>The alert's conditions have been met. Functionally speaking, this is equivalent to the <code>Inactive</code> state.</p> |
+| Expired | <p>Tracking was stopped because the alert condition can never be met (e.g. a futures contract has expired, no further updates to the feed are possible).</p> |
+| Suspended | <p>The tracking was suspended for system maintenance.</p> |
+| Orphaned | <p>Either tracking was suspended for system maintenance or an error occurred which forced tracking to stop.</p> |
 
 
 * * *

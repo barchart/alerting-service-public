@@ -14,7 +14,6 @@
 * [Components](#Components)
 * [Paths](#Paths)
 
-
 ## Servers {docsify-ignore}
 
 * [https://alerts-management-demo.barchart.com](https://alerts-management-demo.barchart.com)  - Demo (evaluation and testing only)
