@@ -1,9 +1,12 @@
 # Release Notes
 
 ## 4.2.0
+**New Features**
+
+* Added support for additional JSON data which can be included in alert trigger history. For example, the alert trigger item for news alerts will no include a link to the news article itself.
+  
 **Other**
 
-* Added support of the `trigger_additional_data` field for the trigger status.
 * Updated OpenAPI file.
 
 ## 4.1.1
