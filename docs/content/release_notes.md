@@ -3,7 +3,7 @@
 ## 4.2.0
 **New Features**
 
-* Added support for additional JSON data which can be included in alert trigger history. For example, the alert trigger item for news alerts will no include a link to the news article itself.
+* Added support for additional JSON data which can be included in alert trigger history. For example, the alert trigger item for news alerts will now include a link to the news article itself.
   
 **Other**
 
