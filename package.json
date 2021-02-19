@@ -22,7 +22,7 @@
 		"@barchart/marketdata-api-js": "^5.7.5",
 		"jsonwebtoken": "^8.5.1",
 		"socket.io-client": "^2.3.0",
-		"uuid": "^3.4.0"
+		"uuid": "^8.3.2"
 	},
 	"devDependencies": {
 		"@babel/core": "^7.11.1",
