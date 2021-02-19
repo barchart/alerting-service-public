@@ -4,7 +4,7 @@
 **Technical Enhancements**
 
 * Upgraded the [@barchart/common-js](https://github.com/barchart/common-js) library to the next major version (4).
-* Updated the `AlertManager` class to use the promise timeout mechanism found in the [@barchart/common-js](https://github.com/barchart/common-js) library.
+* Swapped the timeout mechanism for promises used by the `AlertManager` class.
 
 
 ## 4.2.0
