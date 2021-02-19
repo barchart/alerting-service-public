@@ -1444,7 +1444,7 @@ module.exports = (() => {
           const alertAdapterPromise = Promise.resolve().then(() => {
             const AdapterClazz = this._adapterClazz;
             const adapter = new AdapterClazz(this._host, this._port, this._secure, onAlertCreated.bind(this), onAlertMutated.bind(this), onAlertDeleted.bind(this), onAlertTriggered.bind(this), onTriggersCreated.bind(this), onTriggersMutated.bind(this), onTriggersDeleted.bind(this));
-            return timeout(adapter.connect(jwtProvider), 10000, 'Alert service is temporarily unavailable. Please try again later.');
+            return promise.timeout(adapter.connect(jwtProvider), 10000, 'Alert service is temporarily unavailable. Please try again later.');
           });
           this._connectPromise = Promise.all([alertAdapterPromise]).then(results => {
             this._adapter = results[0];
@@ -2304,14 +2304,6 @@ module.exports = (() => {
     if (data) {
       data.deleteEvent.fire(triggers);
     }
-  }
-
-  function timeout(p, duration, description) {
-    return Promise.race([p, promise.build((resolveCallback, rejectCallback) => {
-      setTimeout(() => {
-        rejectCallback(description);
-      }, duration);
-    })]);
   }
 
   function cloneAlert(alert) {
@@ -3790,7 +3782,7 @@ module.exports = (() => {
   'use strict';
 
   return {
-    version: '4.2.0'
+    version: '4.3.0'
   };
 })();
 
