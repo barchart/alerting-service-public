@@ -204,9 +204,9 @@ The user's preferences will be used, if alert is classified with an ```alert_typ
 }
 ```
 
-#### 3. Don't Send a Notification
+#### 4. Don't Send a Notification
 
-If none of the previous rules is matched, then no notification — for the given type — is generated.
+If the previous rules are not matched, then no notification — for the given type — will be generated.
 
 
 
