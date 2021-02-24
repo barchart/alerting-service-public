@@ -33,7 +33,7 @@ const registerDeviceAndroid = async (userId, system) => {
 			deviceID: deviceID,
 			tokenID: token,
 			bundleID: bundleId,
-			userID: `${userId}@${system}`
+			userID: userId
 		}, {
 			headers: {
 				'Authorization': `Bearer ${jwtToken}`
@@ -61,7 +61,7 @@ const registerDeviceIos = async (userId, system) => {
 		return axios.post('https://push-notifications-stage.aws.barchart.com/v1/apns/registerDevice', {
 			deviceID: token,
 			bundleID: bundleId,
-			userID: `${userId}@${system}`
+			userID: userId
 		}, {
 			headers: {
 				'Authorization': `Bearer ${jwtToken}`
