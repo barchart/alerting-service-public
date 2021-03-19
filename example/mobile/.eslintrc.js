@@ -4,6 +4,7 @@ module.exports = {
 		'react',
 		'react-native'
 	],
+	'ignorePatterns': ['../browser', '../node', '../../docs', '../../lib', '../../test', '../../AlertBuilder'],
 	'env': {
 		'browser': true,
 		'node': true,
