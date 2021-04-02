@@ -105,22 +105,24 @@ describe('When constructing a AlertBuilder', () => {
 				'property': {
 					'property_id': 2,
 					'target': {
-						'identifier': 'TSLA'
+						'identifier': 'TSLA',
+						'display': 'TSLA-Q'
 					}
 				},
 				'operator': {
 					'operator_id': 2,
-					'operand': 20
+					'operand': '20'
 				}
 			};
 
 			const alert = alertBuilder.withConditionBuilder((cb) => {
 				cb.withPropertyBuilder((pb) => {
 					pb.withProperty('openPrice')
-						.withIdentifier('TSLA');
+						.withIdentifier('TSLA')
+						.withDisplay('TSLA-Q')
 				})
 					.withOperator('greater-than')
-					.withOperand(20);
+					.withOperand('20');
 			}).build();
 
 			expect(alert.conditions.length).toEqual(1);
@@ -174,7 +176,7 @@ describe('When constructing a AlertBuilder', () => {
 							.withIdentifier('TSLA');
 					})
 						.withOperator('greater-than')
-						.withOperand(20);
+						.withOperand('20');
 				})
 				.withPublisherBuilder((pb) => {
 					pb.withRecipient('375259634424')
@@ -198,7 +200,7 @@ describe('When constructing a AlertBuilder', () => {
 							.withIdentifier('TSLA');
 					})
 						.withOperator('crosses')
-						.withOperand(20);
+						.withOperand('20');
 				});
 			};
 
@@ -215,7 +217,7 @@ describe('When constructing a AlertBuilder', () => {
 							.withIdentifier('TSLA');
 					})
 						.withOperator('unknown')
-						.withOperand(20);
+						.withOperand('20');
 				});
 			};
 
@@ -232,7 +234,7 @@ describe('When constructing a AlertBuilder', () => {
 							.withIdentifier('TSLA');
 					})
 						.withOperator('greater-than')
-						.withOperand(20);
+						.withOperand('20');
 				});
 			};
 
