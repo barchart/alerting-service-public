@@ -5,12 +5,13 @@ const AlertManager = require('../../../lib/AlertManager'),
 	JwtProvider = require('../../../lib/security/JwtProvider'),
 	getJwtGenerator = require('../../../lib/security/demo/getJwtGenerator');
 
-const jwtProvider = new JwtProvider(getJwtGenerator, 10000);
+const jwtGenerator = getJwtGenerator('00000000', 'barchart.com');
+const jwtProvider = new JwtProvider(jwtGenerator, 60000);
 const host = 'alerts-management-demo.barchart.com';
 const port = 443;
 const secure = true;
 
-jasmine.DEFAULT_TIMEOUT_INTERVAL = 10000;
+jasmine.DEFAULT_TIMEOUT_INTERVAL = 60000;
 
 let operators = [];
 let properties = [];

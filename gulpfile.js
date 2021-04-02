@@ -105,7 +105,7 @@ gulp.task('build-example-bundle', () => {
 });
 
 gulp.task('build-test-bundle', () => {
-	return browserify({entries: glob.sync('test/specs/**/*.js')})
+	return browserify({entries: glob.sync('test/specs/**/[!AlertBuilderSpec]*.js')})
 		.bundle()
 		.pipe(source('SpecRunner.js'))
 		.pipe(buffer())
@@ -162,12 +162,12 @@ gulp.task('deploy-documentation', gulp.series('upload-documentation-site-to-S3')
 
 gulp.task('execute-browser-tests', () => {
 	return gulp.src('test/SpecRunner.js')
-		.pipe(jasmine());
+		.pipe(jasmine({timeout: 60000}));
 });
 
 gulp.task('execute-node-tests', () => {
 	return gulp.src(['test/specs/**/*.js'])
-		.pipe(jasmine());
+		.pipe(jasmine({timeout: 60000}));
 });
 
 gulp.task('execute-tests', gulp.series(
