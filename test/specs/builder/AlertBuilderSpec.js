@@ -119,7 +119,7 @@ describe('When constructing a AlertBuilder', () => {
 				cb.withPropertyBuilder((pb) => {
 					pb.withProperty('openPrice')
 						.withIdentifier('TSLA')
-						.withDisplay('TSLA-Q')
+						.withDisplay('TSLA-Q');
 				})
 					.withOperator('greater-than')
 					.withOperand('20');
