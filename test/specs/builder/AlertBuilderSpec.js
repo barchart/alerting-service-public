@@ -111,7 +111,13 @@ describe('When constructing a AlertBuilder', () => {
 				},
 				'operator': {
 					'operator_id': 2,
-					'operand': '20'
+					'operand': '20',
+					'modifiers': [
+						{
+							'modifier_id': 1,
+							'value': '5'
+						}
+					]
 				}
 			};
 
@@ -121,8 +127,14 @@ describe('When constructing a AlertBuilder', () => {
 						.withIdentifier('TSLA')
 						.withDisplay('TSLA-Q');
 				})
-					.withOperator('greater-than')
-					.withOperand('20');
+					.withOperatorBuilder((ob) => {
+						ob.withOperator('greater-than')
+							.withOperand('20')
+							.withModifierBuilder((mb) => {
+								mb.withModifier(1)
+									.withValue('5');
+							});
+					});
 			}).build();
 
 			expect(alert.conditions.length).toEqual(1);
@@ -175,8 +187,14 @@ describe('When constructing a AlertBuilder', () => {
 						pb.withProperty('openPrice')
 							.withIdentifier('TSLA');
 					})
-						.withOperator('greater-than')
-						.withOperand('20');
+						.withOperatorBuilder((ob) => {
+							ob.withOperator('greater-than')
+								.withOperand('20')
+								.withModifierBuilder((mb) => {
+									mb.withModifier(1)
+										.withValue('5');
+								});
+						});
 				})
 				.withPublisherBuilder((pb) => {
 					pb.withRecipient('375259634424')
@@ -199,8 +217,10 @@ describe('When constructing a AlertBuilder', () => {
 						pb.withProperty('openPrice')
 							.withIdentifier('TSLA');
 					})
-						.withOperator('crosses')
-						.withOperand('20');
+						.withOperatorBuilder((ob) => {
+							ob.withOperator('crosses')
+								.withOperand('20');
+						});
 				});
 			};
 
@@ -216,8 +236,10 @@ describe('When constructing a AlertBuilder', () => {
 						pb.withProperty('openPrice')
 							.withIdentifier('TSLA');
 					})
-						.withOperator('unknown')
-						.withOperand('20');
+						.withOperatorBuilder((ob) => {
+							ob.withOperator('unknown')
+								.withOperand('20');
+						});
 				});
 			};
 
@@ -233,8 +255,10 @@ describe('When constructing a AlertBuilder', () => {
 						pb.withProperty('unknown')
 							.withIdentifier('TSLA');
 					})
-						.withOperator('greater-than')
-						.withOperand('20');
+						.withOperatorBuilder((ob) => {
+							ob.withOperator('greater-than')
+								.withOperand('20');
+						});
 				});
 			};
 
