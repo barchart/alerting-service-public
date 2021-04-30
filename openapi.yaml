@@ -291,6 +291,7 @@ components:
       required:
         - alert_id
         - alert_system
+        - alert_name
         - user_id
         - trigger_date
         - trigger_status
@@ -302,6 +303,9 @@ components:
           type: string
           format: uuid
           example: "b78b30e3-8af5-48a5-8998-0989269ad9d0"
+        alert_name:
+          type: string
+          example: "Last greater than 200.00"
         alert_system:
           type: string
           example: "barchart.com"
