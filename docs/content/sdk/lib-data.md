@@ -261,6 +261,7 @@
 | Name | Type | Description |
 | --- | --- | --- |
 | alert_id | <code>String</code> | <p>The alert's unique identifier.</p> |
+| alert_name | <code>String</code> | <p>The name of the alert (at the time the trigger was created).</p> |
 | user_id | <code>String</code> | <p>The alert owner's unique identifier.</p> |
 | alert_system | <code>String</code> | <p>The alert owner's domain.</p> |
 | trigger_date | <code>String</code> | <p>The time the alert was triggered (milliseconds since epoch).</p> |

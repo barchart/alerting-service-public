@@ -1,5 +1,13 @@
 # Release Notes
 
+## 4.4.0
+**New Features**
+
+* Added `AlertBuilder` class to provide a typed mechanism for generate schema-compliant JavaScript objects.
+* Added `AlertManager.forStaging` function.
+* Added `AlertManager.forProduction` function.
+
+
 ## 4.3.0
 **Technical Enhancements**
 

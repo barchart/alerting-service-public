@@ -83,7 +83,9 @@
         * [.getToken()](#JwtProvidergetToken) ⇒ <code>Promise.&lt;String&gt;</code>
     * _static_
         * [.fromTokenGenerator(tokenGenerator, [refreshInterval])](#JwtProviderfromTokenGenerator) ⇒ [<code>JwtProvider</code>](#JwtProvider)
-        * [.forDemo(userId, alertSystem, [refreshInterval])](#JwtProviderforDemo) ⇒ [<code>JwtProvider</code>](#JwtProvider)
+        * [.forDemo(userId, contextId, alertSystem, [permissions], [refreshInterval])](#JwtProviderforDemo) ⇒ [<code>JwtProvider</code>](#JwtProvider)
+        * [.forDevelopment(userId, contextId, alertSystem, [permissions], [refreshInterval])](#JwtProviderforDevelopment) ⇒ [<code>JwtProvider</code>](#JwtProvider)
+        * [.forAdmin(userId, contextId, alertSystem, [permissions], [refreshInterval])](#JwtProviderforAdmin) ⇒ [<code>JwtProvider</code>](#JwtProvider)
     * _constructor_
         * [new JwtProvider(tokenGenerator, [refreshInterval])](#new_JwtProvider_new)
 
@@ -114,7 +116,7 @@
 
 * * *
 
-### JwtProvider.forDemo(userId, alertSystem, [refreshInterval]) :id=jwtproviderfordemo
+### JwtProvider.forDemo(userId, contextId, alertSystem, [permissions], [refreshInterval]) :id=jwtproviderfordemo
 > Builds a [JwtProvider](/content/sdk/lib-security?id=jwtprovider) which will generate tokens impersonating the specified
 > user. These tokens will only work in the &quot;test&quot; environment.</p>
 > <p>Recall, the &quot;test&quot; environment is not &quot;secure&quot; -- any data saved here can be accessed
@@ -128,7 +130,49 @@
 | Param | Type | Description |
 | --- | --- | --- |
 | userId | <code>String</code> | <p>The identifier of the user to impersonate.</p> |
+| contextId | <code>String</code> | <p>The context identifier of the user to impersonate.</p> |
 | alertSystem | <code>String</code> | <p>The domain of the user who will be impersonated.</p> |
+| [permissions] | <code>String</code> | <p>The desired permission level.</p> |
+| [refreshInterval] | <code>Number</code> | <p>The number of milliseconds which must pass before a new JWT token is generated. A null or undefined value means the token is not cached.</p> |
+
+
+* * *
+
+### JwtProvider.forDevelopment(userId, contextId, alertSystem, [permissions], [refreshInterval]) :id=jwtproviderfordevelopment
+> Builds a [JwtProvider](/content/sdk/lib-security?id=jwtprovider) which will generate tokens impersonating the specified
+> user. The &quot;development&quot; environment is for Barchart use only and access is restricted
+> to Barchart's internal network.
+
+**Kind**: static method of [<code>JwtProvider</code>](#JwtProvider)  
+**Returns**: [<code>JwtProvider</code>](#JwtProvider)  
+**Access**: public  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| userId | <code>String</code> | <p>The user identifier to impersonate.</p> |
+| contextId | <code>String</code> | <p>The context identifier of the user to impersonate.</p> |
+| alertSystem | <code>String</code> | <p>The domain of the user who will be impersonated.</p> |
+| [permissions] | <code>String</code> | <p>The desired permission level.</p> |
+| [refreshInterval] | <code>Number</code> | <p>The number of milliseconds which must pass before a new JWT token is generated. A null or undefined value means the token is not cached.</p> |
+
+
+* * *
+
+### JwtProvider.forAdmin(userId, contextId, alertSystem, [permissions], [refreshInterval]) :id=jwtproviderforadmin
+> Builds a [JwtProvider](/content/sdk/lib-security?id=jwtprovider) which will generate tokens impersonating the specified
+> user. The &quot;admin&quot; environment is for Barchart use only and access is restricted
+> to Barchart's internal network.
+
+**Kind**: static method of [<code>JwtProvider</code>](#JwtProvider)  
+**Returns**: [<code>JwtProvider</code>](#JwtProvider)  
+**Access**: public  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| userId | <code>String</code> | <p>The user identifier to impersonate.</p> |
+| contextId | <code>String</code> | <p>The context identifier of the user to impersonate.</p> |
+| alertSystem | <code>String</code> | <p>The domain of the user who will be impersonated.</p> |
+| [permissions] | <code>String</code> | <p>The desired permission level.</p> |
 | [refreshInterval] | <code>Number</code> | <p>The number of milliseconds which must pass before a new JWT token is generated. A null or undefined value means the token is not cached.</p> |
 
 

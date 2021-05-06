@@ -456,7 +456,7 @@
 
 ## GET /alerts/users/{alert_system}/{user_id}/{alert_system_key} 
 
-> Retrieves all alerts, for a single user, which have a specific &quot;alert_system_key&quot; property value.
+> Retrieves all alerts, for a single user, which have a specific "alert_system_key" property value.
 
 **Summary**: Retrieve Alerts By Remote System Key
 

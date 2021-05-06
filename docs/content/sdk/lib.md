@@ -37,6 +37,10 @@
         * [.getUser()](#AlertManagergetUser) ⇒ [<code>Promise.&lt;Schema.UserIdentifier&gt;</code>](/content/sdk/lib-data?id=schemauseridentifier)
     * _static_
         * [.version](#AlertManagerversion) ⇒ <code>String</code>
+        * [.forStaging(jwtProvider, adapterClazz)](#AlertManagerforStaging) ⇒ [<code>Promise.&lt;AlertManager&gt;</code>](#AlertManager)
+        * [.forProduction(jwtProvider, adapterClazz)](#AlertManagerforProduction) ⇒ [<code>Promise.&lt;AlertManager&gt;</code>](#AlertManager)
+        * [.forAdmin(jwtProvider, adapterClazz)](#AlertManagerforAdmin) ⇒ [<code>Promise.&lt;AlertManager&gt;</code>](#AlertManager)
+        * [.forDemo(jwtProvider, adapterClazz)](#AlertManagerforDemo) ⇒ [<code>Promise.&lt;AlertManager&gt;</code>](#AlertManager)
     * _constructor_
         * [new AlertManager(host, port, secure, adapterClazz)](#new_AlertManager_new)
 
@@ -394,6 +398,66 @@
 **Kind**: static property of [<code>AlertManager</code>](#AlertManager)  
 **Returns**: <code>String</code>  
 **Access**: public  
+
+* * *
+
+### AlertManager.forStaging(jwtProvider, adapterClazz) :id=alertmanagerforstaging
+> Creates and starts a new [AlertManager](/content/sdk/lib?id=alertmanager) for use in the private staging environment.
+
+**Kind**: static method of [<code>AlertManager</code>](#AlertManager)  
+**Returns**: [<code>Promise.&lt;AlertManager&gt;</code>](#AlertManager)  
+**Access**: public  
+
+| Param | Type |
+| --- | --- |
+| jwtProvider | [<code>JwtProvider</code>](/content/sdk/lib-security?id=jwtprovider) | 
+| adapterClazz | [<code>AdapterBase</code>](/content/sdk/lib-adapters?id=adapterbase) | 
+
+
+* * *
+
+### AlertManager.forProduction(jwtProvider, adapterClazz) :id=alertmanagerforproduction
+> Creates and starts a new [AlertManager](/content/sdk/lib?id=alertmanager) for use in the private production environment.
+
+**Kind**: static method of [<code>AlertManager</code>](#AlertManager)  
+**Returns**: [<code>Promise.&lt;AlertManager&gt;</code>](#AlertManager)  
+**Access**: public  
+
+| Param | Type |
+| --- | --- |
+| jwtProvider | [<code>JwtProvider</code>](/content/sdk/lib-security?id=jwtprovider) | 
+| adapterClazz | [<code>AdapterBase</code>](/content/sdk/lib-adapters?id=adapterbase) | 
+
+
+* * *
+
+### AlertManager.forAdmin(jwtProvider, adapterClazz) :id=alertmanagerforadmin
+> Creates and starts a new [AlertManager](/content/sdk/lib?id=alertmanager) for use in the private admin environment.
+
+**Kind**: static method of [<code>AlertManager</code>](#AlertManager)  
+**Returns**: [<code>Promise.&lt;AlertManager&gt;</code>](#AlertManager)  
+**Access**: public  
+
+| Param | Type |
+| --- | --- |
+| jwtProvider | [<code>JwtProvider</code>](/content/sdk/lib-security?id=jwtprovider) | 
+| adapterClazz | [<code>AdapterBase</code>](/content/sdk/lib-adapters?id=adapterbase) | 
+
+
+* * *
+
+### AlertManager.forDemo(jwtProvider, adapterClazz) :id=alertmanagerfordemo
+> Creates and starts a new [AlertManager](/content/sdk/lib?id=alertmanager) for use in the private demo environment.
+
+**Kind**: static method of [<code>AlertManager</code>](#AlertManager)  
+**Returns**: [<code>Promise.&lt;AlertManager&gt;</code>](#AlertManager)  
+**Access**: public  
+
+| Param | Type |
+| --- | --- |
+| jwtProvider | [<code>JwtProvider</code>](/content/sdk/lib-security?id=jwtprovider) | 
+| adapterClazz | [<code>AdapterBase</code>](/content/sdk/lib-adapters?id=adapterbase) | 
+
 
 * * *
 

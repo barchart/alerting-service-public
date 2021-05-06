@@ -39,6 +39,7 @@
 
 * [JWT](/content/api/components?id=securityJWT)
 
+
 ## Paths {docsify-ignore}
 
 * [GET /server/version](/content/api/paths?id=get-serverversion)

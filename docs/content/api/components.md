@@ -477,6 +477,7 @@
 | Name | Type | Required | Nullable | Description |
 | ---- | ---- | -------- | -------- | ----------- |
 | alert_id | <code>String</code> | true | false |  |
+| alert_name | <code>String</code> | true | false |  |
 | alert_system | <code>String</code> | true | false |  |
 | user_id | <code>String</code> | true | false |  |
 | trigger_date | <code>String</code> | true | false |  |
@@ -494,6 +495,7 @@
 ```json
 {
   "alert_id": "b78b30e3-8af5-48a5-8998-0989269ad9d0",
+  "alert_name": "Last greater than 200.00",
   "alert_system": "barchart.com",
   "user_id": "barchart-test-user",
   "trigger_date": "1605874379489",
@@ -526,4 +528,5 @@
 | Authorization | JWT | Authorization: Bearer <code>&lt;Token&gt;</code> |
 
 * * *
+
 
