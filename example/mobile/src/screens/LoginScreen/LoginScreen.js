@@ -5,7 +5,7 @@ import { useDispatch } from 'react-redux';
 
 import { setAlerts, setSystem, setTriggers, setUser } from '../../redux/actions/alerts';
 import { createManager } from '../../utils/AlertManager';
-import { registerDevice } from '../../utils/register';
+import PushNotificationProvider from '../../utils/PushNotificationProvider';
 
 export const LoginScreen = ({ navigation }) => {
 	const dispatch = useDispatch();
@@ -26,7 +26,9 @@ export const LoginScreen = ({ navigation }) => {
 			dispatch(setTriggers(results[0]));
 			dispatch(setAlerts(results[1]));
 
-			registerDevice(userId, system);
+			const pushNotificationProvider = new PushNotificationProvider();
+			
+			pushNotificationProvider.registerDevice(userId, system);
 
 			setLoading(false);
 

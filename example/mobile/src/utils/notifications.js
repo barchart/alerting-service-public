@@ -10,12 +10,12 @@ import store from '../redux';
 
 export const configureNotifications = async () => {
 	if (Platform.OS === 'ios') {
-		console.info('IOS device');
+		console.debug('IOS device');
 		configureNotificationsIos();
 	}
 
 	if (Platform.OS === 'android') {
-		console.info('ANDROID device');
+		console.debug('ANDROID device');
 		await configureNotificationsAndroid();
 	}
 };
@@ -51,10 +51,10 @@ const configureNotificationsIos = () => {
 	PushNotification.configure({
 		onRegister: function (tokenData) {
 			const { token } = tokenData;
-			console.info('Token:', token);
+			console.debug('Token:', token);
 			if (Platform.OS === 'android') {
 				getInstanceIdAndroid().then((deviceID) => {
-					console.info('Instance ID:', deviceID);
+					console.debug('Instance ID:', deviceID);
 				});
 			}
 
