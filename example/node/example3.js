@@ -82,27 +82,6 @@ alertManager.connect(jwtProvider)
 
         return Promise.resolve({ })
             .then((context) => {
-                logger.info(`Example: Retrieving a list of alerts for [ ${user_id}@${alert_system} ]`);
-
-                const payload = { };
-
-                payload.user_id = user_id;
-                payload.alert_system = alert_system;
-
-                return alertManager.retrieveAlerts(payload)
-                    .then((alerts) => {
-                        logger.info(`Example: Retrieved alerts [ ${alerts.length} ] for [ ${user_id}@${alert_system} ]`);
-
-                        context.alerts = alerts;
-
-                        return context;
-                    }).catch((e) => {
-                        logger.warn(`Example: Failed to retrieve alerts for [ ${user_id}@${alert_system} ]`);
-                        logger.error(e);
-
-                        throw e;
-                    });
-            }).then((context) => {
                 logger.info(`Example: Retrieving a list of templates for [ ${user_id}@${alert_system} ]`);
 
                 const payload = { };
