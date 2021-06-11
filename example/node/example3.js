@@ -89,7 +89,7 @@ alertManager.connect(jwtProvider)
                 payload.user_id = user_id;
                 payload.alert_system = alert_system;
 
-                return alertManager.getTemplates(payload)
+                return alertManager.retrieveTemplates(payload)
                     .then((templates) => {
                         logger.info(`Example: Retrieved templates [ ${templates.length} ] for [ ${user_id}@${alert_system} ]`);
 
