@@ -9,7 +9,7 @@ git clone git@github.com:barchart/alerts-client-js.git
 Then, the ```example/``` folder, you will find three sub-folders:
 
 * ```example/browser/``` - The web application.
-* ```example/mobile``` - The mobile application.
+* ```example/mobile/``` - The mobile application.
 * ```example/node/``` - The Node.js scripts.
 
 Each of these folders contains a ```README.md``` file with detailed instructions for build and execution of the demo applications.
