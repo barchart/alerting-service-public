@@ -26,15 +26,15 @@
         * [.subscribeTriggers(query, changeCallback, deleteCallback, createCallback)](#AlertManagersubscribeTriggers) ⇒ <code>Disposable</code>
         * [.updateTrigger(query)](#AlertManagerupdateTrigger) ⇒ [<code>Promise.&lt;Schema.Trigger&gt;</code>](/content/sdk/lib-data?id=schematrigger)
         * [.updateTriggers(query)](#AlertManagerupdateTriggers) ⇒ [<code>Promise.&lt;Array.&lt;Schema.Trigger&gt;&gt;</code>](/content/sdk/lib-data?id=schematrigger)
+        * [.retrieveTemplates(query)](#AlertManagerretrieveTemplates) ⇒ [<code>Promise.&lt;Array.&lt;Schema.Template&gt;&gt;</code>](/content/sdk/lib-data?id=schematemplate)
+        * [.createTemplate(template)](#AlertManagercreateTemplate) ⇒ [<code>Promise.&lt;Schema.Template&gt;</code>](/content/sdk/lib-data?id=schematemplate)
+        * [.deleteTemplate(template)](#AlertManagerdeleteTemplate) ⇒ [<code>Promise.&lt;Schema.Template&gt;</code>](/content/sdk/lib-data?id=schematemplate)
         * [.checkSymbol(symbol)](#AlertManagercheckSymbol) ⇒ <code>Promise.&lt;String&gt;</code>
         * [.getTargets()](#AlertManagergetTargets) ⇒ [<code>Promise.&lt;Array.&lt;Schema.Target&gt;&gt;</code>](/content/sdk/lib-data?id=schematarget)
         * [.getProperties()](#AlertManagergetProperties) ⇒ [<code>Promise.&lt;Array.&lt;Schema.Property&gt;&gt;</code>](/content/sdk/lib-data?id=schemaproperty)
         * [.getOperators()](#AlertManagergetOperators) ⇒ [<code>Promise.&lt;Array.&lt;Schema.Operator&gt;&gt;</code>](/content/sdk/lib-data?id=schemaoperator)
         * [.getPublisherTypes()](#AlertManagergetPublisherTypes) ⇒ [<code>Promise.&lt;Array.&lt;Schema.PublisherType&gt;&gt;</code>](/content/sdk/lib-data?id=schemapublishertype)
         * [.getPublisherTypeDefaults(query)](#AlertManagergetPublisherTypeDefaults) ⇒ [<code>Promise.&lt;Array.&lt;Schema.PublisherTypeDefault&gt;&gt;</code>](/content/sdk/lib-data?id=schemapublishertypedefault)
-        * [.getTemplates(query)](#AlertManagergetTemplates) ⇒ [<code>Promise.&lt;Array.&lt;Schema.Template&gt;&gt;</code>](/content/sdk/lib-data?id=schematemplate)
-        * [.createTemplate(template)](#AlertManagercreateTemplate) ⇒ [<code>Promise.&lt;Schema.Template&gt;</code>](/content/sdk/lib-data?id=schematemplate)
-        * [.deleteTemplate(template)](#AlertManagerdeleteTemplate) ⇒ [<code>Promise.&lt;Schema.Template&gt;</code>](/content/sdk/lib-data?id=schematemplate)
         * [.assignPublisherTypeDefault(publisherTypeDefault)](#AlertManagerassignPublisherTypeDefault) ⇒ [<code>Promise.&lt;Schema.PublisherTypeDefault&gt;</code>](/content/sdk/lib-data?id=schemapublishertypedefault)
         * [.getServerVersion()](#AlertManagergetServerVersion) ⇒ <code>Promise.&lt;String&gt;</code>
         * [.getUser()](#AlertManagergetUser) ⇒ [<code>Promise.&lt;Schema.UserIdentifier&gt;</code>](/content/sdk/lib-data?id=schemauseridentifier)
@@ -101,6 +101,7 @@
 
 **Kind**: instance method of [<code>AlertManager</code>](#AlertManager)  
 **Returns**: <code>Disposable</code>  
+**Access**: public  
 
 | Param | Type |
 | --- | --- |
@@ -239,6 +240,7 @@
 
 **Kind**: instance method of [<code>AlertManager</code>](#AlertManager)  
 **Returns**: <code>Disposable</code>  
+**Access**: public  
 
 | Param | Type |
 | --- | --- |
@@ -283,6 +285,48 @@
 | query.user_id | <code>String</code> | 
 | query.alert_system | <code>String</code> | 
 | [query.trigger_status] | <code>String</code> | 
+
+
+* * *
+
+### alertManager.retrieveTemplates(query) :id=alertmanagerretrievetemplates
+> Gets all templates owned by the current user.
+
+**Kind**: instance method of [<code>AlertManager</code>](#AlertManager)  
+**Returns**: [<code>Promise.&lt;Array.&lt;Schema.Template&gt;&gt;</code>](/content/sdk/lib-data?id=schematemplate)  
+**Access**: public  
+
+| Param | Type |
+| --- | --- |
+| query | [<code>Schema.TemplateQuery</code>](/content/sdk/lib-data?id=schematemplatequery) | 
+
+
+* * *
+
+### alertManager.createTemplate(template) :id=alertmanagercreatetemplate
+> Creates a new template.
+
+**Kind**: instance method of [<code>AlertManager</code>](#AlertManager)  
+**Returns**: [<code>Promise.&lt;Schema.Template&gt;</code>](/content/sdk/lib-data?id=schematemplate)  
+**Access**: public  
+
+| Param | Type |
+| --- | --- |
+| template | [<code>Schema.Template</code>](/content/sdk/lib-data?id=schematemplate) | 
+
+
+* * *
+
+### alertManager.deleteTemplate(template) :id=alertmanagerdeletetemplate
+> Deletes an existing template.
+
+**Kind**: instance method of [<code>AlertManager</code>](#AlertManager)  
+**Returns**: [<code>Promise.&lt;Schema.Template&gt;</code>](/content/sdk/lib-data?id=schematemplate)  
+**Access**: public  
+
+| Param | Type |
+| --- | --- |
+| template | [<code>Schema.Template</code>](/content/sdk/lib-data?id=schematemplate) | 
 
 
 * * *
@@ -358,48 +402,6 @@
 | query | <code>Object</code> | 
 | query.user_id | <code>String</code> | 
 | query.alert_system | <code>String</code> | 
-
-
-* * *
-
-### alertManager.getTemplates(query) :id=alertmanagergettemplates
-> Gets a set of templates.
-
-**Kind**: instance method of [<code>AlertManager</code>](#AlertManager)  
-**Returns**: [<code>Promise.&lt;Array.&lt;Schema.Template&gt;&gt;</code>](/content/sdk/lib-data?id=schematemplate)  
-**Access**: public  
-
-| Param | Type |
-| --- | --- |
-| query | [<code>Schema.TemplateQuery</code>](/content/sdk/lib-data?id=schematemplatequery) | 
-
-
-* * *
-
-### alertManager.createTemplate(template) :id=alertmanagercreatetemplate
-> Creates a new template.
-
-**Kind**: instance method of [<code>AlertManager</code>](#AlertManager)  
-**Returns**: [<code>Promise.&lt;Schema.Template&gt;</code>](/content/sdk/lib-data?id=schematemplate)  
-**Access**: public  
-
-| Param | Type |
-| --- | --- |
-| template | [<code>Schema.Template</code>](/content/sdk/lib-data?id=schematemplate) | 
-
-
-* * *
-
-### alertManager.deleteTemplate(template) :id=alertmanagerdeletetemplate
-> Deletes an existing template.
-
-**Kind**: instance method of [<code>AlertManager</code>](#AlertManager)  
-**Returns**: [<code>Promise.&lt;Schema.Template&gt;</code>](/content/sdk/lib-data?id=schematemplate)  
-**Access**: public  
-
-| Param | Type |
-| --- | --- |
-| template | [<code>Schema.Template</code>](/content/sdk/lib-data?id=schematemplate) | 
 
 
 * * *
