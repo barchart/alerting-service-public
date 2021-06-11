@@ -9,7 +9,7 @@ Two options exist:
 * Load the `example.html` page in the `browser` folder in a web browser.
 * Load the hosted version of the page at https://examples.aws.barchart.com/alerts-client-js/example.html.
 
-### Architecture
+### Application Architecture
 
 #### Source Files
 
