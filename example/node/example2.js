@@ -2,7 +2,8 @@ const process = require('process');
 
 const AlertManager = require('./../../lib/AlertManager');
 
-const AdapterForHttp = require('./../../lib/adapters/AdapterForHttp');
+const AdapterForHttp = require('./../../lib/adapters/AdapterForHttp'),
+	AdapterForSocketIo = require('./../../lib/adapters/AdapterForSocketIo');
 
 const JwtProvider = require('./../../lib/security/JwtProvider'),
 	getJwtGenerator = require('./../../lib/security/demo/getJwtGenerator');
@@ -38,18 +39,58 @@ process.on('uncaughtException', (error) => {
 	logger.error('Unhandled Error', error);
 });
 
-const user_id = process.argv[2];
-const alert_system = 'barchart.com';
+function getParameterValue(name) {
+	let value = null;
+
+	for (let i = 0; i < process.argv.length; i++) {
+		const matches = process.argv[i].match(/^--(\S+)[=\s]+(\S+)$/);
+
+		if (matches !== null && matches[1] === name) {
+			value = matches[2];
+		}
+
+		if (value !== null) {
+			break;
+		}
+	}
+
+	return value;
+}
+
+const user_id = getParameterValue('user_id');
+const alert_system = getParameterValue('alert_system') || 'barchart.com';
 
 if (!user_id) {
-	logger.error('A user identifier must be specified. Here is a usage example: "node example2.js user-1234"');
+	logger.error('The user_id argument must be specified. Example: "node example.js --user_id=me"');
 
 	process.exit();
 }
 
-const host = 'alerts-management-demo.barchart.com';
-const port = 443;
-const secure = true;
+const mode = getParameterValue('mode') || 'socket.io';
+
+let adapterClazz;
+let adapterDescription;
+
+if (mode === 'http') {
+	adapterClazz = AdapterForHttp;
+	adapterDescription = 'HTTP';
+} else {
+	adapterClazz = AdapterForSocketIo;
+	adapterDescription = 'Socket.IO';
+}
+
+let host = getParameterValue('host') || 'alerts-management-demo.barchart.com';
+let port = getParameterValue('port') || 443;
+
+try {
+	port = parseInt(port);
+} catch (e) {
+	logger.error('The port argument must be an integer. Example: "node example.js --user_id=me --host=localhost --port=8888"');
+
+	process.exit();
+}
+
+let secure = port === 443;
 
 logger.info(`Example: Created AlertManager for [ ${host}:${port} ] using [ HTTP ] mode`);
 

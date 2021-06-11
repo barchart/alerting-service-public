@@ -42,16 +42,34 @@ process.on('uncaughtException', (error) => {
 	logger.error('Unhandled Error', error);
 });
 
-const user_id = process.argv[2];
-const alert_system = 'barchart.com';
+function getParameterValue(name) {
+	let value = null;
+
+	for (let i = 0; i < process.argv.length; i++) {
+		const matches = process.argv[i].match(/^--(\S+)[=\s]+(\S+)$/);
+
+		if (matches !== null && matches[1] === name) {
+			value = matches[2];
+		}
+
+		if (value !== null) {
+			break;
+		}
+	}
+
+	return value;
+}
+
+const user_id = getParameterValue('user_id');
+const alert_system = getParameterValue('alert_system') || 'barchart.com';
 
 if (!user_id) {
-	logger.error('A user identifier must be specified. Here is a usage example: "node example.js user-1234"');
+	logger.error('The user_id argument must be specified. Example: "node example.js --user_id=me"');
 
 	process.exit();
 }
 
-const mode = process.argv[3];
+const mode = getParameterValue('mode') || 'socket.io';
 
 let adapterClazz;
 let adapterDescription;
@@ -64,9 +82,18 @@ if (mode === 'http') {
 	adapterDescription = 'Socket.IO';
 }
 
-const host = 'alerts-management-demo.barchart.com';
-const port = 443;
-const secure = true;
+let host = getParameterValue('host') || 'alerts-management-demo.barchart.com';
+let port = getParameterValue('port') || 443;
+
+try {
+	port = parseInt(port);
+} catch (e) {
+	logger.error('The port argument must be an integer. Example: "node example.js --user_id=me --host=localhost --port=8888"');
+
+	process.exit();
+}
+
+let secure = port === 443;
 
 logger.info(`Example: Created AlertManager for [ ${host}:${port} ] using [ ${adapterDescription} ] mode`);
 
@@ -75,7 +102,7 @@ alertManager = new AlertManager(host, port, secure, adapterClazz);
 logger.info(`Example: Configuring JWT generator to impersonate [ ${user_id}@${alert_system} ]`);
 
 const jwtGenerator = getJwtGenerator(user_id, alert_system);
-const jwtProvider = new JwtProvider(jwtGenerator, 60000, 'demo');
+const jwtProvider = new JwtProvider(jwtGenerator, 60000);
 
 logger.info(`Example: Connecting to the Barchart Alerting Service`);
 
