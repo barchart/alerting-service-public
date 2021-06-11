@@ -1,6 +1,6 @@
 # @barchart/alerts-client-js/example/browser
 
-A simple reference application to demonstrate the capabilities of the Barchart Alerting Service using this SDK.
+A simple reference application which demonstrates the capabilities of the Barchart Alerting Service using this SDK.
 
 ### Running the Application
 
