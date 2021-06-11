@@ -140,6 +140,41 @@ alertManager.connect(jwtProvider)
                         throw e;
                     });
             }).then((context) => {
+                logger.info(`Example: Creating new alert from template for [ ${user_id}@${alert_system} ]`);
+
+                const alert = AlertManager.createAlertFromTemplate(context.template, 'AAPL');
+
+                return alertManager.createAlert(alert)
+                    .then((createdAlert) => {
+                        logger.info(`Example: Created alert from template for [ ${user_id}@${alert_system} ]`);
+                        logger.info(JSON.stringify(createdAlert, null, 2));
+
+                        context.alert = createdAlert;
+
+                        return context;
+                    }).catch((e) => {
+                        logger.warn(`Example: Failed to create an alert from template for [ ${user_id}@${alert_system} ]`);
+                        logger.error(e);
+
+                        throw e;
+                    });
+            }).then((context) => {
+                logger.info(`Example: Deleting an alert for [ ${user_id}@${alert_system} ]`);
+
+                return alertManager.deleteAlert(context.alert)
+                    .then((deletedAlert) => {
+                        logger.info(`Example: Deleted alert [ ${deletedAlert.alert_id} ] for [ ${user_id}@${alert_system} ]`);
+
+                        context.alert = null;
+
+                        return context;
+                    }).catch((e) => {
+                        logger.warn(`Example: Failed to delete alert for [ ${user_id}@${alert_system} ]`);
+                        logger.error(e);
+
+                        throw e;
+                    });
+            }).then((context) => {
                 logger.info(`Example: Deleting template for [ ${user_id}@${alert_system} ]`);
 
                 return alertManager.deleteTemplate(context.template)
