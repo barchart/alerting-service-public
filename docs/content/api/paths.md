@@ -504,6 +504,188 @@
 
 * * *
 
+## GET /templates/users/{alert_system}/{user_id} 
+
+> Retrieves all templates for a single user.
+
+**Summary**: Retrieve Templates For User.
+
+**Security**: 
+[JWT](/content/api/components?id=securityJWT)
+#### Path Parameters
+
+| Name | Type | Required | Nullable | Description |
+| ---- | ---- | -------- | -------- | ----------- |
+| user_id | <code>String</code> | true | false | The unique identifier of the user (in the :alert_system) |
+| alert_system | <code>String</code> | true | false | The name of the user's system (e.g. "barchart.com" or "grains.com") |
+
+#### Responses
+
+**Status Code**: 200
+
+> A JSON document, containing an array of template objects.
+
+**Content Type**: <code>application/json</code>
+
+**Response Type:** [<code>Array&lt;Template&gt;</code>](/content/api/components?id=schemasTemplate)
+
+* * *
+
+**Status Code**: 500
+
+> A JSON document, containing an error.
+
+**Content Type**: <code>application/json</code>
+
+**Response Type:** <code>Object</code>
+    
+| Name | Type | Required | Nullable | Description |
+| ---- | ---- | -------- | -------- | ----------- |
+| message | <code>String</code> | false | false |  |
+
+**Example**:
+
+```json
+{
+  "message": "string"
+}
+```
+
+* * *
+
+## DELETE /templates/{template_id} 
+
+> Deletes an existing template, stopping it, if necessary.
+
+**Summary**: Delete Template
+
+**Security**: 
+[JWT](/content/api/components?id=securityJWT)
+#### Path Parameters
+
+| Name | Type | Required | Nullable | Description |
+| ---- | ---- | -------- | -------- | ----------- |
+| template_id | <code>String</code> | true | false | The UUID for the template |
+
+#### Responses
+
+**Status Code**: 200
+
+> A JSON document, conforming to the alert schema, representing the deleted template.
+
+**Content Type**: <code>application/json</code>
+
+**Response Type:** [<code>Array&lt;Template&gt;</code>](/content/api/components?id=schemasTemplate)
+
+* * *
+
+**Status Code**: 500
+
+> The template does not exist.
+
+**Content Type**: <code>application/json</code>
+
+**Response Type:** <code>Object</code>
+    
+| Name | Type | Required | Nullable | Description |
+| ---- | ---- | -------- | -------- | ----------- |
+| message | <code>String</code> | false | false |  |
+
+**Example**:
+
+```json
+{
+  "message": "Template could not be deleted."
+}
+```
+
+* * *
+
+## POST /templates 
+
+> Creates a new template.
+
+**Summary**: Create Template.
+
+**Security**: 
+[JWT](/content/api/components?id=securityJWT)
+#### Request Body
+    
+**Content Type**: application/json
+
+**Type**: <code>Object</code>
+
+| Name | Type | Required | Nullable | Description |
+| ---- | ---- | -------- | -------- | ----------- |
+| name | <code>String</code> | false | false |  |
+| user_id | <code>String</code> | true | false |  |
+| alert_system | <code>String</code> | true | false |  |
+| conditions | <code>Array&lt;object&gt;</code> | true | false |  |
+| conditions[i].property | <code>Object</code> |  | false |  |
+| conditions[i].property.property_id | <code>Integer</code> | false | false |  |
+| conditions[i].operator | <code>Object</code> |  | false |  |
+| conditions[i].operator.operator_id | <code>Integer</code> | false | false |  |
+| conditions[i].operator.operand | <code>String</code> | false | false |  |
+
+**Example**:
+
+```json
+{
+  "name": "Example template",
+  "user_id": "me",
+  "alert_system": "barchart.com",
+  "conditions": [
+    {
+      "property": {
+        "property_id": 1
+      },
+      "operator": {
+        "operator_id": 3,
+        "operand": "99"
+      }
+    }
+  ]
+}
+```
+
+#### Responses
+
+**Status Code**: 200
+
+> A JSON document, conforming to the alert schema, representing the newly created template.
+
+**Content Type**: <code>application/json</code>
+
+**Response Type:** [<code>Array&lt;Alert&gt;</code>](/content/api/components?id=schemasAlert)
+
+* * *
+
+**Status Code**: 401 - [Unauthorized](/content/api/components?id=responsesunauthorized)
+
+* * *
+
+**Status Code**: 500
+
+> The reason for the failure, which is typically caused by POST data that does not conform the the template schema.
+
+**Content Type**: <code>application/json</code>
+
+**Response Type:** <code>Object</code>
+    
+| Name | Type | Required | Nullable | Description |
+| ---- | ---- | -------- | -------- | ----------- |
+| message | <code>String</code> | false | false |  |
+
+**Example**:
+
+```json
+{
+  "message": "The argument [ query.user_id ] must be a [ string ]"
+}
+```
+
+* * *
+
 ## GET /alert/market/configuration/{alert_system}/{user_id} 
 
 > Retrieves default publishing information for a single user.

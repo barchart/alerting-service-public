@@ -471,6 +471,200 @@
 
 * * *
 
+### Template :id=schemastemplate
+**Type**: <code>Object</code>
+    
+| Name | Type | Required | Nullable | Description |
+| ---- | ---- | -------- | -------- | ----------- |
+| template_id | <code>String</code> | false | false |  |
+| alert_system | <code>String</code> | false | false |  |
+| user_id | <code>String</code> | false | false |  |
+| name | <code>String</code> | false | false |  |
+| create_date | <code>String</code> | false | false |  |
+| conditions | [<code>Array&lt;Condition&gt;</code>](#schemasCondition) |  | false |  |
+
+**Example**:
+
+```json
+{
+  "template_id": "39b633bf-8993-491d-b544-bdc9deed60be",
+  "alert_system": "string",
+  "user_id": "barchart-test-user",
+  "name": "Example template",
+  "create_date": "1453673000873",
+  "conditions": [
+    {
+      "condition_id": "38a3f731-0f87-40b7-a33b-dd9c792998e2",
+      "name": "Gap Down is greater than 10.00",
+      "operator": {
+        "operator_id": 4,
+        "operator_type": "binary",
+        "operator_name": "is-indicator",
+        "operand_options": [
+          [
+            "Buy",
+            "Sell",
+            "Hold"
+          ]
+        ],
+        "operand_literal": true,
+        "operand_display": "10",
+        "operand": "10",
+        "display": {
+          "short": ">",
+          "medium": "greater than",
+          "long": "greater than"
+        },
+        "modifiers": [
+          1,
+          2,
+          3
+        ]
+      },
+      "property": {
+        "property_id": 18,
+        "type": "number",
+        "format": "0,0.00",
+        "group": "Technical",
+        "accessor": [
+          "gapDown"
+        ],
+        "category": [
+          "Gap & Range Change"
+        ],
+        "description": [
+          "Gap Down"
+        ],
+        "descriptionShort": [
+          "Gap Down"
+        ],
+        "target": {
+          "description": "basic",
+          "display": "string",
+          "identifier": "TSLA",
+          "identifier_description": "symbol",
+          "qualifier_descriptions": [
+            [
+              "location",
+              "delivery date"
+            ]
+          ],
+          "kind": "string",
+          "target_id": 1,
+          "type": "symbol"
+        },
+        "valid_operators": [
+          44
+        ],
+        "sortOrder": 912
+      },
+      "templates": {
+        "condition": "Gap Down is greater than {{{operator.format.operand}}}",
+        "trigger": {
+          "email": "Gap Down is {{{event.format.gapDown}}}",
+          "sms": "Gap Down for {{{property.target.identifier}}} is {{{event.format.gapDown}}}"
+        }
+      }
+    }
+  ]
+}
+```
+
+* * *
+
+### TemplateCondition :id=schemastemplatecondition
+**Type**: <code>Object</code>
+    
+| Name | Type | Required | Nullable | Description |
+| ---- | ---- | -------- | -------- | ----------- |
+| template_condition_id | <code>String</code> | false | false |  |
+| operator | [<code>Operator</code>](#schemasOperator) |  | false |  |
+| property | [<code>Property</code>](#schemasProperty) |  | false |  |
+| templates | <code>Object</code> |  | false |  |
+| templates.condition | <code>String</code> | false | false |  |
+| templates.trigger | <code>Object</code> |  | false |  |
+| templates.trigger.email | <code>String</code> | false | false |  |
+| templates.trigger.sms | <code>String</code> | false | false |  |
+
+**Example**:
+
+```json
+{
+  "template_condition_id": "38a3f731-0f87-40b7-a33b-dd9c792998e2",
+  "operator": {
+    "operator_id": 4,
+    "operator_type": "binary",
+    "operator_name": "is-indicator",
+    "operand_options": [
+      [
+        "Buy",
+        "Sell",
+        "Hold"
+      ]
+    ],
+    "operand_literal": true,
+    "operand_display": "10",
+    "operand": "10",
+    "display": {
+      "short": ">",
+      "medium": "greater than",
+      "long": "greater than"
+    },
+    "modifiers": [
+      1,
+      2,
+      3
+    ]
+  },
+  "property": {
+    "property_id": 18,
+    "type": "number",
+    "format": "0,0.00",
+    "group": "Technical",
+    "accessor": [
+      "gapDown"
+    ],
+    "category": [
+      "Gap & Range Change"
+    ],
+    "description": [
+      "Gap Down"
+    ],
+    "descriptionShort": [
+      "Gap Down"
+    ],
+    "target": {
+      "description": "basic",
+      "display": "string",
+      "identifier": "TSLA",
+      "identifier_description": "symbol",
+      "qualifier_descriptions": [
+        [
+          "location",
+          "delivery date"
+        ]
+      ],
+      "kind": "string",
+      "target_id": 1,
+      "type": "symbol"
+    },
+    "valid_operators": [
+      44
+    ],
+    "sortOrder": 912
+  },
+  "templates": {
+    "condition": "Gap Down is greater than {{{operator.format.operand}}}",
+    "trigger": {
+      "email": "Gap Down is {{{event.format.gapDown}}}",
+      "sms": "Gap Down for {{{property.target.identifier}}} is {{{event.format.gapDown}}}"
+    }
+  }
+}
+```
+
+* * *
+
 ### Trigger :id=schemastrigger
 **Type**: <code>Object</code>
     

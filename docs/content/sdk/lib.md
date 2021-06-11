@@ -32,11 +32,15 @@
         * [.getOperators()](#AlertManagergetOperators) ⇒ [<code>Promise.&lt;Array.&lt;Schema.Operator&gt;&gt;</code>](/content/sdk/lib-data?id=schemaoperator)
         * [.getPublisherTypes()](#AlertManagergetPublisherTypes) ⇒ [<code>Promise.&lt;Array.&lt;Schema.PublisherType&gt;&gt;</code>](/content/sdk/lib-data?id=schemapublishertype)
         * [.getPublisherTypeDefaults(query)](#AlertManagergetPublisherTypeDefaults) ⇒ [<code>Promise.&lt;Array.&lt;Schema.PublisherTypeDefault&gt;&gt;</code>](/content/sdk/lib-data?id=schemapublishertypedefault)
+        * [.getTemplates(query)](#AlertManagergetTemplates) ⇒ [<code>Promise.&lt;Array.&lt;Schema.Template&gt;&gt;</code>](/content/sdk/lib-data?id=schematemplate)
+        * [.createTemplate(template)](#AlertManagercreateTemplate) ⇒ [<code>Promise.&lt;Schema.Template&gt;</code>](/content/sdk/lib-data?id=schematemplate)
+        * [.deleteTemplate(template)](#AlertManagerdeleteTemplate) ⇒ [<code>Promise.&lt;Schema.Template&gt;</code>](/content/sdk/lib-data?id=schematemplate)
         * [.assignPublisherTypeDefault(publisherTypeDefault)](#AlertManagerassignPublisherTypeDefault) ⇒ [<code>Promise.&lt;Schema.PublisherTypeDefault&gt;</code>](/content/sdk/lib-data?id=schemapublishertypedefault)
         * [.getServerVersion()](#AlertManagergetServerVersion) ⇒ <code>Promise.&lt;String&gt;</code>
         * [.getUser()](#AlertManagergetUser) ⇒ [<code>Promise.&lt;Schema.UserIdentifier&gt;</code>](/content/sdk/lib-data?id=schemauseridentifier)
     * _static_
         * [.version](#AlertManagerversion) ⇒ <code>String</code>
+        * [.createAlertFromTemplate(template, symbol, [alert])](#AlertManagercreateAlertFromTemplate) ⇒ [<code>Promise.&lt;Schema.Alert&gt;</code>](/content/sdk/lib-data?id=schemaalert)
         * [.forStaging(jwtProvider, adapterClazz)](#AlertManagerforStaging) ⇒ [<code>Promise.&lt;AlertManager&gt;</code>](#AlertManager)
         * [.forProduction(jwtProvider, adapterClazz)](#AlertManagerforProduction) ⇒ [<code>Promise.&lt;AlertManager&gt;</code>](#AlertManager)
         * [.forAdmin(jwtProvider, adapterClazz)](#AlertManagerforAdmin) ⇒ [<code>Promise.&lt;AlertManager&gt;</code>](#AlertManager)
@@ -358,6 +362,48 @@
 
 * * *
 
+### alertManager.getTemplates(query) :id=alertmanagergettemplates
+> Gets a set of templates.
+
+**Kind**: instance method of [<code>AlertManager</code>](#AlertManager)  
+**Returns**: [<code>Promise.&lt;Array.&lt;Schema.Template&gt;&gt;</code>](/content/sdk/lib-data?id=schematemplate)  
+**Access**: public  
+
+| Param | Type |
+| --- | --- |
+| query | [<code>Schema.TemplateQuery</code>](/content/sdk/lib-data?id=schematemplatequery) | 
+
+
+* * *
+
+### alertManager.createTemplate(template) :id=alertmanagercreatetemplate
+> Creates a new template.
+
+**Kind**: instance method of [<code>AlertManager</code>](#AlertManager)  
+**Returns**: [<code>Promise.&lt;Schema.Template&gt;</code>](/content/sdk/lib-data?id=schematemplate)  
+**Access**: public  
+
+| Param | Type |
+| --- | --- |
+| template | [<code>Schema.Template</code>](/content/sdk/lib-data?id=schematemplate) | 
+
+
+* * *
+
+### alertManager.deleteTemplate(template) :id=alertmanagerdeletetemplate
+> Deletes an existing template.
+
+**Kind**: instance method of [<code>AlertManager</code>](#AlertManager)  
+**Returns**: [<code>Promise.&lt;Schema.Template&gt;</code>](/content/sdk/lib-data?id=schematemplate)  
+**Access**: public  
+
+| Param | Type |
+| --- | --- |
+| template | [<code>Schema.Template</code>](/content/sdk/lib-data?id=schematemplate) | 
+
+
+* * *
+
 ### alertManager.assignPublisherTypeDefault(publisherTypeDefault) :id=alertmanagerassignpublishertypedefault
 > Saves a user's notification preferences for a single notification strategy (e.g. email
 > or text message).
@@ -398,6 +444,22 @@
 **Kind**: static property of [<code>AlertManager</code>](#AlertManager)  
 **Returns**: <code>String</code>  
 **Access**: public  
+
+* * *
+
+### AlertManager.createAlertFromTemplate(template, symbol, [alert]) :id=alertmanagercreatealertfromtemplate
+> Creates an alert object from template and symbol identifier.
+
+**Kind**: static method of [<code>AlertManager</code>](#AlertManager)  
+**Returns**: [<code>Promise.&lt;Schema.Alert&gt;</code>](/content/sdk/lib-data?id=schemaalert)  
+**Access**: public  
+
+| Param | Type |
+| --- | --- |
+| template | [<code>Schema.Template</code>](/content/sdk/lib-data?id=schematemplate) | 
+| symbol | <code>String</code> | 
+| [alert] | [<code>Schema.Alert</code>](/content/sdk/lib-data?id=schemaalert) | 
+
 
 * * *
 

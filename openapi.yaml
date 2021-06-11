@@ -285,6 +285,57 @@ components:
           type: string
           example: "symbol"
 
+    Template:
+      type: object
+      properties:
+        template_id:
+          type: string
+          format: uuid
+          example: "39b633bf-8993-491d-b544-bdc9deed60be"
+        alert_system:
+          type: string
+        user_id:
+          type: string
+          example: "barchart-test-user"
+        name:
+          type: string
+          example: "Example template"
+        create_date:
+          type: string
+          example: "1453673000873"
+        conditions:
+          type: array
+          items:
+            $ref: '#/components/schemas/Condition'
+
+    TemplateCondition:
+      type: object
+      description: A "Condition" without target.
+      properties:
+        template_condition_id:
+          type: string
+          format: uuid
+          example: "38a3f731-0f87-40b7-a33b-dd9c792998e2"
+        operator:
+          $ref: '#/components/schemas/Operator'
+        property:
+          $ref: '#/components/schemas/Property'
+        templates:
+          type: object
+          properties:
+            condition:
+              type: string
+              example: "Gap Down is greater than {{{operator.format.operand}}}"
+            trigger:
+              type: object
+              properties:
+                email:
+                  type: string
+                  example: "Gap Down is {{{event.format.gapDown}}}"
+                sms:
+                  type: string
+                  example: "Gap Down for {{{property.target.identifier}}} is {{{event.format.gapDown}}}"
+
     Trigger:
       type: object
       description: An alert trigger status shows status of alert trigger.
@@ -764,6 +815,153 @@ paths:
                 properties:
                   message:
                     type: string
+
+  /templates/users/{alert_system}/{user_id}:
+    get:
+      summary: "Retrieve Templates For User."
+      description: "Retrieves all templates for a single user."
+      tags:
+        - Templates
+      security:
+        - JWT: [ ]
+      parameters:
+        - name: user_id
+          required: true
+          in: path
+          description: "The unique identifier of the user (in the :alert_system)"
+          schema:
+            type: string
+
+        - name: alert_system
+          required: true
+          in: path
+          description: The name of the user's system (e.g. "barchart.com" or "grains.com")
+          schema:
+            type: string
+      responses:
+        '200':
+          description: A JSON document, containing an array of template objects.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Template'
+
+        '500':
+          description: A JSON document, containing an error.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+
+  /templates/{template_id}:
+    delete:
+      summary: "Delete Template"
+      description: "Deletes an existing template, stopping it, if necessary."
+      tags:
+        - Templates
+      security:
+        - JWT: [ ]
+      parameters:
+        - name: template_id
+          in: path
+          description: "The UUID for the template"
+          required: true
+          schema:
+            type: string
+            format: uuid
+            example: "6bc32e9d-50ba-4f26-a633-a3cb3884b504"
+      responses:
+        200:
+          description: "A JSON document, conforming to the alert schema, representing the deleted template."
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Template'
+
+        '500':
+          description: "The template does not exist."
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "Template could not be deleted."
+
+  /templates:
+    post:
+      summary: Create Template.
+      description: Creates a new template.
+      tags:
+        - Template
+      security:
+        - JWT: [ ]
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - user_id
+                - alert_system
+                - conditions
+              properties:
+                name:
+                  type: string
+                  example: "Example template"
+                user_id:
+                  type: string
+                  example: "me"
+                alert_system:
+                  type: string
+                  example: "barchart.com"
+                conditions:
+                  type: array
+                  items:
+                    type: object
+                    properties:
+                      property:
+                        type: object
+                        properties:
+                          property_id:
+                            type: integer
+                            example: 1
+                      operator:
+                        type: object
+                        properties:
+                          operator_id:
+                            type: integer
+                            example: 3
+                          operand:
+                            type: string
+                            example: "99"
+      responses:
+        '200':
+          description: A JSON document, conforming to the alert schema, representing the newly created template.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Alert'
+
+        '500':
+          description: The reason for the failure, which is typically caused by POST data that does not conform the the template schema.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "The argument [ query.user_id ] must be a [ string ]"
+
+        '401':
+          $ref: '#/components/responses/Unauthorized'
 
   /alert/market/configuration/{alert_system}/{user_id}:
     get:

@@ -33,6 +33,8 @@
 * [Condition](/content/api/components?id=schemasCondition)
 * [Property](/content/api/components?id=schemasProperty)
 * [Target](/content/api/components?id=schemasTarget)
+* [Template](/content/api/components?id=schemasTemplate)
+* [TemplateCondition](/content/api/components?id=schemasTemplateCondition)
 * [Trigger](/content/api/components?id=schemasTrigger)
 
 ### Security 
@@ -50,6 +52,9 @@
 * [GET /alerts/users/{alert_system}/{user_id}](/content/api/paths?id=get-alertsusersalert_systemuser_id)
 * [PUT /alerts/users/{alert_system}/{user_id}](/content/api/paths?id=put-alertsusersalert_systemuser_id)
 * [GET /alerts/users/{alert_system}/{user_id}/{alert_system_key}](/content/api/paths?id=get-alertsusersalert_systemuser_idalert_system_key)
+* [GET /templates/users/{alert_system}/{user_id}](/content/api/paths?id=get-templatesusersalert_systemuser_id)
+* [DELETE /templates/{template_id}](/content/api/paths?id=delete-templatestemplate_id)
+* [POST /templates](/content/api/paths?id=post-templates)
 * [GET /alert/market/configuration/{alert_system}/{user_id}](/content/api/paths?id=get-alertmarketconfigurationalert_systemuser_id)
 * [GET /alert/targets](/content/api/paths?id=get-alerttargets)
 * [GET /alert/targets/properties](/content/api/paths?id=get-alerttargetsproperties)

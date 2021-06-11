@@ -3,7 +3,7 @@
 ## 4.4.0
 **New Features**
 
-* Added `AlertBuilder` class to provide a typed mechanism for generate schema-compliant JavaScript objects.
+* Added the `AlertBuilder` class, which provides a mechanism for generate schema-compliant JavaScript objects.
 * Added `AlertManager.forStaging` function.
 * Added `AlertManager.forProduction` function.
 
@@ -11,7 +11,7 @@
 ## 4.3.0
 **Technical Enhancements**
 
-* Upgraded the [@barchart/common-js](https://github.com/barchart/common-js) library to the next major version (4).
+* Upgraded the [@barchart/common-js](https://github.com/barchart/common-js) library to the next major version.
 * Swapped the timeout mechanism for promises used by the `AlertManager` class.
 
 

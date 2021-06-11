@@ -25,6 +25,9 @@
         * [.UserIdentifier](#SchemaUserIdentifier) : <code>Object</code>
         * [.PublisherType](#SchemaPublisherType) : <code>Object</code>
         * [.PublisherTypeDefault](#SchemaPublisherTypeDefault) : <code>Object</code>
+        * [.Template](#SchemaTemplate) : <code>Object</code>
+        * [.TemplateCondition](#SchemaTemplateCondition) : <code>Object</code>
+        * [.TemplateQuery](#SchemaTemplateQuery) : <code>Object</code>
         * [.Trigger](#SchemaTrigger) : <code>Object</code>
 
 
@@ -246,6 +249,54 @@
 | [allow_window_end] | <code>String</code> | <p>The time of day, formatted as HH:MM, to stop allowing notifications to be sent.</p> |
 | [allow_window_timezone] | <code>String</code> | <p>The timezone which applies to allow_window_start and allow_window_end.</p> |
 | active_alert_types | <code>Array.&lt;String&gt;</code> | <p>Applies this rule to any alert any alert with a matching &quot;alert_type&quot; property value.</p> |
+
+
+* * *
+
+### Schema.Template :id=schematemplate
+> A template.
+
+**Kind**: static typedef of [<code>Schema</code>](#Schema)  
+**Properties**
+
+| Name | Type | Description |
+| --- | --- | --- |
+| [template_id] | <code>String</code> | <p>The template's unique identifier (assigned by the backend, omit when creating a new template).</p> |
+| [name] | <code>String</code> | <p>The name of the template (if not provided, the backend will attempt to generate a name).</p> |
+| user_id | <code>String</code> | <p>The template owner's unique identifier.</p> |
+| alert_system | <code>String</code> | <p>The template owner's domain.</p> |
+| [create_date] | <code>String</code> | <p>The time the alert was created (milliseconds since epoch). Managed by the backend.</p> |
+| conditions | [<code>Array.&lt;TemplateCondition&gt;</code>](#SchemaTemplateCondition) | <p>An array of conditions without target.</p> |
+
+
+* * *
+
+### Schema.TemplateCondition :id=schematemplatecondition
+> A template condition.
+
+**Kind**: static typedef of [<code>Schema</code>](#Schema)  
+**Properties**
+
+| Name | Type | Description |
+| --- | --- | --- |
+| template_condition_id | <code>String</code> | <p>The template's condition unique identifier (assigned by the backend).</p> |
+| [name] | <code>String</code> | <p>The name of the template condition (if not provided, the backend will attempt to generate a name). Managed by the backend.</p> |
+| property | [<code>Property</code>](#SchemaProperty) | <p>The &quot;property&quot; which is being evaluated (e.g. last price).</p> |
+| operator | [<code>Operator</code>](#SchemaOperator) | <p>The &quot;operator&quot; to use to evaluate the <code>property</code> (e.g. greater than).</p> |
+
+
+* * *
+
+### Schema.TemplateQuery :id=schematemplatequery
+> Parameters used when running a query for templates.
+
+**Kind**: static typedef of [<code>Schema</code>](#Schema)  
+**Properties**
+
+| Name | Type | Description |
+| --- | --- | --- |
+| user_id | <code>String</code> | <p>A value to match against an alert's <code>user_id</code> property.</p> |
+| alert_system | <code>String</code> | <p>A value to match against an alert's <code>alert_system</code> property.</p> |
 
 
 * * *
