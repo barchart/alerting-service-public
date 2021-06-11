@@ -16,7 +16,7 @@ Two options exist:
 This is a single-page browser application written with [Knockout.js](https://knockoutjs.com/), consisting of three source files:
 
 * `index.html` — The initial HTML page, including with [Knockout.js](https://knockoutjs.com/) templates with reactive data binding directives.
-* `js/example.js` — JavaScript source which includes [Knockout.js](https://knockoutjs.com/) observables, data models, and event-handling functions.
+* `js/example.js` — JavaScript source, including [Knockout.js](https://knockoutjs.com/) observables, data models, and event-handling functions.
 * `example.css` — A simple stylesheet.
 
 #### Build
