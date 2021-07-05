@@ -64,7 +64,9 @@ export default (() => {
 				headers: { 'Authorization': `Bearer ${jwtToken}` }
 			};
 
-			return axios.post('https://push-notifications-stage.aws.barchart.com/v1/register', query, config).catch((err) => {
+			return axios.post('https://push-notifications-stage.aws.barchart.com/v2/register', query, config).then((response) => {
+				console.debug('Device Registered:', JSON.stringify(response.data));
+			}).catch((err) => {
 				console.error('Register device error:', err);
 			});
 		});
