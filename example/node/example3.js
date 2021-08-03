@@ -182,8 +182,6 @@ alertManager.connect(jwtProvider)
                         logger.info(`Example: Updated template for [ ${user_id}@${alert_system} ]`);
                         logger.info(JSON.stringify(template, null, 2));
 
-                        throw new Error('Stop');
-
                         context.template = template;
 
                         return context;
