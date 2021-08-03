@@ -1951,6 +1951,23 @@ module.exports = (() => {
       });
     }
     /**
+     * Update an existing template.
+     *
+     * @public
+     * @param {Schema.Template} template
+     * @returns {Promise<Schema.Template>}
+     */
+
+
+    updateTemplate(template) {
+      return Promise.resolve().then(() => {
+        checkStatus(this, 'update template');
+        validate.template.forUpdate(template);
+      }).then(() => {
+        return this._adapter.updateTemplate(template);
+      });
+    }
+    /**
      * Deletes an existing template.
      *
      * @public
@@ -2663,6 +2680,10 @@ module.exports = (() => {
       return null;
     }
 
+    updateTemplate(template) {
+      return null;
+    }
+
     deleteTemplate(template) {
       return null;
     }
@@ -2806,6 +2827,9 @@ module.exports = (() => {
       this._createTemplateEndpoint = EndpointBuilder.for('create-template', 'Create template').withVerb(VerbType.POST).withProtocol(protocolType).withHost(host).withPort(port).withPathBuilder(pb => {
         pb.withLiteralParameter('templates', 'templates');
       }).withBody().withRequestInterceptor(requestInterceptor).withResponseInterceptor(ResponseInterceptor.DATA).withErrorInterceptor(ErrorInterceptor.GENERAL).endpoint;
+      this._updateTemplateEndpoint = EndpointBuilder.for('update-template', 'Update template').withVerb(VerbType.PUT).withProtocol(protocolType).withHost(host).withPort(port).withPathBuilder(pb => {
+        pb.withLiteralParameter('templates', 'templates').withVariableParameter('template_id', 'template_id', 'template_id');
+      }).withBody().withRequestInterceptor(requestInterceptor).withResponseInterceptor(ResponseInterceptor.DATA).withErrorInterceptor(ErrorInterceptor.GENERAL).endpoint;
       this._deleteTemplateEndpoint = EndpointBuilder.for('delete-template', 'Delete template').withVerb(VerbType.DELETE).withProtocol(protocolType).withHost(host).withPort(port).withPathBuilder(pb => {
         pb.withLiteralParameter('templates', 'templates').withVariableParameter('template_id', 'template_id', 'template_id');
       }).withRequestInterceptor(requestInterceptor).withResponseInterceptor(ResponseInterceptor.DATA).withErrorInterceptor(ErrorInterceptor.GENERAL).endpoint;
@@ -2933,6 +2957,10 @@ module.exports = (() => {
 
     createTemplate(template) {
       return Gateway.invoke(this._createTemplateEndpoint, template);
+    }
+
+    updateTemplate(template) {
+      return Gateway.invoke(this._updateTemplateEndpoint, template);
     }
 
     deleteTemplate(template) {
@@ -3471,6 +3499,10 @@ module.exports = (() => {
 
     createTemplate(template) {
       return sendRequestToServer.call(this, 'templates/create', template, true);
+    }
+
+    updateTemplate(template) {
+      return sendRequestToServer.call(this, 'templates/update', template, true);
     }
 
     deleteTemplate(template) {
@@ -4042,6 +4074,15 @@ module.exports = (() => {
       assert.argumentIsRequired(template, d, Object);
       assert.argumentIsRequired(template.template_id, `${d}.template_id`, String);
     },
+    forUpdate: (template, description) => {
+      const d = getDescription(description);
+      assert.argumentIsRequired(template, d, Object);
+      assert.argumentIsRequired(template.template_id, `${d}.template_id`, String);
+      assert.argumentIsOptional(template.name, `${d}.name`, String);
+      assert.argumentIsOptional(template.description, `${d}.description`, String);
+      assert.argumentIsOptional(template.use_as_default, `${d}.use_as_default`, Boolean);
+      assert.argumentIsOptional(template.sort_order, `${d}.sort_order`, Number);
+    },
     forUser: (template, description) => {
       const d = getDescription(description);
       assert.argumentIsRequired(template, d, Object);
@@ -4178,7 +4219,7 @@ module.exports = (() => {
   'use strict';
 
   return {
-    version: '4.6.0'
+    version: '4.7.0'
   };
 })();
 
