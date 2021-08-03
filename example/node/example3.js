@@ -167,6 +167,33 @@ alertManager.connect(jwtProvider)
                         throw e;
                     });
             }).then((context) => {
+                logger.info(`Example: Updating an existing template for [ ${user_id}@${alert_system} ]`);
+
+                const update = { };
+
+                update.template_id = context.template.template_id;
+                update.name = 'New Name';
+                update.description = 'New Description';
+                update.use_as_default = true;
+                update.sort_order = 999;
+
+                return alertManager.updateTemplate(update)
+                    .then((template) => {
+                        logger.info(`Example: Updated template for [ ${user_id}@${alert_system} ]`);
+                        logger.info(JSON.stringify(template, null, 2));
+
+                        throw new Error('Stop');
+
+                        context.template = template;
+
+                        return context;
+                    }).catch((e) => {
+                        logger.warn(`Example: Failed to create template for [ ${user_id}@${alert_system} ]`);
+                        logger.error(e);
+
+                        throw e;
+                    });
+            }).then((context) => {
                 logger.info(`Example: Creating new alert from template for [ ${user_id}@${alert_system} ]`);
 
                 const alert = AlertManager.createAlertFromTemplate(context.template, 'AAPL');

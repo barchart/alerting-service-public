@@ -263,8 +263,12 @@
 | --- | --- | --- |
 | [template_id] | <code>String</code> | <p>The template's unique identifier (assigned by the backend, omit when creating a new template).</p> |
 | [name] | <code>String</code> | <p>The name of the template (if not provided, the backend will attempt to generate a name).</p> |
+| [description] | <code>String</code> | <p>The description of the template.</p> |
+| [alert_type] | <code>String</code> | <p>Same as the &quot;alert_type&quot; property of an Alert object.</p> |
+| [use_as_default] | <code>Boolean</code> | <ul> <li></li> </ul> |
 | user_id | <code>String</code> | <p>The template owner's unique identifier.</p> |
 | alert_system | <code>String</code> | <p>The template owner's domain.</p> |
+| sort_order | <code>Number</code> | <p>The order, relative to other templates, this template should be displayed in.</p> |
 | [create_date] | <code>String</code> | <p>The time the alert was created (milliseconds since epoch). Managed by the backend.</p> |
 | conditions | [<code>Array.&lt;TemplateCondition&gt;</code>](#SchemaTemplateCondition) | <p>An array of conditions without target.</p> |
 

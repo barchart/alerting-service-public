@@ -1,5 +1,10 @@
 # Release Notes
 
+## 4.7.0
+**New Features**
+
+* Added the `AlertManager.updateTemplate` function.
+
 ## 4.5.0
 **New Features**
 

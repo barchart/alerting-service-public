@@ -28,6 +28,7 @@
         * [.updateTriggers(query)](#AlertManagerupdateTriggers) ⇒ [<code>Promise.&lt;Array.&lt;Schema.Trigger&gt;&gt;</code>](/content/sdk/lib-data?id=schematrigger)
         * [.retrieveTemplates(query)](#AlertManagerretrieveTemplates) ⇒ [<code>Promise.&lt;Array.&lt;Schema.Template&gt;&gt;</code>](/content/sdk/lib-data?id=schematemplate)
         * [.createTemplate(template)](#AlertManagercreateTemplate) ⇒ [<code>Promise.&lt;Schema.Template&gt;</code>](/content/sdk/lib-data?id=schematemplate)
+        * [.updateTemplate(template)](#AlertManagerupdateTemplate) ⇒ [<code>Promise.&lt;Schema.Template&gt;</code>](/content/sdk/lib-data?id=schematemplate)
         * [.deleteTemplate(template)](#AlertManagerdeleteTemplate) ⇒ [<code>Promise.&lt;Schema.Template&gt;</code>](/content/sdk/lib-data?id=schematemplate)
         * [.checkSymbol(symbol)](#AlertManagercheckSymbol) ⇒ <code>Promise.&lt;String&gt;</code>
         * [.getTargets()](#AlertManagergetTargets) ⇒ [<code>Promise.&lt;Array.&lt;Schema.Target&gt;&gt;</code>](/content/sdk/lib-data?id=schematarget)
@@ -305,6 +306,20 @@
 
 ### alertManager.createTemplate(template) :id=alertmanagercreatetemplate
 > Creates a new template.
+
+**Kind**: instance method of [<code>AlertManager</code>](#AlertManager)  
+**Returns**: [<code>Promise.&lt;Schema.Template&gt;</code>](/content/sdk/lib-data?id=schematemplate)  
+**Access**: public  
+
+| Param | Type |
+| --- | --- |
+| template | [<code>Schema.Template</code>](/content/sdk/lib-data?id=schematemplate) | 
+
+
+* * *
+
+### alertManager.updateTemplate(template) :id=alertmanagerupdatetemplate
+> Update an existing template.
 
 **Kind**: instance method of [<code>AlertManager</code>](#AlertManager)  
 **Returns**: [<code>Promise.&lt;Schema.Template&gt;</code>](/content/sdk/lib-data?id=schematemplate)  
