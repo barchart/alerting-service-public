@@ -1968,6 +1968,24 @@ module.exports = (() => {
       });
     }
     /**
+     * Updates the sort_order property for one (or more) templates.
+     *
+     * @public
+     * @param {TemplateSortOrderDefinition[]} template
+     * @returns {Promise<Schema.Template[]>}
+     */
+
+
+    updateTemplateOrder(templates) {
+      return Promise.resolve().then(() => {
+        checkStatus(this, 'update template order');
+      }).then(() => {
+        return this._adapter.updateTemplateOrder({
+          templates
+        });
+      });
+    }
+    /**
      * Deletes an existing template.
      *
      * @public
@@ -2684,6 +2702,10 @@ module.exports = (() => {
       return null;
     }
 
+    updateTemplateOrder(templates) {
+      return null;
+    }
+
     deleteTemplate(template) {
       return null;
     }
@@ -2830,6 +2852,9 @@ module.exports = (() => {
       this._updateTemplateEndpoint = EndpointBuilder.for('update-template', 'Update template').withVerb(VerbType.PUT).withProtocol(protocolType).withHost(host).withPort(port).withPathBuilder(pb => {
         pb.withLiteralParameter('templates', 'templates').withVariableParameter('template_id', 'template_id', 'template_id');
       }).withBody().withRequestInterceptor(requestInterceptor).withResponseInterceptor(ResponseInterceptor.DATA).withErrorInterceptor(ErrorInterceptor.GENERAL).endpoint;
+      this._updateTemplateOrderEndpoint = EndpointBuilder.for('update-template-order', 'Update template ordering').withVerb(VerbType.PUT).withProtocol(protocolType).withHost(host).withPort(port).withPathBuilder(pb => {
+        pb.withLiteralParameter('templates', 'templates').withLiteralParameter('batch', 'batch').withLiteralParameter('sorting', 'sorting');
+      }).withBody().withRequestInterceptor(requestInterceptor).withResponseInterceptor(ResponseInterceptor.DATA).withErrorInterceptor(ErrorInterceptor.GENERAL).endpoint;
       this._deleteTemplateEndpoint = EndpointBuilder.for('delete-template', 'Delete template').withVerb(VerbType.DELETE).withProtocol(protocolType).withHost(host).withPort(port).withPathBuilder(pb => {
         pb.withLiteralParameter('templates', 'templates').withVariableParameter('template_id', 'template_id', 'template_id');
       }).withRequestInterceptor(requestInterceptor).withResponseInterceptor(ResponseInterceptor.DATA).withErrorInterceptor(ErrorInterceptor.GENERAL).endpoint;
@@ -2961,6 +2986,10 @@ module.exports = (() => {
 
     updateTemplate(template) {
       return Gateway.invoke(this._updateTemplateEndpoint, template);
+    }
+
+    updateTemplateOrder(templates) {
+      return Gateway.invoke(this._updateTemplateOrderEndpoint, templates);
     }
 
     deleteTemplate(template) {
@@ -3503,6 +3532,10 @@ module.exports = (() => {
 
     updateTemplate(template) {
       return sendRequestToServer.call(this, 'templates/update', template, true);
+    }
+
+    updateTemplateOrder(template) {
+      return sendRequestToServer.call(this, 'templates/batch/sorting', template, true);
     }
 
     deleteTemplate(template) {
@@ -4219,7 +4252,7 @@ module.exports = (() => {
   'use strict';
 
   return {
-    version: '4.7.0'
+    version: '4.8.0'
   };
 })();
 
