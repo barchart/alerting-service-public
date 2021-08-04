@@ -1,5 +1,10 @@
 # Release Notes
 
+## 4.8.0
+**New Features**
+
+* Added the `AlertManager.updateTemplateOrder` function.
+
 ## 4.7.0
 **New Features**
 

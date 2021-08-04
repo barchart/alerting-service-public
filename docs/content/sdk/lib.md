@@ -29,6 +29,7 @@
         * [.retrieveTemplates(query)](#AlertManagerretrieveTemplates) ⇒ [<code>Promise.&lt;Array.&lt;Schema.Template&gt;&gt;</code>](/content/sdk/lib-data?id=schematemplate)
         * [.createTemplate(template)](#AlertManagercreateTemplate) ⇒ [<code>Promise.&lt;Schema.Template&gt;</code>](/content/sdk/lib-data?id=schematemplate)
         * [.updateTemplate(template)](#AlertManagerupdateTemplate) ⇒ [<code>Promise.&lt;Schema.Template&gt;</code>](/content/sdk/lib-data?id=schematemplate)
+        * [.updateTemplateOrder(template)](#AlertManagerupdateTemplateOrder) ⇒ [<code>Promise.&lt;Array.&lt;Schema.Template&gt;&gt;</code>](/content/sdk/lib-data?id=schematemplate)
         * [.deleteTemplate(template)](#AlertManagerdeleteTemplate) ⇒ [<code>Promise.&lt;Schema.Template&gt;</code>](/content/sdk/lib-data?id=schematemplate)
         * [.checkSymbol(symbol)](#AlertManagercheckSymbol) ⇒ <code>Promise.&lt;String&gt;</code>
         * [.getTargets()](#AlertManagergetTargets) ⇒ [<code>Promise.&lt;Array.&lt;Schema.Target&gt;&gt;</code>](/content/sdk/lib-data?id=schematarget)
@@ -328,6 +329,20 @@
 | Param | Type |
 | --- | --- |
 | template | [<code>Schema.Template</code>](/content/sdk/lib-data?id=schematemplate) | 
+
+
+* * *
+
+### alertManager.updateTemplateOrder(template) :id=alertmanagerupdatetemplateorder
+> Updates the sort_order property for one (or more) templates.
+
+**Kind**: instance method of [<code>AlertManager</code>](#AlertManager)  
+**Returns**: [<code>Promise.&lt;Array.&lt;Schema.Template&gt;&gt;</code>](/content/sdk/lib-data?id=schematemplate)  
+**Access**: public  
+
+| Param | Type |
+| --- | --- |
+| template | <code>Array.&lt;TemplateSortOrderDefinition&gt;</code> | 
 
 
 * * *

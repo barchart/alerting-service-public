@@ -27,6 +27,7 @@
         * [.PublisherTypeDefault](#SchemaPublisherTypeDefault) : <code>Object</code>
         * [.Template](#SchemaTemplate) : <code>Object</code>
         * [.TemplateCondition](#SchemaTemplateCondition) : <code>Object</code>
+        * [.TemplateSortOrderDefinition](#SchemaTemplateSortOrderDefinition) : <code>Object</code>
         * [.TemplateQuery](#SchemaTemplateQuery) : <code>Object</code>
         * [.Trigger](#SchemaTrigger) : <code>Object</code>
 
@@ -287,6 +288,20 @@
 | [name] | <code>String</code> | <p>The name of the template condition (if not provided, the backend will attempt to generate a name). Managed by the backend.</p> |
 | property | [<code>Property</code>](#SchemaProperty) | <p>The &quot;property&quot; which is being evaluated (e.g. last price).</p> |
 | operator | [<code>Operator</code>](#SchemaOperator) | <p>The &quot;operator&quot; to use to evaluate the <code>property</code> (e.g. greater than).</p> |
+
+
+* * *
+
+### Schema.TemplateSortOrderDefinition :id=schematemplatesortorderdefinition
+> Parameters used when running a query for templates.
+
+**Kind**: static typedef of [<code>Schema</code>](#Schema)  
+**Properties**
+
+| Name | Type | Description |
+| --- | --- | --- |
+| template_id | <code>String</code> | <p>The template's unique identifier.</p> |
+| sort_order | <code>Number</code> | <p>The order, relative to other templates, this template should be displayed in.</p> |
 
 
 * * *
