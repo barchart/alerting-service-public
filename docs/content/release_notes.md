@@ -1,5 +1,11 @@
 # Release Notes
 
+## 4.9.0
+**New Features**
+
+* Modified the Alert schema, adding an optional `template_id` property (referencing a template, assuming the alert was created from a template).
+* Modified the `AlertManager.createAlertFromTemplate` function to assign the `template_id` property to the resulting Alert object.
+
 ## 4.8.0
 **New Features**
 

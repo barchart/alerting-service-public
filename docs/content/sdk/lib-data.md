@@ -48,6 +48,7 @@
 | Name | Type | Description |
 | --- | --- | --- |
 | [alert_id] | <code>String</code> | <p>The alert's unique identifier (assigned by the backend, omit when creating a new alert).</p> |
+| [template_id] | <code>String</code> | <p>The template identifier, if this alert was created from a template (otherwise null).</p> |
 | [name] | <code>String</code> | <p>The name of the alert (if not provided, the backend will attempt to generate a name).</p> |
 | user_id | <code>String</code> | <p>The alert owner's unique identifier.</p> |
 | alert_system | <code>String</code> | <p>The alert owner's domain.</p> |
