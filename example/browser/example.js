@@ -2210,6 +2210,10 @@ module.exports = (() => {
         newAlert.alert_system = template.alert_system;
       }
 
+      if (template.template_id) {
+        newAlert.template_id = template.template_id;
+      }
+
       newAlert.conditions = template.conditions.map(c => {
         const condition = object.clone(c);
         const property = condition.property;
@@ -3878,6 +3882,7 @@ module.exports = (() => {
     forCreate: (alert, description) => {
       const d = getDescription(description);
       validator.forUser(alert, description);
+      assert.argumentIsOptional(alert.template_id, `${d}.template_id`, String);
       assert.argumentIsOptional(alert.alert_type, `${d}.alert_type`, String);
       assert.argumentIsOptional(alert.name, `${d}.name`, String);
       assert.argumentIsOptional(alert.notes, `${d}.notes`, Object);
@@ -4252,7 +4257,7 @@ module.exports = (() => {
   'use strict';
 
   return {
-    version: '4.8.0'
+    version: '4.9.0'
   };
 })();
 
