@@ -85,7 +85,7 @@ let port = getParameterValue('port') || 443;
 try {
 	port = parseInt(port);
 } catch (e) {
-	logger.error('The port argument must be an integer. Example: "node example.js --user_id=me --host=localhost --port=8888"');
+	logger.error('The port argument must be an integer. Example: "node example4.js --user_id=me --host=localhost --port=8888"');
 
 	process.exit();
 }
@@ -113,8 +113,8 @@ alertManager.connect(jwtProvider)
 
 				const templates = [];
 
-				templates.push({ template_id: '68252c20-86ea-4de1-842b-044ca797f611', sort_order: 33 });
-				templates.push({ template_id: '719ea36d-180e-4e1d-b8d8-aa50e39d64a9', sort_order: 44 });
+				templates.push({ template_id: '31571e63-d62d-4a1e-8254-f0113bde6b81', sort_order: 77777 });
+				templates.push({ template_id: '5eb20f77-a69d-4b10-9c45-b0b81fc0c6f2', sort_order: 88888 });
 
 				return alertManager.updateTemplateOrder(templates)
 					.then((updated) => {
@@ -123,7 +123,7 @@ alertManager.connect(jwtProvider)
 
 						return context;
 					}).catch((e) => {
-						logger.warn(`Example: Failed to create update template ordering`);
+						logger.warn(`Example: Failed to update template ordering`);
 						logger.error(e);
 
 						throw e;

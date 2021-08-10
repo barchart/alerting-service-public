@@ -61,7 +61,7 @@ const user_id = getParameterValue('user_id');
 const alert_system = getParameterValue('alert_system') || 'barchart.com';
 
 if (!user_id) {
-	logger.error('The user_id argument must be specified. Example: "node example.js --user_id=me"');
+	logger.error('The user_id argument must be specified. Example: "node example2.js --user_id=me"');
 
 	process.exit();
 }

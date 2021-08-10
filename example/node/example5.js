@@ -61,7 +61,7 @@ const user_id = getParameterValue('user_id');
 const alert_system = getParameterValue('alert_system') || 'barchart.com';
 
 if (!user_id) {
-    logger.error('The user_id argument must be specified. Example: "node example3.js --user_id=me"');
+    logger.error('The user_id argument must be specified. Example: "node example.js --user_id=me"');
 
     process.exit();
 }
@@ -85,7 +85,7 @@ let port = getParameterValue('port') || 443;
 try {
     port = parseInt(port);
 } catch (e) {
-    logger.error('The port argument must be an integer. Example: "node example.js --user_id=me --host=localhost --port=8888"');
+    logger.error('The port argument must be an integer. Example: "node example5.js --user_id=me --host=localhost --port=8888"');
 
     process.exit();
 }
@@ -107,10 +107,29 @@ alertManager.connect(jwtProvider)
     .then(() => {
         logger.info(`Example: Connected to the Barchart Alerting Service`);
 
-    }).catch((e) => {
-        logger.warn(`Example: Failed to connect to the Barchart Alerting Service`);
-    }).then(() => {
-        logger.info(`Example: Disposing AlertManager`);
+        return Promise.resolve({})
+            .then((context) => {
+                logger.info(`Example: Deleting existing template`);
 
-        alertManager.dispose();
-    });
+                const payload = { template_id: "0a7170a3-18b8-41dd-a386-887dd0ea8c95" };
+
+                return alertManager.deleteTemplate(payload)
+                    .then((response) => {
+                        logger.info(`Example: Deleted existing template`);
+                        logger.info(JSON.stringify(response, null, 2));
+
+                        return context;
+                    }).catch((e) => {
+                        logger.warn(`Example: Failed to delete template`);
+                        logger.error(e);
+
+                        throw e;
+                    });
+            });
+    }).catch((e) => {
+    logger.warn(`Example: Failed to connect to the Barchart Alerting Service`);
+}).then(() => {
+    logger.info(`Example: Disposing AlertManager`);
+
+    alertManager.dispose();
+});
