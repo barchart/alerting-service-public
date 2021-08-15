@@ -1,5 +1,10 @@
 # Release Notes
 
+## 4.10.0
+**New Features**
+
+* Modified the Alert schema, adding an optional `frequency` property.
+
 ## 4.9.0
 **New Features**
 
