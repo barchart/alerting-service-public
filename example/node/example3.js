@@ -107,6 +107,142 @@ alertManager.connect(jwtProvider)
     .then(() => {
         logger.info(`Example: Connected to the Barchart Alerting Service`);
 
+        return Promise.resolve({ })
+            .then((context) => {
+                logger.info(`Example: Retrieving a list of templates for [ ${user_id}@${alert_system} ]`);
+
+                const payload = { };
+
+                payload.user_id = user_id;
+                payload.alert_system = alert_system;
+
+                return alertManager.retrieveTemplates(payload)
+                    .then((templates) => {
+                        logger.info(`Example: Retrieved templates [ ${templates.length} ] for [ ${user_id}@${alert_system} ]`);
+
+                        context.templates = templates;
+
+                        return context;
+                    }).catch((e) => {
+                        logger.warn(`Example: Failed to retrieve templates for [ ${user_id}@${alert_system} ]`);
+                        logger.error(e);
+
+                        throw e;
+                    });
+            }).then((context) => {
+                logger.info(`Example: Creating new template for [ ${user_id}@${alert_system} ]`);
+
+                const template = { };
+
+                template.user_id = user_id;
+                template.alert_system = alert_system;
+                template.name = 'Temporary template';
+
+                template.conditions = [
+                    {
+                        property: {
+                            property_id: 1
+                        },
+                        operator: {
+                            operand: '100',
+                            operand_display: '100',
+                            operand_format: '100.00',
+                            operator_id: 2
+                        }
+                    }
+                ];
+
+                return alertManager.createTemplate(template)
+                    .then((template) => {
+                        logger.info(`Example: Created template for [ ${user_id}@${alert_system} ]`);
+                        logger.info(JSON.stringify(template, null, 2));
+
+                        context.template = template;
+
+                        return context;
+                    }).catch((e) => {
+                        logger.warn(`Example: Failed to create template for [ ${user_id}@${alert_system} ]`);
+                        logger.error(e);
+
+                        throw e;
+                    });
+            }).then((context) => {
+                logger.info(`Example: Updating an existing template for [ ${user_id}@${alert_system} ]`);
+
+                const update = { };
+
+                update.template_id = context.template.template_id;
+                update.name = 'New Name';
+                update.description = 'New Description';
+                update.use_as_default = true;
+                update.sort_order = 999;
+
+                return alertManager.updateTemplate(update)
+                    .then((template) => {
+                        logger.info(`Example: Updated template for [ ${user_id}@${alert_system} ]`);
+                        logger.info(JSON.stringify(template, null, 2));
+
+                        context.template = template;
+
+                        return context;
+                    }).catch((e) => {
+                        logger.warn(`Example: Failed to update template for [ ${user_id}@${alert_system} ]`);
+                        logger.error(e);
+
+                        throw e;
+                    });
+            }).then((context) => {
+                logger.info(`Example: Creating new alert from template for [ ${user_id}@${alert_system} ]`);
+
+                const alert = AlertManager.createAlertFromTemplate(context.template, 'AAPL');
+
+                return alertManager.createAlert(alert)
+                    .then((createdAlert) => {
+                        logger.info(`Example: Created alert from template for [ ${user_id}@${alert_system} ]`);
+                        logger.info(JSON.stringify(createdAlert, null, 2));
+
+                        context.alert = createdAlert;
+
+                        return context;
+                    }).catch((e) => {
+                        logger.warn(`Example: Failed to create an alert from template for [ ${user_id}@${alert_system} ]`);
+                        logger.error(e);
+
+                        throw e;
+                    });
+            }).then((context) => {
+                logger.info(`Example: Deleting an alert for [ ${user_id}@${alert_system} ]`);
+
+                return alertManager.deleteAlert(context.alert)
+                    .then((deletedAlert) => {
+                        logger.info(`Example: Deleted alert [ ${deletedAlert.alert_id} ] for [ ${user_id}@${alert_system} ]`);
+
+                        context.alert = null;
+
+                        return context;
+                    }).catch((e) => {
+                        logger.warn(`Example: Failed to delete alert for [ ${user_id}@${alert_system} ]`);
+                        logger.error(e);
+
+                        throw e;
+                    });
+            }).then((context) => {
+                logger.info(`Example: Deleting template for [ ${user_id}@${alert_system} ]`);
+
+                return alertManager.deleteTemplate(context.template)
+                    .then((deletedTemplate) => {
+                        logger.info(`Example: Deleted template [ ${deletedTemplate.template_id} ] for [ ${user_id}@${alert_system} ]`);
+
+                        context.template = null;
+
+                        return context;
+                    }).catch((e) => {
+                        logger.warn(`Example: Failed to delete template for [ ${user_id}@${alert_system} ]`);
+                        logger.error(e);
+
+                        throw e;
+                    });
+            });
     }).catch((e) => {
         logger.warn(`Example: Failed to connect to the Barchart Alerting Service`);
     }).then(() => {
