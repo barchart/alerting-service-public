@@ -266,8 +266,9 @@
 | [template_id] | <code>String</code> | <p>The template's unique identifier (assigned by the backend, omit when creating a new template).</p> |
 | [name] | <code>String</code> | <p>The name of the template (if not provided, the backend will attempt to generate a name).</p> |
 | [description] | <code>String</code> | <p>The description of the template.</p> |
+| [frequency] | <code>String</code> | <p>A text description that indicates how (or if) schedules should be added when creating new alerts from this template.</p> |
 | [alert_type] | <code>String</code> | <p>Same as the &quot;alert_type&quot; property of an Alert object.</p> |
-| [use_as_default] | <code>Boolean</code> | <ul> <li></li> </ul> |
+| [use_as_default] | <code>Boolean</code> | <p>Indicates if this is the default template for a given &quot;alert_type&quot; property value.</p> |
 | user_id | <code>String</code> | <p>The template owner's unique identifier.</p> |
 | alert_system | <code>String</code> | <p>The template owner's domain.</p> |
 | sort_order | <code>Number</code> | <p>The order, relative to other templates, this template should be displayed in.</p> |
