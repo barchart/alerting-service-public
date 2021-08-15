@@ -4103,6 +4103,7 @@ module.exports = (() => {
       validator.forUser(template, description);
       assert.argumentIsOptional(template.name, `${d}.name`, String);
       assert.argumentIsOptional(template.description, `${d}.description`, String);
+      assert.argumentIsOptional(template.frequency, `${d}.frequency`, String);
       assert.argumentIsOptional(template.alert_type, `${d}.alert_type`, String);
       assert.argumentIsOptional(template.use_as_default, `${d}.use_as_default`, Boolean);
       assert.argumentIsArray(template.conditions, `${d}.conditions`, templateCondition.forCreate);
@@ -4257,7 +4258,7 @@ module.exports = (() => {
   'use strict';
 
   return {
-    version: '4.9.0'
+    version: '4.9.1'
   };
 })();
 
