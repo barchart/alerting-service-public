@@ -2228,6 +2228,18 @@ module.exports = (() => {
       return properties.filter(property => property.target.target_id === target.target_id);
     }
 
+    static getPropertiesForSymbol(properties, symbol) {
+      return Promise.resolve().then(() => {
+        assert.argumentIsArray(properties, 'properties', Object);
+        assert.argumentIsValid(symbol, 'symbol', s => is.string(s) && s.length > 0, 'is a string');
+        return lookupInstrument(symbol);
+      }).then(profile => {
+        return properties.filter(p => {
+          return !p.hasOwnProperty('valid_asset_classes') || p.valid_asset_classes === null || p.valid_asset_classes.some(vac => vac === profile.instrument.symbolType);
+        });
+      });
+    }
+
     static getOperatorsForProperty(operators, property) {
       const operatorMap = AlertManager.getOperatorMap(operators);
       return property.valid_operators.map(operatorId => operatorMap[operatorId]);
@@ -2533,7 +2545,7 @@ module.exports = (() => {
 
   function lookupInstrument(symbol) {
     return Gateway.invoke(instrumentLookupEndpoint, {
-      symbol: symbol
+      symbol
     });
   }
 
@@ -4119,6 +4131,7 @@ module.exports = (() => {
       assert.argumentIsRequired(template.template_id, `${d}.template_id`, String);
       assert.argumentIsOptional(template.name, `${d}.name`, String);
       assert.argumentIsOptional(template.description, `${d}.description`, String);
+      assert.argumentIsOptional(template.frequency, `${d}.frequency`, String);
       assert.argumentIsOptional(template.use_as_default, `${d}.use_as_default`, Boolean);
       assert.argumentIsOptional(template.sort_order, `${d}.sort_order`, Number);
     },
@@ -4258,7 +4271,7 @@ module.exports = (() => {
   'use strict';
 
   return {
-    version: '4.10.0'
+    version: '4.11.0'
   };
 })();
 
