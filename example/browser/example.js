@@ -1,4 +1,6 @@
 (function(){function r(e,n,t){function o(i,f){if(!n[i]){if(!e[i]){var c="function"==typeof require&&require;if(!f&&c)return c(i,!0);if(u)return u(i,!0);var a=new Error("Cannot find module '"+i+"'");throw a.code="MODULE_NOT_FOUND",a}var p=n[i]={exports:{}};e[i][0].call(p.exports,function(r){var n=e[i][1][r];return o(n||r)},p,p.exports,r,e,n,t)}return n[i].exports}for(var u="function"==typeof require&&require,i=0;i<t.length;i++)o(t[i]);return o}return r})()({1:[function(require,module,exports){
+'use strict';
+
 const AlertManager = require('./../../../lib/AlertManager');
 
 const AdapterForHttp = require('./../../../lib/adapters/AdapterForHttp'),
@@ -12,1350 +14,1368 @@ const timezone = require('@barchart/common-js/lang/timezone');
 const ComparatorBuilder = require('@barchart/common-js/collections/sorting/ComparatorBuilder'),
       comparators = require('@barchart/common-js/collections/sorting/comparators');
 
-module.exports = (() => {
-  'use strict';
+var alertManager;
+var utilities = AlertManager;
+var targets = ko.observable();
+var properties = ko.observable();
+var operators = ko.observable();
+var modifiers = ko.observable();
+var publisherTypes = ko.observable();
+var marketDataConfiguration = ko.observable();
+var currentSystem = null;
+var currentUserId = null;
 
-  var alertManager;
-  var utilities = AlertManager;
-  var targets = ko.observable();
-  var properties = ko.observable();
-  var operators = ko.observable();
-  var modifiers = ko.observable();
-  var publisherTypes = ko.observable();
-  var marketDataConfiguration = ko.observable();
-  var currentSystem = null;
-  var currentUserId = null;
+function PageModel(host, system, userId) {
+  var that = this;
+  that.host = ko.observable(host || 'alerts-management-demo.barchart.com');
+  that.system = ko.observable(system || 'barchart.com');
+  that.userId = ko.observable(userId || 'me');
+  that.mode = ko.observable('socket.io');
+  currentSystem = system;
+  currentUserId = userId;
+  that.version = ko.observable({});
+  that.authenticatedUser = ko.observable('Unsecure');
+  that.connecting = ko.observable(false);
+  that.connected = ko.observable(false);
+  that.message = ko.observable('Waiting to connect...');
+  that.alert = ko.observable();
+  that.alerts = ko.observableArray([]);
+  that.alertsFormatted = ko.computed(function () {
+    const models = that.alerts().slice(0);
+    models.sort(comparatorForAlerts);
+    return models;
+  });
+  that.publisherSettings = ko.observable();
+  that.marketDataSettings = ko.observable();
+  that.providerDescription = ko.observable(alertManager !== null ? alertManager.toString() : '');
+  that.triggers = ko.observableArray([]);
+  that.triggersSortOptions = ko.observableArray([triggersOrderOptions.BY_ALERT, triggersOrderOptions.BY_DATE]);
+  that.triggersSelectedSort = ko.observable(triggersOrderOptions.BY_DATE);
+  that.triggersFormatted = ko.computed(function () {
+    const models = that.triggers().slice(0);
+    let sorted;
 
-  function PageModel(host, system, userId) {
-    var that = this;
-    that.host = ko.observable(host || 'alerts-management-demo.barchart.com');
-    that.system = ko.observable(system || 'barchart.com');
-    that.userId = ko.observable(userId || 'me');
-    that.mode = ko.observable('socket.io');
-    currentSystem = system;
-    currentUserId = userId;
-    that.version = ko.observable({});
-    that.authenticatedUser = ko.observable('Unsecure');
-    that.connecting = ko.observable(false);
-    that.connected = ko.observable(false);
-    that.message = ko.observable('Waiting to connect...');
-    that.alert = ko.observable();
-    that.alerts = ko.observableArray([]);
-    that.alertsFormatted = ko.computed(function () {
-      const models = that.alerts().slice(0);
-      models.sort(comparatorForAlerts);
-      return models;
+    if (that.triggersSelectedSort() === triggersOrderOptions.BY_ALERT) {
+      models.sort(comparatorForTriggersByAlert);
+      models.forEach(model => {
+        model.display.first(false);
+        model.display.rowSpan(1);
+      });
+      const grouped = models.reduce((accumulator, model) => {
+        const group = accumulator.find(a => a.alert_id === model.trigger().alert_id) || null;
+
+        if (group === null) {
+          accumulator.push({
+            alert_id: model.trigger().alert_id,
+            triggers: [model]
+          });
+        } else {
+          group.triggers.push(model);
+        }
+
+        return accumulator;
+      }, []);
+      grouped.forEach(group => {
+        group.triggers[0].display.first(true);
+        group.triggers[0].display.rowSpan(group.triggers.length);
+      });
+      sorted = grouped.reduce((acc, g) => {
+        return acc.concat(g.triggers);
+      }, []);
+    } else if (that.triggersSelectedSort() === triggersOrderOptions.BY_DATE) {
+      models.sort(comparatorForTriggersByDate);
+      models.forEach(model => {
+        model.display.first(true);
+        model.display.rowSpan(1);
+      });
+      sorted = models;
+    } else {
+      sorted = models;
+    }
+
+    return sorted;
+  });
+  that.triggersFormatted.extend({
+    rateLimit: 100
+  });
+  that.activeTemplate = ko.observable('alert-disconnected');
+
+  var getAlertModel = function (alert) {
+    return _.find(that.alerts(), function (model) {
+      return model.alert().alert_id === alert.alert_id;
     });
-    that.publisherSettings = ko.observable();
-    that.marketDataSettings = ko.observable();
-    that.providerDescription = ko.observable(alertManager !== null ? alertManager.toString() : '');
-    that.triggers = ko.observableArray([]);
-    that.triggersSortOptions = ko.observableArray([triggersOrderOptions.BY_ALERT, triggersOrderOptions.BY_DATE]);
-    that.triggersSelectedSort = ko.observable(triggersOrderOptions.BY_DATE);
-    that.triggersFormatted = ko.computed(function () {
-      const models = that.triggers().slice(0);
-      let sorted;
+  };
 
-      if (that.triggersSelectedSort() === triggersOrderOptions.BY_ALERT) {
-        models.sort(comparatorForTriggersByAlert);
-        models.forEach(model => {
-          model.display.first(false);
-          model.display.rowSpan(1);
-        });
-        const grouped = models.reduce((accumulator, model) => {
-          const group = accumulator.find(a => a.alert_id === model.trigger().alert_id) || null;
+  var sortAlertModels = function () {
+    that.alerts.sort(function (a, b) {
+      return a.alert().name.localeCompare(b.alert().name);
+    });
+  };
 
-          if (group === null) {
-            accumulator.push({
-              alert_id: model.trigger().alert_id,
-              triggers: [model]
-            });
-          } else {
-            group.triggers.push(model);
+  var getTriggerModel = function (trigger) {
+    return _.find(that.triggers(), function (model) {
+      return model.trigger().alert_id === trigger.alert_id && model.trigger().trigger_date === trigger.trigger_date;
+    });
+  };
+
+  that.canConnect = ko.computed(function () {
+    return !that.connecting() && !that.connected();
+  });
+  that.canDisconnect = ko.computed(function () {
+    return that.connected();
+  });
+
+  that.setSocketTransport = () => {
+    that.mode('socket.io');
+  };
+
+  that.setRestTransport = () => {
+    that.mode('rest');
+  };
+
+  that.handleConnectKeypress = function (d, e) {
+    if (e.keyCode === 13 && !that.connected()) {
+      that.connect();
+    }
+
+    return true;
+  };
+
+  that.connect = function () {
+    if (!that.connected() && !that.connecting()) {
+      that.message('Attempting to connect...');
+      reset(that.host(), that.system(), that.userId(), that.mode());
+    }
+  };
+
+  that.disconnect = function () {
+    if (that.connected()) {
+      that.activeTemplate('alert-disconnected');
+      currentSystem = null;
+      currentUserId = null;
+      that.connected(false);
+      that.alerts([]);
+      alertManager.dispose();
+      alertManager = null;
+    }
+  };
+
+  that.changeToGrid = function () {
+    if (!that.connected()) {
+      return;
+    }
+
+    that.activeTemplate('alert-grid-template');
+  };
+
+  that.changeToCreate = function () {
+    if (!that.connected()) {
+      return;
+    }
+
+    that.alert = new AlertEntryModel();
+    that.activeTemplate('alert-entry-template');
+  };
+
+  that.changeToView = function (alertEntryModel) {
+    if (!that.connected()) {
+      return;
+    }
+
+    that.alert = new AlertEntryModel(alertEntryModel.alert());
+    that.activeTemplate('alert-entry-template');
+  };
+
+  that.changeToPreferences = function () {
+    if (!that.connected()) {
+      return;
+    }
+
+    that.publisherSettings = new AlertPublisherTypeDefaultsModel(publisherTypes());
+    that.marketDataSettings = new MarketDataConfigurationModel(marketDataConfiguration());
+    that.activeTemplate('alert-preferences-template');
+  };
+
+  that.changeToHistory = function () {
+    if (!that.connected()) {
+      return;
+    }
+
+    that.activeTemplate('trigger-history-template');
+  };
+
+  that.deleteAlert = function (alertDisplayModel) {
+    alertDisplayModel.processing(true);
+    alertManager.deleteAlert(alertDisplayModel.alert()).then(function () {
+      that.alerts.remove(alertDisplayModel);
+    });
+  };
+
+  that.enableAlerts = function () {
+    alertManager.enableAlerts({
+      alert_system: currentSystem,
+      user_id: currentUserId
+    });
+  };
+
+  that.disableAlerts = function () {
+    alertManager.disableAlerts({
+      alert_system: currentSystem,
+      user_id: currentUserId
+    });
+  };
+
+  that.handleAlertCreate = function (createdAlert) {
+    var existingModel = getAlertModel(createdAlert);
+
+    if (!existingModel) {
+      that.alerts.push(new AlertDisplayModel(createdAlert));
+      sortAlertModels();
+    }
+  };
+
+  that.handleAlertChange = function (changedAlert) {
+    var existingModel = getAlertModel(changedAlert);
+
+    if (existingModel) {
+      existingModel.alert(changedAlert);
+    } else {
+      that.alerts.push(new AlertDisplayModel(changedAlert));
+      sortAlertModels();
+    }
+  };
+
+  that.handleAlertTrigger = function (triggeredAlert) {
+    that.handleAlertChange(triggeredAlert);
+  };
+
+  that.handleAlertDelete = function (deletedAlert) {
+    var modelToRemove = getAlertModel(deletedAlert);
+    that.alerts.remove(modelToRemove);
+    that.triggers.remove(function (triggerModel) {
+      return triggerModel.trigger().alert_id === modelToRemove.alert().alert_id;
+    });
+  };
+
+  that.handleTemplateCreate = function (template) {
+    console.log('Template created', template);
+  };
+
+  that.handleTemplateChange = function (template) {
+    console.log('Template changed', template);
+  };
+
+  that.handleTemplateDelete = function (template) {
+    console.log('Template deleted', template);
+  };
+
+  that.handleTriggersCreate = function (triggers) {
+    let model;
+    triggers.forEach(trigger => {
+      model = new AlertTriggerModel(trigger);
+      that.triggers.push(model);
+    });
+
+    if (triggers.length === 1) {
+      const onclick = (() => {
+        let clicked = false;
+        return () => {
+          if (!clicked) {
+            model.toggle();
+            clicked = true;
           }
+        };
+      })();
 
-          return accumulator;
-        }, []);
-        grouped.forEach(group => {
-          group.triggers[0].display.first(true);
-          group.triggers[0].display.rowSpan(group.triggers.length);
-        });
-        sorted = grouped.reduce((acc, g) => {
-          return acc.concat(g.triggers);
-        }, []);
-      } else if (that.triggersSelectedSort() === triggersOrderOptions.BY_DATE) {
-        models.sort(comparatorForTriggersByDate);
-        models.forEach(model => {
-          model.display.first(true);
-          model.display.rowSpan(1);
-        });
-        sorted = models;
-      } else {
-        sorted = models;
-      }
-
-      return sorted;
-    });
-    that.triggersFormatted.extend({
-      rateLimit: 100
-    });
-    that.activeTemplate = ko.observable('alert-disconnected');
-
-    var getAlertModel = function (alert) {
-      return _.find(that.alerts(), function (model) {
-        return model.alert().alert_id === alert.alert_id;
+      toastr.info(triggers[0].trigger_description, triggers[0].trigger_title, {
+        onclick: onclick,
+        progressBar: true
       });
-    };
+    }
+  };
 
-    var sortAlertModels = function () {
-      that.alerts.sort(function (a, b) {
-        return a.alert().name.localeCompare(b.alert().name);
-      });
-    };
-
-    var getTriggerModel = function (trigger) {
-      return _.find(that.triggers(), function (model) {
-        return model.trigger().alert_id === trigger.alert_id && model.trigger().trigger_date === trigger.trigger_date;
-      });
-    };
-
-    that.canConnect = ko.computed(function () {
-      return !that.connecting() && !that.connected();
-    });
-    that.canDisconnect = ko.computed(function () {
-      return that.connected();
-    });
-
-    that.setSocketTransport = () => {
-      that.mode('socket.io');
-    };
-
-    that.setRestTransport = () => {
-      that.mode('rest');
-    };
-
-    that.handleConnectKeypress = function (d, e) {
-      if (e.keyCode === 13 && !that.connected()) {
-        that.connect();
-      }
-
-      return true;
-    };
-
-    that.connect = function () {
-      if (!that.connected() && !that.connecting()) {
-        that.message('Attempting to connect...');
-        reset(that.host(), that.system(), that.userId(), that.mode());
-      }
-    };
-
-    that.disconnect = function () {
-      if (that.connected()) {
-        that.activeTemplate('alert-disconnected');
-        currentSystem = null;
-        currentUserId = null;
-        that.connected(false);
-        that.alerts([]);
-        alertManager.dispose();
-        alertManager = null;
-      }
-    };
-
-    that.changeToGrid = function () {
-      if (!that.connected()) {
-        return;
-      }
-
-      that.activeTemplate('alert-grid-template');
-    };
-
-    that.changeToCreate = function () {
-      if (!that.connected()) {
-        return;
-      }
-
-      that.alert = new AlertEntryModel();
-      that.activeTemplate('alert-entry-template');
-    };
-
-    that.changeToView = function (alertEntryModel) {
-      if (!that.connected()) {
-        return;
-      }
-
-      that.alert = new AlertEntryModel(alertEntryModel.alert());
-      that.activeTemplate('alert-entry-template');
-    };
-
-    that.changeToPreferences = function () {
-      if (!that.connected()) {
-        return;
-      }
-
-      that.publisherSettings = new AlertPublisherTypeDefaultsModel(publisherTypes());
-      that.marketDataSettings = new MarketDataConfigurationModel(marketDataConfiguration());
-      that.activeTemplate('alert-preferences-template');
-    };
-
-    that.changeToHistory = function () {
-      if (!that.connected()) {
-        return;
-      }
-
-      that.activeTemplate('trigger-history-template');
-    };
-
-    that.deleteAlert = function (alertDisplayModel) {
-      alertDisplayModel.processing(true);
-      alertManager.deleteAlert(alertDisplayModel.alert()).then(function () {
-        that.alerts.remove(alertDisplayModel);
-      });
-    };
-
-    that.enableAlerts = function () {
-      alertManager.enableAlerts({
-        alert_system: currentSystem,
-        user_id: currentUserId
-      });
-    };
-
-    that.disableAlerts = function () {
-      alertManager.disableAlerts({
-        alert_system: currentSystem,
-        user_id: currentUserId
-      });
-    };
-
-    that.handleAlertCreate = function (createdAlert) {
-      var existingModel = getAlertModel(createdAlert);
-
-      if (!existingModel) {
-        that.alerts.push(new AlertDisplayModel(createdAlert));
-        sortAlertModels();
-      }
-    };
-
-    that.handleAlertChange = function (changedAlert) {
-      var existingModel = getAlertModel(changedAlert);
+  that.handleTriggersChange = function (triggers) {
+    triggers.forEach(trigger => {
+      const existingModel = getTriggerModel(trigger);
 
       if (existingModel) {
-        existingModel.alert(changedAlert);
+        existingModel.trigger(trigger);
       } else {
-        that.alerts.push(new AlertDisplayModel(changedAlert));
-        sortAlertModels();
+        that.triggers.push(new AlertTriggerModel(trigger));
       }
-    };
-
-    that.handleAlertTrigger = function (triggeredAlert) {
-      that.handleAlertChange(triggeredAlert);
-    };
-
-    that.handleAlertDelete = function (deletedAlert) {
-      var modelToRemove = getAlertModel(deletedAlert);
-      that.alerts.remove(modelToRemove);
-      that.triggers.remove(function (triggerModel) {
-        return triggerModel.trigger().alert_id === modelToRemove.alert().alert_id;
-      });
-    };
-
-    that.handleTriggersCreate = function (triggers) {
-      let model;
-      triggers.forEach(trigger => {
-        model = new AlertTriggerModel(trigger);
-        that.triggers.push(model);
-      });
-
-      if (triggers.length === 1) {
-        const onclick = (() => {
-          let clicked = false;
-          return () => {
-            if (!clicked) {
-              model.toggle();
-              clicked = true;
-            }
-          };
-        })();
-
-        toastr.info(triggers[0].trigger_description, triggers[0].trigger_title, {
-          onclick: onclick,
-          progressBar: true
-        });
-      }
-    };
-
-    that.handleTriggersChange = function (triggers) {
-      triggers.forEach(trigger => {
-        const existingModel = getTriggerModel(trigger);
-
-        if (existingModel) {
-          existingModel.trigger(trigger);
-        } else {
-          that.triggers.push(new AlertTriggerModel(trigger));
-        }
-      });
-    };
-
-    that.handleTriggersDelete = function (triggers) {
-      const existingModels = triggers.map(t => getTriggerModel(t) || null).filter(t => t !== null);
-      that.triggers.removeAll(existingModels);
-    };
-
-    that.updateTriggers = function (status) {
-      return alertManager.updateTriggers({
-        user_id: currentUserId,
-        alert_system: currentSystem,
-        trigger_status: status
-      });
-    };
-  }
-
-  function AlertTriggerModel(trigger) {
-    var that = this;
-    that.trigger = ko.observable(trigger);
-    that.date = ko.computed(function () {
-      return new Date(parseInt(that.trigger().trigger_date));
-    });
-    that.statusDate = ko.computed(function () {
-      return new Date(parseInt(that.trigger().trigger_status_date));
-    });
-    that.loading = ko.observable(false);
-
-    var formatDate = function (date) {
-      var returnRef;
-
-      if (date) {
-        returnRef = date.toLocaleString();
-      } else {
-        returnRef = 'never';
-      }
-
-      return returnRef;
-    };
-
-    that.display = {
-      date: ko.computed(function () {
-        return formatDate(that.date());
-      }),
-      first: ko.observable(1),
-      read: ko.computed(function () {
-        return that.trigger().trigger_status === 'Read';
-      }),
-      rowSpan: ko.observable(1),
-      statusDate: ko.computed(function () {
-        return formatDate(that.statusDate());
-      })
-    };
-    that.news = {
-      isExist: false
-    };
-
-    if (that.trigger().trigger_additional_data && that.trigger().trigger_additional_data.type === 'news' && that.trigger().trigger_additional_data.data.link) {
-      that.news.isExist = true;
-    }
-
-    that.toggle = function () {
-      that.loading(true);
-      const payload = {};
-      payload.alert_id = that.trigger().alert_id;
-      payload.trigger_date = that.date().getTime().toString();
-      payload.trigger_status = getOppositeStatus(that.trigger().trigger_status);
-      return alertManager.updateTrigger(payload).then(() => {
-        that.loading(false);
-      });
-    };
-
-    function getOppositeStatus(status) {
-      return status === 'Read' ? 'Unread' : 'Read';
-    }
-  }
-
-  function AlertDisplayModel(alert) {
-    var that = this;
-    that.alert = ko.observable(alert);
-    that.processing = ko.observable(false);
-    that.createDate = ko.computed(function () {
-      var alert = that.alert();
-      var returnRef;
-
-      if (alert.create_date) {
-        returnRef = new Date(parseInt(alert.create_date));
-      } else {
-        returnRef = new Date(0);
-      }
-
-      return returnRef;
-    });
-    that.createDateDisplay = ko.computed(function () {
-      var nullDate = new Date(0);
-      var returnRef;
-
-      if (that.createDate().getTime() === nullDate.getTime()) {
-        returnRef = 'Undefined';
-      } else {
-        returnRef = that.createDate().toLocaleString();
-      }
-
-      return returnRef;
-    });
-    that.lastTriggerDateDisplay = ko.computed(function () {
-      var alert = that.alert();
-      var returnRef;
-
-      if (alert.last_trigger_date) {
-        var lastTriggerDate = new Date(parseInt(alert.last_trigger_date));
-        returnRef = lastTriggerDate.toLocaleString();
-      } else {
-        returnRef = 'never';
-      }
-
-      return returnRef;
-    });
-    that.canStart = ko.computed(function () {
-      var alert = that.alert();
-      return alert.alert_state === 'Inactive' || alert.alert_state === 'Triggered' || alert.alert_state === 'Orphaned' || alert.alert_state === 'Expired';
-    });
-    that.canPause = ko.computed(function () {
-      var alert = that.alert();
-      return alert.alert_state === 'Active';
-    });
-    that.canRefresh = ko.computed(function () {
-      return !that.canStart() && !that.canPause();
-    });
-
-    that.start = function () {
-      alertManager.enableAlert(that.alert());
-    };
-
-    that.pause = function () {
-      alertManager.disableAlert(that.alert());
-    };
-
-    that.refresh = function () {
-      alertManager.retrieveAlert(that.alert()).then(function (refreshedAlert) {
-        that.alert(refreshedAlert);
-      });
-    };
-  }
-
-  function AlertEntryModel(alert) {
-    var that = this;
-    that.alert = ko.observable(alert || null);
-    that.alertType = ko.observable('none');
-    that.alertBehavior = ko.observable('terminate');
-    that.name = ko.observable(null);
-    that.userNotes = ko.observable(null);
-    that.createDate = ko.observable(null);
-    that.alertSystemKey = ko.observable(null);
-    that.conditions = ko.observableArray([]);
-    that.publishers = ko.observableArray([]);
-    that.schedules = ko.observableArray([]);
-    that.processing = ko.observable(false);
-    that.error = ko.observable(null);
-    that.alertBehaviors = ko.observable(['terminate', 'schedule', 'automatic']);
-    that.alertTypes = ko.observable(['none', 'news', 'price', 'match']);
-    that.automaticReset = ko.computed(function () {
-      return that.alertBehavior() === 'automatic';
-    });
-    that.showSchedules = ko.computed(function () {
-      return that.alertBehavior() === 'schedule';
-    });
-
-    that.clearAlert = function () {
-      that.alert(null);
-      that.alertType('none');
-      that.alertBehavior('terminate');
-      that.name(null);
-      that.userNotes(null);
-      that.createDate(null);
-      that.alertSystemKey(null);
-      that.conditions([]);
-      that.publishers([]);
-      that.schedules([]);
-      that.processing(false);
-      that.error(null);
-    };
-
-    that.createAlert = function () {
-      that.processing(true);
-      that.error(null);
-      var alertType = that.alertType();
-
-      if (alertType === 'none') {
-        alertType = null;
-      }
-
-      var alertBehavior = that.alertBehavior();
-
-      if (alertType === 'news' && alertBehavior === 'automatic') {
-        alertBehavior = null;
-      }
-
-      if (alertBehavior === 'automatic') {
-        alertBehavior = 'terminate';
-      }
-
-      var schedules;
-
-      if (alertBehavior === 'schedule') {
-        schedules = _.map(that.schedules(), function (schedule) {
-          return {
-            time: schedule.time(),
-            day: schedule.day(),
-            timezone: schedule.timezone()
-          };
-        });
-      } else {
-        schedules = [];
-      }
-
-      var alert = {
-        alert_type: alertType,
-        user_notes: that.userNotes() || null,
-        user_id: currentUserId,
-        alert_system: currentSystem,
-        automatic_reset: that.automaticReset(),
-        conditions: _.map(that.conditions(), function (condition) {
-          var property = condition.property();
-          var operator = condition.operator();
-          var operand = condition.operand();
-
-          if (operator.operand_literal) {
-            operand = condition.operand();
-
-            if (operator.operand_type === 'Array' && _.isString(operand)) {
-              operand = _.map(operand.split(','), function (item) {
-                return _.trim(item);
-              });
-            }
-
-            if (property.type === 'percent') {
-              operand = parseFloat(operand) / 100;
-              operand = operand.toString();
-            }
-          }
-
-          var conditionData = {
-            property: {
-              property_id: property.property_id,
-              target: {
-                identifier: condition.targetIdentifier()
-              }
-            },
-            operator: {
-              operator_id: operator.operator_id,
-              operand: operand
-            }
-          };
-
-          var modifiers = _.filter(condition.modifiers(), function (modifier) {
-            return modifier.modifier() !== null;
-          });
-
-          if (_.isArray(modifiers) && modifiers.length > 0) {
-            conditionData.operator.modifiers = _.map(modifiers, function (modifier) {
-              var value = modifier.value();
-              var m = modifier.modifier();
-
-              if (m.type === 'percent') {
-                value = parseFloat(value) / 100;
-                value = value.toString();
-              }
-
-              return {
-                modifier_id: m.modifier_id,
-                value: value
-              };
-            });
-          }
-
-          var qualifiers = condition.qualifiers();
-
-          if (qualifiers.length > 0) {
-            conditionData.property.target.qualifiers = _.map(qualifiers, function (qualifier) {
-              return qualifier.qualifierValue();
-            });
-          }
-
-          return conditionData;
-        }),
-        publishers: _.map(that.publishers(), function (publisher) {
-          return {
-            type: {
-              publisher_type_id: publisher.publisherType().publisher_type_id
-            },
-            use_default_recipient: publisher.useDefaultRecipient(),
-            recipient: publisher.recipient(),
-            format: publisher.format()
-          };
-        }),
-        schedules: schedules
-      };
-      var name = that.name();
-
-      if (_.isString(name) && name.length !== 0) {
-        alert.name = name;
-      }
-
-      var alertSystemKey = that.alertSystemKey();
-
-      if (_.isString(alertSystemKey) && alertSystemKey !== 0) {
-        alert.alert_system_key = alertSystemKey;
-      }
-
-      if (alertBehavior !== null) {
-        alert.alert_behavior = alertBehavior;
-      }
-
-      var executeValidationPromise = function () {
-        return _.reduce(_.map(_.filter(that.conditions(), function (condition) {
-          var property = condition.property();
-          return property.target.type === 'symbol';
-        }), function (condition) {
-          return alertManager.checkSymbol(condition.targetIdentifier()).then(translatedSymbol => {
-            const userSymbol = condition.targetIdentifier();
-
-            if (userSymbol !== translatedSymbol) {
-              _.forEach(alert.conditions, function (condition) {
-                if (condition.property.target.identifier === userSymbol) {
-                  condition.property.target.identifier = translatedSymbol;
-                }
-              });
-            }
-
-            return true;
-          });
-        }), function (aggregatePromise, symbolPromise) {
-          var returnRef;
-
-          if (aggregatePromise) {
-            returnRef = aggregatePromise.then(function () {
-              return symbolPromise;
-            });
-          } else {
-            returnRef = symbolPromise;
-          }
-
-          return returnRef;
-        }, null);
-      };
-
-      var executeCreatePromise = function () {
-        return alertManager.createAlert(alert).then(function (created) {
-          that.alert(created);
-        });
-      };
-
-      var promise = executeValidationPromise();
-
-      if (promise === null) {
-        promise = executeCreatePromise();
-      } else {
-        promise = promise.then(function () {
-          return executeCreatePromise();
-        });
-      }
-
-      promise.catch(function (e) {
-        that.error(e);
-      }).then(function () {
-        that.processing(false);
-      });
-    };
-
-    that.selectAlertType = function (alertType) {
-      that.alertType(alertType);
-    };
-
-    that.selectAlertBehavior = function (alertBehavior) {
-      that.alertBehavior(alertBehavior);
-    };
-
-    that.addCondition = function (conditionToAdd) {
-      that.conditions.push(new AlertConditionModel(that.ready, conditionToAdd || null));
-    };
-
-    that.removeCondition = function (conditionToRemove) {
-      that.conditions.remove(conditionToRemove);
-    };
-
-    that.addPublisher = function (publisherToAdd) {
-      that.publishers.push(new AlertPublisherModel(that.ready, publisherToAdd || null));
-    };
-
-    that.removePublisher = function (publisherToRemove) {
-      that.publishers.remove(publisherToRemove);
-    };
-
-    that.addSchedule = function (scheduleToAdd) {
-      that.schedules.push(new AlertScheduleModel(that.ready, scheduleToAdd || null));
-    };
-
-    that.removeSchedule = function (scheduleToRemove) {
-      that.schedules.remove(scheduleToRemove);
-    };
-
-    that.complete = ko.computed(function () {
-      return _.isObject(that.alert());
-    });
-    that.ready = ko.computed(function () {
-      return !that.complete() && !that.processing();
-    });
-    that.canSave = ko.computed(function () {
-      return that.ready();
-    });
-
-    if (_.isObject(alert)) {
-      that.name(alert.name);
-      var alertBehavior = alert.alert_behavior || terminate;
-
-      if (alertBehavior === 'terminate' && alert.automatic_reset) {
-        alertBehavior = 'automatic';
-      }
-
-      that.alertBehavior(alertBehavior);
-
-      if (_.isString(alert.user_notes)) {
-        that.userNotes(alert.user_notes);
-      }
-
-      if (_.isString(alert.alert_system_key)) {
-        that.alertSystemKey(alert.alert_system_key);
-      }
-
-      that.alertType(alert.alert_type || 'none');
-      that.createDate(new Date(parseInt(alert.create_date)));
-
-      _.forEach(alert.conditions, function (condition) {
-        that.addCondition(condition);
-      });
-
-      _.forEach(alert.publishers, function (publisher) {
-        that.addPublisher(publisher);
-      });
-
-      _.forEach(alert.schedules, function (schedule) {
-        that.addSchedule(schedule);
-      });
-    }
-  }
-
-  function AlertScheduleModel(ready, schedule) {
-    var that = this;
-    that.time = ko.observable(null);
-    that.day = ko.observable('Monday');
-    that.days = ko.observable(['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday']);
-    that.timezones = ko.observable(timezone.getTimezones());
-    that.timezone = ko.observable(timezone.guessTimezone());
-
-    that.selectDay = function (day) {
-      that.day(day);
-    };
-
-    that.selectTimezone = function (timezone) {
-      that.timezone(timezone);
-    };
-
-    that.ready = ready;
-
-    if (_.isObject(schedule)) {
-      that.time(schedule.time);
-      that.day(schedule.day);
-      that.timezone(schedule.timezone);
-    }
-  }
-
-  function AlertConditionModel(ready, condition) {
-    var that = this;
-    that.target = ko.observable(null);
-    that.targetIdentifier = ko.observable(null);
-    that.properties = ko.observableArray([]);
-    that.property = ko.observable(null);
-    that.operator = ko.observable(null);
-    that.operand = ko.observable(null);
-    that.modifiers = ko.observableArray([]);
-    that.ready = ready;
-    that.targets = ko.computed(function () {
-      return targets();
-    });
-    that.operators = ko.computed(function () {
-      var p = that.property();
-      var o = operators() || [];
-      var returnRef;
-
-      if (p) {
-        returnRef = utilities.getOperatorsForProperty(o, p);
-      } else {
-        returnRef = [];
-      }
-
-      that.operator(_.first(returnRef) || null);
-      return returnRef;
-    });
-    that.qualifiers = ko.computed(function () {
-      var target = that.target();
-      var returnRef;
-
-      if (target) {
-        return _.map(target.qualifier_descriptions || [], function (description, index) {
-          var value;
-
-          if (_.isObject(condition) && _.isArray(condition.property.target.qualifiers)) {
-            value = condition.property.target.qualifiers[index];
-          } else {
-            value = null;
-          }
-
-          return new AlertTargetQualifierModel(ready, description, value);
-        });
-      } else {
-        returnRef = [];
-      }
-
-      return returnRef;
-    });
-    that.propertyTree = ko.computed(function () {
-      var target = that.target();
-      var targetProperties;
-
-      if (target) {
-        targetProperties = utilities.getPropertiesForTarget(properties(), that.target());
-      } else {
-        targetProperties = [];
-      }
-
-      return utilities.getPropertyTree(targetProperties, true);
-    });
-
-    that.selectTarget = function (target) {
-      that.target(target);
-      that.properties([]);
-      that.properties.push(new AlertConditionTreeModel(that, that.propertyTree(), 'Property', 0));
-      that.property(null);
-      that.operator(null);
-    };
-
-    that.selectPropertyTree = function (tree, index) {
-      if (tree.items) {
-        var next = index + 1;
-        that.properties.splice(next);
-        that.properties.push(new AlertConditionTreeModel(that, tree.items, 'Property', next));
-        that.property(null);
-        that.operand(null);
-      } else {
-        that.property(tree.item);
-        that.operand(_.first(that.operator().operand_options) || null);
-      }
-    };
-
-    that.selectOperator = function (operator) {
-      that.operator(operator);
-      that.operand(_.first(that.operator().operand_options) || null);
-      that.modifiers([]);
-
-      if (!operator.modifiers.length !== 0) {
-        var all = modifiers();
-        var eligible;
-
-        if (all.length > 0 && operator.modifiers.length > 0) {
-          eligible = _.filter(all, function (x) {
-            return _.some(operator.modifiers, function (e) {
-              return x.modifier_id === e;
-            });
-          });
-        } else {
-          eligible = [];
-        }
-
-        that.modifiers.push(new AlertConditionModifierModel(that, eligible));
-      }
-    };
-
-    that.selectOperand = function (operand) {
-      that.operand(operand);
-    };
-
-    if (_.isObject(condition)) {
-      that.target(_.find(targets(), function (target) {
-        return target.target_id === condition.property.target.target_id;
-      }));
-      that.property(_.find(properties(), function (property) {
-        return property.property_id === condition.property.property_id;
-      }));
-      that.operator(_.find(operators(), function (operator) {
-        return operator.operator_id === condition.operator.operator_id;
-      }));
-      that.targetIdentifier(condition.property.target.identifier);
-      var operand = condition.operator.operand_display || condition.operator.operand;
-
-      if (_.isArray(operand)) {
-        operand = operand.join(',');
-      }
-
-      var p = that.property();
-
-      if (p && p.type === 'percent') {
-        operand = parseFloat(operand) * 100;
-      }
-
-      that.operand(operand);
-
-      _.forEach(condition.operator.modifiers || [], function (modifier) {
-        that.modifiers.push(new AlertConditionModifierModel(that, [modifier], modifier));
-      });
-
-      var getNode = function (items, description) {
-        return _.find(items, function (item) {
-          return item.description === description;
-        });
-      };
-
-      var node = {
-        items: that.propertyTree()
-      };
-      var descriptionPath = [].concat(condition.property.category || []).concat(condition.property.description);
-
-      for (var i = 0; i < descriptionPath.length; i++) {
-        var n = getNode(node.items, descriptionPath[i]);
-        that.properties.push(new AlertConditionTreeModel(that, node.items, 'Property', i, n));
-        node = n;
-      }
-    } else {
-      that.selectTarget(_.first(that.targets()));
-    }
-  }
-
-  function AlertConditionModifierModel(parent, eligible, m) {
-    var that = this;
-    that.parent = parent;
-    that.modifiers = ko.observable(eligible);
-    that.modifier = ko.observable(null);
-    that.value = ko.observable(null);
-
-    if (eligible.length > 0) {
-      that.modifier(eligible[0]);
-    }
-
-    that.selectModifier = function (modifier) {
-      that.modifier(modifier);
-    };
-
-    that.modifierDisplay = ko.computed(function () {
-      var modifier = that.modifier();
-      var returnRef;
-
-      if (modifier) {
-        returnRef = modifier.display;
-      } else {
-        returnRef = '--none--';
-      }
-
-      return returnRef;
-    });
-    that.showValue = ko.computed(function () {
-      var modifier = that.modifier();
-      return modifier !== null;
-    });
-    that.showPercent = ko.computed(function () {
-      var modifier = that.modifier();
-      return modifier !== null && modifier.type === 'percent';
-    });
-
-    if (_.isObject(m) && m.value) {
-      var v = m.value;
-
-      if (m.type === 'percent') {
-        v = parseFloat(v) * 100;
-      }
-
-      that.modifier(m);
-      that.value(v);
-    }
-  }
-
-  function AlertTargetQualifierModel(ready, description, value) {
-    var that = this;
-    that.ready = ready;
-    that.qualifierDescription = ko.observable(description);
-    that.qualifierValue = ko.observable(value || null);
-  }
-
-  function AlertConditionTreeModel(parent, tree, description, index, node) {
-    var that = this;
-    that.parent = parent;
-    that.tree = ko.observable(tree);
-    that.node = ko.observable(node || null);
-    that.description = ko.computed(function () {
-      var property = that.node();
-      var returnRef;
-
-      if (property) {
-        returnRef = property.description;
-      } else {
-        returnRef = 'Select ' + description;
-      }
-
-      return returnRef;
-    });
-
-    that.selectTree = function (node) {
-      that.node(node);
-      that.parent.selectPropertyTree(node, index);
-    };
-
-    that.showOperator = ko.computed(function () {
-      var node = that.node();
-      var property = that.parent.property();
-      var operator = that.parent.operator();
-      return _.isObject(node) && _.isObject(node.item) && node.item === property && _.isObject(operator) && operator.operator_type === 'binary';
-    });
-    that.showOptions = ko.computed(function () {
-      var operator = that.parent.operator();
-      return _.isObject(operator) && _.isArray(operator.operand_options) && operator.operand_options.length > 0;
-    });
-    that.showModifiers = ko.computed(function () {
-      var node = that.node();
-      var property = that.parent.property();
-      var operator = that.parent.operator();
-      return _.isObject(node) && _.isObject(node.item) && node.item === property && _.isObject(operator) && operator.modifiers.length > 0;
-    });
-    that.showPercent = ko.computed(function () {
-      var property = that.parent.property();
-      return property !== null && property.type === 'percent';
-    });
-  }
-
-  function AlertPublisherModel(ready, publisher) {
-    var that = this;
-    that.publisherTypes = publisherTypes;
-    that.publisherType = ko.observable(_.first(that.publisherTypes()));
-    that.useDefaultRecipient = ko.observable(false);
-    that.recipient = ko.observable();
-    that.format = ko.observable();
-    that.ready = ready;
-
-    that.selectPublisherType = function (publisherType) {
-      that.publisherType(publisherType);
-    };
-
-    that.toggleDefaultRecipient = function () {
-      if (!ready() || !_.isString(that.publisherType().default_recipient)) {
-        return;
-      }
-
-      that.useDefaultRecipient(!that.useDefaultRecipient());
-
-      if (that.useDefaultRecipient()) {
-        that.recipient(that.publisherType().default_recipient);
-      } else {
-        that.recipient('');
-      }
-    };
-
-    that.recipientReady = ko.computed(function () {
-      var ready = that.ready();
-      var useDefaultRecipient = that.useDefaultRecipient();
-      return ready && !useDefaultRecipient;
-    });
-
-    if (_.isObject(publisher)) {
-      that.publisherType(_.find(publisherTypes(), function (candidate) {
-        return candidate.publisher_type_id === publisher.type.publisher_type_id;
-      }));
-      that.useDefaultRecipient(publisher.use_default_recipient);
-      that.recipient(publisher.recipient);
-      that.format(publisher.format);
-    }
-  }
-
-  function AlertPublisherTypeDefaultsModel(publisherTypeDefaults) {
-    var that = this;
-    that.processing = ko.observable(false);
-    that.ready = ko.computed(function () {
-      return !that.processing();
-    });
-    that.publisherTypeDefaults = ko.observable(_.map(publisherTypeDefaults, function (publisherTypeDefault) {
-      return new AlertPublisherTypeDefaultModel(publisherTypeDefault, that.ready);
-    }));
-
-    that.savePreferences = function () {
-      var defaultPublisherTypes = that.publisherTypeDefaults();
-      var publishersToSave = defaultPublisherTypes.length;
-
-      var checkComplete = function () {
-        publishersToSave = publishersToSave - 1;
-
-        if (publishersToSave === 0) {
-          alertManager.getPublisherTypeDefaults({
-            user_id: currentUserId,
-            alert_system: currentSystem
-          }).then(function (pt) {
-            publisherTypes(pt);
-            that.processing(false);
-          });
-        }
-      };
-
-      if (publishersToSave.length !== 0) {
-        that.processing(true);
-
-        _.forEach(defaultPublisherTypes, function (defaultPublisherType) {
-          if (_.isString(defaultPublisherType.defaultRecipient())) {
-            var activeAlertTypes = [];
-
-            if (defaultPublisherType.priceActive()) {
-              activeAlertTypes.push('price');
-            }
-
-            if (defaultPublisherType.newsActive()) {
-              activeAlertTypes.push('news');
-            }
-
-            if (defaultPublisherType.matchActive()) {
-              activeAlertTypes.push('match');
-            }
-
-            var ptd = {
-              publisher_type_id: defaultPublisherType.publisherTypeId(),
-              alert_system: currentSystem,
-              user_id: currentUserId,
-              default_recipient: defaultPublisherType.defaultRecipient(),
-              allow_window_timezone: defaultPublisherType.allowTimezone() || null,
-              allow_window_start: defaultPublisherType.allowStartTime() || null,
-              allow_window_end: defaultPublisherType.allowEndTime() || null,
-              active_alert_types: activeAlertTypes
-            };
-            var hmac = defaultPublisherType.defaultRecipientHmac();
-
-            if (_.isString(hmac) && hmac.length > 0) {
-              ptd.default_recipient_hmac = hmac;
-            }
-
-            alertManager.assignPublisherTypeDefault(ptd).then(function (savedPublisherTypeDefault) {
-              checkComplete();
-            });
-          } else {
-            checkComplete();
-          }
-        });
-      }
-    };
-  }
-
-  function AlertPublisherTypeDefaultModel(publisherTypeDefault, ready) {
-    var that = this;
-    that.ready = ready;
-    that.timezones = ko.observable(timezone.getTimezones());
-    that.publisherTypeId = ko.observable(publisherTypeDefault.publisher_type_id);
-    that.transport = ko.observable(publisherTypeDefault.transport);
-    that.provider = ko.observable(publisherTypeDefault.provider);
-    that.defaultRecipient = ko.observable(publisherTypeDefault.default_recipient);
-    that.defaultRecipientHmac = ko.observable(publisherTypeDefault.default_recipient_hmac);
-    that.allowTimezone = ko.observable(publisherTypeDefault.allow_window_timezone || timezone.guessTimezone());
-    that.allowStartTime = ko.observable(publisherTypeDefault.allow_window_start);
-    that.allowEndTime = ko.observable(publisherTypeDefault.allow_window_end);
-    that.priceActive = ko.observable(_.includes(publisherTypeDefault.active_alert_types, 'price'));
-    that.newsActive = ko.observable(_.includes(publisherTypeDefault.active_alert_types, 'news'));
-    that.matchActive = ko.observable(_.includes(publisherTypeDefault.active_alert_types, 'match'));
-
-    that.selectTimezone = function (timezone) {
-      that.allowTimezone(timezone);
-    };
-  }
-
-  function MarketDataConfigurationModel(mdc) {
-    var that = this;
-    that.processing = ko.observable(false);
-    that.ready = ko.computed(function () {
-      return !that.processing();
-    });
-    that.userId = ko.observable(currentUserId);
-    that.systemId = ko.observable(currentSystem);
-    that.marketDataId = ko.observable(null);
-
-    that.savePreferences = function () {
-      that.processing(true);
-      alertManager.assignMarketDataConfiguration({
-        user_id: currentUserId,
-        alert_system: currentSystem,
-        market_data_id: that.marketDataId()
-      }).then(function (mdc) {
-        marketDataConfiguration(mdc);
-        that.processing(false);
-      });
-    };
-
-    if (mdc && mdc.market_data_id) {
-      that.marketDataId(mdc.market_data_id);
-    }
-  }
-
-  var reset = function (host, system, userId, mode) {
-    ko.cleanNode($('body')[0]);
-    return Promise.resolve().then(() => {
-      let port;
-      let secure;
-
-      if (host && host === 'localhost') {
-        port = 3000;
-        secure = false;
-      } else {
-        port = 443;
-        secure = true;
-      }
-
-      let adapterClazz;
-
-      if (mode === 'socket.io') {
-        adapterClazz = AdapterForSocketIo;
-      } else {
-        adapterClazz = AdapterForHttp;
-      }
-
-      if (host) {
-        alertManager = new AlertManager(host, port, secure, adapterClazz);
-      } else {
-        alertManager = null;
-      }
-    }).then(() => {
-      var pageModel = new PageModel(host, system, userId);
-
-      if (mode) {
-        pageModel.mode(mode);
-      }
-
-      var initializePromise;
-
-      if (alertManager) {
-        pageModel.connecting(true);
-        var jwtGenerator = getJwtGenerator(userId, system);
-        var jwtProvider = new JwtProvider(jwtGenerator, 60000);
-        initializePromise = alertManager.connect(jwtProvider).then(function () {
-          if (!(system === 'barchart.com' || system === 'grains.com' || system === 'webstation.barchart.com' || system === 'gos.agricharts.com' || system === 'gbemembers.com' || system === 'cmdtymarketplace.com')) {
-            throw 'Invalid system, please re-enter...';
-          }
-
-          if (!userId) {
-            throw 'Invalid user, please re-enter...';
-          }
-
-          var startupPromises = [];
-          alertManager.subscribeAlerts({
-            user_id: userId,
-            alert_system: system
-          }, function (changedAlert) {
-            pageModel.handleAlertChange(changedAlert);
-          }, function (deletedAlert) {
-            pageModel.handleAlertDelete(deletedAlert);
-          }, function (createdAlert) {
-            pageModel.handleAlertCreate(createdAlert);
-          }, function (triggeredAlert) {
-            pageModel.handleAlertTrigger(triggeredAlert);
-          });
-          alertManager.subscribeTriggers({
-            user_id: userId,
-            alert_system: system,
-            trigger_date: getDateBackwards(7).getTime()
-          }, function (changedTriggers) {
-            pageModel.handleTriggersChange(changedTriggers);
-          }, function (deletedTriggers) {
-            pageModel.handleTriggersDelete(deletedTriggers);
-          }, function (createdTriggers) {
-            pageModel.handleTriggersCreate(createdTriggers);
-          });
-          startupPromises.push(alertManager.getUser().then(function (data) {
-            if (data.user_id && data.alert_system) {
-              pageModel.authenticatedUser(`${data.user_id}@${data.alert_system}`);
-            }
-          }));
-          startupPromises.push(alertManager.getServerVersion().then(function (data) {
-            pageModel.version({
-              api: data.semver,
-              sdk: AlertManager.version
-            });
-          }));
-          startupPromises.push(alertManager.getTargets().then(function (t) {
-            targets(t);
-          }));
-          startupPromises.push(alertManager.getProperties().then(function (p) {
-            properties(p);
-          }));
-          startupPromises.push(alertManager.getOperators().then(function (o) {
-            o.forEach(item => {
-              item.display.compound = item.display.short;
-
-              if (item.operator_type === 'binary') {
-                if (item.operand_literal) {
-                  item.display.compound = item.display.compound + ' [ value ]';
-                } else {
-                  item.display.compound = item.display.compound + ' [ field ]';
-                }
-              }
-            });
-            operators(o);
-          }));
-          startupPromises.push(alertManager.getModifiers().then(function (m) {
-            modifiers(m);
-          }));
-          startupPromises.push(alertManager.getPublisherTypeDefaults({
-            user_id: userId,
-            alert_system: system
-          }).then(function (pt) {
-            publisherTypes(pt);
-          }));
-          startupPromises.push(alertManager.getMarketDataConfiguration({
-            user_id: userId,
-            alert_system: system
-          }).then(function (mdc) {
-            marketDataConfiguration(mdc);
-          }));
-          return Promise.all(startupPromises).then(() => {
-            pageModel.connected(true);
-            pageModel.changeToGrid();
-          });
-        }).catch(e => {
-          console.log(e);
-          alertManager.dispose();
-          alertManager = null;
-          pageModel.connected(false);
-          pageModel.activeTemplate('alert-disconnected');
-
-          if (typeof e === 'string') {
-            pageModel.message(e);
-          } else {
-            pageModel.message('Unable to connect. Try again...');
-          }
-        }).then(() => {
-          pageModel.connecting(false);
-        });
-      } else {
-        initializePromise = Promise.resolve();
-      }
-
-      return initializePromise.then(() => {
-        ko.applyBindings(pageModel, $('body')[0]);
-      });
     });
   };
 
-  var triggersOrderOptions = {
-    BY_ALERT: 'Order by Alert',
-    BY_DATE: 'Order by Date'
-  };
-  var comparatorForAlerts = ComparatorBuilder.startWith((modelA, modelB) => comparators.compareDates(modelB.createDate(), modelA.createDate())).toComparator();
-  var comparatorForTriggersByAlert = ComparatorBuilder.startWith((modelA, modelB) => comparators.compareStrings(modelA.trigger().alert_id, modelB.trigger().alert_id)).thenBy((modelA, modelB) => comparators.compareDates(modelB.date(), modelA.date())).toComparator();
-  var comparatorForTriggersByDate = ComparatorBuilder.startWith((modelA, modelB) => comparators.compareDates(modelB.date(), modelA.date())).toComparator();
-
-  var getDateBackwards = function (days) {
-    const now = new Date();
-    const past = now.getDate() - days;
-    now.setDate(past);
-    return now;
+  that.handleTriggersDelete = function (triggers) {
+    const existingModels = triggers.map(t => getTriggerModel(t) || null).filter(t => t !== null);
+    that.triggers.removeAll(existingModels);
   };
 
-  $(document).ready(function () {
-    reset(null, null, null, null);
+  that.updateTriggers = function (status) {
+    return alertManager.updateTriggers({
+      user_id: currentUserId,
+      alert_system: currentSystem,
+      trigger_status: status
+    });
+  };
+}
+
+function AlertTriggerModel(trigger) {
+  var that = this;
+  that.trigger = ko.observable(trigger);
+  that.date = ko.computed(function () {
+    return new Date(parseInt(that.trigger().trigger_date));
   });
-})();
+  that.statusDate = ko.computed(function () {
+    return new Date(parseInt(that.trigger().trigger_status_date));
+  });
+  that.loading = ko.observable(false);
+
+  var formatDate = function (date) {
+    var returnRef;
+
+    if (date) {
+      returnRef = date.toLocaleString();
+    } else {
+      returnRef = 'never';
+    }
+
+    return returnRef;
+  };
+
+  that.display = {
+    date: ko.computed(function () {
+      return formatDate(that.date());
+    }),
+    first: ko.observable(1),
+    read: ko.computed(function () {
+      return that.trigger().trigger_status === 'Read';
+    }),
+    rowSpan: ko.observable(1),
+    statusDate: ko.computed(function () {
+      return formatDate(that.statusDate());
+    })
+  };
+  that.news = {
+    isExist: false
+  };
+
+  if (that.trigger().trigger_additional_data && that.trigger().trigger_additional_data.type === 'news' && that.trigger().trigger_additional_data.data.link) {
+    that.news.isExist = true;
+  }
+
+  that.toggle = function () {
+    that.loading(true);
+    const payload = {};
+    payload.alert_id = that.trigger().alert_id;
+    payload.trigger_date = that.date().getTime().toString();
+    payload.trigger_status = getOppositeStatus(that.trigger().trigger_status);
+    return alertManager.updateTrigger(payload).then(() => {
+      that.loading(false);
+    });
+  };
+
+  function getOppositeStatus(status) {
+    return status === 'Read' ? 'Unread' : 'Read';
+  }
+}
+
+function AlertDisplayModel(alert) {
+  var that = this;
+  that.alert = ko.observable(alert);
+  that.processing = ko.observable(false);
+  that.createDate = ko.computed(function () {
+    var alert = that.alert();
+    var returnRef;
+
+    if (alert.create_date) {
+      returnRef = new Date(parseInt(alert.create_date));
+    } else {
+      returnRef = new Date(0);
+    }
+
+    return returnRef;
+  });
+  that.createDateDisplay = ko.computed(function () {
+    var nullDate = new Date(0);
+    var returnRef;
+
+    if (that.createDate().getTime() === nullDate.getTime()) {
+      returnRef = 'Undefined';
+    } else {
+      returnRef = that.createDate().toLocaleString();
+    }
+
+    return returnRef;
+  });
+  that.lastTriggerDateDisplay = ko.computed(function () {
+    var alert = that.alert();
+    var returnRef;
+
+    if (alert.last_trigger_date) {
+      var lastTriggerDate = new Date(parseInt(alert.last_trigger_date));
+      returnRef = lastTriggerDate.toLocaleString();
+    } else {
+      returnRef = 'never';
+    }
+
+    return returnRef;
+  });
+  that.canStart = ko.computed(function () {
+    var alert = that.alert();
+    return alert.alert_state === 'Inactive' || alert.alert_state === 'Triggered' || alert.alert_state === 'Orphaned' || alert.alert_state === 'Expired';
+  });
+  that.canPause = ko.computed(function () {
+    var alert = that.alert();
+    return alert.alert_state === 'Active';
+  });
+  that.canRefresh = ko.computed(function () {
+    return !that.canStart() && !that.canPause();
+  });
+
+  that.start = function () {
+    alertManager.enableAlert(that.alert());
+  };
+
+  that.pause = function () {
+    alertManager.disableAlert(that.alert());
+  };
+
+  that.refresh = function () {
+    alertManager.retrieveAlert(that.alert()).then(function (refreshedAlert) {
+      that.alert(refreshedAlert);
+    });
+  };
+}
+
+function AlertEntryModel(alert) {
+  var that = this;
+  that.alert = ko.observable(alert || null);
+  that.alertType = ko.observable('none');
+  that.alertBehavior = ko.observable('terminate');
+  that.name = ko.observable(null);
+  that.userNotes = ko.observable(null);
+  that.createDate = ko.observable(null);
+  that.alertSystemKey = ko.observable(null);
+  that.conditions = ko.observableArray([]);
+  that.publishers = ko.observableArray([]);
+  that.schedules = ko.observableArray([]);
+  that.processing = ko.observable(false);
+  that.error = ko.observable(null);
+  that.alertBehaviors = ko.observable(['terminate', 'schedule', 'automatic']);
+  that.alertTypes = ko.observable(['none', 'news', 'price', 'match']);
+  that.automaticReset = ko.computed(function () {
+    return that.alertBehavior() === 'automatic';
+  });
+  that.showSchedules = ko.computed(function () {
+    return that.alertBehavior() === 'schedule';
+  });
+
+  that.clearAlert = function () {
+    that.alert(null);
+    that.alertType('none');
+    that.alertBehavior('terminate');
+    that.name(null);
+    that.userNotes(null);
+    that.createDate(null);
+    that.alertSystemKey(null);
+    that.conditions([]);
+    that.publishers([]);
+    that.schedules([]);
+    that.processing(false);
+    that.error(null);
+  };
+
+  that.createAlert = function () {
+    that.processing(true);
+    that.error(null);
+    var alertType = that.alertType();
+
+    if (alertType === 'none') {
+      alertType = null;
+    }
+
+    var alertBehavior = that.alertBehavior();
+
+    if (alertType === 'news' && alertBehavior === 'automatic') {
+      alertBehavior = null;
+    }
+
+    if (alertBehavior === 'automatic') {
+      alertBehavior = 'terminate';
+    }
+
+    var schedules;
+
+    if (alertBehavior === 'schedule') {
+      schedules = _.map(that.schedules(), function (schedule) {
+        return {
+          time: schedule.time(),
+          day: schedule.day(),
+          timezone: schedule.timezone()
+        };
+      });
+    } else {
+      schedules = [];
+    }
+
+    var alert = {
+      alert_type: alertType,
+      user_notes: that.userNotes() || null,
+      user_id: currentUserId,
+      alert_system: currentSystem,
+      automatic_reset: that.automaticReset(),
+      conditions: _.map(that.conditions(), function (condition) {
+        var property = condition.property();
+        var operator = condition.operator();
+        var operand = condition.operand();
+
+        if (operator.operand_literal) {
+          operand = condition.operand();
+
+          if (operator.operand_type === 'Array' && _.isString(operand)) {
+            operand = _.map(operand.split(','), function (item) {
+              return _.trim(item);
+            });
+          }
+
+          if (property.type === 'percent') {
+            operand = parseFloat(operand) / 100;
+            operand = operand.toString();
+          }
+        }
+
+        var conditionData = {
+          property: {
+            property_id: property.property_id,
+            target: {
+              identifier: condition.targetIdentifier()
+            }
+          },
+          operator: {
+            operator_id: operator.operator_id,
+            operand: operand
+          }
+        };
+
+        var modifiers = _.filter(condition.modifiers(), function (modifier) {
+          return modifier.modifier() !== null;
+        });
+
+        if (_.isArray(modifiers) && modifiers.length > 0) {
+          conditionData.operator.modifiers = _.map(modifiers, function (modifier) {
+            var value = modifier.value();
+            var m = modifier.modifier();
+
+            if (m.type === 'percent') {
+              value = parseFloat(value) / 100;
+              value = value.toString();
+            }
+
+            return {
+              modifier_id: m.modifier_id,
+              value: value
+            };
+          });
+        }
+
+        var qualifiers = condition.qualifiers();
+
+        if (qualifiers.length > 0) {
+          conditionData.property.target.qualifiers = _.map(qualifiers, function (qualifier) {
+            return qualifier.qualifierValue();
+          });
+        }
+
+        return conditionData;
+      }),
+      publishers: _.map(that.publishers(), function (publisher) {
+        return {
+          type: {
+            publisher_type_id: publisher.publisherType().publisher_type_id
+          },
+          use_default_recipient: publisher.useDefaultRecipient(),
+          recipient: publisher.recipient(),
+          format: publisher.format()
+        };
+      }),
+      schedules: schedules
+    };
+    var name = that.name();
+
+    if (_.isString(name) && name.length !== 0) {
+      alert.name = name;
+    }
+
+    var alertSystemKey = that.alertSystemKey();
+
+    if (_.isString(alertSystemKey) && alertSystemKey !== 0) {
+      alert.alert_system_key = alertSystemKey;
+    }
+
+    if (alertBehavior !== null) {
+      alert.alert_behavior = alertBehavior;
+    }
+
+    var executeValidationPromise = function () {
+      return _.reduce(_.map(_.filter(that.conditions(), function (condition) {
+        var property = condition.property();
+        return property.target.type === 'symbol';
+      }), function (condition) {
+        return alertManager.checkSymbol(condition.targetIdentifier()).then(translatedSymbol => {
+          const userSymbol = condition.targetIdentifier();
+
+          if (userSymbol !== translatedSymbol) {
+            _.forEach(alert.conditions, function (condition) {
+              if (condition.property.target.identifier === userSymbol) {
+                condition.property.target.identifier = translatedSymbol;
+              }
+            });
+          }
+
+          return true;
+        });
+      }), function (aggregatePromise, symbolPromise) {
+        var returnRef;
+
+        if (aggregatePromise) {
+          returnRef = aggregatePromise.then(function () {
+            return symbolPromise;
+          });
+        } else {
+          returnRef = symbolPromise;
+        }
+
+        return returnRef;
+      }, null);
+    };
+
+    var executeCreatePromise = function () {
+      return alertManager.createAlert(alert).then(function (created) {
+        that.alert(created);
+      });
+    };
+
+    var promise = executeValidationPromise();
+
+    if (promise === null) {
+      promise = executeCreatePromise();
+    } else {
+      promise = promise.then(function () {
+        return executeCreatePromise();
+      });
+    }
+
+    promise.catch(function (e) {
+      that.error(e);
+    }).then(function () {
+      that.processing(false);
+    });
+  };
+
+  that.selectAlertType = function (alertType) {
+    that.alertType(alertType);
+  };
+
+  that.selectAlertBehavior = function (alertBehavior) {
+    that.alertBehavior(alertBehavior);
+  };
+
+  that.addCondition = function (conditionToAdd) {
+    that.conditions.push(new AlertConditionModel(that.ready, conditionToAdd || null));
+  };
+
+  that.removeCondition = function (conditionToRemove) {
+    that.conditions.remove(conditionToRemove);
+  };
+
+  that.addPublisher = function (publisherToAdd) {
+    that.publishers.push(new AlertPublisherModel(that.ready, publisherToAdd || null));
+  };
+
+  that.removePublisher = function (publisherToRemove) {
+    that.publishers.remove(publisherToRemove);
+  };
+
+  that.addSchedule = function (scheduleToAdd) {
+    that.schedules.push(new AlertScheduleModel(that.ready, scheduleToAdd || null));
+  };
+
+  that.removeSchedule = function (scheduleToRemove) {
+    that.schedules.remove(scheduleToRemove);
+  };
+
+  that.complete = ko.computed(function () {
+    return _.isObject(that.alert());
+  });
+  that.ready = ko.computed(function () {
+    return !that.complete() && !that.processing();
+  });
+  that.canSave = ko.computed(function () {
+    return that.ready();
+  });
+
+  if (_.isObject(alert)) {
+    that.name(alert.name);
+    var alertBehavior = alert.alert_behavior || terminate;
+
+    if (alertBehavior === 'terminate' && alert.automatic_reset) {
+      alertBehavior = 'automatic';
+    }
+
+    that.alertBehavior(alertBehavior);
+
+    if (_.isString(alert.user_notes)) {
+      that.userNotes(alert.user_notes);
+    }
+
+    if (_.isString(alert.alert_system_key)) {
+      that.alertSystemKey(alert.alert_system_key);
+    }
+
+    that.alertType(alert.alert_type || 'none');
+    that.createDate(new Date(parseInt(alert.create_date)));
+
+    _.forEach(alert.conditions, function (condition) {
+      that.addCondition(condition);
+    });
+
+    _.forEach(alert.publishers, function (publisher) {
+      that.addPublisher(publisher);
+    });
+
+    _.forEach(alert.schedules, function (schedule) {
+      that.addSchedule(schedule);
+    });
+  }
+}
+
+function AlertScheduleModel(ready, schedule) {
+  var that = this;
+  that.time = ko.observable(null);
+  that.day = ko.observable('Monday');
+  that.days = ko.observable(['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday']);
+  that.timezones = ko.observable(timezone.getTimezones());
+  that.timezone = ko.observable(timezone.guessTimezone());
+
+  that.selectDay = function (day) {
+    that.day(day);
+  };
+
+  that.selectTimezone = function (timezone) {
+    that.timezone(timezone);
+  };
+
+  that.ready = ready;
+
+  if (_.isObject(schedule)) {
+    that.time(schedule.time);
+    that.day(schedule.day);
+    that.timezone(schedule.timezone);
+  }
+}
+
+function AlertConditionModel(ready, condition) {
+  var that = this;
+  that.target = ko.observable(null);
+  that.targetIdentifier = ko.observable(null);
+  that.properties = ko.observableArray([]);
+  that.property = ko.observable(null);
+  that.operator = ko.observable(null);
+  that.operand = ko.observable(null);
+  that.modifiers = ko.observableArray([]);
+  that.ready = ready;
+  that.targets = ko.computed(function () {
+    return targets();
+  });
+  that.operators = ko.computed(function () {
+    var p = that.property();
+    var o = operators() || [];
+    var returnRef;
+
+    if (p) {
+      returnRef = utilities.getOperatorsForProperty(o, p);
+    } else {
+      returnRef = [];
+    }
+
+    that.operator(_.first(returnRef) || null);
+    return returnRef;
+  });
+  that.qualifiers = ko.computed(function () {
+    var target = that.target();
+    var returnRef;
+
+    if (target) {
+      return _.map(target.qualifier_descriptions || [], function (description, index) {
+        var value;
+
+        if (_.isObject(condition) && _.isArray(condition.property.target.qualifiers)) {
+          value = condition.property.target.qualifiers[index];
+        } else {
+          value = null;
+        }
+
+        return new AlertTargetQualifierModel(ready, description, value);
+      });
+    } else {
+      returnRef = [];
+    }
+
+    return returnRef;
+  });
+  that.propertyTree = ko.computed(function () {
+    var target = that.target();
+    var targetProperties;
+
+    if (target) {
+      targetProperties = utilities.getPropertiesForTarget(properties(), that.target());
+    } else {
+      targetProperties = [];
+    }
+
+    return utilities.getPropertyTree(targetProperties, true);
+  });
+
+  that.selectTarget = function (target) {
+    that.target(target);
+    that.properties([]);
+    that.properties.push(new AlertConditionTreeModel(that, that.propertyTree(), 'Property', 0));
+    that.property(null);
+    that.operator(null);
+  };
+
+  that.selectPropertyTree = function (tree, index) {
+    if (tree.items) {
+      var next = index + 1;
+      that.properties.splice(next);
+      that.properties.push(new AlertConditionTreeModel(that, tree.items, 'Property', next));
+      that.property(null);
+      that.operand(null);
+    } else {
+      that.property(tree.item);
+      that.operand(_.first(that.operator().operand_options) || null);
+    }
+  };
+
+  that.selectOperator = function (operator) {
+    that.operator(operator);
+    that.operand(_.first(that.operator().operand_options) || null);
+    that.modifiers([]);
+
+    if (!operator.modifiers.length !== 0) {
+      var all = modifiers();
+      var eligible;
+
+      if (all.length > 0 && operator.modifiers.length > 0) {
+        eligible = _.filter(all, function (x) {
+          return _.some(operator.modifiers, function (e) {
+            return x.modifier_id === e;
+          });
+        });
+      } else {
+        eligible = [];
+      }
+
+      that.modifiers.push(new AlertConditionModifierModel(that, eligible));
+    }
+  };
+
+  that.selectOperand = function (operand) {
+    that.operand(operand);
+  };
+
+  if (_.isObject(condition)) {
+    that.target(_.find(targets(), function (target) {
+      return target.target_id === condition.property.target.target_id;
+    }));
+    that.property(_.find(properties(), function (property) {
+      return property.property_id === condition.property.property_id;
+    }));
+    that.operator(_.find(operators(), function (operator) {
+      return operator.operator_id === condition.operator.operator_id;
+    }));
+    that.targetIdentifier(condition.property.target.identifier);
+    var operand = condition.operator.operand_display || condition.operator.operand;
+
+    if (_.isArray(operand)) {
+      operand = operand.join(',');
+    }
+
+    var p = that.property();
+
+    if (p && p.type === 'percent') {
+      operand = parseFloat(operand) * 100;
+    }
+
+    that.operand(operand);
+
+    _.forEach(condition.operator.modifiers || [], function (modifier) {
+      that.modifiers.push(new AlertConditionModifierModel(that, [modifier], modifier));
+    });
+
+    var getNode = function (items, description) {
+      return _.find(items, function (item) {
+        return item.description === description;
+      });
+    };
+
+    var node = {
+      items: that.propertyTree()
+    };
+    var descriptionPath = [].concat(condition.property.category || []).concat(condition.property.description);
+
+    for (var i = 0; i < descriptionPath.length; i++) {
+      var n = getNode(node.items, descriptionPath[i]);
+      that.properties.push(new AlertConditionTreeModel(that, node.items, 'Property', i, n));
+      node = n;
+    }
+  } else {
+    that.selectTarget(_.first(that.targets()));
+  }
+}
+
+function AlertConditionModifierModel(parent, eligible, m) {
+  var that = this;
+  that.parent = parent;
+  that.modifiers = ko.observable(eligible);
+  that.modifier = ko.observable(null);
+  that.value = ko.observable(null);
+
+  if (eligible.length > 0) {
+    that.modifier(eligible[0]);
+  }
+
+  that.selectModifier = function (modifier) {
+    that.modifier(modifier);
+  };
+
+  that.modifierDisplay = ko.computed(function () {
+    var modifier = that.modifier();
+    var returnRef;
+
+    if (modifier) {
+      returnRef = modifier.display;
+    } else {
+      returnRef = '--none--';
+    }
+
+    return returnRef;
+  });
+  that.showValue = ko.computed(function () {
+    var modifier = that.modifier();
+    return modifier !== null;
+  });
+  that.showPercent = ko.computed(function () {
+    var modifier = that.modifier();
+    return modifier !== null && modifier.type === 'percent';
+  });
+
+  if (_.isObject(m) && m.value) {
+    var v = m.value;
+
+    if (m.type === 'percent') {
+      v = parseFloat(v) * 100;
+    }
+
+    that.modifier(m);
+    that.value(v);
+  }
+}
+
+function AlertTargetQualifierModel(ready, description, value) {
+  var that = this;
+  that.ready = ready;
+  that.qualifierDescription = ko.observable(description);
+  that.qualifierValue = ko.observable(value || null);
+}
+
+function AlertConditionTreeModel(parent, tree, description, index, node) {
+  var that = this;
+  that.parent = parent;
+  that.tree = ko.observable(tree);
+  that.node = ko.observable(node || null);
+  that.description = ko.computed(function () {
+    var property = that.node();
+    var returnRef;
+
+    if (property) {
+      returnRef = property.description;
+    } else {
+      returnRef = 'Select ' + description;
+    }
+
+    return returnRef;
+  });
+
+  that.selectTree = function (node) {
+    that.node(node);
+    that.parent.selectPropertyTree(node, index);
+  };
+
+  that.showOperator = ko.computed(function () {
+    var node = that.node();
+    var property = that.parent.property();
+    var operator = that.parent.operator();
+    return _.isObject(node) && _.isObject(node.item) && node.item === property && _.isObject(operator) && operator.operator_type === 'binary';
+  });
+  that.showOptions = ko.computed(function () {
+    var operator = that.parent.operator();
+    return _.isObject(operator) && _.isArray(operator.operand_options) && operator.operand_options.length > 0;
+  });
+  that.showModifiers = ko.computed(function () {
+    var node = that.node();
+    var property = that.parent.property();
+    var operator = that.parent.operator();
+    return _.isObject(node) && _.isObject(node.item) && node.item === property && _.isObject(operator) && operator.modifiers.length > 0;
+  });
+  that.showPercent = ko.computed(function () {
+    var property = that.parent.property();
+    return property !== null && property.type === 'percent';
+  });
+}
+
+function AlertPublisherModel(ready, publisher) {
+  var that = this;
+  that.publisherTypes = publisherTypes;
+  that.publisherType = ko.observable(_.first(that.publisherTypes()));
+  that.useDefaultRecipient = ko.observable(false);
+  that.recipient = ko.observable();
+  that.format = ko.observable();
+  that.ready = ready;
+
+  that.selectPublisherType = function (publisherType) {
+    that.publisherType(publisherType);
+  };
+
+  that.toggleDefaultRecipient = function () {
+    if (!ready() || !_.isString(that.publisherType().default_recipient)) {
+      return;
+    }
+
+    that.useDefaultRecipient(!that.useDefaultRecipient());
+
+    if (that.useDefaultRecipient()) {
+      that.recipient(that.publisherType().default_recipient);
+    } else {
+      that.recipient('');
+    }
+  };
+
+  that.recipientReady = ko.computed(function () {
+    var ready = that.ready();
+    var useDefaultRecipient = that.useDefaultRecipient();
+    return ready && !useDefaultRecipient;
+  });
+
+  if (_.isObject(publisher)) {
+    that.publisherType(_.find(publisherTypes(), function (candidate) {
+      return candidate.publisher_type_id === publisher.type.publisher_type_id;
+    }));
+    that.useDefaultRecipient(publisher.use_default_recipient);
+    that.recipient(publisher.recipient);
+    that.format(publisher.format);
+  }
+}
+
+function AlertPublisherTypeDefaultsModel(publisherTypeDefaults) {
+  var that = this;
+  that.processing = ko.observable(false);
+  that.ready = ko.computed(function () {
+    return !that.processing();
+  });
+  that.publisherTypeDefaults = ko.observable(_.map(publisherTypeDefaults, function (publisherTypeDefault) {
+    return new AlertPublisherTypeDefaultModel(publisherTypeDefault, that.ready);
+  }));
+
+  that.savePreferences = function () {
+    var defaultPublisherTypes = that.publisherTypeDefaults();
+    var publishersToSave = defaultPublisherTypes.length;
+
+    var checkComplete = function () {
+      publishersToSave = publishersToSave - 1;
+
+      if (publishersToSave === 0) {
+        alertManager.getPublisherTypeDefaults({
+          user_id: currentUserId,
+          alert_system: currentSystem
+        }).then(function (pt) {
+          publisherTypes(pt);
+          that.processing(false);
+        });
+      }
+    };
+
+    if (publishersToSave.length !== 0) {
+      that.processing(true);
+
+      _.forEach(defaultPublisherTypes, function (defaultPublisherType) {
+        if (_.isString(defaultPublisherType.defaultRecipient())) {
+          var activeAlertTypes = [];
+
+          if (defaultPublisherType.priceActive()) {
+            activeAlertTypes.push('price');
+          }
+
+          if (defaultPublisherType.newsActive()) {
+            activeAlertTypes.push('news');
+          }
+
+          if (defaultPublisherType.matchActive()) {
+            activeAlertTypes.push('match');
+          }
+
+          var ptd = {
+            publisher_type_id: defaultPublisherType.publisherTypeId(),
+            alert_system: currentSystem,
+            user_id: currentUserId,
+            default_recipient: defaultPublisherType.defaultRecipient(),
+            allow_window_timezone: defaultPublisherType.allowTimezone() || null,
+            allow_window_start: defaultPublisherType.allowStartTime() || null,
+            allow_window_end: defaultPublisherType.allowEndTime() || null,
+            active_alert_types: activeAlertTypes
+          };
+          var hmac = defaultPublisherType.defaultRecipientHmac();
+
+          if (_.isString(hmac) && hmac.length > 0) {
+            ptd.default_recipient_hmac = hmac;
+          }
+
+          alertManager.assignPublisherTypeDefault(ptd).then(function (savedPublisherTypeDefault) {
+            checkComplete();
+          });
+        } else {
+          checkComplete();
+        }
+      });
+    }
+  };
+}
+
+function AlertPublisherTypeDefaultModel(publisherTypeDefault, ready) {
+  var that = this;
+  that.ready = ready;
+  that.timezones = ko.observable(timezone.getTimezones());
+  that.publisherTypeId = ko.observable(publisherTypeDefault.publisher_type_id);
+  that.transport = ko.observable(publisherTypeDefault.transport);
+  that.provider = ko.observable(publisherTypeDefault.provider);
+  that.defaultRecipient = ko.observable(publisherTypeDefault.default_recipient);
+  that.defaultRecipientHmac = ko.observable(publisherTypeDefault.default_recipient_hmac);
+  that.allowTimezone = ko.observable(publisherTypeDefault.allow_window_timezone || timezone.guessTimezone());
+  that.allowStartTime = ko.observable(publisherTypeDefault.allow_window_start);
+  that.allowEndTime = ko.observable(publisherTypeDefault.allow_window_end);
+  that.priceActive = ko.observable(_.includes(publisherTypeDefault.active_alert_types, 'price'));
+  that.newsActive = ko.observable(_.includes(publisherTypeDefault.active_alert_types, 'news'));
+  that.matchActive = ko.observable(_.includes(publisherTypeDefault.active_alert_types, 'match'));
+
+  that.selectTimezone = function (timezone) {
+    that.allowTimezone(timezone);
+  };
+}
+
+function MarketDataConfigurationModel(mdc) {
+  var that = this;
+  that.processing = ko.observable(false);
+  that.ready = ko.computed(function () {
+    return !that.processing();
+  });
+  that.userId = ko.observable(currentUserId);
+  that.systemId = ko.observable(currentSystem);
+  that.marketDataId = ko.observable(null);
+
+  that.savePreferences = function () {
+    that.processing(true);
+    alertManager.assignMarketDataConfiguration({
+      user_id: currentUserId,
+      alert_system: currentSystem,
+      market_data_id: that.marketDataId()
+    }).then(function (mdc) {
+      marketDataConfiguration(mdc);
+      that.processing(false);
+    });
+  };
+
+  if (mdc && mdc.market_data_id) {
+    that.marketDataId(mdc.market_data_id);
+  }
+}
+
+var reset = function (host, system, userId, mode) {
+  ko.cleanNode($('body')[0]);
+  return Promise.resolve().then(() => {
+    let port;
+    let secure;
+
+    if (host && host === 'localhost') {
+      port = 3000;
+      secure = false;
+    } else {
+      port = 443;
+      secure = true;
+    }
+
+    let adapterClazz;
+
+    if (mode === 'socket.io') {
+      adapterClazz = AdapterForSocketIo;
+    } else {
+      adapterClazz = AdapterForHttp;
+    }
+
+    if (host) {
+      alertManager = new AlertManager(host, port, secure, adapterClazz);
+    } else {
+      alertManager = null;
+    }
+  }).then(() => {
+    var pageModel = new PageModel(host, system, userId);
+
+    if (mode) {
+      pageModel.mode(mode);
+    }
+
+    var initializePromise;
+
+    if (alertManager) {
+      pageModel.connecting(true);
+      var jwtGenerator = getJwtGenerator(userId, system);
+      var jwtProvider = new JwtProvider(jwtGenerator, 60000);
+      initializePromise = alertManager.connect(jwtProvider).then(function () {
+        if (!(system === 'barchart.com' || system === 'grains.com' || system === 'webstation.barchart.com' || system === 'gos.agricharts.com' || system === 'gbemembers.com' || system === 'cmdtymarketplace.com')) {
+          throw 'Invalid system, please re-enter...';
+        }
+
+        if (!userId) {
+          throw 'Invalid user, please re-enter...';
+        }
+
+        var startupPromises = [];
+        alertManager.subscribeAlerts({
+          user_id: userId,
+          alert_system: system
+        }, function (changedAlert) {
+          pageModel.handleAlertChange(changedAlert);
+        }, function (deletedAlert) {
+          pageModel.handleAlertDelete(deletedAlert);
+        }, function (createdAlert) {
+          pageModel.handleAlertCreate(createdAlert);
+        }, function (triggeredAlert) {
+          pageModel.handleAlertTrigger(triggeredAlert);
+        });
+        alertManager.subscribeTemplates({
+          user_id: userId,
+          alert_system: system
+        }, function (changedTemplate) {
+          pageModel.handleTemplateChange(changedTemplate);
+        }, function (deletedTemplate) {
+          pageModel.handleTemplateDelete(deletedTemplate);
+        }, function (createdTemplate) {
+          pageModel.handleTemplateCreate(createdTemplate);
+        });
+        alertManager.subscribeTriggers({
+          user_id: userId,
+          alert_system: system,
+          trigger_date: getDateBackwards(7).getTime()
+        }, function (changedTriggers) {
+          pageModel.handleTriggersChange(changedTriggers);
+        }, function (deletedTriggers) {
+          pageModel.handleTriggersDelete(deletedTriggers);
+        }, function (createdTriggers) {
+          pageModel.handleTriggersCreate(createdTriggers);
+        });
+        startupPromises.push(alertManager.getUser().then(function (data) {
+          if (data.user_id && data.alert_system) {
+            pageModel.authenticatedUser(`${data.user_id}@${data.alert_system}`);
+          }
+        }));
+        startupPromises.push(alertManager.getServerVersion().then(function (data) {
+          pageModel.version({
+            api: data.semver,
+            sdk: AlertManager.version
+          });
+        }));
+        startupPromises.push(alertManager.getTargets().then(function (t) {
+          targets(t);
+        }));
+        startupPromises.push(alertManager.getProperties().then(function (p) {
+          properties(p);
+        }));
+        startupPromises.push(alertManager.getOperators().then(function (o) {
+          o.forEach(item => {
+            item.display.compound = item.display.short;
+
+            if (item.operator_type === 'binary') {
+              if (item.operand_literal) {
+                item.display.compound = item.display.compound + ' [ value ]';
+              } else {
+                item.display.compound = item.display.compound + ' [ field ]';
+              }
+            }
+          });
+          operators(o);
+        }));
+        startupPromises.push(alertManager.getModifiers().then(function (m) {
+          modifiers(m);
+        }));
+        startupPromises.push(alertManager.getPublisherTypeDefaults({
+          user_id: userId,
+          alert_system: system
+        }).then(function (pt) {
+          publisherTypes(pt);
+        }));
+        startupPromises.push(alertManager.getMarketDataConfiguration({
+          user_id: userId,
+          alert_system: system
+        }).then(function (mdc) {
+          marketDataConfiguration(mdc);
+        }));
+        return Promise.all(startupPromises).then(() => {
+          pageModel.connected(true);
+          pageModel.changeToGrid();
+        });
+      }).catch(e => {
+        console.log(e);
+        alertManager.dispose();
+        alertManager = null;
+        pageModel.connected(false);
+        pageModel.activeTemplate('alert-disconnected');
+
+        if (typeof e === 'string') {
+          pageModel.message(e);
+        } else {
+          pageModel.message('Unable to connect. Try again...');
+        }
+      }).then(() => {
+        pageModel.connecting(false);
+      });
+    } else {
+      initializePromise = Promise.resolve();
+    }
+
+    return initializePromise.then(() => {
+      ko.applyBindings(pageModel, $('body')[0]);
+    });
+  });
+};
+
+var triggersOrderOptions = {
+  BY_ALERT: 'Order by Alert',
+  BY_DATE: 'Order by Date'
+};
+var comparatorForAlerts = ComparatorBuilder.startWith((modelA, modelB) => comparators.compareDates(modelB.createDate(), modelA.createDate())).toComparator();
+var comparatorForTriggersByAlert = ComparatorBuilder.startWith((modelA, modelB) => comparators.compareStrings(modelA.trigger().alert_id, modelB.trigger().alert_id)).thenBy((modelA, modelB) => comparators.compareDates(modelB.date(), modelA.date())).toComparator();
+var comparatorForTriggersByDate = ComparatorBuilder.startWith((modelA, modelB) => comparators.compareDates(modelB.date(), modelA.date())).toComparator();
+
+var getDateBackwards = function (days) {
+  const now = new Date();
+  const past = now.getDate() - days;
+  now.setDate(past);
+  return now;
+};
+
+$(document).ready(function () {
+  reset(null, null, null, null);
+});
 
 },{"./../../../lib/AlertManager":2,"./../../../lib/adapters/AdapterForHttp":4,"./../../../lib/adapters/AdapterForSocketIo":5,"./../../../lib/security/JwtProvider":18,"./../../../lib/security/demo/getJwtGenerator":19,"@barchart/common-js/collections/sorting/ComparatorBuilder":41,"@barchart/common-js/collections/sorting/comparators":42,"@barchart/common-js/lang/timezone":59}],2:[function(require,module,exports){
 const array = require('@barchart/common-js/lang/array'),
@@ -1427,6 +1447,7 @@ module.exports = (() => {
       this._connectPromise = null;
       this._alertSubscriptionMap = {};
       this._triggerSubscriptionMap = {};
+      this._templateSubscriptionMap = {};
     }
     /**
      * Attempts to establish a connection to the backend. This function should be invoked
@@ -1447,7 +1468,7 @@ module.exports = (() => {
         if (this._connectPromise === null) {
           const alertAdapterPromise = Promise.resolve().then(() => {
             const AdapterClazz = this._adapterClazz;
-            const adapter = new AdapterClazz(this._host, this._port, this._secure, onAlertCreated.bind(this), onAlertMutated.bind(this), onAlertDeleted.bind(this), onAlertTriggered.bind(this), onTriggersCreated.bind(this), onTriggersMutated.bind(this), onTriggersDeleted.bind(this));
+            const adapter = new AdapterClazz(this._host, this._port, this._secure, onAlertCreated.bind(this), onAlertMutated.bind(this), onAlertDeleted.bind(this), onAlertTriggered.bind(this), onTriggersCreated.bind(this), onTriggersMutated.bind(this), onTriggersDeleted.bind(this), onTemplateCreated.bind(this), onTemplateMutated.bind(this), onTemplateDeleted.bind(this));
             return promise.timeout(adapter.connect(jwtProvider), 10000, 'Alert service is temporarily unavailable. Please try again later.');
           });
           this._connectPromise = Promise.all([alertAdapterPromise]).then(results => {
@@ -1930,7 +1951,66 @@ module.exports = (() => {
         checkStatus(this, 'get templates');
         validate.template.forUser(query);
       }).then(() => {
-        return this._adapter.getTemplates(query);
+        return this._adapter.retrieveTemplates(query);
+      });
+    }
+    /**
+     * Registers three separate callbacks which will be invoked when templates are created,
+     * deleted, or changed.
+     *
+     * @public
+     * @param {Object} query
+     * @param {String} query.user_id
+     * @param {String} query.alert_system
+     * @param {Callbacks.TemplateMutatedCallback} changeCallback
+     * @param {Callbacks.TemplateDeletedCallback} deleteCallback
+     * @param {Callbacks.TemplateCreatedCallback} createCallback
+     * @returns {Disposable}
+     */
+
+
+    subscribeTemplates(query, changeCallback, deleteCallback, createCallback) {
+      checkStatus(this, 'subscribe templates');
+      validate.template.forUser(query);
+      assert.argumentIsRequired(changeCallback, 'changeCallback', Function);
+      assert.argumentIsRequired(deleteCallback, 'deleteCallback', Function);
+      assert.argumentIsRequired(createCallback, 'createCallback', Function);
+      const userId = query.user_id;
+      const alertSystem = query.alert_system;
+
+      if (!this._templateSubscriptionMap.hasOwnProperty(userId)) {
+        this._templateSubscriptionMap[userId] = {};
+      }
+
+      if (!this._templateSubscriptionMap[userId].hasOwnProperty(alertSystem)) {
+        this._templateSubscriptionMap[userId][alertSystem] = {
+          createEvent: new Event(this),
+          changeEvent: new Event(this),
+          deleteEvent: new Event(this),
+          subscribers: 0
+        };
+      }
+
+      const subscriptionData = this._templateSubscriptionMap[userId][alertSystem];
+
+      if (subscriptionData.subscribers === 0) {
+        subscriptionData.implementationBinding = this._adapter.subscribeTemplates(query);
+      }
+
+      subscriptionData.subscribers = subscriptionData.subscribers + 1;
+      const createRegistration = subscriptionData.createEvent.register(createCallback);
+      const changeRegistration = subscriptionData.changeEvent.register(changeCallback);
+      const deleteRegistration = subscriptionData.deleteEvent.register(deleteCallback);
+      return Disposable.fromAction(() => {
+        subscriptionData.subscribers = subscriptionData.subscribers - 1;
+
+        if (subscriptionData.subscribers === 0) {
+          subscriptionData.implementationBinding.dispose();
+        }
+
+        createRegistration.dispose();
+        changeRegistration.dispose();
+        deleteRegistration.dispose();
       });
     }
     /**
@@ -2228,18 +2308,6 @@ module.exports = (() => {
       return properties.filter(property => property.target.target_id === target.target_id);
     }
 
-    static getPropertiesForSymbol(properties, symbol) {
-      return Promise.resolve().then(() => {
-        assert.argumentIsArray(properties, 'properties', Object);
-        assert.argumentIsValid(symbol, 'symbol', s => is.string(s) && s.length > 0, 'is a string');
-        return lookupInstrument(symbol);
-      }).then(profile => {
-        return properties.filter(p => {
-          return !p.hasOwnProperty('valid_asset_classes') || p.valid_asset_classes === null || p.valid_asset_classes.some(vac => vac === profile.instrument.symbolType);
-        });
-      });
-    }
-
     static getOperatorsForProperty(operators, property) {
       const operatorMap = AlertManager.getOperatorMap(operators);
       return property.valid_operators.map(operatorId => operatorMap[operatorId]);
@@ -2407,6 +2475,8 @@ module.exports = (() => {
       }
 
       this._alertSubscriptionMap = null;
+      this._triggerSubscriptionMap = null;
+      this._templateSubscriptionMap = null;
     }
 
     toString() {
@@ -2499,6 +2569,42 @@ module.exports = (() => {
     }
   }
 
+  function onTemplateCreated(template) {
+    if (!template) {
+      return;
+    }
+
+    const data = getMutationEvents(this._templateSubscriptionMap, template);
+
+    if (data) {
+      data.createEvent.fire(template);
+    }
+  }
+
+  function onTemplateMutated(template) {
+    if (!template) {
+      return;
+    }
+
+    const data = getMutationEvents(this._templateSubscriptionMap, template);
+
+    if (data) {
+      data.changeEvent.fire(template);
+    }
+  }
+
+  function onTemplateDeleted(template) {
+    if (!template) {
+      return;
+    }
+
+    const data = getMutationEvents(this._templateSubscriptionMap, template);
+
+    if (data) {
+      data.deleteEvent.fire(template);
+    }
+  }
+
   function onTriggersCreated(triggers) {
     if (!triggers || triggers.length === 0) {
       return;
@@ -2582,10 +2688,13 @@ module.exports = (() => {
    * @param {Callbacks.TriggersCreatedCallback=} onTriggersCreated
    * @param {Callbacks.TriggersMutatedCallback=} onTriggersMutated
    * @param {Callbacks.TriggersDeletedCallback=} onTriggersDeleted
+   * @param {Callbacks.TemplateCreatedCallback=} onTemplateCreated
+   * @param {Callbacks.TemplateMutatedCallback=} onTemplateMutated
+   * @param {Callbacks.TemplateDeletedCallback=} onTemplateDeleted
    */
 
   class AdapterBase extends Disposable {
-    constructor(host, port, secure, onAlertCreated, onAlertMutated, onAlertDeleted, onAlertTriggered, onTriggersCreated, onTriggersMutated, onTriggersDeleted) {
+    constructor(host, port, secure, onAlertCreated, onAlertMutated, onAlertDeleted, onAlertTriggered, onTriggersCreated, onTriggersMutated, onTriggersDeleted, onTemplateCreated, onTemplateMutated, onTemplateDeleted) {
       super();
       assert.argumentIsRequired(host, 'host', String);
       assert.argumentIsRequired(port, 'port', Number);
@@ -2597,6 +2706,9 @@ module.exports = (() => {
       assert.argumentIsOptional(onTriggersCreated, 'onTriggersCreated', Function);
       assert.argumentIsOptional(onTriggersMutated, 'onTriggersMutated', Function);
       assert.argumentIsOptional(onTriggersDeleted, 'onTriggersDeleted', Function);
+      assert.argumentIsOptional(onTemplateCreated, 'onTemplateCreated', Function);
+      assert.argumentIsOptional(onTemplateMutated, 'onTemplateMutated', Function);
+      assert.argumentIsOptional(onTemplateDeleted, 'onTemplateDeleted', Function);
       this._host = host;
       this._port = port;
       this._secure = secure;
@@ -2607,6 +2719,9 @@ module.exports = (() => {
       this._onTriggersCreated = onTriggersCreated || emptyCallback;
       this._onTriggersMutated = onTriggersMutated || emptyCallback;
       this._onTriggersDeleted = onTriggersDeleted || emptyCallback;
+      this._onTemplateCreated = onTemplateCreated || emptyCallback;
+      this._onTemplateMutated = onTemplateMutated || emptyCallback;
+      this._onTemplateDeleted = onTemplateDeleted || emptyCallback;
     }
     /**
      * The hostname of the Barchart Alerting Service.
@@ -2662,6 +2777,10 @@ module.exports = (() => {
       return null;
     }
 
+    retrieveAlerts(query) {
+      return null;
+    }
+
     updateAlert(alert) {
       return null;
     }
@@ -2674,11 +2793,47 @@ module.exports = (() => {
       return null;
     }
 
-    retrieveAlerts(query) {
+    subscribeAlerts(query) {
       return null;
     }
 
-    subscribeAlerts(query) {
+    retrieveTriggers(query) {
+      return null;
+    }
+
+    updateTrigger(query) {
+      return null;
+    }
+
+    updateTriggers(query) {
+      return null;
+    }
+
+    subscribeTriggers(query) {
+      return null;
+    }
+
+    createTemplate(template) {
+      return null;
+    }
+
+    retrieveTemplates(query) {
+      return null;
+    }
+
+    updateTemplate(template) {
+      return null;
+    }
+
+    updateTemplateOrder(templates) {
+      return null;
+    }
+
+    deleteTemplate(template) {
+      return null;
+    }
+
+    subscribeTemplates(query) {
       return null;
     }
 
@@ -2706,26 +2861,6 @@ module.exports = (() => {
       return null;
     }
 
-    getTemplates(query) {
-      return null;
-    }
-
-    createTemplate(template) {
-      return null;
-    }
-
-    updateTemplate(template) {
-      return null;
-    }
-
-    updateTemplateOrder(templates) {
-      return null;
-    }
-
-    deleteTemplate(template) {
-      return null;
-    }
-
     assignPublisherTypeDefault(publisherTypeDefault) {
       return null;
     }
@@ -2743,22 +2878,6 @@ module.exports = (() => {
     }
 
     getServerVersion() {
-      return null;
-    }
-
-    retrieveTriggers(query) {
-      return null;
-    }
-
-    updateTrigger(query) {
-      return null;
-    }
-
-    updateTriggers(query) {
-      return null;
-    }
-
-    subscribeTriggers(query) {
       return null;
     }
 
@@ -2808,8 +2927,8 @@ module.exports = (() => {
    */
 
   class AdapterForHttp extends AdapterBase {
-    constructor(host, port, secure, onAlertCreated, onAlertMutated, onAlertDeleted, onAlertTriggered, onTriggerCreated, onTriggerMutated, onTriggerDeleted) {
-      super(host, port, secure, onAlertCreated, onAlertMutated, onAlertDeleted, onAlertTriggered, onTriggerCreated, onTriggerMutated, onTriggerDeleted);
+    constructor(host, port, secure, onAlertCreated, onAlertMutated, onAlertDeleted, onAlertTriggered, onTriggerCreated, onTriggerMutated, onTriggerDeleted, onTemplateCreated, onTemplateMutated, onTemplateDeleted) {
+      super(host, port, secure, onAlertCreated, onAlertMutated, onAlertDeleted, onAlertTriggered, onTriggerCreated, onTriggerMutated, onTriggerDeleted, onTemplateCreated, onTemplateMutated, onTemplateDeleted);
       assert.argumentIsOptional(host, 'host', String);
       assert.argumentIsOptional(port, 'port', Number);
       assert.argumentIsOptional(secure, 'secure', Boolean);
@@ -2823,23 +2942,49 @@ module.exports = (() => {
         protocolType = ProtocolType.HTTP;
       }
 
-      this._createEndpoint = EndpointBuilder.for('create-alert', 'Create alert').withVerb(VerbType.POST).withProtocol(protocolType).withHost(host).withPort(port).withPathBuilder(pb => {
+      this._createAlertEndpoint = EndpointBuilder.for('create-alert', 'Create alert').withVerb(VerbType.POST).withProtocol(protocolType).withHost(host).withPort(port).withPathBuilder(pb => {
         pb.withLiteralParameter('alerts', 'alerts');
       }).withBody().withRequestInterceptor(requestInterceptor).withResponseInterceptor(ResponseInterceptor.DATA).withErrorInterceptor(ErrorInterceptor.GENERAL).endpoint;
-      this._retrieveEndpoint = EndpointBuilder.for('query', 'Query').withVerb(VerbType.GET).withProtocol(protocolType).withHost(host).withPort(port).withPathBuilder(pb => {
+      this._retrieveAlertEndpoint = EndpointBuilder.for('query', 'Query').withVerb(VerbType.GET).withProtocol(protocolType).withHost(host).withPort(port).withPathBuilder(pb => {
         pb.withLiteralParameter('alerts', 'alerts').withVariableParameter('alert_id', 'alert_id', 'alert_id');
       }).withRequestInterceptor(requestInterceptor).withResponseInterceptor(ResponseInterceptor.DATA).withErrorInterceptor(ErrorInterceptor.GENERAL).endpoint;
-      this._queryEndpoint = EndpointBuilder.for('query', 'Query').withVerb(VerbType.GET).withProtocol(protocolType).withHost(host).withPort(port).withPathBuilder(pb => {
+      this._retrieveAlertsEndpoint = EndpointBuilder.for('query', 'Query').withVerb(VerbType.GET).withProtocol(protocolType).withHost(host).withPort(port).withPathBuilder(pb => {
         pb.withLiteralParameter('alerts', 'alerts').withLiteralParameter('users', 'users').withVariableParameter('alert_system', 'alert_system', 'alert_system').withVariableParameter('user_id', 'user_id', 'user_id');
       }).withRequestInterceptor(requestInterceptor).withResponseInterceptor(ResponseInterceptor.DATA).withErrorInterceptor(ErrorInterceptor.GENERAL).endpoint;
-      this._updateEndpoint = EndpointBuilder.for('update-alert', 'Update alert').withVerb(VerbType.PUT).withProtocol(protocolType).withHost(host).withPort(port).withPathBuilder(pb => {
+      this._updateAlertEndpoint = EndpointBuilder.for('update-alert', 'Update alert').withVerb(VerbType.PUT).withProtocol(protocolType).withHost(host).withPort(port).withPathBuilder(pb => {
         pb.withLiteralParameter('alerts', 'alerts').withVariableParameter('alert_id', 'alert_id', 'alert_id');
       }).withBody().withRequestInterceptor(requestInterceptor).withResponseInterceptor(ResponseInterceptor.DATA).withErrorInterceptor(ErrorInterceptor.GENERAL).endpoint;
       this._updateAlertsForUserEndpoint = EndpointBuilder.for('update-alert', 'Update alert').withVerb(VerbType.PUT).withProtocol(protocolType).withHost(host).withPort(port).withPathBuilder(pb => {
         pb.withLiteralParameter('alerts', 'alerts').withLiteralParameter('users', 'users').withVariableParameter('alert_system', 'alert_system', 'alert_system').withVariableParameter('user_id', 'user_id', 'user_id');
       }).withBody().withRequestInterceptor(requestInterceptor).withResponseInterceptor(ResponseInterceptor.DATA).withErrorInterceptor(ErrorInterceptor.GENERAL).endpoint;
-      this._deleteEndpoint = EndpointBuilder.for('delete-alert', 'Delete alert').withVerb(VerbType.DELETE).withProtocol(protocolType).withHost(host).withPort(port).withPathBuilder(pb => {
+      this._deleteAlertEndpoint = EndpointBuilder.for('delete-alert', 'Delete alert').withVerb(VerbType.DELETE).withProtocol(protocolType).withHost(host).withPort(port).withPathBuilder(pb => {
         pb.withLiteralParameter('alerts', 'alerts').withVariableParameter('alert_id', 'alert_id', 'alert_id');
+      }).withRequestInterceptor(requestInterceptor).withResponseInterceptor(ResponseInterceptor.DATA).withErrorInterceptor(ErrorInterceptor.GENERAL).endpoint;
+      this._retrieveTriggersEndpoint = EndpointBuilder.for('retrieve-alert-triggers', 'Retrieve alert triggers').withVerb(VerbType.GET).withProtocol(protocolType).withHost(host).withPort(port).withPathBuilder(pb => {
+        pb.withLiteralParameter('alert', 'alert').withLiteralParameter('triggers', 'triggers').withLiteralParameter('users', 'users').withVariableParameter('alert_system', 'alert_system', 'alert_system').withVariableParameter('user_id', 'user_id', 'user_id');
+      }).withQueryBuilder(pb => {
+        pb.withVariableParameter('trigger_date', 'trigger_date', 'trigger_date', true).withVariableParameter('trigger_status', 'trigger_status', 'trigger_status', true);
+      }).withRequestInterceptor(requestInterceptor).withResponseInterceptor(ResponseInterceptor.DATA).withErrorInterceptor(ErrorInterceptor.GENERAL).endpoint;
+      this._updateTriggerEndpoint = EndpointBuilder.for('update-trigger', 'Update trigger').withVerb(VerbType.PUT).withProtocol(protocolType).withHost(host).withPort(port).withPathBuilder(pb => {
+        pb.withLiteralParameter('alert', 'alert').withLiteralParameter('triggers', 'triggers').withVariableParameter('alert_id', 'alert_id', 'alert_id').withVariableParameter('trigger_date', 'trigger_date', 'trigger_date');
+      }).withBody().withRequestInterceptor(requestInterceptor).withResponseInterceptor(ResponseInterceptor.DATA).withErrorInterceptor(ErrorInterceptor.GENERAL).endpoint;
+      this._updateTriggersEndpoint = EndpointBuilder.for('update-triggers', 'Update triggers').withVerb(VerbType.PUT).withProtocol(protocolType).withHost(host).withPort(port).withPathBuilder(pb => {
+        pb.withLiteralParameter('alert', 'alert').withLiteralParameter('triggers', 'triggers').withLiteralParameter('users', 'users').withVariableParameter('alert_system', 'alert_system', 'alert_system').withVariableParameter('user_id', 'user_id', 'user_id');
+      }).withBody().withRequestInterceptor(requestInterceptor).withResponseInterceptor(ResponseInterceptor.DATA).withErrorInterceptor(ErrorInterceptor.GENERAL).endpoint;
+      this._createTemplateEndpoint = EndpointBuilder.for('create-template', 'Create template').withVerb(VerbType.POST).withProtocol(protocolType).withHost(host).withPort(port).withPathBuilder(pb => {
+        pb.withLiteralParameter('templates', 'templates');
+      }).withBody().withRequestInterceptor(requestInterceptor).withResponseInterceptor(ResponseInterceptor.DATA).withErrorInterceptor(ErrorInterceptor.GENERAL).endpoint;
+      this._retrieveTemplatesEndpoint = EndpointBuilder.for('retrieve-templates', 'Retrieve templates').withVerb(VerbType.GET).withProtocol(protocolType).withHost(host).withPort(port).withPathBuilder(pb => {
+        pb.withLiteralParameter('templates', 'templates').withLiteralParameter('users', 'users').withVariableParameter('alert_system', 'alert_system', 'alert_system').withVariableParameter('user_id', 'user_id', 'user_id');
+      }).withRequestInterceptor(requestInterceptor).withResponseInterceptor(ResponseInterceptor.DATA).withErrorInterceptor(ErrorInterceptor.GENERAL).endpoint;
+      this._updateTemplateEndpoint = EndpointBuilder.for('update-template', 'Update template').withVerb(VerbType.PUT).withProtocol(protocolType).withHost(host).withPort(port).withPathBuilder(pb => {
+        pb.withLiteralParameter('templates', 'templates').withVariableParameter('template_id', 'template_id', 'template_id');
+      }).withBody().withRequestInterceptor(requestInterceptor).withResponseInterceptor(ResponseInterceptor.DATA).withErrorInterceptor(ErrorInterceptor.GENERAL).endpoint;
+      this._updateTemplateOrderEndpoint = EndpointBuilder.for('update-template-order', 'Update template ordering').withVerb(VerbType.PUT).withProtocol(protocolType).withHost(host).withPort(port).withPathBuilder(pb => {
+        pb.withLiteralParameter('templates', 'templates').withLiteralParameter('batch', 'batch').withLiteralParameter('sorting', 'sorting');
+      }).withBody().withRequestInterceptor(requestInterceptor).withResponseInterceptor(ResponseInterceptor.DATA).withErrorInterceptor(ErrorInterceptor.GENERAL).endpoint;
+      this._deleteTemplateEndpoint = EndpointBuilder.for('delete-template', 'Delete template').withVerb(VerbType.DELETE).withProtocol(protocolType).withHost(host).withPort(port).withPathBuilder(pb => {
+        pb.withLiteralParameter('templates', 'templates').withVariableParameter('template_id', 'template_id', 'template_id');
       }).withRequestInterceptor(requestInterceptor).withResponseInterceptor(ResponseInterceptor.DATA).withErrorInterceptor(ErrorInterceptor.GENERAL).endpoint;
       this._retrieveTargetsEndpoint = EndpointBuilder.for('retrieve-targets', 'Retrieve targets').withVerb(VerbType.GET).withProtocol(protocolType).withHost(host).withPort(port).withPathBuilder(pb => {
         pb.withLiteralParameter('alert', 'alert').withLiteralParameter('targets', 'targets');
@@ -2859,21 +3004,6 @@ module.exports = (() => {
       this._retrievePublisherTypeDefaultsEndpoint = EndpointBuilder.for('retrieve-publisher-type-defaults', 'Retrieve publisher type defaults').withVerb(VerbType.GET).withProtocol(protocolType).withHost(host).withPort(port).withPathBuilder(pb => {
         pb.withLiteralParameter('alert', 'alert').withLiteralParameter('publishers', 'publishers').withLiteralParameter('default', 'default').withVariableParameter('alert_system', 'alert_system', 'alert_system').withVariableParameter('user_id', 'user_id', 'user_id');
       }).withRequestInterceptor(requestInterceptor).withResponseInterceptor(ResponseInterceptor.DATA).withErrorInterceptor(ErrorInterceptor.GENERAL).endpoint;
-      this._retrieveTemplatesEndpoint = EndpointBuilder.for('retrieve-templates', 'Retrieve templates').withVerb(VerbType.GET).withProtocol(protocolType).withHost(host).withPort(port).withPathBuilder(pb => {
-        pb.withLiteralParameter('templates', 'templates').withLiteralParameter('users', 'users').withVariableParameter('alert_system', 'alert_system', 'alert_system').withVariableParameter('user_id', 'user_id', 'user_id');
-      }).withRequestInterceptor(requestInterceptor).withResponseInterceptor(ResponseInterceptor.DATA).withErrorInterceptor(ErrorInterceptor.GENERAL).endpoint;
-      this._createTemplateEndpoint = EndpointBuilder.for('create-template', 'Create template').withVerb(VerbType.POST).withProtocol(protocolType).withHost(host).withPort(port).withPathBuilder(pb => {
-        pb.withLiteralParameter('templates', 'templates');
-      }).withBody().withRequestInterceptor(requestInterceptor).withResponseInterceptor(ResponseInterceptor.DATA).withErrorInterceptor(ErrorInterceptor.GENERAL).endpoint;
-      this._updateTemplateEndpoint = EndpointBuilder.for('update-template', 'Update template').withVerb(VerbType.PUT).withProtocol(protocolType).withHost(host).withPort(port).withPathBuilder(pb => {
-        pb.withLiteralParameter('templates', 'templates').withVariableParameter('template_id', 'template_id', 'template_id');
-      }).withBody().withRequestInterceptor(requestInterceptor).withResponseInterceptor(ResponseInterceptor.DATA).withErrorInterceptor(ErrorInterceptor.GENERAL).endpoint;
-      this._updateTemplateOrderEndpoint = EndpointBuilder.for('update-template-order', 'Update template ordering').withVerb(VerbType.PUT).withProtocol(protocolType).withHost(host).withPort(port).withPathBuilder(pb => {
-        pb.withLiteralParameter('templates', 'templates').withLiteralParameter('batch', 'batch').withLiteralParameter('sorting', 'sorting');
-      }).withBody().withRequestInterceptor(requestInterceptor).withResponseInterceptor(ResponseInterceptor.DATA).withErrorInterceptor(ErrorInterceptor.GENERAL).endpoint;
-      this._deleteTemplateEndpoint = EndpointBuilder.for('delete-template', 'Delete template').withVerb(VerbType.DELETE).withProtocol(protocolType).withHost(host).withPort(port).withPathBuilder(pb => {
-        pb.withLiteralParameter('templates', 'templates').withVariableParameter('template_id', 'template_id', 'template_id');
-      }).withRequestInterceptor(requestInterceptor).withResponseInterceptor(ResponseInterceptor.DATA).withErrorInterceptor(ErrorInterceptor.GENERAL).endpoint;
       this._assignPublisherTypeDefaultEndpoint = EndpointBuilder.for('assign-publisher-type-default', 'Assign default publisher type').withVerb(VerbType.PUT).withProtocol(protocolType).withHost(host).withPort(port).withPathBuilder(pb => {
         pb.withLiteralParameter('alert', 'alert').withLiteralParameter('publishers', 'publishers').withLiteralParameter('default', 'default').withVariableParameter('alert_system', 'alert_system', 'alert_system').withVariableParameter('user_id', 'user_id', 'user_id').withVariableParameter('publisher_type_id', 'publisher_type_id', 'publisher_type_id');
       }).withBody().withRequestInterceptor(requestInterceptor).withResponseInterceptor(ResponseInterceptor.DATA).withErrorInterceptor(ErrorInterceptor.GENERAL).endpoint;
@@ -2883,26 +3013,16 @@ module.exports = (() => {
       this._assignMarketDataConfigurationEndpoint = EndpointBuilder.for('assign-market-data-configuration', 'Assign market data configuration').withVerb(VerbType.PUT).withProtocol(protocolType).withHost(host).withPort(port).withPathBuilder(pb => {
         pb.withLiteralParameter('alert', 'alert').withLiteralParameter('market', 'market').withLiteralParameter('configuration', 'configuration').withVariableParameter('alert_system', 'alert_system', 'alert_system').withVariableParameter('user_id', 'user_id', 'user_id');
       }).withBody().withRequestInterceptor(requestInterceptor).withResponseInterceptor(ResponseInterceptor.DATA).withErrorInterceptor(ErrorInterceptor.GENERAL).endpoint;
-      this._userEndpoint = EndpointBuilder.for('get-user', 'Get user').withVerb(VerbType.GET).withProtocol(protocolType).withHost(host).withPort(port).withPathBuilder(pb => {
+      this._retrieveUserEndpoint = EndpointBuilder.for('get-user', 'Get user').withVerb(VerbType.GET).withProtocol(protocolType).withHost(host).withPort(port).withPathBuilder(pb => {
         pb.withLiteralParameter('user', 'user');
       }).withRequestInterceptor(requestInterceptor).withResponseInterceptor(ResponseInterceptor.DATA).withErrorInterceptor(ErrorInterceptor.GENERAL).endpoint;
-      this._retrieveTriggersEndpoint = EndpointBuilder.for('retrieve-alert-triggers', 'Retrieve alert triggers').withVerb(VerbType.GET).withProtocol(protocolType).withHost(host).withPort(port).withPathBuilder(pb => {
-        pb.withLiteralParameter('alert', 'alert').withLiteralParameter('triggers', 'triggers').withLiteralParameter('users', 'users').withVariableParameter('alert_system', 'alert_system', 'alert_system').withVariableParameter('user_id', 'user_id', 'user_id');
-      }).withQueryBuilder(pb => {
-        pb.withVariableParameter('trigger_date', 'trigger_date', 'trigger_date', true).withVariableParameter('trigger_status', 'trigger_status', 'trigger_status', true);
-      }).withRequestInterceptor(requestInterceptor).withResponseInterceptor(ResponseInterceptor.DATA).withErrorInterceptor(ErrorInterceptor.GENERAL).endpoint;
-      this._updateTriggerEndpoint = EndpointBuilder.for('update-trigger', 'Update trigger').withVerb(VerbType.PUT).withProtocol(protocolType).withHost(host).withPort(port).withPathBuilder(pb => {
-        pb.withLiteralParameter('alert', 'alert').withLiteralParameter('triggers', 'triggers').withVariableParameter('alert_id', 'alert_id', 'alert_id').withVariableParameter('trigger_date', 'trigger_date', 'trigger_date');
-      }).withBody().withRequestInterceptor(requestInterceptor).withResponseInterceptor(ResponseInterceptor.DATA).withErrorInterceptor(ErrorInterceptor.GENERAL).endpoint;
-      this._updateTriggersEndpoint = EndpointBuilder.for('update-triggers', 'Update triggers').withVerb(VerbType.PUT).withProtocol(protocolType).withHost(host).withPort(port).withPathBuilder(pb => {
-        pb.withLiteralParameter('alert', 'alert').withLiteralParameter('triggers', 'triggers').withLiteralParameter('users', 'users').withVariableParameter('alert_system', 'alert_system', 'alert_system').withVariableParameter('user_id', 'user_id', 'user_id');
-      }).withBody().withRequestInterceptor(requestInterceptor).withResponseInterceptor(ResponseInterceptor.DATA).withErrorInterceptor(ErrorInterceptor.GENERAL).endpoint;
-      this._versionEndpoint = EndpointBuilder.for('get-version', 'Get version').withVerb(VerbType.GET).withProtocol(protocolType).withHost(host).withPort(port).withPathBuilder(pb => {
+      this._retrieveVersionEndpoint = EndpointBuilder.for('get-version', 'Get version').withVerb(VerbType.GET).withProtocol(protocolType).withHost(host).withPort(port).withPathBuilder(pb => {
         pb.withLiteralParameter('server', 'server').withLiteralParameter('version', 'version');
       }).withResponseInterceptor(ResponseInterceptor.DATA).withErrorInterceptor(ErrorInterceptor.GENERAL).endpoint;
       this._scheduler = new Scheduler();
       this._alertSubscriberMap = {};
       this._triggerSubscriberMap = {};
+      this._templateSubscriberMap = {};
     }
 
     connect(jwtProvider) {
@@ -2918,32 +3038,20 @@ module.exports = (() => {
     }
 
     createAlert(alert) {
-      return Gateway.invoke(this._createEndpoint, alert);
+      return Gateway.invoke(this._createAlertEndpoint, alert);
     }
 
     retrieveAlert(alert) {
-      return Gateway.invoke(this._retrieveEndpoint, alert);
-    }
-
-    updateAlert(alert) {
-      return Gateway.invoke(this._updateEndpoint, alert);
-    }
-
-    updateAlertsForUser(query) {
-      return Gateway.invoke(this._updateAlertsForUserEndpoint, query);
-    }
-
-    deleteAlert(alert) {
-      return Gateway.invoke(this._deleteEndpoint, alert);
+      return Gateway.invoke(this._retrieveAlertEndpoint, alert);
     }
 
     retrieveAlerts(query) {
-      return Gateway.invoke(this._queryEndpoint, query).then(alerts => {
+      return Gateway.invoke(this._retrieveAlertsEndpoint, query).then(alerts => {
         const subscriber = getSubscriber(this._alertSubscriberMap, query);
 
         if (subscriber) {
           const clones = alerts.map(alert => {
-            return Object.assign(alert);
+            return object.clone(alert);
           });
           subscriber.processAlerts(clones);
         }
@@ -2952,6 +3060,18 @@ module.exports = (() => {
       }).catch(e => {
         console.log(e);
       });
+    }
+
+    updateAlert(alert) {
+      return Gateway.invoke(this._updateAlertEndpoint, alert);
+    }
+
+    updateAlertsForUser(query) {
+      return Gateway.invoke(this._updateAlertsForUserEndpoint, query);
+    }
+
+    deleteAlert(alert) {
+      return Gateway.invoke(this._deleteAlertEndpoint, alert);
     }
 
     subscribeAlerts(query) {
@@ -2966,70 +3086,6 @@ module.exports = (() => {
         deleteSubscriber(this._alertSubscriberMap, subscriber);
         subscriber.dispose();
       });
-    }
-
-    getTargets() {
-      return Gateway.invoke(this._retrieveTargetsEndpoint);
-    }
-
-    getProperties() {
-      return Gateway.invoke(this._retrievePropertiesEndpoint);
-    }
-
-    getOperators() {
-      return Gateway.invoke(this._retrieveOperatorsEndpoint);
-    }
-
-    getModifiers() {
-      return Gateway.invoke(this._retrieveModifiersEndpoint);
-    }
-
-    getPublisherTypes() {
-      return Gateway.invoke(this._retrievePublisherTypesEndpoint);
-    }
-
-    getPublisherTypeDefaults(query) {
-      return Gateway.invoke(this._retrievePublisherTypeDefaultsEndpoint, query);
-    }
-
-    getTemplates(query) {
-      return Gateway.invoke(this._retrieveTemplatesEndpoint, query);
-    }
-
-    createTemplate(template) {
-      return Gateway.invoke(this._createTemplateEndpoint, template);
-    }
-
-    updateTemplate(template) {
-      return Gateway.invoke(this._updateTemplateEndpoint, template);
-    }
-
-    updateTemplateOrder(templates) {
-      return Gateway.invoke(this._updateTemplateOrderEndpoint, templates);
-    }
-
-    deleteTemplate(template) {
-      return Gateway.invoke(this._deleteTemplateEndpoint, template);
-    }
-
-    assignPublisherTypeDefault(publisherTypeDefault) {
-      return Gateway.invoke(this._assignPublisherTypeDefaultEndpoint, publisherTypeDefault);
-    }
-
-    getMarketDataConfiguration(query) {
-      return Gateway.invoke(this._retrieveMarketDataConfigurationEndpoint, query);
-    }
-
-    assignMarketDataConfiguration(marketDataConfiguration) {
-      return Gateway.invoke(this._assignMarketDataConfigurationEndpoint, marketDataConfiguration);
-    }
-
-    getUser() {
-      return Gateway.invoke(this._userEndpoint);
-    }
-
-    getServerVersion() {
-      return Gateway.invoke(this._versionEndpoint);
     }
 
     retrieveTriggers(query) {
@@ -3071,12 +3127,110 @@ module.exports = (() => {
       });
     }
 
+    createTemplate(template) {
+      return Gateway.invoke(this._createTemplateEndpoint, template);
+    }
+
+    retrieveTemplates(query) {
+      return Gateway.invoke(this._retrieveTemplatesEndpoint, query).then(templates => {
+        const subscriber = getSubscriber(this._templateSubscriberMap, query);
+
+        if (subscriber) {
+          const clones = templates.map(template => {
+            return object.clone(template);
+          });
+          subscriber.processTemplates(clones);
+        }
+
+        return templates;
+      }).catch(e => {
+        console.log(e);
+      });
+    }
+
+    updateTemplate(template) {
+      return Gateway.invoke(this._updateTemplateEndpoint, template);
+    }
+
+    updateTemplateOrder(templates) {
+      return Gateway.invoke(this._updateTemplateOrderEndpoint, templates);
+    }
+
+    deleteTemplate(template) {
+      return Gateway.invoke(this._deleteTemplateEndpoint, template);
+    }
+
+    subscribeTemplates(query) {
+      if (getSubscriber(this._templateSubscriberMap, query) !== null) {
+        throw new Error('A template subscriber already exists');
+      }
+
+      const subscriber = new TemplateSubscriber(this, query);
+      subscriber.start();
+      putSubscriber(this._templateSubscriberMap, subscriber);
+      return Disposable.fromAction(() => {
+        deleteSubscriber(this._templateSubscriberMap, subscriber);
+        subscriber.dispose();
+      });
+    }
+
+    getTargets() {
+      return Gateway.invoke(this._retrieveTargetsEndpoint);
+    }
+
+    getProperties() {
+      return Gateway.invoke(this._retrievePropertiesEndpoint);
+    }
+
+    getOperators() {
+      return Gateway.invoke(this._retrieveOperatorsEndpoint);
+    }
+
+    getModifiers() {
+      return Gateway.invoke(this._retrieveModifiersEndpoint);
+    }
+
+    getPublisherTypes() {
+      return Gateway.invoke(this._retrievePublisherTypesEndpoint);
+    }
+
+    getPublisherTypeDefaults(query) {
+      return Gateway.invoke(this._retrievePublisherTypeDefaultsEndpoint, query);
+    }
+
+    assignPublisherTypeDefault(publisherTypeDefault) {
+      return Gateway.invoke(this._assignPublisherTypeDefaultEndpoint, publisherTypeDefault);
+    }
+
+    getMarketDataConfiguration(query) {
+      return Gateway.invoke(this._retrieveMarketDataConfigurationEndpoint, query);
+    }
+
+    assignMarketDataConfiguration(marketDataConfiguration) {
+      return Gateway.invoke(this._assignMarketDataConfigurationEndpoint, marketDataConfiguration);
+    }
+
+    getUser() {
+      return Gateway.invoke(this._retrieveUserEndpoint);
+    }
+
+    getServerVersion() {
+      return Gateway.invoke(this._retrieveVersionEndpoint);
+    }
+
     _onDispose() {
       getSubscribers(this._alertSubscriberMap).forEach(subscriber => {
         subscriber.dispose();
       });
+      getSubscribers(this._triggerSubscriberMap).forEach(subscriber => {
+        subscriber.dispose();
+      });
+      getSubscribers(this._templateSubscriberMap).forEach(subscriber => {
+        subscriber.dispose();
+      });
       this._alertSubscriberMap = null;
       this._triggerSubscriberMap = null;
+      this._templateSubscriberMap = null;
 
       this._scheduler.dispose();
 
@@ -3198,9 +3352,17 @@ module.exports = (() => {
         throw new Error('The alert subscriber has already been started.');
       }
 
+      if (this.getIsDisposed()) {
+        throw new Error('The alert subscriber has been disposed.');
+      }
+
       this._started = true;
 
       const poll = delay => {
+        if (!this._started) {
+          return;
+        }
+
         this._parent._scheduler.schedule(() => {
           return this._parent.retrieveAlerts(this._query).catch(e => {}).then(() => {
             poll(delay || 5000);
@@ -3209,6 +3371,14 @@ module.exports = (() => {
       };
 
       poll(0);
+    }
+
+    _onDispose() {
+      this._started = false;
+    }
+
+    toString() {
+      return '[AdapterForHttp.AlertSubscriber]';
     }
 
   }
@@ -3271,9 +3441,17 @@ module.exports = (() => {
         throw new Error('The trigger subscriber has already been started.');
       }
 
+      if (this.getIsDisposed()) {
+        throw new Error('The trigger subscriber has been disposed.');
+      }
+
       this._started = true;
 
       const poll = delay => {
+        if (!this._started) {
+          return;
+        }
+
         this._parent._scheduler.schedule(() => {
           return this._parent.retrieveTriggers(this._query).catch(e => {}).then(() => {
             poll(delay || 5000);
@@ -3282,6 +3460,98 @@ module.exports = (() => {
       };
 
       poll(0);
+    }
+
+    _onDispose() {
+      this._started = false;
+    }
+
+    toString() {
+      return '[AdapterForHttp.TriggerSubscriber]';
+    }
+
+  }
+
+  class TemplateSubscriber extends Disposable {
+    constructor(parent, query) {
+      super();
+      this._parent = parent;
+      this._query = query;
+      this._templates = {};
+      this._started = false;
+    }
+
+    getQuery() {
+      return this._query;
+    }
+
+    processTemplates(templates) {
+      const currentTemplates = array.indexBy(templates, template => template.template_id);
+      const createdTemplates = Object.keys(currentTemplates).filter(templateId => !this._templates.hasOwnProperty(templateId)).map(templateId => currentTemplates[templateId]);
+      const deletedTemplates = Object.keys(this._templates).filter(templateId => !currentTemplates.hasOwnProperty(templateId)).map(templateId => this._templates[templateId]);
+      const mutatedTemplates = templates.filter(template => {
+        let returnVal = true;
+        const templateId = template.template_id;
+
+        if (this._templates.hasOwnProperty(templateId)) {
+          const existing = this._templates[templateId];
+          returnVal = existing.version !== template.version;
+        }
+
+        return returnVal;
+      });
+      createdTemplates.forEach(template => {
+        this._templates[template.template_id] = template;
+      });
+      mutatedTemplates.forEach(template => {
+        this._templates[template.template_id] = template;
+      });
+      deletedTemplates.forEach(template => {
+        delete this._templates[template.template_id];
+      });
+      createdTemplates.forEach(template => {
+        this._parent._onTemplateCreated(template);
+      });
+      mutatedTemplates.forEach(template => {
+        this._parent._onTemplateMutated(template);
+      });
+      deletedTemplates.forEach(template => {
+        this._parent._onTemplateDeleted(template);
+      });
+    }
+
+    start() {
+      if (this._started) {
+        throw new Error('The template subscriber has already been started.');
+      }
+
+      if (this.getIsDisposed()) {
+        throw new Error('The template subscriber has been disposed.');
+      }
+
+      this._started = true;
+
+      const poll = delay => {
+        if (!this._started) {
+          return;
+        }
+
+        this._parent._scheduler.schedule(() => {
+          return this._parent.retrieveTemplates(this._query).catch(e => {}).then(() => {
+            poll(delay || 5000);
+          });
+        }, delay);
+      };
+
+      poll(0);
+    }
+
+    _onDispose() {
+      this._started = false;
+    }
+
+    toString() {
+      return '[AdapterForHttp.TemplateSubscriber]';
     }
 
   }
@@ -3380,13 +3650,14 @@ module.exports = (() => {
    */
 
   class AdapterForSocketIo extends AdapterBase {
-    constructor(host, port, secure, onAlertCreated, onAlertMutated, onAlertDeleted, onAlertTriggered, onTriggersCreated, onTriggersMutated, onTriggersDeleted) {
-      super(host, port, secure, onAlertCreated, onAlertMutated, onAlertDeleted, onAlertTriggered, onTriggersCreated, onTriggersMutated, onTriggersDeleted);
+    constructor(host, port, secure, onAlertCreated, onAlertMutated, onAlertDeleted, onAlertTriggered, onTriggersCreated, onTriggersMutated, onTriggersDeleted, onTemplateCreated, onTemplateMutated, onTemplateDeleted) {
+      super(host, port, secure, onAlertCreated, onAlertMutated, onAlertDeleted, onAlertTriggered, onTriggersCreated, onTriggersMutated, onTriggersDeleted, onTemplateCreated, onTemplateMutated, onTemplateDeleted);
       this._socket = null;
       this._connectionState = ConnectionState.Disconnected;
       this._requestMap = {};
       this._alertSubscriberMap = {};
       this._triggerSubscriberMap = {};
+      this._templateSubscriberMap = {};
       this._jwtProvider = null;
     }
 
@@ -3459,6 +3730,18 @@ module.exports = (() => {
             this._onAlertTriggered(alert);
           });
 
+          this._socket.on('template/created', template => {
+            this._onTemplateCreated(template);
+          });
+
+          this._socket.on('template/mutated', template => {
+            this._onTemplateMutated(template);
+          });
+
+          this._socket.on('template/deleted', template => {
+            this._onTemplateDeleted(template);
+          });
+
           this._socket.on('triggers/created', triggers => {
             this._onTriggersCreated(triggers);
           });
@@ -3484,6 +3767,10 @@ module.exports = (() => {
       return sendRequestToServer.call(this, 'alerts/retrieve', alert, true);
     }
 
+    retrieveAlerts(query) {
+      return sendRequestToServer.call(this, 'alerts/retrieve/user', query, true);
+    }
+
     updateAlert(alert) {
       return sendRequestToServer.call(this, 'alerts/update', alert, true);
     }
@@ -3496,10 +3783,6 @@ module.exports = (() => {
       return sendRequestToServer.call(this, 'alerts/delete', alert, true);
     }
 
-    retrieveAlerts(user) {
-      return sendRequestToServer.call(this, 'alerts/retrieve/user', user, true);
-    }
-
     subscribeAlerts(query) {
       if (getSubscriber(this._alertSubscriberMap, query) !== null) {
         throw new Error('An alert subscriber already exists');
@@ -3510,6 +3793,66 @@ module.exports = (() => {
       putSubscriber(this._alertSubscriberMap, subscriber);
       return Disposable.fromAction(() => {
         deleteSubscriber(this._alertSubscriberMap, subscriber);
+        subscriber.dispose();
+      });
+    }
+
+    retrieveTriggers(query) {
+      return sendRequestToServer.call(this, 'alert/triggers/retrieve/user', query, true);
+    }
+
+    updateTrigger(query) {
+      return sendRequestToServer.call(this, 'alert/triggers/update', query, true);
+    }
+
+    updateTriggers(query) {
+      return sendRequestToServer.call(this, 'alert/triggers/update/user', query, true);
+    }
+
+    subscribeTriggers(query) {
+      if (getSubscriber(this._triggerSubscriberMap, query) !== null) {
+        throw new Error('A trigger subscriber already exists');
+      }
+
+      const subscriber = new TriggerSubscriber(this, query);
+      subscriber.subscribe();
+      putSubscriber(this._triggerSubscriberMap, subscriber);
+      return Disposable.fromAction(() => {
+        deleteSubscriber(this._triggerSubscriberMap, subscriber);
+        subscriber.dispose();
+      });
+    }
+
+    createTemplate(template) {
+      return sendRequestToServer.call(this, 'templates/create', template, true);
+    }
+
+    retrieveTemplates(query) {
+      return sendRequestToServer.call(this, 'templates/retrieve/user', query, true);
+    }
+
+    updateTemplate(template) {
+      return sendRequestToServer.call(this, 'templates/update', template, true);
+    }
+
+    updateTemplateOrder(template) {
+      return sendRequestToServer.call(this, 'templates/batch/sorting', template, true);
+    }
+
+    deleteTemplate(template) {
+      return sendRequestToServer.call(this, 'templates/delete', template, true);
+    }
+
+    subscribeTemplates(query) {
+      if (getSubscriber(this._templateSubscriberMap, query) !== null) {
+        throw new Error('A template subscriber already exists');
+      }
+
+      const subscriber = new TemplateSubscriber(this, query);
+      subscriber.subscribe();
+      putSubscriber(this._templateSubscriberMap, subscriber);
+      return Disposable.fromAction(() => {
+        deleteSubscriber(this._templateSubscriberMap, subscriber);
         subscriber.dispose();
       });
     }
@@ -3538,26 +3881,6 @@ module.exports = (() => {
       return sendRequestToServer.call(this, 'alert/publishers/default/retrieve', query, true);
     }
 
-    getTemplates(query) {
-      return sendRequestToServer.call(this, 'templates/retrieve/user', query, true);
-    }
-
-    createTemplate(template) {
-      return sendRequestToServer.call(this, 'templates/create', template, true);
-    }
-
-    updateTemplate(template) {
-      return sendRequestToServer.call(this, 'templates/update', template, true);
-    }
-
-    updateTemplateOrder(template) {
-      return sendRequestToServer.call(this, 'templates/batch/sorting', template, true);
-    }
-
-    deleteTemplate(template) {
-      return sendRequestToServer.call(this, 'templates/delete', template, true);
-    }
-
     assignPublisherTypeDefault(publisherTypeDefault) {
       return sendRequestToServer.call(this, 'alert/publishers/default/update', publisherTypeDefault, true);
     }
@@ -3576,32 +3899,6 @@ module.exports = (() => {
 
     getServerVersion() {
       return sendRequestToServer.call(this, 'server/version', {});
-    }
-
-    retrieveTriggers(query) {
-      return sendRequestToServer.call(this, 'alert/triggers/retrieve/user', query, true);
-    }
-
-    updateTrigger(query) {
-      return sendRequestToServer.call(this, 'alert/triggers/update', query, true);
-    }
-
-    updateTriggers(query) {
-      return sendRequestToServer.call(this, 'alert/triggers/update/user', query, true);
-    }
-
-    subscribeTriggers(query) {
-      if (getSubscriber(this._triggerSubscriberMap, query) !== null) {
-        throw new Error('A trigger subscriber already exists');
-      }
-
-      const subscriber = new TriggerSubscriber(this, query);
-      subscriber.subscribe();
-      putSubscriber(this._triggerSubscriberMap, subscriber);
-      return Disposable.fromAction(() => {
-        deleteSubscriber(this._triggerSubscriberMap, subscriber);
-        subscriber.dispose();
-      });
     }
 
     _onDispose() {
@@ -3727,7 +4024,7 @@ module.exports = (() => {
 
     subscribe() {
       if (this.getIsDisposed()) {
-        throw new Error('The subscriber has been disposed.');
+        throw new Error('The alert subscriber has been disposed.');
       }
 
       sendSubscriptionToServer.call(this._parent, 'alerts/events', this._query, true).then(() => {
@@ -3746,8 +4043,6 @@ module.exports = (() => {
         });
       });
     }
-
-    _onDispose() {}
 
     toString() {
       return '[AdapterForSocketIo.AlertSubscriber]';
@@ -3768,7 +4063,7 @@ module.exports = (() => {
 
     subscribe() {
       if (this.getIsDisposed()) {
-        throw new Error('The subscriber has been disposed.');
+        throw new Error('The trigger subscriber has been disposed.');
       }
 
       sendSubscriptionToServer.call(this._parent, 'triggers/events', this._query, true).then(() => {
@@ -3786,10 +4081,47 @@ module.exports = (() => {
       });
     }
 
-    _onDispose() {}
-
     toString() {
       return '[AdapterForSocketIo.TriggerSubscriber]';
+    }
+
+  }
+
+  class TemplateSubscriber extends Disposable {
+    constructor(parent, query) {
+      super();
+      this._parent = parent;
+      this._query = query;
+    }
+
+    getQuery() {
+      return this._query;
+    }
+
+    subscribe() {
+      if (this.getIsDisposed()) {
+        throw new Error('The template subscriber has been disposed.');
+      }
+
+      sendSubscriptionToServer.call(this._parent, 'templates/events', this._query, true).then(() => {
+        if (this.getIsDisposed()) {
+          return;
+        }
+
+        this._parent.retrieveTemplates(this._query).then(templates => {
+          if (this.getIsDisposed()) {
+            return;
+          }
+
+          templates.forEach(alert => {
+            this._parent._onTemplateMutated(alert);
+          });
+        });
+      });
+    }
+
+    toString() {
+      return '[AdapterForSocketIo.TemplateSubscriber]';
     }
 
   }
@@ -11911,7 +12243,19 @@ module.exports = (() => {
         let token;
         const schedulePromise = promise.build((resolveCallback, rejectCallback) => {
           const wrappedAction = () => {
-            delete this._timeoutBindings[token];
+            const disposable = this._timeoutBindings[token]; // 2021/05/18, BRI. Invoking dispose cases the clearTimeout function to run.
+            // Running clearTimeout should not be necessary because the timer has elapsed
+            // and the callback is being invoked. However, failing to call clearTimeout in
+            // a Node.js environment (after version 10) leads to a memory leak. Notice that
+            // this function has a reference to the Scheduler instance (via closure). In my
+            // view, this is breaking change between versions 10 and 12 of Node.js. I have
+            // been unable to locate any documentation regarding this change; however, a changes
+            // to did occur (which becomes obvious when inspecting the data structure returned by
+            // the setTimeout function).
+
+            if (disposable) {
+              disposable.dispose();
+            }
 
             try {
               resolveCallback(actionToSchedule());
