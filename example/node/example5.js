@@ -127,9 +127,9 @@ alertManager.connect(jwtProvider)
                     });
             });
     }).catch((e) => {
-    logger.warn(`Example: Failed to connect to the Barchart Alerting Service`);
-}).then(() => {
-    logger.info(`Example: Disposing AlertManager`);
+        logger.warn(`Example: Failed to connect to the Barchart Alerting Service`);
+    }).then(() => {
+        logger.info(`Example: Disposing AlertManager`);
 
-    alertManager.dispose();
-});
+        alertManager.dispose();
+    });

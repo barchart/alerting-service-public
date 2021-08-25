@@ -1,5 +1,7 @@
 const process = require('process');
 
+const promise = require('@barchart/common-js/lang/promise');
+
 const AlertManager = require('./../../lib/AlertManager');
 
 const AdapterForHttp = require('./../../lib/adapters/AdapterForHttp'),
@@ -81,6 +83,8 @@ if (mode === 'http') {
 
 let host = getParameterValue('host') || 'alerts-management-demo.barchart.com';
 let port = getParameterValue('port') || 443;
+
+const THRESHOLD = 7000;
 
 try {
     port = parseInt(port);
@@ -167,6 +171,10 @@ alertManager.connect(jwtProvider)
                         throw e;
                     });
             }).then((context) => {
+                return wait(THRESHOLD).then(() => {
+                    return context;
+                });
+            }).then((context) => {
                 logger.info(`Example: Updating an existing template for [ ${user_id}@${alert_system} ]`);
 
                 const update = { };
@@ -192,6 +200,10 @@ alertManager.connect(jwtProvider)
                         throw e;
                     });
             }).then((context) => {
+                return wait(THRESHOLD).then(() => {
+                    return context;
+                });
+            }).then((context) => {
                 logger.info(`Example: Creating new alert from template for [ ${user_id}@${alert_system} ]`);
 
                 const alert = AlertManager.createAlertFromTemplate(context.template, 'AAPL');
@@ -211,6 +223,10 @@ alertManager.connect(jwtProvider)
                         throw e;
                     });
             }).then((context) => {
+                return wait(THRESHOLD).then(() => {
+                    return context;
+                });
+            }).then((context) => {
                 logger.info(`Example: Deleting an alert for [ ${user_id}@${alert_system} ]`);
 
                 return alertManager.deleteAlert(context.alert)
@@ -226,6 +242,10 @@ alertManager.connect(jwtProvider)
 
                         throw e;
                     });
+            }).then((context) => {
+                return wait(THRESHOLD).then(() => {
+                    return context;
+                });
             }).then((context) => {
                 logger.info(`Example: Deleting template for [ ${user_id}@${alert_system} ]`);
 
@@ -250,3 +270,11 @@ alertManager.connect(jwtProvider)
 
         alertManager.dispose();
     });
+
+function wait(delay) {
+    return promise.build((resolve) => {
+        setTimeout(() => {
+            resolve();
+        }, delay);
+    });
+}

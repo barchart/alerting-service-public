@@ -264,6 +264,15 @@ function PageModel(host, system, userId) {
 			return triggerModel.trigger().alert_id === modelToRemove.alert().alert_id;
 		});
 	};
+	that.handleTemplateCreate = function(template) {
+		console.log('Template created', template);
+	};
+	that.handleTemplateChange = function(template) {
+		console.log('Template changed', template);
+	};
+	that.handleTemplateDelete = function(template) {
+		console.log('Template deleted', template);
+	};
 	that.handleTriggersCreate = function(triggers) {
 		let model;
 
@@ -1309,6 +1318,18 @@ var reset = function(host, system, userId, mode) {
 							},
 							function(triggeredAlert) {
 								pageModel.handleAlertTrigger(triggeredAlert);
+							}
+						);
+
+						alertManager.subscribeTemplates({ user_id: userId, alert_system: system },
+							function(changedTemplate) {
+								pageModel.handleTemplateChange(changedTemplate);
+							},
+							function(deletedTemplate) {
+								pageModel.handleTemplateDelete(deletedTemplate);
+							},
+							function(createdTemplate) {
+								pageModel.handleTemplateCreate(createdTemplate);
 							}
 						);
 

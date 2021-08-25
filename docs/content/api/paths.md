@@ -118,7 +118,7 @@
 
 **Content Type**: <code>application/json</code>
 
-**Response Type:** [<code>Array&lt;Alert&gt;</code>](/content/api/components?id=schemasAlert)
+**Response Type:** [<code>Alert</code>](/content/api/components?id=schemasAlert)
 
 * * *
 
@@ -170,7 +170,7 @@
 
 **Content Type**: <code>application/json</code>
 
-**Response Type:** [<code>Array&lt;Alert&gt;</code>](/content/api/components?id=schemasAlert)
+**Response Type:** [<code>Alert</code>](/content/api/components?id=schemasAlert)
 
 * * *
 
@@ -218,7 +218,7 @@
 
 **Content Type**: <code>application/json</code>
 
-**Response Type:** [<code>Array&lt;Alert&gt;</code>](/content/api/components?id=schemasAlert)
+**Response Type:** [<code>Alert</code>](/content/api/components?id=schemasAlert)
 
 * * *
 
@@ -286,7 +286,7 @@
 
 **Content Type**: <code>application/json</code>
 
-**Response Type:** [<code>Array&lt;Alert&gt;</code>](/content/api/components?id=schemasAlert)
+**Response Type:** [<code>Alert</code>](/content/api/components?id=schemasAlert)
 
 * * *
 
@@ -575,7 +575,7 @@
 
 **Content Type**: <code>application/json</code>
 
-**Response Type:** [<code>Array&lt;Template&gt;</code>](/content/api/components?id=schemasTemplate)
+**Response Type:** [<code>Template</code>](/content/api/components?id=schemasTemplate)
 
 * * *
 
@@ -656,7 +656,7 @@
 
 **Content Type**: <code>application/json</code>
 
-**Response Type:** [<code>Array&lt;Alert&gt;</code>](/content/api/components?id=schemasAlert)
+**Response Type:** [<code>Alert</code>](/content/api/components?id=schemasAlert)
 
 * * *
 
@@ -781,7 +781,7 @@
 
 **Content Type**: <code>application/json</code>
 
-**Response Type:** [<code>Array&lt;Operator&gt;</code>](/content/api/components?id=schemasOperator)
+**Response Type:** [<code>Operator</code>](/content/api/components?id=schemasOperator)
 
 * * *
 
@@ -1112,7 +1112,7 @@
 
 **Content Type**: <code>application/json</code>
 
-**Response Type:** [<code>Array&lt;Trigger&gt;</code>](/content/api/components?id=schemasTrigger)
+**Response Type:** [<code>Trigger</code>](/content/api/components?id=schemasTrigger)
 
 * * *
 
