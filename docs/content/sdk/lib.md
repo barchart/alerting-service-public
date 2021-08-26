@@ -27,6 +27,7 @@
         * [.updateTrigger(query)](#AlertManagerupdateTrigger) ⇒ [<code>Promise.&lt;Schema.Trigger&gt;</code>](/content/sdk/lib-data?id=schematrigger)
         * [.updateTriggers(query)](#AlertManagerupdateTriggers) ⇒ [<code>Promise.&lt;Array.&lt;Schema.Trigger&gt;&gt;</code>](/content/sdk/lib-data?id=schematrigger)
         * [.retrieveTemplates(query)](#AlertManagerretrieveTemplates) ⇒ [<code>Promise.&lt;Array.&lt;Schema.Template&gt;&gt;</code>](/content/sdk/lib-data?id=schematemplate)
+        * [.subscribeTemplates(query, changeCallback, deleteCallback, createCallback)](#AlertManagersubscribeTemplates) ⇒ <code>Disposable</code>
         * [.createTemplate(template)](#AlertManagercreateTemplate) ⇒ [<code>Promise.&lt;Schema.Template&gt;</code>](/content/sdk/lib-data?id=schematemplate)
         * [.updateTemplate(template)](#AlertManagerupdateTemplate) ⇒ [<code>Promise.&lt;Schema.Template&gt;</code>](/content/sdk/lib-data?id=schematemplate)
         * [.updateTemplateOrder(template)](#AlertManagerupdateTemplateOrder) ⇒ [<code>Promise.&lt;Array.&lt;Schema.Template&gt;&gt;</code>](/content/sdk/lib-data?id=schematemplate)
@@ -301,6 +302,26 @@
 | Param | Type |
 | --- | --- |
 | query | [<code>Schema.TemplateQuery</code>](/content/sdk/lib-data?id=schematemplatequery) | 
+
+
+* * *
+
+### alertManager.subscribeTemplates(query, changeCallback, deleteCallback, createCallback) :id=alertmanagersubscribetemplates
+> Registers three separate callbacks which will be invoked when templates are created,
+> deleted, or changed.
+
+**Kind**: instance method of [<code>AlertManager</code>](#AlertManager)  
+**Returns**: <code>Disposable</code>  
+**Access**: public  
+
+| Param | Type |
+| --- | --- |
+| query | <code>Object</code> | 
+| query.user_id | <code>String</code> | 
+| query.alert_system | <code>String</code> | 
+| changeCallback | [<code>Callbacks.TemplateMutatedCallback</code>](/content/sdk/lib-callbacks?id=callbackstemplatemutatedcallback) | 
+| deleteCallback | [<code>Callbacks.TemplateDeletedCallback</code>](/content/sdk/lib-callbacks?id=callbackstemplatedeletedcallback) | 
+| createCallback | [<code>Callbacks.TemplateCreatedCallback</code>](/content/sdk/lib-callbacks?id=callbackstemplatecreatedcallback) | 
 
 
 * * *

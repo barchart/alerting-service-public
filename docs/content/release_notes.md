@@ -1,5 +1,10 @@
 # Release Notes
 
+## 4.12.0
+**New Features**
+
+* Added `AlertManager.subscribeTemplates` function.
+
 ## 4.10.0
 **New Features**
 

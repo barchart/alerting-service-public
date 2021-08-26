@@ -37,7 +37,7 @@
         * *[.secure](#AdapterBasesecure) ⇒ <code>String</code>*
         * *[.connect(jwtProvider)](#AdapterBaseconnect) ⇒ [<code>Promise.&lt;AdapterBase&gt;</code>](#AdapterBase)*
     * _constructor_
-        * *[new AdapterBase(host, port, secure, onAlertCreated, onAlertMutated, onAlertDeleted, onAlertTriggered, [onTriggersCreated], [onTriggersMutated], [onTriggersDeleted])](#new_AdapterBase_new)*
+        * *[new AdapterBase(host, port, secure, onAlertCreated, onAlertMutated, onAlertDeleted, onAlertTriggered, [onTriggersCreated], [onTriggersMutated], [onTriggersDeleted], [onTemplateCreated], [onTemplateMutated], [onTemplateDeleted])](#new_AdapterBase_new)*
 
 
 * * *
@@ -83,7 +83,7 @@
 
 * * *
 
-### new AdapterBase(host, port, secure, onAlertCreated, onAlertMutated, onAlertDeleted, onAlertTriggered, [onTriggersCreated], [onTriggersMutated], [onTriggersDeleted]) :id=new_adapterbase_new
+### new AdapterBase(host, port, secure, onAlertCreated, onAlertMutated, onAlertDeleted, onAlertTriggered, [onTriggersCreated], [onTriggersMutated], [onTriggersDeleted], [onTemplateCreated], [onTemplateMutated], [onTemplateDeleted]) :id=new_adapterbase_new
 **Kind**: constructor of [<code>AdapterBase</code>](#AdapterBase)  
 
 | Param | Type |
@@ -98,6 +98,9 @@
 | [onTriggersCreated] | [<code>Callbacks.TriggersCreatedCallback</code>](/content/sdk/lib-callbacks?id=callbackstriggerscreatedcallback) | 
 | [onTriggersMutated] | [<code>Callbacks.TriggersMutatedCallback</code>](/content/sdk/lib-callbacks?id=callbackstriggersmutatedcallback) | 
 | [onTriggersDeleted] | [<code>Callbacks.TriggersDeletedCallback</code>](/content/sdk/lib-callbacks?id=callbackstriggersdeletedcallback) | 
+| [onTemplateCreated] | [<code>Callbacks.TemplateCreatedCallback</code>](/content/sdk/lib-callbacks?id=callbackstemplatecreatedcallback) | 
+| [onTemplateMutated] | [<code>Callbacks.TemplateMutatedCallback</code>](/content/sdk/lib-callbacks?id=callbackstemplatemutatedcallback) | 
+| [onTemplateDeleted] | [<code>Callbacks.TemplateDeletedCallback</code>](/content/sdk/lib-callbacks?id=callbackstemplatedeletedcallback) | 
 
 
 * * *
@@ -234,7 +237,7 @@
 * * *
 
 ## AdapterForWebSockets :id=adapterforwebsockets
-> A backend communication adapter implemented with WebSockets. Coming in version 4.3.0.
+> A backend communication adapter implemented with WebSockets. Coming soon.
 
 **Kind**: global class  
 **Extends**: [<code>AdapterBase</code>](#AdapterBase)  
