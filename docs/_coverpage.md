@@ -1,4 +1,4 @@
-# Barchart Alerting Service SDK <small>JavaScript 4.11.0</small>
+# Barchart Alerting Service SDK <small>JavaScript 4.12.0</small>
 
 > Continuously monitor market conditions and receive notifications
 
