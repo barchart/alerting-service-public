@@ -79,7 +79,7 @@ if (mode === 'http') {
 	adapterDescription = 'Socket.IO';
 }
 
-let host = getParameterValue('host') || 'alerts-management-demo.barchart.com';
+let host = getParameterValue('host') || 'alerts-management-stage.barchart.com';
 let port = getParameterValue('port') || 443;
 
 try {
