@@ -85,7 +85,7 @@ let port = getParameterValue('port') || 443;
 try {
 	port = parseInt(port);
 } catch (e) {
-	logger.error('The port argument must be an integer. Example: "node example6.js --user_id=me"');
+	logger.error('The port argument must be an integer. Example: "node example7.js --user_id=me"');
 
 	process.exit();
 }
@@ -103,9 +103,39 @@ const jwtProvider = new JwtProvider(jwtGenerator, 60000, 'dev');
 
 logger.info(`Example: Connecting to the Barchart Alerting Service`);
 
+const timing = { };
+
+timing.connect = { };
+timing.connect.start = 0;
+timing.connect.finish = 0;
+
+timing.properties = { };
+timing.properties.start = 0;
+timing.properties.finish = 0;
+
+timing.grouping = { };
+timing.grouping.start = 0;
+timing.grouping.finish = 0;
+
+function getTime() {
+	const date = new Date();
+
+	return date.getTime();
+}
+
+function getElapsedTime(finish, start) {
+	return `${finish - start} ms`;
+}
+
+timing.connect.start = getTime();
+
 alertManager.connect(jwtProvider)
 	.then(() => {
+		timing.connect.finish = getTime();
+
 		logger.info(`Example: Connected to the Barchart Alerting Service`);
+
+		timing.properties.start = getTime();
 
 		return Promise.resolve({})
 			.then((context) => {
@@ -113,6 +143,8 @@ alertManager.connect(jwtProvider)
 
 				return alertManager.getProperties()
 					.then((response) => {
+						timing.properties.finish = getTime();
+
 						logger.info(`Example: Retrieved ${response.length} properties`);
 
 						context.properties = response;
@@ -125,22 +157,26 @@ alertManager.connect(jwtProvider)
 						throw e;
 					});
 			}).then((context) => {
-				logger.info(`Example: Filtering properties for ESZ21`);
+				timing.grouping.start = getTime();
 
-				return AlertManager.getPropertiesForSymbol(context.properties, 'ESZ21')
-					.then((filtered) => {
-						logger.info(`Example: Filtered ${context.properties.length - filtered.length} properties, leaving ${filtered.length} valid properties for ESZ21`);
-					}).catch((e) => {
-						logger.warn(`Example: Failed to filter properties`);
-						logger.error(e);
+				logger.info(`Example: Grouping properties into tree`);
 
-						throw e;
-					});
+				const groups = AlertManager.getPropertyTree(context.properties);
+
+				timing.grouping.finish = getTime();
+
+				return context;
+			}).then((context) => {
+				logger.info(`Example: Backend connect time was ${getElapsedTime(timing.connect.finish, timing.connect.start)}`);
+				logger.info(`Example: Property download time was ${getElapsedTime(timing.properties.finish, timing.properties.start)}`);
+				logger.info(`Example: Property grouping time was ${getElapsedTime(timing.grouping.finish, timing.grouping.start)}`);
+
+				logger.info(`Example: Total elapsed time was ${getElapsedTime(timing.grouping.finish, timing.connect.start)}`);
 			});
 	}).catch((e) => {
-		logger.warn(`Example: Failed to connect to the Barchart Alerting Service`);
-	}).then(() => {
-		logger.info(`Example: Disposing AlertManager`);
+	logger.warn(`Example: Failed to connect to the Barchart Alerting Service`);
+}).then(() => {
+	logger.info(`Example: Disposing AlertManager`);
 
-		alertManager.dispose();
-	});
+	alertManager.dispose();
+});
