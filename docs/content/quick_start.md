@@ -11,7 +11,7 @@ As a consumer of the Barchart Alerting Service, you have two options:
 npm install @barchart/alerts-client-js -S
 ```
 
-**Otherwise, if you choose not to use the SDK**, please finish reviewing this page, then refer to the [API Reference](/content/api) section.
+**Otherwise, if you choose not to use the SDK**, please finish reviewing this page, then refer to the [API Reference](/content/api_reference) section.
 
 ## Environments
 
