@@ -89,7 +89,7 @@ const THRESHOLD = 7000;
 try {
     port = parseInt(port);
 } catch (e) {
-    logger.error('The port argument must be an integer. Example: "node example.js --user_id=me --host=localhost --port=8888"');
+    logger.error('The port argument must be an integer. Example: "node example3.js --user_id=me --host=localhost --port=8888"');
 
     process.exit();
 }
