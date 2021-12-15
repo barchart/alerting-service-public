@@ -13,7 +13,7 @@ const LoggerFactory = require('./../../lib/logging/LoggerFactory'),
 
 LoggerFactory.configure(new CustomLoggingProvider());
 
-const logger = LoggerFactory.getLogger('@barchart/example3');
+const logger = LoggerFactory.getLogger('@barchart/example6');
 
 logger.info(`Example: Node.js example script started, using SDK version [ ${AlertManager.version} ]`);
 
@@ -61,7 +61,7 @@ const user_id = getParameterValue('user_id');
 const alert_system = getParameterValue('alert_system') || 'barchart.com';
 
 if (!user_id) {
-	logger.error('The user_id argument must be specified. Example: "node example.js --user_id=me"');
+	logger.error('The user_id argument must be specified. Example: "node example6.js --user_id=me"');
 
 	process.exit();
 }
@@ -85,14 +85,14 @@ let port = getParameterValue('port') || 443;
 try {
 	port = parseInt(port);
 } catch (e) {
-	logger.error('The port argument must be an integer. Example: "node example5.js --user_id=me --host=localhost --port=8888"');
+	logger.error('The port argument must be an integer. Example: "node example6.js --user_id=me --host=localhost --port=8888"');
 
 	process.exit();
 }
 
 let secure = port === 443;
 
-logger.info(`Example: Created AlertManager for [ ${host}:${port} ] using [ ${adapterDescription} ] mode`);
+logger.info(`Example: Creating AlertManager for [ ${host}:${port} ] using [ ${adapterDescription} ] mode`);
 
 alertManager = new AlertManager(host, port, secure, adapterClazz);
 

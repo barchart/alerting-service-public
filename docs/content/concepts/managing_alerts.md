@@ -164,7 +164,7 @@ curl 'https://alerts-management-demo.barchart.com/alerts/3a36d266-875d-4eaf-8c24
 
 #### JSON Result
 
-Once the start command it processed, the _alert_ is echoed back to us with updated property values — most notably, the ```alert_state``` property.
+Once the start command is processed, the _alert_ is echoed back to us with updated property values — most notably, the ```alert_state``` property.
 
 ## Stopping an Alert
 
@@ -200,7 +200,81 @@ curl 'https://alerts-management-demo.barchart.com/alerts/3a36d266-875d-4eaf-8c24
 
 #### JSON Result
 
-Once the stop command it processed, the _alert_ is echoed back to us with updated property values — most notably, the ```alert_state``` property.
+Once the stop command is processed, the _alert_ is echoed back to us with updated property values — most notably, the ```alert_state``` property.
+
+## Starting All Alerts
+
+All of a user's _alerts_ can be started with one command.
+
+#### Using the SDK
+
+Call the [```AlertManager.enableAlerts```](/content/sdk/lib?id=alertmanagerenablealerts) function.
+
+```js
+const payload = { };
+
+payload.user_id = 'me';
+payload.alert_system = 'barchart.com';
+
+alertManager.enableAlerts(payload)
+	.then((success) => {
+		console.log(`Command to start all alerts executed.`);
+	});
+```
+
+#### Using the API
+
+Or, we can activate all of a user's _alerts_ by sending a ```PUT``` request to the [```/alerts/{alert_system}/{user}```](/content/api/paths?id=put-alertsusersalert_systemuser_id) endpoint. We must specify the desired ```alert_state``` property as ```Starting```.
+
+```shell
+curl 'https://alerts-management-demo.barchart.com/alerts/users/barchart.com/me' \
+  -X 'PUT' \
+  -H 'Accept: application/json' \
+  -H 'Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoibWUiLCJhbGVydF9zeXN0ZW0iOiJiYXJjaGFydC5jb20iLCJpYXQiOjE1ODk0MTEyNzl9.SxyC8s_CKhPyzcNmM_h_TRMiNSx3YstKGmAb2IOWqgM' \
+  -H 'Content-Type: application/json;charset=UTF-8' \
+  --data-binary '{"alert_state":"Starting"}'
+```
+
+#### JSON Result
+
+Once the start command is processed, a JSON array is returned. The array will contain each _alert_ that is starting.
+
+## Stopping All Alerts
+
+All of a user's _alerts_ can be stopped with one command.
+
+#### Using the SDK
+
+Call the [```AlertManager.disableAlerts```](/content/sdk/lib?id=alertmanagerdisablealerts) function.
+
+```js
+const payload = { };
+
+payload.user_id = 'me';
+payload.alert_system = 'barchart.com';
+
+alertManager.disableAlerts(payload)
+	.then((success) => {
+		console.log(`Command to stop all alerts executed.`);
+	});
+```
+
+#### Using the API
+
+Or, we can deactivate all of a user's _alerts_ by sending a ```PUT``` request to the [```/alerts/{alert_system}/{user}```](/content/api/paths?id=put-alertsusersalert_systemuser_id) endpoint. We must specify the desired ```alert_state``` property as ```Stopping```.
+
+```shell
+curl 'https://alerts-management-demo.barchart.com/alerts/users/barchart.com/me' \
+  -X 'PUT' \
+  -H 'Accept: application/json' \
+  -H 'Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoibWUiLCJhbGVydF9zeXN0ZW0iOiJiYXJjaGFydC5jb20iLCJpYXQiOjE1ODk0MTEyNzl9.SxyC8s_CKhPyzcNmM_h_TRMiNSx3YstKGmAb2IOWqgM' \
+  -H 'Content-Type: application/json;charset=UTF-8' \
+  --data-binary '{"alert_state":"Stopping"}'
+```
+
+#### JSON Result
+
+Once the stop command is processed, a JSON array is returned. The array will contain each _alert_ that is stopping.
 
 ## Deleting an Alert
 

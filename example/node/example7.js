@@ -13,7 +13,7 @@ const LoggerFactory = require('./../../lib/logging/LoggerFactory'),
 
 LoggerFactory.configure(new CustomLoggingProvider());
 
-const logger = LoggerFactory.getLogger('@barchart/example3');
+const logger = LoggerFactory.getLogger('@barchart/example7');
 
 logger.info(`Example: Node.js example script started, using SDK version [ ${AlertManager.version} ]`);
 
@@ -61,7 +61,7 @@ const user_id = getParameterValue('user_id');
 const alert_system = getParameterValue('alert_system') || 'barchart.com';
 
 if (!user_id) {
-	logger.error('The user_id argument must be specified. Example: "node example.js --user_id=me"');
+	logger.error('The user_id argument must be specified. Example: "node example7.js --user_id=me"');
 
 	process.exit();
 }
@@ -92,7 +92,7 @@ try {
 
 let secure = port === 443;
 
-logger.info(`Example: Created AlertManager for [ ${host}:${port} ] using [ ${adapterDescription} ] mode`);
+logger.info(`Example: Creating AlertManager for [ ${host}:${port} ] using [ ${adapterDescription} ] mode`);
 
 alertManager = new AlertManager(host, port, secure, adapterClazz);
 

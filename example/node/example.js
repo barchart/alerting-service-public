@@ -95,7 +95,7 @@ try {
 
 let secure = port === 443;
 
-logger.info(`Example: Created AlertManager for [ ${host}:${port} ] using [ ${adapterDescription} ] mode`);
+logger.info(`Example: Creating AlertManager for [ ${host}:${port} ] using [ ${adapterDescription} ] mode`);
 
 alertManager = new AlertManager(host, port, secure, adapterClazz);
 
