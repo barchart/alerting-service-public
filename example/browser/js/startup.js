@@ -1,4 +1,7 @@
-'use strict';
+/* jshint node: true */
+/* globals document, ko, toastr, _, $ */
+
+"use strict";
 
 const AlertManager = require('./../../../lib/AlertManager');
 
@@ -729,7 +732,7 @@ function AlertEntryModel(alert) {
 	if (_.isObject(alert)) {
 		that.name(alert.name);
 
-		var alertBehavior = alert.alert_behavior || terminate;
+		var alertBehavior = alert.alert_behavior || 'terminate';
 
 		if (alertBehavior === 'terminate' && alert.automatic_reset) {
 			alertBehavior = 'automatic';
