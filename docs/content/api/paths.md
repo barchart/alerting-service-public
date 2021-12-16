@@ -120,6 +120,138 @@
 
 **Response Type:** [<code>Alert</code>](/content/api/components?id=schemasAlert)
 
+**Example**:
+
+```
+{
+  "alert_id": "39b633bf-8993-491d-b544-bdc9deed60be",
+  "alert_state": "Inactive",
+  "alert_system": "barchart.com",
+  "alert_state_key": "abcdef",
+  "alert_type": "price",
+  "alert_behavior": "Terminate",
+  "user_id": "barchart-test-user",
+  "name": "Buy TSLA",
+  "user_notes": "Time to buy Tesla Motors stock",
+  "system_notes": {},
+  "automatic_reset": true,
+  "create_date": "1453673000873",
+  "last_trigger_date": "145367399999",
+  "last_start_date": "145367399999",
+  "conditions": [
+    {
+      "condition_id": "38a3f731-0f87-40b7-a33b-dd9c792998e2",
+      "name": "Gap Down is greater than 10.00",
+      "operator": {
+        "operator_id": 4,
+        "operator_type": "binary",
+        "operator_name": "is-indicator",
+        "operand_options": [
+          [
+            "Buy",
+            "Sell",
+            "Hold"
+          ]
+        ],
+        "operand_literal": true,
+        "operand_display": "10",
+        "operand": "10",
+        "display": {
+          "short": ">",
+          "medium": "greater than",
+          "long": "greater than"
+        },
+        "modifiers": [
+          1,
+          2,
+          3
+        ]
+      },
+      "property": {
+        "property_id": 18,
+        "type": "number",
+        "format": "0,0.00",
+        "group": "Technical",
+        "accessor": [
+          "gapDown"
+        ],
+        "category": [
+          "Gap & Range Change"
+        ],
+        "description": [
+          "Gap Down"
+        ],
+        "descriptionShort": [
+          "Gap Down"
+        ],
+        "target": {
+          "description": "basic",
+          "display": "string",
+          "identifier": "TSLA",
+          "identifier_description": "symbol",
+          "qualifier_descriptions": [
+            [
+              "location",
+              "delivery date"
+            ]
+          ],
+          "kind": "string",
+          "target_id": 1,
+          "type": "symbol"
+        },
+        "valid_operators": [
+          44
+        ],
+        "sortOrder": 912
+      },
+      "templates": {
+        "condition": "Gap Down is greater than {{{operator.format.operand}}}",
+        "trigger": {
+          "email": "Gap Down is {{{event.format.gapDown}}}",
+          "sms": "Gap Down for {{{property.target.identifier}}} is {{{event.format.gapDown}}}"
+        }
+      }
+    }
+  ],
+  "publishers": [
+    {
+      "publisher_id": "9c864a19-ce77-4a87-8cd6-e0810ecb120e",
+      "use_default_recipient": false,
+      "recipient": "123-456-7890",
+      "format": "It is a good time to buy Tesla stock.",
+      "timing": {
+        "timezon": "America/Chicago"
+      },
+      "type": {
+        "publisher_type_id": 1,
+        "transport": "sms",
+        "provider": "twilio"
+      }
+    }
+  ],
+  "tracking_server_id": 0,
+  "schedules": [
+    []
+  ],
+  "effectivePublishers": [
+    {
+      "publisher_id": "9c864a19-ce77-4a87-8cd6-e0810ecb120e",
+      "use_default_recipient": false,
+      "recipient": "123-456-7890",
+      "format": "It is a good time to buy Tesla stock.",
+      "timing": {
+        "timezon": "America/Chicago"
+      },
+      "type": {
+        "publisher_type_id": 1,
+        "transport": "sms",
+        "provider": "twilio"
+      }
+    }
+  ]
+}
+```
+
 * * *
 
 **Status Code**: 401 - [Unauthorized](/content/api/components?id=responsesunauthorized)
@@ -172,6 +304,138 @@
 
 **Response Type:** [<code>Alert</code>](/content/api/components?id=schemasAlert)
 
+**Example**:
+
+```
+{
+  "alert_id": "39b633bf-8993-491d-b544-bdc9deed60be",
+  "alert_state": "Inactive",
+  "alert_system": "barchart.com",
+  "alert_state_key": "abcdef",
+  "alert_type": "price",
+  "alert_behavior": "Terminate",
+  "user_id": "barchart-test-user",
+  "name": "Buy TSLA",
+  "user_notes": "Time to buy Tesla Motors stock",
+  "system_notes": {},
+  "automatic_reset": true,
+  "create_date": "1453673000873",
+  "last_trigger_date": "145367399999",
+  "last_start_date": "145367399999",
+  "conditions": [
+    {
+      "condition_id": "38a3f731-0f87-40b7-a33b-dd9c792998e2",
+      "name": "Gap Down is greater than 10.00",
+      "operator": {
+        "operator_id": 4,
+        "operator_type": "binary",
+        "operator_name": "is-indicator",
+        "operand_options": [
+          [
+            "Buy",
+            "Sell",
+            "Hold"
+          ]
+        ],
+        "operand_literal": true,
+        "operand_display": "10",
+        "operand": "10",
+        "display": {
+          "short": ">",
+          "medium": "greater than",
+          "long": "greater than"
+        },
+        "modifiers": [
+          1,
+          2,
+          3
+        ]
+      },
+      "property": {
+        "property_id": 18,
+        "type": "number",
+        "format": "0,0.00",
+        "group": "Technical",
+        "accessor": [
+          "gapDown"
+        ],
+        "category": [
+          "Gap & Range Change"
+        ],
+        "description": [
+          "Gap Down"
+        ],
+        "descriptionShort": [
+          "Gap Down"
+        ],
+        "target": {
+          "description": "basic",
+          "display": "string",
+          "identifier": "TSLA",
+          "identifier_description": "symbol",
+          "qualifier_descriptions": [
+            [
+              "location",
+              "delivery date"
+            ]
+          ],
+          "kind": "string",
+          "target_id": 1,
+          "type": "symbol"
+        },
+        "valid_operators": [
+          44
+        ],
+        "sortOrder": 912
+      },
+      "templates": {
+        "condition": "Gap Down is greater than {{{operator.format.operand}}}",
+        "trigger": {
+          "email": "Gap Down is {{{event.format.gapDown}}}",
+          "sms": "Gap Down for {{{property.target.identifier}}} is {{{event.format.gapDown}}}"
+        }
+      }
+    }
+  ],
+  "publishers": [
+    {
+      "publisher_id": "9c864a19-ce77-4a87-8cd6-e0810ecb120e",
+      "use_default_recipient": false,
+      "recipient": "123-456-7890",
+      "format": "It is a good time to buy Tesla stock.",
+      "timing": {
+        "timezon": "America/Chicago"
+      },
+      "type": {
+        "publisher_type_id": 1,
+        "transport": "sms",
+        "provider": "twilio"
+      }
+    }
+  ],
+  "tracking_server_id": 0,
+  "schedules": [
+    []
+  ],
+  "effectivePublishers": [
+    {
+      "publisher_id": "9c864a19-ce77-4a87-8cd6-e0810ecb120e",
+      "use_default_recipient": false,
+      "recipient": "123-456-7890",
+      "format": "It is a good time to buy Tesla stock.",
+      "timing": {
+        "timezon": "America/Chicago"
+      },
+      "type": {
+        "publisher_type_id": 1,
+        "transport": "sms",
+        "provider": "twilio"
+      }
+    }
+  ]
+}
+```
+
 * * *
 
 **Status Code**: 404
@@ -219,6 +483,138 @@
 **Content Type**: <code>application/json</code>
 
 **Response Type:** [<code>Alert</code>](/content/api/components?id=schemasAlert)
+
+**Example**:
+
+```
+{
+  "alert_id": "39b633bf-8993-491d-b544-bdc9deed60be",
+  "alert_state": "Inactive",
+  "alert_system": "barchart.com",
+  "alert_state_key": "abcdef",
+  "alert_type": "price",
+  "alert_behavior": "Terminate",
+  "user_id": "barchart-test-user",
+  "name": "Buy TSLA",
+  "user_notes": "Time to buy Tesla Motors stock",
+  "system_notes": {},
+  "automatic_reset": true,
+  "create_date": "1453673000873",
+  "last_trigger_date": "145367399999",
+  "last_start_date": "145367399999",
+  "conditions": [
+    {
+      "condition_id": "38a3f731-0f87-40b7-a33b-dd9c792998e2",
+      "name": "Gap Down is greater than 10.00",
+      "operator": {
+        "operator_id": 4,
+        "operator_type": "binary",
+        "operator_name": "is-indicator",
+        "operand_options": [
+          [
+            "Buy",
+            "Sell",
+            "Hold"
+          ]
+        ],
+        "operand_literal": true,
+        "operand_display": "10",
+        "operand": "10",
+        "display": {
+          "short": ">",
+          "medium": "greater than",
+          "long": "greater than"
+        },
+        "modifiers": [
+          1,
+          2,
+          3
+        ]
+      },
+      "property": {
+        "property_id": 18,
+        "type": "number",
+        "format": "0,0.00",
+        "group": "Technical",
+        "accessor": [
+          "gapDown"
+        ],
+        "category": [
+          "Gap & Range Change"
+        ],
+        "description": [
+          "Gap Down"
+        ],
+        "descriptionShort": [
+          "Gap Down"
+        ],
+        "target": {
+          "description": "basic",
+          "display": "string",
+          "identifier": "TSLA",
+          "identifier_description": "symbol",
+          "qualifier_descriptions": [
+            [
+              "location",
+              "delivery date"
+            ]
+          ],
+          "kind": "string",
+          "target_id": 1,
+          "type": "symbol"
+        },
+        "valid_operators": [
+          44
+        ],
+        "sortOrder": 912
+      },
+      "templates": {
+        "condition": "Gap Down is greater than {{{operator.format.operand}}}",
+        "trigger": {
+          "email": "Gap Down is {{{event.format.gapDown}}}",
+          "sms": "Gap Down for {{{property.target.identifier}}} is {{{event.format.gapDown}}}"
+        }
+      }
+    }
+  ],
+  "publishers": [
+    {
+      "publisher_id": "9c864a19-ce77-4a87-8cd6-e0810ecb120e",
+      "use_default_recipient": false,
+      "recipient": "123-456-7890",
+      "format": "It is a good time to buy Tesla stock.",
+      "timing": {
+        "timezon": "America/Chicago"
+      },
+      "type": {
+        "publisher_type_id": 1,
+        "transport": "sms",
+        "provider": "twilio"
+      }
+    }
+  ],
+  "tracking_server_id": 0,
+  "schedules": [
+    []
+  ],
+  "effectivePublishers": [
+    {
+      "publisher_id": "9c864a19-ce77-4a87-8cd6-e0810ecb120e",
+      "use_default_recipient": false,
+      "recipient": "123-456-7890",
+      "format": "It is a good time to buy Tesla stock.",
+      "timing": {
+        "timezon": "America/Chicago"
+      },
+      "type": {
+        "publisher_type_id": 1,
+        "transport": "sms",
+        "provider": "twilio"
+      }
+    }
+  ]
+}
+```
 
 * * *
 
@@ -287,6 +683,138 @@
 **Content Type**: <code>application/json</code>
 
 **Response Type:** [<code>Alert</code>](/content/api/components?id=schemasAlert)
+
+**Example**:
+
+```
+{
+  "alert_id": "39b633bf-8993-491d-b544-bdc9deed60be",
+  "alert_state": "Inactive",
+  "alert_system": "barchart.com",
+  "alert_state_key": "abcdef",
+  "alert_type": "price",
+  "alert_behavior": "Terminate",
+  "user_id": "barchart-test-user",
+  "name": "Buy TSLA",
+  "user_notes": "Time to buy Tesla Motors stock",
+  "system_notes": {},
+  "automatic_reset": true,
+  "create_date": "1453673000873",
+  "last_trigger_date": "145367399999",
+  "last_start_date": "145367399999",
+  "conditions": [
+    {
+      "condition_id": "38a3f731-0f87-40b7-a33b-dd9c792998e2",
+      "name": "Gap Down is greater than 10.00",
+      "operator": {
+        "operator_id": 4,
+        "operator_type": "binary",
+        "operator_name": "is-indicator",
+        "operand_options": [
+          [
+            "Buy",
+            "Sell",
+            "Hold"
+          ]
+        ],
+        "operand_literal": true,
+        "operand_display": "10",
+        "operand": "10",
+        "display": {
+          "short": ">",
+          "medium": "greater than",
+          "long": "greater than"
+        },
+        "modifiers": [
+          1,
+          2,
+          3
+        ]
+      },
+      "property": {
+        "property_id": 18,
+        "type": "number",
+        "format": "0,0.00",
+        "group": "Technical",
+        "accessor": [
+          "gapDown"
+        ],
+        "category": [
+          "Gap & Range Change"
+        ],
+        "description": [
+          "Gap Down"
+        ],
+        "descriptionShort": [
+          "Gap Down"
+        ],
+        "target": {
+          "description": "basic",
+          "display": "string",
+          "identifier": "TSLA",
+          "identifier_description": "symbol",
+          "qualifier_descriptions": [
+            [
+              "location",
+              "delivery date"
+            ]
+          ],
+          "kind": "string",
+          "target_id": 1,
+          "type": "symbol"
+        },
+        "valid_operators": [
+          44
+        ],
+        "sortOrder": 912
+      },
+      "templates": {
+        "condition": "Gap Down is greater than {{{operator.format.operand}}}",
+        "trigger": {
+          "email": "Gap Down is {{{event.format.gapDown}}}",
+          "sms": "Gap Down for {{{property.target.identifier}}} is {{{event.format.gapDown}}}"
+        }
+      }
+    }
+  ],
+  "publishers": [
+    {
+      "publisher_id": "9c864a19-ce77-4a87-8cd6-e0810ecb120e",
+      "use_default_recipient": false,
+      "recipient": "123-456-7890",
+      "format": "It is a good time to buy Tesla stock.",
+      "timing": {
+        "timezon": "America/Chicago"
+      },
+      "type": {
+        "publisher_type_id": 1,
+        "transport": "sms",
+        "provider": "twilio"
+      }
+    }
+  ],
+  "tracking_server_id": 0,
+  "schedules": [
+    []
+  ],
+  "effectivePublishers": [
+    {
+      "publisher_id": "9c864a19-ce77-4a87-8cd6-e0810ecb120e",
+      "use_default_recipient": false,
+      "recipient": "123-456-7890",
+      "format": "It is a good time to buy Tesla stock.",
+      "timing": {
+        "timezon": "America/Chicago"
+      },
+      "type": {
+        "publisher_type_id": 1,
+        "transport": "sms",
+        "provider": "twilio"
+      }
+    }
+  ]
+}
+```
 
 * * *
 
@@ -359,6 +887,140 @@
 
 **Response Type:** [<code>Array&lt;Alert&gt;</code>](/content/api/components?id=schemasAlert)
 
+**Example**:
+
+```
+[
+  {
+    "alert_id": "39b633bf-8993-491d-b544-bdc9deed60be",
+    "alert_state": "Inactive",
+    "alert_system": "barchart.com",
+    "alert_state_key": "abcdef",
+    "alert_type": "price",
+    "alert_behavior": "Terminate",
+    "user_id": "barchart-test-user",
+    "name": "Buy TSLA",
+    "user_notes": "Time to buy Tesla Motors stock",
+    "system_notes": {},
+    "automatic_reset": true,
+    "create_date": "1453673000873",
+    "last_trigger_date": "145367399999",
+    "last_start_date": "145367399999",
+    "conditions": [
+      {
+        "condition_id": "38a3f731-0f87-40b7-a33b-dd9c792998e2",
+        "name": "Gap Down is greater than 10.00",
+        "operator": {
+          "operator_id": 4,
+          "operator_type": "binary",
+          "operator_name": "is-indicator",
+          "operand_options": [
+            [
+              "Buy",
+              "Sell",
+              "Hold"
+            ]
+          ],
+          "operand_literal": true,
+          "operand_display": "10",
+          "operand": "10",
+          "display": {
+            "short": ">",
+            "medium": "greater than",
+            "long": "greater than"
+          },
+          "modifiers": [
+            1,
+            2,
+            3
+          ]
+        },
+        "property": {
+          "property_id": 18,
+          "type": "number",
+          "format": "0,0.00",
+          "group": "Technical",
+          "accessor": [
+            "gapDown"
+          ],
+          "category": [
+            "Gap & Range Change"
+          ],
+          "description": [
+            "Gap Down"
+          ],
+          "descriptionShort": [
+            "Gap Down"
+          ],
+          "target": {
+            "description": "basic",
+            "display": "string",
+            "identifier": "TSLA",
+            "identifier_description": "symbol",
+            "qualifier_descriptions": [
+              [
+                "location",
+                "delivery date"
+              ]
+            ],
+            "kind": "string",
+            "target_id": 1,
+            "type": "symbol"
+          },
+          "valid_operators": [
+            44
+          ],
+          "sortOrder": 912
+        },
+        "templates": {
+          "condition": "Gap Down is greater than {{{operator.format.operand}}}",
+          "trigger": {
+            "email": "Gap Down is {{{event.format.gapDown}}}",
+            "sms": "Gap Down for {{{property.target.identifier}}} is {{{event.format.gapDown}}}"
+          }
+        }
+      }
+    ],
+    "publishers": [
+      {
+        "publisher_id": "9c864a19-ce77-4a87-8cd6-e0810ecb120e",
+        "use_default_recipient": false,
+        "recipient": "123-456-7890",
+        "format": "It is a good time to buy Tesla stock.",
+        "timing": {
+          "timezon": "America/Chicago"
+        },
+        "type": {
+          "publisher_type_id": 1,
+          "transport": "sms",
+          "provider": "twilio"
+        }
+      }
+    ],
+    "tracking_server_id": 0,
+    "schedules": [
+      []
+    ],
+    "effectivePublishers": [
+      {
+        "publisher_id": "9c864a19-ce77-4a87-8cd6-e0810ecb120e",
+        "use_default_recipient": false,
+        "recipient": "123-456-7890",
+        "format": "It is a good time to buy Tesla stock.",
+        "timing": {
+          "timezon": "America/Chicago"
+        },
+        "type": {
+          "publisher_type_id": 1,
+          "transport": "sms",
+          "provider": "twilio"
+        }
+      }
+    ]
+  }
+]
+```
+
 * * *
 
 **Status Code**: 500
@@ -430,6 +1092,140 @@
 
 **Response Type:** [<code>Array&lt;Alert&gt;</code>](/content/api/components?id=schemasAlert)
 
+**Example**:
+
+```
+[
+  {
+    "alert_id": "39b633bf-8993-491d-b544-bdc9deed60be",
+    "alert_state": "Inactive",
+    "alert_system": "barchart.com",
+    "alert_state_key": "abcdef",
+    "alert_type": "price",
+    "alert_behavior": "Terminate",
+    "user_id": "barchart-test-user",
+    "name": "Buy TSLA",
+    "user_notes": "Time to buy Tesla Motors stock",
+    "system_notes": {},
+    "automatic_reset": true,
+    "create_date": "1453673000873",
+    "last_trigger_date": "145367399999",
+    "last_start_date": "145367399999",
+    "conditions": [
+      {
+        "condition_id": "38a3f731-0f87-40b7-a33b-dd9c792998e2",
+        "name": "Gap Down is greater than 10.00",
+        "operator": {
+          "operator_id": 4,
+          "operator_type": "binary",
+          "operator_name": "is-indicator",
+          "operand_options": [
+            [
+              "Buy",
+              "Sell",
+              "Hold"
+            ]
+          ],
+          "operand_literal": true,
+          "operand_display": "10",
+          "operand": "10",
+          "display": {
+            "short": ">",
+            "medium": "greater than",
+            "long": "greater than"
+          },
+          "modifiers": [
+            1,
+            2,
+            3
+          ]
+        },
+        "property": {
+          "property_id": 18,
+          "type": "number",
+          "format": "0,0.00",
+          "group": "Technical",
+          "accessor": [
+            "gapDown"
+          ],
+          "category": [
+            "Gap & Range Change"
+          ],
+          "description": [
+            "Gap Down"
+          ],
+          "descriptionShort": [
+            "Gap Down"
+          ],
+          "target": {
+            "description": "basic",
+            "display": "string",
+            "identifier": "TSLA",
+            "identifier_description": "symbol",
+            "qualifier_descriptions": [
+              [
+                "location",
+                "delivery date"
+              ]
+            ],
+            "kind": "string",
+            "target_id": 1,
+            "type": "symbol"
+          },
+          "valid_operators": [
+            44
+          ],
+          "sortOrder": 912
+        },
+        "templates": {
+          "condition": "Gap Down is greater than {{{operator.format.operand}}}",
+          "trigger": {
+            "email": "Gap Down is {{{event.format.gapDown}}}",
+            "sms": "Gap Down for {{{property.target.identifier}}} is {{{event.format.gapDown}}}"
+          }
+        }
+      }
+    ],
+    "publishers": [
+      {
+        "publisher_id": "9c864a19-ce77-4a87-8cd6-e0810ecb120e",
+        "use_default_recipient": false,
+        "recipient": "123-456-7890",
+        "format": "It is a good time to buy Tesla stock.",
+        "timing": {
+          "timezon": "America/Chicago"
+        },
+        "type": {
+          "publisher_type_id": 1,
+          "transport": "sms",
+          "provider": "twilio"
+        }
+      }
+    ],
+    "tracking_server_id": 0,
+    "schedules": [
+      []
+    ],
+    "effectivePublishers": [
+      {
+        "publisher_id": "9c864a19-ce77-4a87-8cd6-e0810ecb120e",
+        "use_default_recipient": false,
+        "recipient": "123-456-7890",
+        "format": "It is a good time to buy Tesla stock.",
+        "timing": {
+          "timezon": "America/Chicago"
+        },
+        "type": {
+          "publisher_type_id": 1,
+          "transport": "sms",
+          "provider": "twilio"
+        }
+      }
+    ]
+  }
+]
+```
+
 * * *
 
 **Status Code**: 500
@@ -480,6 +1276,140 @@
 
 **Response Type:** [<code>Array&lt;Alert&gt;</code>](/content/api/components?id=schemasAlert)
 
+**Example**:
+
+```
+[
+  {
+    "alert_id": "39b633bf-8993-491d-b544-bdc9deed60be",
+    "alert_state": "Inactive",
+    "alert_system": "barchart.com",
+    "alert_state_key": "abcdef",
+    "alert_type": "price",
+    "alert_behavior": "Terminate",
+    "user_id": "barchart-test-user",
+    "name": "Buy TSLA",
+    "user_notes": "Time to buy Tesla Motors stock",
+    "system_notes": {},
+    "automatic_reset": true,
+    "create_date": "1453673000873",
+    "last_trigger_date": "145367399999",
+    "last_start_date": "145367399999",
+    "conditions": [
+      {
+        "condition_id": "38a3f731-0f87-40b7-a33b-dd9c792998e2",
+        "name": "Gap Down is greater than 10.00",
+        "operator": {
+          "operator_id": 4,
+          "operator_type": "binary",
+          "operator_name": "is-indicator",
+          "operand_options": [
+            [
+              "Buy",
+              "Sell",
+              "Hold"
+            ]
+          ],
+          "operand_literal": true,
+          "operand_display": "10",
+          "operand": "10",
+          "display": {
+            "short": ">",
+            "medium": "greater than",
+            "long": "greater than"
+          },
+          "modifiers": [
+            1,
+            2,
+            3
+          ]
+        },
+        "property": {
+          "property_id": 18,
+          "type": "number",
+          "format": "0,0.00",
+          "group": "Technical",
+          "accessor": [
+            "gapDown"
+          ],
+          "category": [
+            "Gap & Range Change"
+          ],
+          "description": [
+            "Gap Down"
+          ],
+          "descriptionShort": [
+            "Gap Down"
+          ],
+          "target": {
+            "description": "basic",
+            "display": "string",
+            "identifier": "TSLA",
+            "identifier_description": "symbol",
+            "qualifier_descriptions": [
+              [
+                "location",
+                "delivery date"
+              ]
+            ],
+            "kind": "string",
+            "target_id": 1,
+            "type": "symbol"
+          },
+          "valid_operators": [
+            44
+          ],
+          "sortOrder": 912
+        },
+        "templates": {
+          "condition": "Gap Down is greater than {{{operator.format.operand}}}",
+          "trigger": {
+            "email": "Gap Down is {{{event.format.gapDown}}}",
+            "sms": "Gap Down for {{{property.target.identifier}}} is {{{event.format.gapDown}}}"
+          }
+        }
+      }
+    ],
+    "publishers": [
+      {
+        "publisher_id": "9c864a19-ce77-4a87-8cd6-e0810ecb120e",
+        "use_default_recipient": false,
+        "recipient": "123-456-7890",
+        "format": "It is a good time to buy Tesla stock.",
+        "timing": {
+          "timezon": "America/Chicago"
+        },
+        "type": {
+          "publisher_type_id": 1,
+          "transport": "sms",
+          "provider": "twilio"
+        }
+      }
+    ],
+    "tracking_server_id": 0,
+    "schedules": [
+      []
+    ],
+    "effectivePublishers": [
+      {
+        "publisher_id": "9c864a19-ce77-4a87-8cd6-e0810ecb120e",
+        "use_default_recipient": false,
+        "recipient": "123-456-7890",
+        "format": "It is a good time to buy Tesla stock.",
+        "timing": {
+          "timezon": "America/Chicago"
+        },
+        "type": {
+          "publisher_type_id": 1,
+          "transport": "sms",
+          "provider": "twilio"
+        }
+      }
+    ]
+  }
+]
+```
+
 * * *
 
 **Status Code**: 500
@@ -529,6 +1459,95 @@
 
 **Response Type:** [<code>Array&lt;Template&gt;</code>](/content/api/components?id=schemasTemplate)
 
+**Example**:
+
+```
+[
+  {
+    "template_id": "39b633bf-8993-491d-b544-bdc9deed60be",
+    "alert_system": "string",
+    "user_id": "barchart-test-user",
+    "name": "Example template",
+    "create_date": "1453673000873",
+    "conditions": [
+      {
+        "condition_id": "38a3f731-0f87-40b7-a33b-dd9c792998e2",
+        "name": "Gap Down is greater than 10.00",
+        "operator": {
+          "operator_id": 4,
+          "operator_type": "binary",
+          "operator_name": "is-indicator",
+          "operand_options": [
+            [
+              "Buy",
+              "Sell",
+              "Hold"
+            ]
+          ],
+          "operand_literal": true,
+          "operand_display": "10",
+          "operand": "10",
+          "display": {
+            "short": ">",
+            "medium": "greater than",
+            "long": "greater than"
+          },
+          "modifiers": [
+            1,
+            2,
+            3
+          ]
+        },
+        "property": {
+          "property_id": 18,
+          "type": "number",
+          "format": "0,0.00",
+          "group": "Technical",
+          "accessor": [
+            "gapDown"
+          ],
+          "category": [
+            "Gap & Range Change"
+          ],
+          "description": [
+            "Gap Down"
+          ],
+          "descriptionShort": [
+            "Gap Down"
+          ],
+          "target": {
+            "description": "basic",
+            "display": "string",
+            "identifier": "TSLA",
+            "identifier_description": "symbol",
+            "qualifier_descriptions": [
+              [
+                "location",
+                "delivery date"
+              ]
+            ],
+            "kind": "string",
+            "target_id": 1,
+            "type": "symbol"
+          },
+          "valid_operators": [
+            44
+          ],
+          "sortOrder": 912
+        },
+        "templates": {
+          "condition": "Gap Down is greater than {{{operator.format.operand}}}",
+          "trigger": {
+            "email": "Gap Down is {{{event.format.gapDown}}}",
+            "sms": "Gap Down for {{{property.target.identifier}}} is {{{event.format.gapDown}}}"
+          }
+        }
+      }
+    ]
+  }
+]
+```
+
 * * *
 
 **Status Code**: 500
@@ -576,6 +1595,93 @@
 **Content Type**: <code>application/json</code>
 
 **Response Type:** [<code>Template</code>](/content/api/components?id=schemasTemplate)
+
+**Example**:
+
+```
+{
+  "template_id": "39b633bf-8993-491d-b544-bdc9deed60be",
+  "alert_system": "string",
+  "user_id": "barchart-test-user",
+  "name": "Example template",
+  "create_date": "1453673000873",
+  "conditions": [
+    {
+      "condition_id": "38a3f731-0f87-40b7-a33b-dd9c792998e2",
+      "name": "Gap Down is greater than 10.00",
+      "operator": {
+        "operator_id": 4,
+        "operator_type": "binary",
+        "operator_name": "is-indicator",
+        "operand_options": [
+          [
+            "Buy",
+            "Sell",
+            "Hold"
+          ]
+        ],
+        "operand_literal": true,
+        "operand_display": "10",
+        "operand": "10",
+        "display": {
+          "short": ">",
+          "medium": "greater than",
+          "long": "greater than"
+        },
+        "modifiers": [
+          1,
+          2,
+          3
+        ]
+      },
+      "property": {
+        "property_id": 18,
+        "type": "number",
+        "format": "0,0.00",
+        "group": "Technical",
+        "accessor": [
+          "gapDown"
+        ],
+        "category": [
+          "Gap & Range Change"
+        ],
+        "description": [
+          "Gap Down"
+        ],
+        "descriptionShort": [
+          "Gap Down"
+        ],
+        "target": {
+          "description": "basic",
+          "display": "string",
+          "identifier": "TSLA",
+          "identifier_description": "symbol",
+          "qualifier_descriptions": [
+            [
+              "location",
+              "delivery date"
+            ]
+          ],
+          "kind": "string",
+          "target_id": 1,
+          "type": "symbol"
+        },
+        "valid_operators": [
+          44
+        ],
+        "sortOrder": 912
+      },
+      "templates": {
+        "condition": "Gap Down is greater than {{{operator.format.operand}}}",
+        "trigger": {
+          "email": "Gap Down is {{{event.format.gapDown}}}",
+          "sms": "Gap Down for {{{property.target.identifier}}} is {{{event.format.gapDown}}}"
+        }
+      }
+    }
+  ]
+}
+```
 
 * * *
 
@@ -657,6 +1763,138 @@
 **Content Type**: <code>application/json</code>
 
 **Response Type:** [<code>Alert</code>](/content/api/components?id=schemasAlert)
+
+**Example**:
+
+```
+{
+  "alert_id": "39b633bf-8993-491d-b544-bdc9deed60be",
+  "alert_state": "Inactive",
+  "alert_system": "barchart.com",
+  "alert_state_key": "abcdef",
+  "alert_type": "price",
+  "alert_behavior": "Terminate",
+  "user_id": "barchart-test-user",
+  "name": "Buy TSLA",
+  "user_notes": "Time to buy Tesla Motors stock",
+  "system_notes": {},
+  "automatic_reset": true,
+  "create_date": "1453673000873",
+  "last_trigger_date": "145367399999",
+  "last_start_date": "145367399999",
+  "conditions": [
+    {
+      "condition_id": "38a3f731-0f87-40b7-a33b-dd9c792998e2",
+      "name": "Gap Down is greater than 10.00",
+      "operator": {
+        "operator_id": 4,
+        "operator_type": "binary",
+        "operator_name": "is-indicator",
+        "operand_options": [
+          [
+            "Buy",
+            "Sell",
+            "Hold"
+          ]
+        ],
+        "operand_literal": true,
+        "operand_display": "10",
+        "operand": "10",
+        "display": {
+          "short": ">",
+          "medium": "greater than",
+          "long": "greater than"
+        },
+        "modifiers": [
+          1,
+          2,
+          3
+        ]
+      },
+      "property": {
+        "property_id": 18,
+        "type": "number",
+        "format": "0,0.00",
+        "group": "Technical",
+        "accessor": [
+          "gapDown"
+        ],
+        "category": [
+          "Gap & Range Change"
+        ],
+        "description": [
+          "Gap Down"
+        ],
+        "descriptionShort": [
+          "Gap Down"
+        ],
+        "target": {
+          "description": "basic",
+          "display": "string",
+          "identifier": "TSLA",
+          "identifier_description": "symbol",
+          "qualifier_descriptions": [
+            [
+              "location",
+              "delivery date"
+            ]
+          ],
+          "kind": "string",
+          "target_id": 1,
+          "type": "symbol"
+        },
+        "valid_operators": [
+          44
+        ],
+        "sortOrder": 912
+      },
+      "templates": {
+        "condition": "Gap Down is greater than {{{operator.format.operand}}}",
+        "trigger": {
+          "email": "Gap Down is {{{event.format.gapDown}}}",
+          "sms": "Gap Down for {{{property.target.identifier}}} is {{{event.format.gapDown}}}"
+        }
+      }
+    }
+  ],
+  "publishers": [
+    {
+      "publisher_id": "9c864a19-ce77-4a87-8cd6-e0810ecb120e",
+      "use_default_recipient": false,
+      "recipient": "123-456-7890",
+      "format": "It is a good time to buy Tesla stock.",
+      "timing": {
+        "timezon": "America/Chicago"
+      },
+      "type": {
+        "publisher_type_id": 1,
+        "transport": "sms",
+        "provider": "twilio"
+      }
+    }
+  ],
+  "tracking_server_id": 0,
+  "schedules": [
+    []
+  ],
+  "effectivePublishers": [
+    {
+      "publisher_id": "9c864a19-ce77-4a87-8cd6-e0810ecb120e",
+      "use_default_recipient": false,
+      "recipient": "123-456-7890",
+      "format": "It is a good time to buy Tesla stock.",
+      "timing": {
+        "timezon": "America/Chicago"
+      },
+      "type": {
+        "publisher_type_id": 1,
+        "transport": "sms",
+        "provider": "twilio"
+      }
+    }
+  ]
+}
+```
 
 * * *
 
@@ -747,6 +1985,28 @@
 
 **Response Type:** [<code>Array&lt;Target&gt;</code>](/content/api/components?id=schemasTarget)
 
+**Example**:
+
+```
+[
+  {
+    "description": "basic",
+    "display": "string",
+    "identifier": "TSLA",
+    "identifier_description": "symbol",
+    "qualifier_descriptions": [
+      [
+        "location",
+        "delivery date"
+      ]
+    ],
+    "kind": "string",
+    "target_id": 1,
+    "type": "symbol"
+  }
+]
+```
+
 * * *
 
 ## GET /alert/targets/properties 
@@ -765,6 +2025,50 @@
 
 **Response Type:** [<code>Array&lt;Property&gt;</code>](/content/api/components?id=schemasProperty)
 
+**Example**:
+
+```
+[
+  {
+    "property_id": 18,
+    "type": "number",
+    "format": "0,0.00",
+    "group": "Technical",
+    "accessor": [
+      "gapDown"
+    ],
+    "category": [
+      "Gap & Range Change"
+    ],
+    "description": [
+      "Gap Down"
+    ],
+    "descriptionShort": [
+      "Gap Down"
+    ],
+    "target": {
+      "description": "basic",
+      "display": "string",
+      "identifier": "TSLA",
+      "identifier_description": "symbol",
+      "qualifier_descriptions": [
+        [
+          "location",
+          "delivery date"
+        ]
+      ],
+      "kind": "string",
+      "target_id": 1,
+      "type": "symbol"
+    },
+    "valid_operators": [
+      44
+    ],
+    "sortOrder": 912
+  }
+]
+```
+
 * * *
 
 ## GET /alert/operators 
@@ -782,6 +2086,36 @@
 **Content Type**: <code>application/json</code>
 
 **Response Type:** [<code>Operator</code>](/content/api/components?id=schemasOperator)
+
+**Example**:
+
+```
+{
+  "operator_id": 4,
+  "operator_type": "binary",
+  "operator_name": "is-indicator",
+  "operand_options": [
+    [
+      "Buy",
+      "Sell",
+      "Hold"
+    ]
+  ],
+  "operand_literal": true,
+  "operand_display": "10",
+  "operand": "10",
+  "display": {
+    "short": ">",
+    "medium": "greater than",
+    "long": "greater than"
+  },
+  "modifiers": [
+    1,
+    2,
+    3
+  ]
+}
+```
 
 * * *
 
@@ -1069,6 +2403,30 @@
 
 **Response Type:** [<code>Array&lt;Trigger&gt;</code>](/content/api/components?id=schemasTrigger)
 
+**Example**:
+
+```
+[
+  {
+    "alert_id": "b78b30e3-8af5-48a5-8998-0989269ad9d0",
+    "alert_name": "Last greater than 200.00",
+    "alert_system": "barchart.com",
+    "user_id": "barchart-test-user",
+    "trigger_date": "1605874379489",
+    "trigger_status": "Read",
+    "trigger_status_date": "1606227202480",
+    "trigger_title": "MSFT",
+    "trigger_description": "MSFT traded for 214.86 at 10:34 ET on 12/14/20",
+    "trigger_additional_data": {
+      "type": "news",
+      "data": {
+        "url": "https://barchart.com/story/stocks/quotes/TSLA/news/1085745/view"
+      }
+    }
+  }
+]
+```
+
 * * *
 
 ## PUT /alert/triggers/users/{alert_system}/{user_id} 
@@ -1113,6 +2471,28 @@
 **Content Type**: <code>application/json</code>
 
 **Response Type:** [<code>Trigger</code>](/content/api/components?id=schemasTrigger)
+
+**Example**:
+
+```
+{
+  "alert_id": "b78b30e3-8af5-48a5-8998-0989269ad9d0",
+  "alert_name": "Last greater than 200.00",
+  "alert_system": "barchart.com",
+  "user_id": "barchart-test-user",
+  "trigger_date": "1605874379489",
+  "trigger_status": "Read",
+  "trigger_status_date": "1606227202480",
+  "trigger_title": "MSFT",
+  "trigger_description": "MSFT traded for 214.86 at 10:34 ET on 12/14/20",
+  "trigger_additional_data": {
+    "type": "news",
+    "data": {
+      "url": "https://barchart.com/story/stocks/quotes/TSLA/news/1085745/view"
+    }
+  }
+}
+```
 
 * * *
 
@@ -1162,6 +2542,30 @@
 **Content Type**: <code>application/json</code>
 
 **Response Type:** [<code>Array&lt;Trigger&gt;</code>](/content/api/components?id=schemasTrigger)
+
+**Example**:
+
+```
+[
+  {
+    "alert_id": "b78b30e3-8af5-48a5-8998-0989269ad9d0",
+    "alert_name": "Last greater than 200.00",
+    "alert_system": "barchart.com",
+    "user_id": "barchart-test-user",
+    "trigger_date": "1605874379489",
+    "trigger_status": "Read",
+    "trigger_status_date": "1606227202480",
+    "trigger_title": "MSFT",
+    "trigger_description": "MSFT traded for 214.86 at 10:34 ET on 12/14/20",
+    "trigger_additional_data": {
+      "type": "news",
+      "data": {
+        "url": "https://barchart.com/story/stocks/quotes/TSLA/news/1085745/view"
+      }
+    }
+  }
+]
+```
 
 * * *
 

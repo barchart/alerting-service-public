@@ -1,9 +1,15 @@
 # Release Notes
 
+## 4.12.1
+**Technical Enhancements**
+
+* Added documentation for starting/stopping multiple alerts to "Quick Start" section.
+* Fixed JavaScript "lint" in example code.
+
 ## 4.12.0
 **New Features**
 
-* Added `AlertManager.subscribeTemplates` function.
+* Added the `AlertManager.subscribeTemplates` function.
 
 ## 4.10.0
 **New Features**
