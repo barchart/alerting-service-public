@@ -1,5 +1,8 @@
 (function(){function r(e,n,t){function o(i,f){if(!n[i]){if(!e[i]){var c="function"==typeof require&&require;if(!f&&c)return c(i,!0);if(u)return u(i,!0);var a=new Error("Cannot find module '"+i+"'");throw a.code="MODULE_NOT_FOUND",a}var p=n[i]={exports:{}};e[i][0].call(p.exports,function(r){var n=e[i][1][r];return o(n||r)},p,p.exports,r,e,n,t)}return n[i].exports}for(var u="function"==typeof require&&require,i=0;i<t.length;i++)o(t[i]);return o}return r})()({1:[function(require,module,exports){
-'use strict';
+/* jshint node: true */
+
+/* globals document, ko, toastr, _, $ */
+"use strict";
 
 const AlertManager = require('./../../../lib/AlertManager');
 
@@ -717,7 +720,7 @@ function AlertEntryModel(alert) {
 
   if (_.isObject(alert)) {
     that.name(alert.name);
-    var alertBehavior = alert.alert_behavior || terminate;
+    var alertBehavior = alert.alert_behavior || 'terminate';
 
     if (alertBehavior === 'terminate' && alert.automatic_reset) {
       alertBehavior = 'automatic';
@@ -4603,7 +4606,7 @@ module.exports = (() => {
   'use strict';
 
   return {
-    version: '4.12.0'
+    version: '4.12.1'
   };
 })();
 
