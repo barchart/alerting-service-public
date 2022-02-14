@@ -195,6 +195,35 @@ curl 'https://alerts-management-demo.barchart.com/alerts/ef5acb88-d747-48d2-b8d2
   --data-binary '{"alert_id":"ef5acb88-d747-48d2-b8d2-713cf351c012","alert_state":"Stopping"}'
 ```
 
+## Retrieving Alerts
+
+You can retrieve all alerts (for the current user), as follows:
+
+#### Using the SDK
+
+Executing the ```AlertManager.retrieveAlerts``` function will return a snapshot of the current user's alerts. However, in most cases, it is preferable to use the ```AlertManager.subscribeAlerts``` function -- refer to the [Key Concepts: Monitoring Alerts](/content/concepts/monitoring_alerts?id=alert-subscriptions) section for details.
+
+```js
+const query = { };
+
+query.user_id = 'me';
+query.alert_system = 'barchart.com';
+
+alertManager.retrieveAlerts(query)
+	.then((alerts) => {
+		console.log(`Retrieved alerts [ ${alerts.length} ] for [ ${query.user_id}@${query.alert_system} ]`);
+	});
+```
+
+#### Using the API
+
+```shell
+curl 'https://alerts-management-demo.barchart.com/alerts/users/barchart.com/me' \
+  -X 'GET' \
+  -H 'Accept: application/json' \
+  -H 'Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoibWUiLCJhbGVydF9zeXN0ZW0iOiJiYXJjaGFydC5jb20iLCJpYXQiOjE1ODk0MTEyNzl9.SxyC8s_CKhPyzcNmM_h_TRMiNSx3YstKGmAb2IOWqgM'
+```
+
 ## Demo Applications
 
 Sometimes learning by example is best. Three applications were built using this SDK:
