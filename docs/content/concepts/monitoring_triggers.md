@@ -88,6 +88,8 @@ query.alert_system = 'barchart.com';
 const subscripton = alertManager.subscribeTriggers(query, handleTriggersChanged, handleTriggersDeleted, handleTriggersCreated);
 ```
 
+NOTE: After a subscription has been established, the [```Callbacks.TriggersMutatedCallback```](/content/sdk/lib-callbacks?id=callbackstriggersmutatedcallback) will be invoked, passing an array of all existing ```Trigger``` objects. This eliminates the need to explicitly invoke the [```AlertManager.retrieveTriggers```](/content/sdk/lib?id=alertmanagerretrievetriggers) function (to synchronize state).
+
 To stop the subscription, do the following:
 
 ```js
