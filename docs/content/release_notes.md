@@ -1,5 +1,10 @@
 # Release Notes
 
+## 4.12.2
+**Other**
+
+* Updated documentation to describe mechanisms for retrieving a snapshot of the current user's alerts. No functional changes.
+
 ## 4.12.1
 **Technical Enhancements**
 
