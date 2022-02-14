@@ -100,7 +100,8 @@
 
 ### alertManager.subscribeAlerts(query, changeCallback, deleteCallback, createCallback, triggerCallback) :id=alertmanagersubscribealerts
 > Registers four separate callbacks which will be invoked when alerts are created,
-> deleted, changed, or triggered.
+> deleted, changed, or triggered. Soon after a subscription is first established, all
+> existing alerts will be sent to the &quot;change&quot; callback.
 
 **Kind**: instance method of [<code>AlertManager</code>](#AlertManager)  
 **Returns**: <code>Disposable</code>  
@@ -239,7 +240,8 @@
 
 ### alertManager.subscribeTriggers(query, changeCallback, deleteCallback, createCallback) :id=alertmanagersubscribetriggers
 > Registers three separate callbacks which will be invoked when triggers are created,
-> deleted, changed.
+> deleted, changed. Soon after a subscription is first established, all existing
+> triggers will be sent to the &quot;change&quot; callback.
 
 **Kind**: instance method of [<code>AlertManager</code>](#AlertManager)  
 **Returns**: <code>Disposable</code>  
@@ -308,7 +310,8 @@
 
 ### alertManager.subscribeTemplates(query, changeCallback, deleteCallback, createCallback) :id=alertmanagersubscribetemplates
 > Registers three separate callbacks which will be invoked when templates are created,
-> deleted, or changed.
+> deleted, or changed. Soon after a subscription is first established, all existing
+> templates will be sent to the &quot;change&quot; callback.
 
 **Kind**: instance method of [<code>AlertManager</code>](#AlertManager)  
 **Returns**: <code>Disposable</code>  
