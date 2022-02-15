@@ -1546,7 +1546,8 @@ module.exports = (() => {
     }
     /**
      * Registers four separate callbacks which will be invoked when alerts are created,
-     * deleted, changed, or triggered.
+     * deleted, changed, or triggered. Soon after a subscription is first established, all
+     * existing alerts will be sent to the "change" callback.
      *
      * @public
      * @param {Object} query
@@ -1842,7 +1843,8 @@ module.exports = (() => {
     }
     /**
      * Registers three separate callbacks which will be invoked when triggers are created,
-     * deleted, changed.
+     * deleted, changed. Soon after a subscription is first established, all existing
+     * triggers will be sent to the "change" callback.
      *
      * @public
      * @param {Object} query
@@ -1959,7 +1961,8 @@ module.exports = (() => {
     }
     /**
      * Registers three separate callbacks which will be invoked when templates are created,
-     * deleted, or changed.
+     * deleted, or changed. Soon after a subscription is first established, all existing
+     * templates will be sent to the "change" callback.
      *
      * @public
      * @param {Object} query
@@ -4606,7 +4609,7 @@ module.exports = (() => {
   'use strict';
 
   return {
-    version: '4.12.1'
+    version: '4.12.2'
   };
 })();
 
