@@ -22,7 +22,9 @@ A history of _trigger_ objects can be retrieved for a specific user. Also, they 
 
 #### Using the SDK
 
-Use the [```AlertManager.retrieveTriggers```](/content/sdk/lib?id=alertmanagerretrievetriggers) function. You can include ```trigger_date``` and ```trigger_status``` attributes to filter the results:
+Use the [```AlertManager.retrieveTriggers```](/content/sdk/lib?id=alertmanagerretrievetriggers) function to get a snapshot of existing _trigger_ objects.
+
+Alternately, it may be preferable to use the [```AlertManager.subscribeTriggers```](/content/sdk/lib?id=alertmanagersubscribetriggers) function since existing _trigger_ objects are returned immediately after a subscription is established (see the next section for details).
 
 ```js
 const query = { };
@@ -88,7 +90,7 @@ query.alert_system = 'barchart.com';
 const subscripton = alertManager.subscribeTriggers(query, handleTriggersChanged, handleTriggersDeleted, handleTriggersCreated);
 ```
 
-NOTE: After a subscription has been established, the [```Callbacks.TriggersMutatedCallback```](/content/sdk/lib-callbacks?id=callbackstriggersmutatedcallback) will be invoked, passing an array of all existing ```Trigger``` objects. This eliminates the need to explicitly invoke the [```AlertManager.retrieveTriggers```](/content/sdk/lib?id=alertmanagerretrievetriggers) function (to synchronize state).
+NOTE: After a subscription has been established, the [```Callbacks.TriggersMutatedCallback```](/content/sdk/lib-callbacks?id=callbackstriggersmutatedcallback) will be invoked, passing an array of all existing _trigger_ objects. This eliminates the need to explicitly invoke the [```AlertManager.retrieveTriggers```](/content/sdk/lib?id=alertmanagerretrievetriggers) function (to synchronize state).
 
 To stop the subscription, do the following:
 
