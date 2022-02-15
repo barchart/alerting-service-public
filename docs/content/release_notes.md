@@ -3,13 +3,15 @@
 ## 4.12.2
 **Other**
 
-* Updated documentation to describe mechanisms for retrieving a snapshot of the current user's alerts. No functional changes.
+* Updated documentation to describe mechanisms for retrieving a snapshot of the current user's alerts.
+* No functional changes.
 
 ## 4.12.1
-**Technical Enhancements**
+**Other**
 
 * Added documentation for starting/stopping multiple alerts to "Quick Start" section.
 * Fixed JavaScript "lint" in example code.
+* No functional changes.
 
 ## 4.12.0
 **New Features**
