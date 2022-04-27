@@ -1299,7 +1299,7 @@ var reset = function(host, system, userId, mode) {
 
 				initializePromise = alertManager.connect(jwtProvider)
 					.then(function() {
-						if (!(system === 'barchart.com' || system === 'grains.com' || system === 'webstation.barchart.com' || system === 'gos.agricharts.com' || system === 'gbemembers.com' || system === 'cmdtymarketplace.com')) {
+						if (!(system === 'barchart.com' || system === 'grains.com' || system === 'webstation.barchart.com' || system === 'gos.agricharts.com' || system === 'gbemembers.com' || system === 'cmdtymarketplace.com' || system === 'theglobeandmail.com')) {
 							throw 'Invalid system, please re-enter...';
 						}
 
