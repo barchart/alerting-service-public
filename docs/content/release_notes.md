@@ -1,5 +1,10 @@
 # Release Notes
 
+## 4.12.3
+**Bug Fixes**
+
+* Improved messaging of rejected promise from `AlertManager.createAlert` when attempting to create a condition using an invalid target symbol.
+
 ## 4.12.2
 **Other**
 

@@ -39,7 +39,7 @@
 **Security**: 
 [JWT](/content/api/components?id=securityJWT)
 #### Request Body
-    
+
 **Content Type**: application/json
 
 **Type**: <code>Object</code>
@@ -54,11 +54,11 @@
 | user_notes | <code>String</code> | false | false |  |
 | automatic_reset | <code>Boolean</code> | false | false |  |
 | conditions | <code>Array&lt;object&gt;</code> | true | false |  |
-| conditions[i].property | <code>Object</code> |  | false |  |
+| conditions[i].property | <code>Object</code> | false | false |  |
 | conditions[i].property.property_id | <code>Integer</code> | false | false |  |
-| conditions[i].property.target | <code>Object</code> |  | false |  |
+| conditions[i].property.target | <code>Object</code> | false | false |  |
 | conditions[i].property.target.identifier | <code>String</code> | false | false |  |
-| conditions[i].operator | <code>Object</code> |  | false |  |
+| conditions[i].operator | <code>Object</code> | false | false |  |
 | conditions[i].operator.operator_id | <code>Integer</code> | false | false |  |
 | conditions[i].operator.operand | <code>String</code> | false | false |  |
 | publishers | <code>Array&lt;object&gt;</code> | false | false |  |
@@ -66,7 +66,7 @@
 | publishers[i].use_default_recipient | <code>Boolean</code> | false | false |  |
 | publishers[i].recipient | <code>String</code> | false | false |  |
 | publishers[i].format | <code>String</code> | false | false |  |
-| publishers[i].type | <code>Object</code> |  | false |  |
+| publishers[i].type | <code>Object</code> | false | false |  |
 | publishers[i].type.publisher_type_id | <code>Integer</code> | false | false |  |
 | schedules | <code>Array</code> | false | false |  |
 
@@ -655,7 +655,7 @@
 | alert_id | <code>String</code> | true | false | The UUID for the alert |
 
 #### Request Body
-    
+
 **Content Type**: application/json
 
 **Type**: <code>Object</code>
@@ -1061,7 +1061,7 @@
 | alert_system | <code>String</code> | true | false | The name of the user's system (e.g. "barchart.com" or "grains.com") |
 
 #### Request Body
-    
+
 **Content Type**: application/json
 
 **Type**: <code>Object</code>
@@ -1716,7 +1716,7 @@
 **Security**: 
 [JWT](/content/api/components?id=securityJWT)
 #### Request Body
-    
+
 **Content Type**: application/json
 
 **Type**: <code>Object</code>
@@ -1727,9 +1727,9 @@
 | user_id | <code>String</code> | true | false |  |
 | alert_system | <code>String</code> | true | false |  |
 | conditions | <code>Array&lt;object&gt;</code> | true | false |  |
-| conditions[i].property | <code>Object</code> |  | false |  |
+| conditions[i].property | <code>Object</code> | false | false |  |
 | conditions[i].property.property_id | <code>Integer</code> | false | false |  |
-| conditions[i].operator | <code>Object</code> |  | false |  |
+| conditions[i].operator | <code>Object</code> | false | false |  |
 | conditions[i].operator.operator_id | <code>Integer</code> | false | false |  |
 | conditions[i].operator.operand | <code>String</code> | false | false |  |
 
@@ -2286,7 +2286,7 @@
 | publisher_type_id | <code>Integer</code> | true | false | The publisher type to change. |
 
 #### Request Body
-    
+
 **Content Type**: application/json
 
 **Type**: <code>Array&lt;Object&gt;</code>
@@ -2445,7 +2445,7 @@
 | alert_system | <code>String</code> | true | false | The alert system. |
 
 #### Request Body
-    
+
 **Content Type**: application/json
 
 **Type**: <code>Object</code>
@@ -2516,7 +2516,7 @@
 | trigger_date | <code>String</code> | true | false | The alert system. |
 
 #### Request Body
-    
+
 **Content Type**: application/json
 
 **Type**: <code>Object</code>

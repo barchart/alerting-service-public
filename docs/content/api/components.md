@@ -27,7 +27,7 @@
 
 ### Alert :id=schemasalert
 **Type**: <code>Object</code>
-    
+
 | Name | Type | Required | Nullable | Description |
 | ---- | ---- | -------- | -------- | ----------- |
 | alert_id | <code>String</code> | false | false |  |
@@ -44,11 +44,12 @@
 | create_date | <code>String</code> | false | false |  |
 | last_trigger_date | <code>String</code> | false | true |  |
 | last_start_date | <code>String</code> | false | true |  |
-| conditions | [<code>Array&lt;Condition&gt;</code>](#schemasCondition) |  | false |  |
-| publishers | [<code>Array&lt;Publisher&gt;</code>](#schemasPublisher) |  | false |  |
+| conditions | [<code>Array&lt;Condition&gt;</code>](#schemasCondition) | false | false |  |
+| publishers | [<code>Array&lt;Publisher&gt;</code>](#schemasPublisher) | false | false |  |
 | tracking_server_id | <code>Integer</code> | false | true |  |
 | schedules | <code>Array</code> | false | false |  |
-| effectivePublishers | [<code>Array&lt;Publisher&gt;</code>](#schemasPublisher) |  | false |  |
+| effectivePublishers | [<code>Array&lt;Publisher&gt;</code>](#schemasPublisher) | false | false |  |
+
 
 **Example**:
 
@@ -186,19 +187,22 @@
 
 ### Publisher :id=schemaspublisher
 **Type**: <code>Object</code>
-    
+
+>A &quot;publisher&quot; defines the rules for notification once an alert has been triggered. An alert can have multiple publishers.
+
 | Name | Type | Required | Nullable | Description |
 | ---- | ---- | -------- | -------- | ----------- |
 | publisher_id | <code>String</code> | false | false |  |
 | use_default_recipient | <code>Boolean</code> | false | false |  |
 | recipient | <code>String</code> | false | false |  |
 | format | <code>String</code> | false | false |  |
-| timing | <code>Object</code> |  | false |  |
+| timing | <code>Object</code> | false | false |  |
 | timing.timezon | <code>String</code> | false | false |  |
-| type | <code>Object</code> |  | false |  |
+| type | <code>Object</code> | false | false |  |
 | type.publisher_type_id | <code>Integer</code> | false | false |  |
 | type.transport | <code>String</code> | false | false |  |
 | type.provider | <code>String</code> | false | false |  |
+
 
 **Example**:
 
@@ -223,7 +227,7 @@
 
 ### Operator :id=schemasoperator
 **Type**: <code>Object</code>
-    
+
 | Name | Type | Required | Nullable | Description |
 | ---- | ---- | -------- | -------- | ----------- |
 | operator_id | <code>Integer</code> | false | false |  |
@@ -234,12 +238,13 @@
 | operand_literal | <code>Boolean</code> | false | false |  |
 | operand_display | <code>String</code> | false | false |  |
 | operand | <code>String</code> | false | false |  |
-| display | <code>Object</code> |  | false |  |
+| display | <code>Object</code> | false | false |  |
 | display.short | <code>String</code> | false | false |  |
 | display.medium | <code>String</code> | false | false |  |
 | display.long | <code>String</code> | false | false |  |
 | modifiers | <code>Array</code> | false | false |  |
 | modifiers[i] | <code>Integer</code> | false | false |  |
+
 
 **Example**:
 
@@ -275,18 +280,19 @@
 
 ### Condition :id=schemascondition
 **Type**: <code>Object</code>
-    
+
 | Name | Type | Required | Nullable | Description |
 | ---- | ---- | -------- | -------- | ----------- |
 | condition_id | <code>String</code> | false | false |  |
 | name | <code>String</code> | false | false |  |
-| operator | [<code>Operator</code>](#schemasOperator) |  | false |  |
-| property | [<code>Property</code>](#schemasProperty) |  | false |  |
-| templates | <code>Object</code> |  | false |  |
+| operator | [<code>Operator</code>](#schemasOperator) | false | false |  |
+| property | [<code>Property</code>](#schemasProperty) | false | false |  |
+| templates | <code>Object</code> | false | false |  |
 | templates.condition | <code>String</code> | false | false |  |
-| templates.trigger | <code>Object</code> |  | false |  |
+| templates.trigger | <code>Object</code> | false | false |  |
 | templates.trigger.email | <code>String</code> | false | false |  |
 | templates.trigger.sms | <code>String</code> | false | false |  |
+
 
 **Example**:
 
@@ -370,7 +376,9 @@
 
 ### Property :id=schemasproperty
 **Type**: <code>Object</code>
-    
+
+>A &quot;property&quot; refers to an attribute of a target. The value of a &quot;property&quot; can be checked using an &quot;operator&quot; object.
+
 | Name | Type | Required | Nullable | Description |
 | ---- | ---- | -------- | -------- | ----------- |
 | property_id | <code>Integer</code> | false | false |  |
@@ -385,10 +393,11 @@
 | description[i] | <code>String</code> | false | false |  |
 | descriptionShort | <code>Array</code> | false | false |  |
 | descriptionShort[i] | <code>String</code> | false | false |  |
-| target | [<code>Target</code>](#schemasTarget) |  | false |  |
+| target | [<code>Target</code>](#schemasTarget) | false | false |  |
 | valid_operators | <code>Array</code> | false | false |  |
 | valid_operators[i] | <code>Integer</code> | false | false |  |
 | sortOrder | <code>Integer</code> | false | false |  |
+
 
 **Example**:
 
@@ -436,7 +445,9 @@
 
 ### Target :id=schemastarget
 **Type**: <code>Object</code>
-    
+
+>A &quot;target&quot; refers to a type of object which can be observed. Each target has one or more properties.
+
 | Name | Type | Required | Nullable | Description |
 | ---- | ---- | -------- | -------- | ----------- |
 | description | <code>String</code> | true | false |  |
@@ -448,6 +459,7 @@
 | kind | <code>String</code> | false | true |  |
 | target_id | <code>Integer</code> | true | false |  |
 | type | <code>String</code> | true | false |  |
+
 
 **Example**:
 
@@ -473,7 +485,7 @@
 
 ### Template :id=schemastemplate
 **Type**: <code>Object</code>
-    
+
 | Name | Type | Required | Nullable | Description |
 | ---- | ---- | -------- | -------- | ----------- |
 | template_id | <code>String</code> | false | false |  |
@@ -481,7 +493,8 @@
 | user_id | <code>String</code> | false | false |  |
 | name | <code>String</code> | false | false |  |
 | create_date | <code>String</code> | false | false |  |
-| conditions | [<code>Array&lt;Condition&gt;</code>](#schemasCondition) |  | false |  |
+| conditions | [<code>Array&lt;Condition&gt;</code>](#schemasCondition) | false | false |  |
+
 
 **Example**:
 
@@ -574,17 +587,20 @@
 
 ### TemplateCondition :id=schemastemplatecondition
 **Type**: <code>Object</code>
-    
+
+>A &quot;Condition&quot; without target.
+
 | Name | Type | Required | Nullable | Description |
 | ---- | ---- | -------- | -------- | ----------- |
 | template_condition_id | <code>String</code> | false | false |  |
-| operator | [<code>Operator</code>](#schemasOperator) |  | false |  |
-| property | [<code>Property</code>](#schemasProperty) |  | false |  |
-| templates | <code>Object</code> |  | false |  |
+| operator | [<code>Operator</code>](#schemasOperator) | false | false |  |
+| property | [<code>Property</code>](#schemasProperty) | false | false |  |
+| templates | <code>Object</code> | false | false |  |
 | templates.condition | <code>String</code> | false | false |  |
-| templates.trigger | <code>Object</code> |  | false |  |
+| templates.trigger | <code>Object</code> | false | false |  |
 | templates.trigger.email | <code>String</code> | false | false |  |
 | templates.trigger.sms | <code>String</code> | false | false |  |
+
 
 **Example**:
 
@@ -667,7 +683,9 @@
 
 ### Trigger :id=schemastrigger
 **Type**: <code>Object</code>
-    
+
+>An alert trigger status shows status of alert trigger.
+
 | Name | Type | Required | Nullable | Description |
 | ---- | ---- | -------- | -------- | ----------- |
 | alert_id | <code>String</code> | true | false |  |
@@ -679,10 +697,11 @@
 | trigger_status_date | <code>String</code> | true | false |  |
 | trigger_title | <code>String</code> | true | false |  |
 | trigger_description | <code>String</code> | true | false |  |
-| trigger_additional_data | <code>Object</code> |  | false |  |
+| trigger_additional_data | <code>Object</code> | false | false |  |
 | trigger_additional_data.type | <code>String</code> | false | false |  |
-| trigger_additional_data.data | <code>Object</code> |  | false |  |
+| trigger_additional_data.data | <code>Object</code> | false | false |  |
 | trigger_additional_data.data.url | <code>String</code> | false | false |  |
+
 
 **Example**:
 
@@ -715,7 +734,7 @@
 >The JWT authorization
 
 **Type**: http bearer
-    
+
 #### Headers
 | Name | Format | Example |
 | ---- | ------ | ------- |
