@@ -1659,7 +1659,6 @@ module.exports = (() => {
             const symbol = c.property.target.identifier;
             validatePromise = instrumentMap[symbol].then(result => {
               const instrument = result.instrument;
-              const unitcode = convertBaseCodeToUnitCode(instrument.unitcode);
               validate.instrument.forCreate(symbol, instrument);
 
               if (property.format === 'price' && operator.operand_type === 'number' && operator.operand_literal) {
@@ -1669,6 +1668,7 @@ module.exports = (() => {
                   operandToParse = operandToParse + '.0';
                 }
 
+                const unitcode = convertBaseCodeToUnitCode(instrument.unitcode);
                 const price = valueParser(operandToParse, unitcode, ',');
 
                 if (!is.number(price)) {
