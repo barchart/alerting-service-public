@@ -129,6 +129,7 @@ module.exports = (() => {
       }
 
       assert.argumentIsOptional(publisher.format, `${d}.format`, String);
+      assert.argumentIsOptional(publisher.title, `${d}.title`, String);
     }
   };
 

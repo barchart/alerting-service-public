@@ -1,4 +1,4 @@
-const AlertBuilder = require('../../../lib/builder/AlertBuilder');
+const AlertBuilder = require('../../../lib/builder/builders/AlertBuilder');
 
 const AlertManager = require('../../../lib/AlertManager'),
 	AdapterForHttp = require('./../../../lib/adapters/AdapterForHttp'),
@@ -145,18 +145,18 @@ describe('When constructing a AlertBuilder', () => {
 	describe('and publisher are added', () => {
 		it('builder should have an publishers field', () => {
 			const expectedPublisher = {
-				format: 'hello',
 				recipient: '375259634424',
-				use_default_recipient: true,
+				use_default_recipient: false,
 				type: {
 					publisher_type_id: 1
-				}
+				},
+				format: 'hello',
+				title: null
 			};
 
 			const alert = alertBuilder.withPublisherBuilder((pb) => {
 				pb.withRecipient('375259634424')
 					.withFormat('hello')
-					.withUseDefaultRecipient()
 					.withType('sms');
 			}).build();
 
