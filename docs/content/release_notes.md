@@ -1,5 +1,12 @@
 # Release Notes
 
+## 4.13.0
+**New Features**
+
+* Added support for `title` attribute on publisher objects.
+
+
+
 ## 4.12.3
 **Bug Fixes**
 

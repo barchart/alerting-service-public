@@ -289,7 +289,7 @@ const abbreviated = { };
 
 abbreviated.alert_id = alert.alert_id;
 
-alertManager.disableAlert(abbreviated)
+alertManager.deleteAlert(abbreviated)
 	.then((deleted) => {
 		console.log(`Alert [ ${deleted.alert_id} ] was deleted`);
 	});
@@ -301,7 +301,7 @@ Or, we can delete an _alert_ by sending a ```DELETE``` request to the [```/alert
 
 ```shell
 curl 'https://alerts-management-demo.barchart.com/alerts/3a36d266-875d-4eaf-8c24-05021c9208c4' \
-  -X 'PUT' \
+  -X 'DELETE' \
   -H 'Accept: application/json' \
   -H 'Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoibWUiLCJhbGVydF9zeXN0ZW0iOiJiYXJjaGFydC5jb20iLCJpYXQiOjE1ODk0MTEyNzl9.SxyC8s_CKhPyzcNmM_h_TRMiNSx3YstKGmAb2IOWqgM' \
   -H 'Content-Type: application/json;charset=UTF-8'
