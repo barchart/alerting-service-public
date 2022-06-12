@@ -4,7 +4,7 @@ Once an alert's conditions are met, notifications are published. The Barchart Al
 
 * Email — transmitted via [Amazon SES](https://aws.amazon.com/ses/).
 * Text Message — transmitted via [Twilio](https://www.twilio.com/).
-* Mobile Push Notification — via [Apple APNS](https://en.wikipedia.org/wiki/Apple_Push_Notification_service) or [Google FCM](https://firebase.google.com/docs/cloud-messaging).
+* Mobile Push Notification — via [Apple APNs](https://en.wikipedia.org/wiki/Apple_Push_Notification_service) or [Google FCM](https://firebase.google.com/docs/cloud-messaging).
 * Web Hook — via an HTTP(S) POST to your web service.
 
 When an alert triggers, notifications can be published using some or all of these strategies.

@@ -36,8 +36,8 @@ Built with [React Native](https://reactnative.dev/), our mobile app is compatibl
 
 * View existing alerts.
 * Start and stop alerts.
-* Registering for push notifications sent via [Apple APNS](https://en.wikipedia.org/wiki/Apple_Push_Notification_service) or [Google FCM](https://firebase.google.com/docs/cloud-messaging).
-* Receive push notifications when alerts trigger (via APNS or FCM).
+* Registering for push notifications sent via [Apple APNs](https://en.wikipedia.org/wiki/Apple_Push_Notification_service) or [Google FCM](https://firebase.google.com/docs/cloud-messaging).
+* Receive push notifications when alerts trigger (via APNs or FCM).
 * Review alert trigger history.
 * Mark alert triggers as read (or unread).
 
