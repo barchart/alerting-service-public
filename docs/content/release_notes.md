@@ -1,5 +1,12 @@
 # Release Notes
 
+## 4.14.0
+**New Features**
+
+* Updated the `AlertManager.checkSymbol` function to reject equity option symbols.
+* Updated the `AlertManager.createAlert` function to prevent creation of an alert that targets an equity option.
+* Updated the `AlertManager.createAlert` function to prevent creation of an alert that targets a futures option, which evaluates anything other than a price (or volume) property.
+
 ## 4.13.0
 **New Features**
 

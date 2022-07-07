@@ -1,7 +1,7 @@
 ## AlertManager :id=alertmanager
-> The <strong>central component of the SDK</strong>. It is responsible for connecting to Barchart's
-> Alerting Service, querying existing alerts, creating new alerts, and monitoring the status
-> of existing alerts.
+> The <strong>central component of the SDK</strong>, responsible for connecting to Barchart's Alerting
+> Service, creating new alerts, querying existing alerts, and monitoring the status of
+> existing alerts.
 
 **Kind**: global class  
 **Extends**: <code>Disposable</code>  
@@ -399,7 +399,7 @@
 
 | Param | Type | Description |
 | --- | --- | --- |
-| symbol | <code>String</code> | <p>The symbol to check</p> |
+| symbol | <code>String</code> | <p>The value intended to be assigned to the <code>property.target.identifier</code> attribute of a condition.</p> |
 
 
 * * *
