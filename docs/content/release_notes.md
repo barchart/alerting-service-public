@@ -1,5 +1,11 @@
 # Release Notes
 
+## 4.15.0
+**New Features**
+
+* Added a static, undocumented function called `AlertsManager.filterPropertiesForSymbol` which determines which properties are valid for a given symbol.
+* Added a static, undocumented function called `AlertsManager.filterTemplatesForSymbol` which determines which templates are valid for a given symbol.
+
 ## 4.14.0
 **New Features**
 
