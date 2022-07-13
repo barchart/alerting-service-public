@@ -2309,36 +2309,41 @@ module.exports = (() => {
       });
       return newAlert;
     }
+    /**
+     * Given an array of property objects, returns the properties which are valid for
+     * use with a given symbol.
+     *
+     * @static
+     * @ignore
+     * @param {Array<Object>} properties
+     * @param {String} symbol
+     * @param {Number=} target
+     * @returns {Promise<Array<Object>>}
+     */
 
-    static getPropertiesForFilter(properties, target, symbol) {
+
+    static filterPropertiesForSymbol(properties, symbol, target) {
       return Promise.resolve().then(() => {
-        let instrumentPromise = Promise.resolve(null);
-
-        if (is.string(symbol)) {
-          instrumentPromise = lookupInstrument(symbol).then(result => {
-            return result.instrument;
-          });
-        }
-
-        return instrumentPromise;
+        assert.argumentIsArray(properties, properties);
+        assert.argumentIsRequired(symbol, 'symbol', String);
+        assert.argumentIsOptional(target, 'target', Number);
+        return lookupInstrument(symbol).then(result => {
+          return result.instrument;
+        });
       }).then(instrument => {
         return properties.filter(property => {
-          let valid = true;
+          let valid = instrument !== null;
 
-          if (valid && is.number(target)) {
-            valid = property.target.target_id === target.target_id;
+          if (valid && instrument.symbolType === 12) {
+            valid = property.property_id > 0 && property.property_id < 9;
           }
 
-          if (valid && is.string(symbol)) {
-            valid = instrument !== null;
+          if (valid && instrument.symbolType === 34) {
+            valid = false;
+          }
 
-            if (valid && instrument.symbolType === 12) {
-              valid = property.property_id > 0 && property.property_id < 9;
-            }
-
-            if (valid && instrument.symbolType === 34) {
-              valid = false;
-            }
+          if (valid && is.number(target)) {
+            valid = property.target.target_id === target;
           }
 
           return valid;
@@ -2423,6 +2428,44 @@ module.exports = (() => {
 
     static getOperatorMap(operators) {
       return array.indexBy(operators, operator => operator.operator_id);
+    }
+    /**
+     * Given an array of template objects, returns the templates which are valid for
+     * use with a given symbol.
+     *
+     * @static
+     * @ignore
+     * @param {Array<Object>} templates
+     * @param {String} symbol
+     * @returns {Promise<Array<Object>>}
+     */
+
+
+    static filterTemplatesForSymbol(templates, symbol) {
+      return Promise.resolve().then(() => {
+        assert.argumentIsArray(templates, templates);
+        assert.argumentIsRequired(symbol, 'symbol', String);
+        return lookupInstrument(symbol).then(result => {
+          return result.instrument;
+        });
+      }).then(instrument => {
+        return templates.filter(template => {
+          let valid = instrument !== null;
+          const properties = template.conditions.map(condition => {
+            return condition.property.property_id;
+          });
+
+          if (valid && instrument.symbolType === 12) {
+            valid = properties.every(p => p > 0 && p < 9);
+          }
+
+          if (valid && instrument.symbolType === 34) {
+            valid = false;
+          }
+
+          return valid;
+        });
+      });
     }
     /**
      * Returns the version of the SDK.
@@ -4656,7 +4699,7 @@ module.exports = (() => {
   'use strict';
 
   return {
-    version: '4.14.0'
+    version: '4.15.0'
   };
 })();
 
