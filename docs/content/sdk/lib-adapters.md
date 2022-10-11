@@ -37,7 +37,7 @@
         * *[.secure](#AdapterBasesecure) ⇒ <code>String</code>*
         * *[.connect(jwtProvider)](#AdapterBaseconnect) ⇒ [<code>Promise.&lt;AdapterBase&gt;</code>](#AdapterBase)*
     * _constructor_
-        * *[new AdapterBase(host, port, secure, onAlertCreated, onAlertMutated, onAlertDeleted, onAlertTriggered, [onTriggersCreated], [onTriggersMutated], [onTriggersDeleted], [onTemplateCreated], [onTemplateMutated], [onTemplateDeleted])](#new_AdapterBase_new)*
+        * *[new AdapterBase(host, port, secure, onAlertCreated, onAlertMutated, onAlertDeleted, onAlertTriggered, [onTriggersCreated], [onTriggersMutated], [onTriggersDeleted], [onTemplateCreated], [onTemplateMutated], [onTemplateDeleted], [onConnectionStatusChanged])](#new_AdapterBase_new)*
 
 
 * * *
@@ -83,7 +83,7 @@
 
 * * *
 
-### new AdapterBase(host, port, secure, onAlertCreated, onAlertMutated, onAlertDeleted, onAlertTriggered, [onTriggersCreated], [onTriggersMutated], [onTriggersDeleted], [onTemplateCreated], [onTemplateMutated], [onTemplateDeleted]) :id=new_adapterbase_new
+### new AdapterBase(host, port, secure, onAlertCreated, onAlertMutated, onAlertDeleted, onAlertTriggered, [onTriggersCreated], [onTriggersMutated], [onTriggersDeleted], [onTemplateCreated], [onTemplateMutated], [onTemplateDeleted], [onConnectionStatusChanged]) :id=new_adapterbase_new
 **Kind**: constructor of [<code>AdapterBase</code>](#AdapterBase)  
 
 | Param | Type |
@@ -101,6 +101,7 @@
 | [onTemplateCreated] | [<code>Callbacks.TemplateCreatedCallback</code>](/content/sdk/lib-callbacks?id=callbackstemplatecreatedcallback) | 
 | [onTemplateMutated] | [<code>Callbacks.TemplateMutatedCallback</code>](/content/sdk/lib-callbacks?id=callbackstemplatemutatedcallback) | 
 | [onTemplateDeleted] | [<code>Callbacks.TemplateDeletedCallback</code>](/content/sdk/lib-callbacks?id=callbackstemplatedeletedcallback) | 
+| [onConnectionStatusChanged] | [<code>Callbacks.ConnectionStatusChangedCallback</code>](/content/sdk/lib-callbacks?id=callbacksconnectionstatuschangedcallback) | 
 
 
 * * *

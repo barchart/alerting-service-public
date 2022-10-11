@@ -12,6 +12,7 @@
 * [AlertManager](#AlertManager) ⇐ <code>Disposable</code>
     * _instance_
         * [.connect(jwtProvider)](#AlertManagerconnect) ⇒ [<code>Promise.&lt;AlertManager&gt;</code>](#AlertManager)
+        * [.subscribeConnectionStatus(connectionStatusChangedCallback)](#AlertManagersubscribeConnectionStatus) ⇒ <code>Disposable</code>
         * [.retrieveAlert(alert)](#AlertManagerretrieveAlert) ⇒ [<code>Promise.&lt;Schema.Alert&gt;</code>](/content/sdk/lib-data?id=schemaalert)
         * [.retrieveAlerts(query)](#AlertManagerretrieveAlerts) ⇒ [<code>Promise.&lt;Array.&lt;Schema.Alert&gt;&gt;</code>](/content/sdk/lib-data?id=schemaalert)
         * [.subscribeAlerts(query, changeCallback, deleteCallback, createCallback, triggerCallback)](#AlertManagersubscribeAlerts) ⇒ <code>Disposable</code>
@@ -66,6 +67,23 @@
 | Param | Type | Description |
 | --- | --- | --- |
 | jwtProvider | [<code>JwtProvider</code>](/content/sdk/lib-security?id=jwtprovider) | <p>Your implementation of [JwtProvider](/content/sdk/lib-security?id=jwtprovider).</p> |
+
+
+* * *
+
+### alertManager.subscribeConnectionStatus(connectionStatusChangedCallback) :id=alertmanagersubscribeconnectionstatus
+> Registers a callback which will be invoked when the status of the
+> connection to the remote service changes. The callback will be invoked
+> with one of four possible values: connecting, connected, disconnecting,
+> disconnected.
+
+**Kind**: instance method of [<code>AlertManager</code>](#AlertManager)  
+**Returns**: <code>Disposable</code>  
+**Access**: public  
+
+| Param | Type |
+| --- | --- |
+| connectionStatusChangedCallback | [<code>Callbacks.ConnectionStatusChangedCallback</code>](/content/sdk/lib-callbacks?id=callbacksconnectionstatuschangedcallback) | 
 
 
 * * *

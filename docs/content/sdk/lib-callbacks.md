@@ -15,6 +15,7 @@
         * [.TemplateCreatedCallback](#CallbacksTemplateCreatedCallback) : <code>function</code>
         * [.TemplateMutatedCallback](#CallbacksTemplateMutatedCallback) : <code>function</code>
         * [.TemplateDeletedCallback](#CallbacksTemplateDeletedCallback) : <code>function</code>
+        * [.ConnectionStatusChangedCallback](#CallbacksConnectionStatusChangedCallback) : <code>function</code>
 
 
 * * *
@@ -156,6 +157,20 @@
 | Param | Type |
 | --- | --- |
 | template | [<code>Schema.Template</code>](/content/sdk/lib-data?id=schematemplate) | 
+
+
+* * *
+
+### Callbacks.ConnectionStatusChangedCallback :id=callbacksconnectionstatuschangedcallback
+> The function signature for a callback which is invoked the status
+> of the connection to the remote service changes.
+
+**Kind**: static typedef of [<code>Callbacks</code>](#Callbacks)  
+**Access**: public  
+
+| Param | Type |
+| --- | --- |
+| status | <code>String</code> | 
 
 
 * * *
