@@ -1297,6 +1297,10 @@ var reset = function(host, system, userId, mode) {
 				var jwtGenerator = getJwtGenerator(userId, system);
 				var jwtProvider = new JwtProvider(jwtGenerator, 60000);
 
+				alertManager.subscribeConnectionStatus(function(status) {
+					console.log('Connection status changed to [', status, ']');
+				});
+
 				initializePromise = alertManager.connect(jwtProvider)
 					.then(function() {
 						if (!(system === 'barchart.com' || system === 'grains.com' || system === 'webstation.barchart.com' || system === 'gos.agricharts.com' || system === 'gbemembers.com' || system === 'cmdtymarketplace.com' || system === 'theglobeandmail.com')) {
