@@ -69,7 +69,7 @@ User preferences are stored as [```PublisherTypeDefault```](/content/sdk/lib-dat
 The following information is conveyed:
 
 * Send text messages to 312-867-5309, by default.
-* Do not send any messages between the hours of 10:00 PM and 06:00 PM (Chicago time).
+* Do not send any messages between the hours of 10:00 PM and 06:00 AM (Chicago time).
 * Notifications for _price_ and _news_ alerts should be sent via text message, by default.
 
 #### Using the SDK
