@@ -927,8 +927,14 @@ function AlertPublisherTypeDefaultsModel(publisherTypeDefaults) {
         alertManager.getPublisherTypeDefaults({
           user_id: currentUserId,
           alert_system: currentSystem
-        }).then(function (pt) {
-          publisherTypes(pt);
+        }).then(function (saved) {
+          _.forEach(saved, function (s) {
+            _.forEach(that.publisherTypeDefaults(), function (m) {
+              if (s.publisher_type_id === m.publisherTypeId()) {
+                m.update(s);
+              }
+            });
+          });
           that.processing(false);
         });
       }
@@ -961,7 +967,13 @@ function AlertPublisherTypeDefaultsModel(publisherTypeDefaults) {
           if (_.isString(hmac) && hmac.length > 0) {
             ptd.default_recipient_hmac = hmac;
           }
-          alertManager.assignPublisherTypeDefault(ptd).then(function (savedPublisherTypeDefault) {
+          var actionPromise;
+          if (ptd.default_recipient) {
+            actionPromise = alertManager.assignPublisherTypeDefault(ptd);
+          } else {
+            actionPromise = alertManager.deletePublisherTypeDefault(ptd);
+          }
+          actionPromise.then(function (savedPublisherTypeDefault) {
             checkComplete();
           });
         } else {
@@ -973,22 +985,33 @@ function AlertPublisherTypeDefaultsModel(publisherTypeDefaults) {
 }
 function AlertPublisherTypeDefaultModel(publisherTypeDefault, ready) {
   var that = this;
-  that.ready = ready;
-  that.timezones = ko.observable(timezone.getTimezones());
   that.publisherTypeId = ko.observable(publisherTypeDefault.publisher_type_id);
   that.transport = ko.observable(publisherTypeDefault.transport);
   that.provider = ko.observable(publisherTypeDefault.provider);
-  that.defaultRecipient = ko.observable(publisherTypeDefault.default_recipient);
-  that.defaultRecipientHmac = ko.observable(publisherTypeDefault.default_recipient_hmac);
-  that.allowTimezone = ko.observable(publisherTypeDefault.allow_window_timezone || timezone.guessTimezone());
-  that.allowStartTime = ko.observable(publisherTypeDefault.allow_window_start);
-  that.allowEndTime = ko.observable(publisherTypeDefault.allow_window_end);
-  that.priceActive = ko.observable(_.includes(publisherTypeDefault.active_alert_types, 'price'));
-  that.newsActive = ko.observable(_.includes(publisherTypeDefault.active_alert_types, 'news'));
-  that.matchActive = ko.observable(_.includes(publisherTypeDefault.active_alert_types, 'match'));
+  that.defaultRecipient = ko.observable();
+  that.defaultRecipientHmac = ko.observable();
+  that.allowTimezone = ko.observable();
+  that.allowStartTime = ko.observable();
+  that.allowEndTime = ko.observable();
+  that.priceActive = ko.observable();
+  that.newsActive = ko.observable();
+  that.matchActive = ko.observable();
+  that.update = function (ptd) {
+    that.defaultRecipient(ptd.default_recipient);
+    that.defaultRecipientHmac(ptd.default_recipient_hmac);
+    that.allowTimezone(ptd.allow_window_timezone || timezone.guessTimezone());
+    that.allowStartTime(ptd.allow_window_start);
+    that.allowEndTime(ptd.allow_window_end);
+    that.priceActive(_.includes(ptd.active_alert_types, 'price'));
+    that.newsActive(_.includes(ptd.active_alert_types, 'news'));
+    that.matchActive(_.includes(ptd.active_alert_types, 'match'));
+  };
   that.selectTimezone = function (timezone) {
     that.allowTimezone(timezone);
   };
+  that.ready = ready;
+  that.timezones = ko.observable(timezone.getTimezones());
+  that.update(publisherTypeDefault);
 }
 function MarketDataConfigurationModel(mdc) {
   var that = this;
@@ -1961,6 +1984,27 @@ module.exports = (() => {
         return this._adapter.assignPublisherTypeDefault(publisherTypeDefault);
       });
     }
+
+    /**
+     * Removes a user's notification preferences for a single notification strategy (e.g. email
+     * or text message).
+     *
+     * @public
+     * @param {Schema.PublisherTypeDefault} publisherTypeDefault
+     * @returns {Promise<Schema.PublisherTypeDefault>}
+     */
+    deletePublisherTypeDefault(publisherTypeDefault) {
+      return Promise.resolve().then(() => {
+        checkStatus(this, 'clear publisher type default');
+        validate.publisherTypeDefault.forClear(publisherTypeDefault);
+      }).then(() => {
+        const payload = {};
+        payload.user_id = publisherTypeDefault.user_id;
+        payload.alert_system = publisherTypeDefault.alert_system;
+        payload.publisher_type_id = publisherTypeDefault.publisher_type_id;
+        return this._adapter.deletePublisherTypeDefault(payload);
+      });
+    }
     getMarketDataConfiguration(query) {
       return Promise.resolve().then(() => {
         checkStatus(this, 'get market data configuration');
@@ -2628,6 +2672,9 @@ module.exports = (() => {
     assignPublisherTypeDefault(publisherTypeDefault) {
       return null;
     }
+    deletePublisherTypeDefault(publisherTypeDefault) {
+      return null;
+    }
     getMarketDataConfiguration(query) {
       return null;
     }
@@ -2756,6 +2803,9 @@ module.exports = (() => {
         pb.withLiteralParameter('alert', 'alert').withLiteralParameter('publishers', 'publishers').withLiteralParameter('default', 'default').withVariableParameter('alert_system', 'alert_system', 'alert_system').withVariableParameter('user_id', 'user_id', 'user_id');
       }).withRequestInterceptor(requestInterceptor).withResponseInterceptor(ResponseInterceptor.DATA).withErrorInterceptor(ErrorInterceptor.GENERAL).endpoint;
       this._assignPublisherTypeDefaultEndpoint = EndpointBuilder.for('assign-publisher-type-default', 'Assign default publisher type').withVerb(VerbType.PUT).withProtocol(protocolType).withHost(host).withPort(port).withPathBuilder(pb => {
+        pb.withLiteralParameter('alert', 'alert').withLiteralParameter('publishers', 'publishers').withLiteralParameter('default', 'default').withVariableParameter('alert_system', 'alert_system', 'alert_system').withVariableParameter('user_id', 'user_id', 'user_id').withVariableParameter('publisher_type_id', 'publisher_type_id', 'publisher_type_id');
+      }).withBody().withRequestInterceptor(requestInterceptor).withResponseInterceptor(ResponseInterceptor.DATA).withErrorInterceptor(ErrorInterceptor.GENERAL).endpoint;
+      this._deletePublisherTypeDefaultEndpoint = EndpointBuilder.for('delete-publisher-type-default', 'Clear default publisher type').withVerb(VerbType.DELETE).withProtocol(protocolType).withHost(host).withPort(port).withPathBuilder(pb => {
         pb.withLiteralParameter('alert', 'alert').withLiteralParameter('publishers', 'publishers').withLiteralParameter('default', 'default').withVariableParameter('alert_system', 'alert_system', 'alert_system').withVariableParameter('user_id', 'user_id', 'user_id').withVariableParameter('publisher_type_id', 'publisher_type_id', 'publisher_type_id');
       }).withBody().withRequestInterceptor(requestInterceptor).withResponseInterceptor(ResponseInterceptor.DATA).withErrorInterceptor(ErrorInterceptor.GENERAL).endpoint;
       this._retrieveMarketDataConfigurationEndpoint = EndpointBuilder.for('get-market-data-configuration', 'Get market data configuration').withVerb(VerbType.GET).withProtocol(protocolType).withHost(host).withPort(port).withPathBuilder(pb => {
@@ -2918,6 +2968,9 @@ module.exports = (() => {
     }
     assignPublisherTypeDefault(publisherTypeDefault) {
       return Gateway.invoke(this._assignPublisherTypeDefaultEndpoint, publisherTypeDefault);
+    }
+    deletePublisherTypeDefault(publisherTypeDefault) {
+      return Gateway.invoke(this._deletePublisherTypeDefaultEndpoint, publisherTypeDefault);
     }
     getMarketDataConfiguration(query) {
       return Gateway.invoke(this._retrieveMarketDataConfigurationEndpoint, query);
@@ -3476,6 +3529,9 @@ module.exports = (() => {
     assignPublisherTypeDefault(publisherTypeDefault) {
       return sendRequestToServer.call(this, 'alert/publishers/default/update', publisherTypeDefault, true);
     }
+    deletePublisherTypeDefault(publisherTypeDefault) {
+      return sendRequestToServer.call(this, 'alert/publishers/default/delete', publisherTypeDefault, true);
+    }
     getMarketDataConfiguration(query) {
       return sendRequestToServer.call(this, 'alert/market/configuration/retrieve', query, true);
     }
@@ -3916,7 +3972,8 @@ module.exports = (() => {
     forCreate: (publisherTypeDefault, description) => {
       const ptd = publisherTypeDefault;
       const d = getDescription(description);
-      assert.argumentIsRequired(ptd, d, Object);
+      validator.forUser(ptd, description);
+      assert.argumentIsRequired(ptd.publisher_type_id, `${d}.publisher_type_id`, Number);
       assert.argumentIsOptional(ptd.allow_window_timezone, `${d}.allow_window_timezone`, String);
       assert.argumentIsOptional(ptd.allow_window_start, `${d}.allow_window_start`, String);
       assert.argumentIsOptional(ptd.allow_window_end, `${d}.allow_window_end`, String);
@@ -3932,6 +3989,12 @@ module.exports = (() => {
       if (ptd.active_alert_types) {
         assert.argumentIsArray(ptd.active_alert_types, `${d}.active_alert_types`, String);
       }
+    },
+    forClear: (publisherTypeDefault, description) => {
+      const ptd = publisherTypeDefault;
+      const d = getDescription(description);
+      validator.forUser(ptd, description);
+      assert.argumentIsRequired(ptd.publisher_type_id, `${d}.publisher_type_id`, Number);
     },
     forUser: (publisherTypeDefault, description) => {
       const ptd = publisherTypeDefault;
@@ -4108,7 +4171,7 @@ module.exports = (() => {
   'use strict';
 
   return {
-    version: '4.16.0'
+    version: '4.17.0'
   };
 })();
 
