@@ -1146,8 +1146,15 @@ function AlertPublisherTypeDefaultsModel(publisherTypeDefaults) {
 
 			if (publishersToSave === 0) {
 				alertManager.getPublisherTypeDefaults({ user_id: currentUserId, alert_system: currentSystem })
-					.then(function(pt) {
-						publisherTypes(pt);
+					.then(function(saved) {
+
+						_.forEach(saved, function(s) {
+							_.forEach(that.publisherTypeDefaults(), function(m) {
+								if (s.publisher_type_id === m.publisherTypeId()) {
+									m.update(s);
+								}
+							});
+						});
 
 						that.processing(false);
 					});
@@ -1190,10 +1197,17 @@ function AlertPublisherTypeDefaultsModel(publisherTypeDefaults) {
 						ptd.default_recipient_hmac = hmac;
 					}
 
-					alertManager.assignPublisherTypeDefault(ptd)
-						.then(function(savedPublisherTypeDefault) {
-							checkComplete();
-						});
+					var actionPromise;
+
+					if (ptd.default_recipient) {
+						actionPromise = alertManager.assignPublisherTypeDefault(ptd);
+					} else {
+						actionPromise = alertManager.deletePublisherTypeDefault(ptd);
+					}
+
+					actionPromise.then(function(savedPublisherTypeDefault) {
+						checkComplete();
+					});
 				} else {
 					checkComplete();
 				}
@@ -1204,25 +1218,39 @@ function AlertPublisherTypeDefaultsModel(publisherTypeDefaults) {
 function AlertPublisherTypeDefaultModel(publisherTypeDefault, ready) {
 	var that = this;
 
-	that.ready = ready;
-
-	that.timezones = ko.observable(timezone.getTimezones());
-
 	that.publisherTypeId = ko.observable(publisherTypeDefault.publisher_type_id);
 	that.transport = ko.observable(publisherTypeDefault.transport);
 	that.provider = ko.observable(publisherTypeDefault.provider);
-	that.defaultRecipient = ko.observable(publisherTypeDefault.default_recipient);
-	that.defaultRecipientHmac = ko.observable(publisherTypeDefault.default_recipient_hmac);
-	that.allowTimezone = ko.observable(publisherTypeDefault.allow_window_timezone || timezone.guessTimezone());
-	that.allowStartTime = ko.observable(publisherTypeDefault.allow_window_start);
-	that.allowEndTime = ko.observable(publisherTypeDefault.allow_window_end);
-	that.priceActive = ko.observable(_.includes(publisherTypeDefault.active_alert_types, 'price'));
-	that.newsActive = ko.observable(_.includes(publisherTypeDefault.active_alert_types, 'news'));
-	that.matchActive = ko.observable(_.includes(publisherTypeDefault.active_alert_types, 'match'));
+
+	that.defaultRecipient = ko.observable();
+	that.defaultRecipientHmac = ko.observable();
+	that.allowTimezone = ko.observable();
+	that.allowStartTime = ko.observable();
+	that.allowEndTime = ko.observable();
+	that.priceActive = ko.observable();
+	that.newsActive = ko.observable();
+	that.matchActive = ko.observable();
+
+	that.update = function(ptd) {
+		that.defaultRecipient(ptd.default_recipient);
+		that.defaultRecipientHmac(ptd.default_recipient_hmac);
+		that.allowTimezone(ptd.allow_window_timezone || timezone.guessTimezone());
+		that.allowStartTime(ptd.allow_window_start);
+		that.allowEndTime(ptd.allow_window_end);
+		that.priceActive(_.includes(ptd.active_alert_types, 'price'));
+		that.newsActive(_.includes(ptd.active_alert_types, 'news'));
+		that.matchActive(_.includes(ptd.active_alert_types, 'match'));
+	};
 
 	that.selectTimezone = function(timezone) {
 		that.allowTimezone(timezone);
 	};
+
+	that.ready = ready;
+
+	that.timezones = ko.observable(timezone.getTimezones());
+
+	that.update(publisherTypeDefault);
 }
 function MarketDataConfigurationModel(mdc) {
 	var that = this;
