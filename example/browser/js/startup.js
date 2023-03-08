@@ -1306,6 +1306,10 @@ var reset = function(host, system, userId, mode) {
 			}
 
 			if (host) {
+				if (system) {
+					AlertManager.configureSymbolLookup(system);
+				}
+
 				alertManager = new AlertManager(host, port, secure, adapterClazz);
 			} else {
 				alertManager = null;
