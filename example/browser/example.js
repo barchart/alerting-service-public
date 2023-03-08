@@ -1056,6 +1056,9 @@ var reset = function (host, system, userId, mode) {
       adapterClazz = AdapterForHttp;
     }
     if (host) {
+      if (system) {
+        AlertManager.configureSymbolLookup(system);
+      }
       alertManager = new AlertManager(host, port, secure, adapterClazz);
     } else {
       alertManager = null;
@@ -1227,10 +1230,8 @@ const version = require('./meta').version;
 module.exports = (() => {
   'use strict';
 
-  const regex = {};
-  regex.hosts = {};
-  regex.hosts.production = /(prod)/i;
   const DEFAULT_SECURE_PORT = 443;
+  let defaultAlertSystem = null;
 
   /**
    * The **central component of the SDK**, responsible for connecting to Barchart's Alerting
@@ -1457,7 +1458,7 @@ module.exports = (() => {
           if (property.target.type === 'symbol') {
             const symbol = c.property.target.identifier;
             if (!map.hasOwnProperty(symbol)) {
-              map[symbol] = lookupInstrument(symbol);
+              map[symbol] = lookupInstrument(symbol, alert.alert_system);
             }
           }
           return map;
@@ -1881,7 +1882,7 @@ module.exports = (() => {
     checkSymbol(symbol) {
       return Promise.resolve().then(() => {
         checkStatus(this, 'check symbol');
-        return lookupInstrument(symbol);
+        return lookupInstrument(symbol, defaultAlertSystem || null);
       }).then(result => {
         validate.instrument.forCreate(symbol, result.instrument);
         return result.instrument.symbol;
@@ -2050,6 +2051,19 @@ module.exports = (() => {
     }
 
     /**
+     * Some factors may affect whether alerts for given symbols are allowed. One of
+     * those factors is the user's domain. Use of this function may alter the results
+     * of other functions (e.g. {@link AlertManager#checkSymbol}).
+     *
+     * @public
+     * @param {String} alertSystem
+     */
+    static configureSymbolLookup(alertSystem) {
+      assert.argumentIsRequired(alertSystem, 'alertSystem', String);
+      defaultAlertSystem = alertSystem;
+    }
+
+    /**
      * Creates an alert object from template and symbol identifier.
      *
      * @public
@@ -2104,7 +2118,7 @@ module.exports = (() => {
         assert.argumentIsArray(properties, properties);
         assert.argumentIsRequired(symbol, 'symbol', String);
         assert.argumentIsOptional(target, 'target', Number);
-        return lookupInstrument(symbol).then(result => {
+        return lookupInstrument(symbol, defaultAlertSystem || null).then(result => {
           return result.instrument;
         });
       }).then(instrument => {
@@ -2201,7 +2215,7 @@ module.exports = (() => {
       return Promise.resolve().then(() => {
         assert.argumentIsArray(templates, templates);
         assert.argumentIsRequired(symbol, 'symbol', String);
-        return lookupInstrument(symbol).then(result => {
+        return lookupInstrument(symbol, defaultAlertSystem || null).then(result => {
           return result.instrument;
         });
       }).then(instrument => {
@@ -2481,11 +2495,24 @@ module.exports = (() => {
   function cloneAlert(alert) {
     return alert;
   }
-  const instrumentLookupEndpoint = EndpointBuilder.for('lookup-instrument', 'lookup instrument').withVerb(VerbType.GET).withProtocol(ProtocolType.HTTPS).withHost('instruments-prod.aws.barchart.com').withPort(DEFAULT_SECURE_PORT).withPathBuilder(pb => {
-    pb.withLiteralParameter('instruments', 'instruments').withVariableParameter('symbol', 'symbol', 'symbol');
-  }).withResponseInterceptor(ResponseInterceptor.DATA).withErrorInterceptor(ErrorInterceptor.GENERAL).endpoint;
-  function lookupInstrument(symbol) {
-    return Gateway.invoke(instrumentLookupEndpoint, {
+  function buildInstrumentLookupEndpoint(host) {
+    return EndpointBuilder.for('lookup-instrument', 'lookup instrument').withVerb(VerbType.GET).withProtocol(ProtocolType.HTTPS).withHost(host).withPort(DEFAULT_SECURE_PORT).withPathBuilder(pb => {
+      pb.withLiteralParameter('instruments', 'instruments').withVariableParameter('symbol', 'symbol', 'symbol');
+    }).withResponseInterceptor(ResponseInterceptor.DATA).withErrorInterceptor(ErrorInterceptor.GENERAL).endpoint;
+  }
+  const instrumentLookupEndpoints = new Map();
+  function lookupInstrument(symbol, alertSystem) {
+    let host;
+    if (is.string(alertSystem) && (alertSystem === 'webstation.barchart.com' || alertSystem === 'webstation')) {
+      host = 'instruments-cmdtyview.aws.barchart.com';
+    } else {
+      host = 'instruments-prod.aws.barchart.com';
+    }
+    if (!instrumentLookupEndpoints.has(host)) {
+      instrumentLookupEndpoints.set(host, buildInstrumentLookupEndpoint(host));
+    }
+    const endpoint = instrumentLookupEndpoints.get(host);
+    return Gateway.invoke(endpoint, {
       symbol
     });
   }
@@ -4171,7 +4198,7 @@ module.exports = (() => {
   'use strict';
 
   return {
-    version: '4.17.0'
+    version: '4.18.0'
   };
 })();
 
