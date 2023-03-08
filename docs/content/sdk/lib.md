@@ -45,6 +45,7 @@
         * [.getUser()](#AlertManagergetUser) ⇒ [<code>Promise.&lt;Schema.UserIdentifier&gt;</code>](/content/sdk/lib-data?id=schemauseridentifier)
     * _static_
         * [.version](#AlertManagerversion) ⇒ <code>String</code>
+        * [.configureSymbolLookup(alertSystem)](#AlertManagerconfigureSymbolLookup)
         * [.createAlertFromTemplate(template, symbol, [alert])](#AlertManagercreateAlertFromTemplate) ⇒ [<code>Promise.&lt;Schema.Alert&gt;</code>](/content/sdk/lib-data?id=schemaalert)
         * [.forStaging(jwtProvider, adapterClazz)](#AlertManagerforStaging) ⇒ [<code>Promise.&lt;AlertManager&gt;</code>](#AlertManager)
         * [.forProduction(jwtProvider, adapterClazz)](#AlertManagerforProduction) ⇒ [<code>Promise.&lt;AlertManager&gt;</code>](#AlertManager)
@@ -534,6 +535,21 @@
 **Kind**: static property of [<code>AlertManager</code>](#AlertManager)  
 **Returns**: <code>String</code>  
 **Access**: public  
+
+* * *
+
+### AlertManager.configureSymbolLookup(alertSystem) :id=alertmanagerconfiguresymbollookup
+> Some factors may affect whether alerts for given symbols are allowed. One of
+> those factors is the user's domain. Use of this function may alter the results
+> of other functions (e.g. [checkSymbol](#alertmanagerchecksymbol)).
+
+**Kind**: static method of [<code>AlertManager</code>](#AlertManager)  
+**Access**: public  
+
+| Param | Type |
+| --- | --- |
+| alertSystem | <code>String</code> | 
+
 
 * * *
 

@@ -1,5 +1,23 @@
 # Release Notes
 
+## 4.18.0
+**New Features**
+
+* Added `AlertManager.configureSymbolLookup` to allow symbol validation, based on the user's domain.
+
+## 4.17.0
+**New Features**
+
+* Added `AlertManager.deletePublisherTypeDefault` function.
+
+**Bug Fixes**
+
+* Corrected validation logic for `PublisherTypeDefault` object creation.
+
+**Other**
+
+* Fixed failure of example page to properly update UI state after saving publisher settings.
+
 ## 4.16.0
 **New Features**
 
