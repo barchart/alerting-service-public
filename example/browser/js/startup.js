@@ -640,7 +640,7 @@ function AlertEntryModel(alert) {
 
 					return property.target.type === 'symbol';
 				}), function(condition) {
-					return alertManager.checkSymbol(condition.targetIdentifier())
+					return alertManager.checkSymbol(condition.targetIdentifier(), currentSystem)
 						.then((translatedSymbol) => {
 							const userSymbol = condition.targetIdentifier();
 
@@ -1306,10 +1306,6 @@ var reset = function(host, system, userId, mode) {
 			}
 
 			if (host) {
-				if (system) {
-					AlertManager.configureSymbolLookup(system);
-				}
-
 				alertManager = new AlertManager(host, port, secure, adapterClazz);
 			} else {
 				alertManager = null;
