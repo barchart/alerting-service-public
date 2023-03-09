@@ -1,9 +1,14 @@
 # Release Notes
 
+## 4.18.1
+**Other**
+
+* Removed the `AlertManager.configureSymbolLookup` function. Instead, to support variations in symbol validity, an `alertSystem` parameter was added to the `AlertManager.checkSymbol`, `AlertManager.filterPropertiesForSymbol`, and `AlertManager.filterTemplatesForSymbol` functions.
+
 ## 4.18.0
 **New Features**
 
-* Added `AlertManager.configureSymbolLookup` to allow symbol validation, based on the user's domain.
+* Added the `AlertManager.configureSymbolLookup` function, allowing symbol validation logic to vary, based on the user's domain.
 
 ## 4.17.0
 **New Features**

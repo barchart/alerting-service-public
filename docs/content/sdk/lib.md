@@ -33,7 +33,7 @@
         * [.updateTemplate(template)](#AlertManagerupdateTemplate) ⇒ [<code>Promise.&lt;Schema.Template&gt;</code>](/content/sdk/lib-data?id=schematemplate)
         * [.updateTemplateOrder(template)](#AlertManagerupdateTemplateOrder) ⇒ [<code>Promise.&lt;Array.&lt;Schema.Template&gt;&gt;</code>](/content/sdk/lib-data?id=schematemplate)
         * [.deleteTemplate(template)](#AlertManagerdeleteTemplate) ⇒ [<code>Promise.&lt;Schema.Template&gt;</code>](/content/sdk/lib-data?id=schematemplate)
-        * [.checkSymbol(symbol)](#AlertManagercheckSymbol) ⇒ <code>Promise.&lt;String&gt;</code>
+        * [.checkSymbol(symbol, [alertSystem])](#AlertManagercheckSymbol) ⇒ <code>Promise.&lt;String&gt;</code>
         * [.getTargets()](#AlertManagergetTargets) ⇒ [<code>Promise.&lt;Array.&lt;Schema.Target&gt;&gt;</code>](/content/sdk/lib-data?id=schematarget)
         * [.getProperties()](#AlertManagergetProperties) ⇒ [<code>Promise.&lt;Array.&lt;Schema.Property&gt;&gt;</code>](/content/sdk/lib-data?id=schemaproperty)
         * [.getOperators()](#AlertManagergetOperators) ⇒ [<code>Promise.&lt;Array.&lt;Schema.Operator&gt;&gt;</code>](/content/sdk/lib-data?id=schemaoperator)
@@ -45,7 +45,6 @@
         * [.getUser()](#AlertManagergetUser) ⇒ [<code>Promise.&lt;Schema.UserIdentifier&gt;</code>](/content/sdk/lib-data?id=schemauseridentifier)
     * _static_
         * [.version](#AlertManagerversion) ⇒ <code>String</code>
-        * [.configureSymbolLookup(alertSystem)](#AlertManagerconfigureSymbolLookup)
         * [.createAlertFromTemplate(template, symbol, [alert])](#AlertManagercreateAlertFromTemplate) ⇒ [<code>Promise.&lt;Schema.Alert&gt;</code>](/content/sdk/lib-data?id=schemaalert)
         * [.forStaging(jwtProvider, adapterClazz)](#AlertManagerforStaging) ⇒ [<code>Promise.&lt;AlertManager&gt;</code>](#AlertManager)
         * [.forProduction(jwtProvider, adapterClazz)](#AlertManagerforProduction) ⇒ [<code>Promise.&lt;AlertManager&gt;</code>](#AlertManager)
@@ -405,7 +404,7 @@
 
 * * *
 
-### alertManager.checkSymbol(symbol) :id=alertmanagerchecksymbol
+### alertManager.checkSymbol(symbol, [alertSystem]) :id=alertmanagerchecksymbol
 > When constructing alert conditions, we often refer to a stock by
 > its symbol. This function will validate the symbol before you
 > attempt to assign it to the <code>identifier</code> property of a
@@ -420,6 +419,7 @@
 | Param | Type | Description |
 | --- | --- | --- |
 | symbol | <code>String</code> | <p>The value intended to be assigned to the <code>property.target.identifier</code> attribute of a condition.</p> |
+| [alertSystem] | <code>String</code> | <p>The value intended to be assigned to the <code>alert.alert_system</code> attribute of an alert (some symbols are considered invalid given the user's domain).</p> |
 
 
 * * *
@@ -535,21 +535,6 @@
 **Kind**: static property of [<code>AlertManager</code>](#AlertManager)  
 **Returns**: <code>String</code>  
 **Access**: public  
-
-* * *
-
-### AlertManager.configureSymbolLookup(alertSystem) :id=alertmanagerconfiguresymbollookup
-> Some factors may affect whether alerts for given symbols are allowed. One of
-> those factors is the user's domain. Use of this function may alter the results
-> of other functions (e.g. [checkSymbol](#alertmanagerchecksymbol)).
-
-**Kind**: static method of [<code>AlertManager</code>](#AlertManager)  
-**Access**: public  
-
-| Param | Type |
-| --- | --- |
-| alertSystem | <code>String</code> | 
-
 
 * * *
 
