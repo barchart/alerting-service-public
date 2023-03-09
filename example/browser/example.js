@@ -532,7 +532,7 @@ function AlertEntryModel(alert) {
         var property = condition.property();
         return property.target.type === 'symbol';
       }), function (condition) {
-        return alertManager.checkSymbol(condition.targetIdentifier()).then(translatedSymbol => {
+        return alertManager.checkSymbol(condition.targetIdentifier(), currentSystem).then(translatedSymbol => {
           const userSymbol = condition.targetIdentifier();
           if (userSymbol !== translatedSymbol) {
             _.forEach(alert.conditions, function (condition) {
@@ -1056,9 +1056,6 @@ var reset = function (host, system, userId, mode) {
       adapterClazz = AdapterForHttp;
     }
     if (host) {
-      if (system) {
-        AlertManager.configureSymbolLookup(system);
-      }
       alertManager = new AlertManager(host, port, secure, adapterClazz);
     } else {
       alertManager = null;
@@ -1231,7 +1228,6 @@ module.exports = (() => {
   'use strict';
 
   const DEFAULT_SECURE_PORT = 443;
-  let defaultAlertSystem = null;
 
   /**
    * The **central component of the SDK**, responsible for connecting to Barchart's Alerting
@@ -1877,12 +1873,15 @@ module.exports = (() => {
      *
      * @public
      * @param {String} symbol - The value intended to be assigned to the `property.target.identifier` attribute of a condition.
+     * @param {String=} alertSystem - The value intended to be assigned to the `alert.alert_system` attribute of an alert (some symbols are considered invalid given the user's domain).
      * @returns {Promise<String>}
      */
-    checkSymbol(symbol) {
+    checkSymbol(symbol, alertSystem) {
       return Promise.resolve().then(() => {
         checkStatus(this, 'check symbol');
-        return lookupInstrument(symbol, defaultAlertSystem || null);
+        assert.argumentIsRequired(symbol, 'symbol', String);
+        assert.argumentIsOptional(alertSystem, 'alertSystem', String);
+        return lookupInstrument(symbol, alertSystem || null);
       }).then(result => {
         validate.instrument.forCreate(symbol, result.instrument);
         return result.instrument.symbol;
@@ -2051,19 +2050,6 @@ module.exports = (() => {
     }
 
     /**
-     * Some factors may affect whether alerts for given symbols are allowed. One of
-     * those factors is the user's domain. Use of this function may alter the results
-     * of other functions (e.g. {@link AlertManager#checkSymbol}).
-     *
-     * @public
-     * @param {String} alertSystem
-     */
-    static configureSymbolLookup(alertSystem) {
-      assert.argumentIsRequired(alertSystem, 'alertSystem', String);
-      defaultAlertSystem = alertSystem;
-    }
-
-    /**
      * Creates an alert object from template and symbol identifier.
      *
      * @public
@@ -2111,14 +2097,16 @@ module.exports = (() => {
      * @param {Array<Object>} properties
      * @param {String} symbol
      * @param {Number=} target
+     * @param {String=} alertSystem
      * @returns {Promise<Array<Object>>}
      */
-    static filterPropertiesForSymbol(properties, symbol, target) {
+    static filterPropertiesForSymbol(properties, symbol, target, alertSystem) {
       return Promise.resolve().then(() => {
         assert.argumentIsArray(properties, properties);
         assert.argumentIsRequired(symbol, 'symbol', String);
         assert.argumentIsOptional(target, 'target', Number);
-        return lookupInstrument(symbol, defaultAlertSystem || null).then(result => {
+        assert.argumentIsOptional(alertSystem, 'alertSystem', String);
+        return lookupInstrument(symbol, alertSystem || null).then(result => {
           return result.instrument;
         });
       }).then(instrument => {
@@ -2209,13 +2197,15 @@ module.exports = (() => {
      * @ignore
      * @param {Array<Object>} templates
      * @param {String} symbol
+     * @param {String=} alertSystem
      * @returns {Promise<Array<Object>>}
      */
-    static filterTemplatesForSymbol(templates, symbol) {
+    static filterTemplatesForSymbol(templates, symbol, alertSystem) {
       return Promise.resolve().then(() => {
         assert.argumentIsArray(templates, templates);
         assert.argumentIsRequired(symbol, 'symbol', String);
-        return lookupInstrument(symbol, defaultAlertSystem || null).then(result => {
+        assert.argumentIsOptional(alertSystem, 'alertSystem', String);
+        return lookupInstrument(symbol, alertSystem || null).then(result => {
           return result.instrument;
         });
       }).then(instrument => {
@@ -4198,7 +4188,7 @@ module.exports = (() => {
   'use strict';
 
   return {
-    version: '4.18.0'
+    version: '4.18.1'
   };
 })();
 
