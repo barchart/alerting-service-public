@@ -1,5 +1,10 @@
 # Release Notes
 
+## 4.18.2
+**Bug Fixes**
+
+* Updated the validation logic the `AlertManager.assignPublisherTypeDefault` function. The `default_recipient` attribute is now required.
+
 ## 4.18.1
 **Other**
 

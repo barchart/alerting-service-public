@@ -246,7 +246,7 @@
 | publisher_type_id | <code>Number</code> | <p>The identifier of the referenced [PublisherType](#schemapublishertype).</p> |
 | user_id | <code>String</code> | <p>The owner of the preference.</p> |
 | alert_system | <code>String</code> | <p>The domain of the user who owns the preference.</p> |
-| [default_recipient] | <code>String</code> | <p>Strategy-dependent routing instructions (e.g. a phone number or an email address).</p> |
+| default_recipient | <code>String</code> | <p>Strategy-dependent routing instructions (e.g. a phone number or an email address).</p> |
 | [allow_window_start] | <code>String</code> | <p>The time of day, formatted as HH:MM, to begin allowing notifications to be sent.</p> |
 | [allow_window_end] | <code>String</code> | <p>The time of day, formatted as HH:MM, to stop allowing notifications to be sent.</p> |
 | [allow_window_timezone] | <code>String</code> | <p>The timezone which applies to allow_window_start and allow_window_end.</p> |
