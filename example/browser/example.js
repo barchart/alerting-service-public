@@ -3991,6 +3991,7 @@ module.exports = (() => {
       const d = getDescription(description);
       validator.forUser(ptd, description);
       assert.argumentIsRequired(ptd.publisher_type_id, `${d}.publisher_type_id`, Number);
+      assert.argumentIsRequired(ptd.default_recipient, `${d}.default_recipient`, String);
       assert.argumentIsOptional(ptd.allow_window_timezone, `${d}.allow_window_timezone`, String);
       assert.argumentIsOptional(ptd.allow_window_start, `${d}.allow_window_start`, String);
       assert.argumentIsOptional(ptd.allow_window_end, `${d}.allow_window_end`, String);
@@ -4188,7 +4189,7 @@ module.exports = (() => {
   'use strict';
 
   return {
-    version: '4.18.1'
+    version: '4.18.2'
   };
 })();
 
