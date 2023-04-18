@@ -1,9 +1,19 @@
 # Release Notes
 
+## 4.18.3
+**Other**
+
+* Added explanation of `alert_behavior` options to documentation.
+
+**Technical Enhancements**
+
+* Updated example UI to support new Alert Behavior strategies.
+* Removed all references to deprecated `automatic_reset` attribute.
+
 ## 4.18.2
 **Bug Fixes**
 
-* Updated the validation logic the `AlertManager.assignPublisherTypeDefault` function. The `default_recipient` attribute is now required.
+* Updated validation logic for the `AlertManager.assignPublisherTypeDefault` function. The `default_recipient` attribute is now required.
 
 ## 4.18.1
 **Other**
