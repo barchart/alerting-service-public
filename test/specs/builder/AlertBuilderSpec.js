@@ -82,14 +82,6 @@ describe('When constructing a AlertBuilder', () => {
 		});
 	});
 
-	describe('and automatic_reset are set', () => {
-		it('automatic_reset should be true', () => {
-			const alert = alertBuilder.withAutomaticReset().build();
-
-			expect(alert.automatic_reset).toEqual(true);
-		});
-	});
-
 	describe('and alert_behavior are added', () => {
 		it('builder should have an alert_behavior field', () => {
 			const alertBehavior = 'schedule';
@@ -181,7 +173,6 @@ describe('When constructing a AlertBuilder', () => {
 				.withUserNotes(userNotes)
 				.withAlertType(type)
 				.withAlertBehavior(alertBehavior)
-				.withAutomaticReset()
 				.withConditionBuilder((cb) => {
 					cb.withPropertyBuilder((pb) => {
 						pb.withProperty('openPrice')

@@ -168,4 +168,9 @@ See the [Key Concepts: Configuring Notifications](/content/concepts/configuring_
 
 ## Using Advanced Features
 
-Coming soon.
+#### Adjusting Alert Behavior
+
+In general, after an alert has been started, it will remain active until (a) the alert's condition(s) are met; or (b) the alert is manually stopped. However, this workflow can be modified with the `alert_behavior` attribute.
+
+
+

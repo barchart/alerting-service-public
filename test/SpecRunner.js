@@ -17,7 +17,6 @@ module.exports = (() => {
       assert.argumentIsOptional(alert.user_notes, `${d}.user_notes`, String);
       assert.argumentIsOptional(alert.alert_system_key, `${d}.alert_system_key`, String);
       assert.argumentIsOptional(alert.alert_behavior, `${d}.alert_behavior`, String);
-      assert.argumentIsOptional(alert.automatic_reset, `${d}.automatic_reset`, Boolean);
       assert.argumentIsArray(alert.conditions, `${d}.conditions`, condition.forCreate);
       if (alert.hasOwnProperty('publishers')) {
         assert.argumentIsArray(alert.publishers, `${d}.publishers`, publisher.forCreate);

@@ -57,9 +57,6 @@ components:
         system_notes:
           type: object
           example: {}
-        automatic_reset:
-          type: boolean
-          example: true
         create_date:
           type: string
           example: "1453673000873"
@@ -458,9 +455,6 @@ paths:
                 user_notes:
                   type: string
                   example: "Time to buy Tesla Motors stock"
-                automatic_reset:
-                  type: boolean
-                  example: true
                 conditions:
                   type: array
                   items:

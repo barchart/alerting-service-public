@@ -475,12 +475,8 @@ function AlertEntryModel(alert) {
 	that.processing = ko.observable(false);
 	that.error = ko.observable(null);
 
-	that.alertBehaviors = ko.observable([ 'terminate', 'schedule', 'automatic' ]);
+	that.alertBehaviors = ko.observable([ 'continue', 'continue_daily', 'schedule', 'schedule_once', 'terminate' ]);
 	that.alertTypes = ko.observable([ 'none', 'news', 'price', 'match' ]);
-
-	that.automaticReset = ko.computed(function() {
-		return that.alertBehavior() === 'automatic';
-	});
 
 	that.showSchedules = ko.computed(function() {
 		return that.alertBehavior() === 'schedule';
@@ -539,7 +535,6 @@ function AlertEntryModel(alert) {
 			user_notes: that.userNotes() || null,
 			user_id: currentUserId,
 			alert_system: currentSystem,
-			automatic_reset: that.automaticReset(),
 			conditions: _.map(that.conditions(), function(condition) {
 				var property = condition.property();
 				var operator = condition.operator();
@@ -733,10 +728,6 @@ function AlertEntryModel(alert) {
 		that.name(alert.name);
 
 		var alertBehavior = alert.alert_behavior || 'terminate';
-
-		if (alertBehavior === 'terminate' && alert.automatic_reset) {
-			alertBehavior = 'automatic';
-		}
 
 		that.alertBehavior(alertBehavior);
 
