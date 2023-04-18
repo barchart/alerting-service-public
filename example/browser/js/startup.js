@@ -520,7 +520,7 @@ function AlertEntryModel(alert) {
 
 		var schedules;
 
-		if (alertBehavior === 'schedule') {
+		if (that.showSchedules()) {
 			schedules = _.map(that.schedules(), function(schedule) {
 				return {
 					time: schedule.time(),
