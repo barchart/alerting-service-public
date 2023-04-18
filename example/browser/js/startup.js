@@ -479,7 +479,9 @@ function AlertEntryModel(alert) {
 	that.alertTypes = ko.observable([ 'none', 'news', 'price', 'match' ]);
 
 	that.showSchedules = ko.computed(function() {
-		return that.alertBehavior() === 'schedule';
+		var ab = that.alertBehavior();
+
+		return ab === 'schedule' || ab === 'schedule_once';
 	});
 
 	that.clearAlert = function() {
