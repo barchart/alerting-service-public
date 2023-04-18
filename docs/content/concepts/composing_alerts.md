@@ -11,11 +11,10 @@ An _alert_ is our top-level object. Here is a visualization of an alert, showing
 ```text
 ├── Alert
 │   ├── Condition(s)
-│   │   ├── Property
-│   │   │   └── Target
-│   │   ├── Operator
-│   │   │   └── Operand
+│   │   ├── Condition 1 (required)
+│   │   ├── Condition 2 (optional)
 │   ├── Publisher(s)
+│   │   ├── Publisher 1 (optional)
 ```
 
 Every alert has at least one _condition_ which defines:
@@ -28,7 +27,7 @@ You can visualize the _condition_ for Apple stock reaching $600, as follows:
 
 ```text
 
-├── Condition 1:
+├── Condition:
 │   ├── Property: (Last Price)
 │   │   └── Target: (AAPL stock)
 │   ├── Operator: (Greater Than)
@@ -54,7 +53,7 @@ Here is an actual JSON object, representing an alert:
 			},
 			"operator": {
 				"operator_id": 2,
-				"operand": "600"
+				"operand": 600
 			}
 		}
 	],
@@ -170,7 +169,53 @@ See the [Key Concepts: Configuring Notifications](/content/concepts/configuring_
 
 #### Adjusting Alert Behavior
 
-In general, after an alert has been started, it will remain active until (a) the alert's condition(s) are met; or (b) the alert is manually stopped. However, this workflow can be modified with the `alert_behavior` attribute.
+The `alert_behavior` attribute is optional. However, the following values can be specified:
 
+* `continue`
+* `continue_daily`
+* `schedule`
+* `schedule_once`
+* `terminate`
 
+The `terminate` option describes the system's default behavior. Once the alert's conditions are met, notifications are sent and the alert stops.
 
+The `continue` and `continue_daily` options prevent the alert from stopping after its conditions are met. The `continue_daily` behavior prevents an alert from triggering more than once per day.
+
+The `schedule` and `schedule_once` options allow an alert to "sleep" until some point in the future. When the scheduled time arrives, the alert will "wake up" and evaluate its conditions. The `schedule_once` behavior will stop the alert if its conditions are met.
+
+When using the `schedule` and `schedule_once` options, a `schedules` attribute must be added to the alert, defining the days and times the alert should "wake up" and evaluate its conditions. Here is an example:
+
+```json
+{
+	"user_id": "me",
+	"alert_system": "barchart.com",
+	"name": "My Scheduled Alert",
+	"alert_behavior": "schedule",
+	"conditions": [
+		{
+			"property": {
+				"property_id": 1,
+				"target": {
+					"identifier": "AAPL"
+				}
+			},
+			"operator": {
+				"operator_id": 2,
+				"operand": 600
+			}
+		}
+	],
+	"schedules": [
+		{
+			"time": "08:00",
+			"day": "Monday",
+			"timezone": "America/Denver"
+		},
+		{
+			"time": "13:00",
+			"day": "Friday",
+			"timezone": "America/Denver"
+		}
+	]
+}
+```
