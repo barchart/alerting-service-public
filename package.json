@@ -1,6 +1,6 @@
 {
 	"name": "@barchart/alerts-client-js",
-	"version": "4.18.2",
+	"version": "4.18.3",
 	"description": "JavaScript SDK for Barchart Alert Service",
 	"author": {
 		"name": "Bryan Ingle",
