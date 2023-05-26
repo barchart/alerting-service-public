@@ -18,8 +18,8 @@
 	},
 	"keywords": [],
 	"dependencies": {
-		"@barchart/common-js": "^4.3.1",
-		"@barchart/marketdata-api-js": "^5.7.5",
+		"@barchart/common-js": "^4.28.0",
+		"@barchart/marketdata-api-js": "^6.0.2"
 		"jsonwebtoken": "^8.5.1",
 		"socket.io-client": "^2.3.0",
 		"uuid": "^8.3.2"
