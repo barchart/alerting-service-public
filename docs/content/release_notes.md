@@ -1,5 +1,11 @@
 # Release Notes
 
+## 4.18.4
+**Technical Enhancements**
+
+* Updated [`@barchart/marketdata-api-js`](https://github.com/barchart/marketdata-api-js) to the next major version.
+* Updated [`@barchart/common-js`](https://github.com/barchart/common-js) to the latest version.
+
 ## 4.18.3
 **Other**
 
