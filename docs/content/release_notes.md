@@ -1,5 +1,10 @@
 # Release Notes
 
+## 4.18.5
+**Technical Enhancements**
+
+* Removed unnecessary import from `JwtProvider` class.
+
 ## 4.18.4
 **Technical Enhancements**
 

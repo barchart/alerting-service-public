@@ -40,7 +40,6 @@
 | name | <code>String</code> | false | false |  |
 | user_notes | <code>String</code> | false | true |  |
 | system_notes | <code>Object</code> | false | false |  |
-| automatic_reset | <code>Boolean</code> | false | false |  |
 | create_date | <code>String</code> | false | false |  |
 | last_trigger_date | <code>String</code> | false | true |  |
 | last_start_date | <code>String</code> | false | true |  |
@@ -65,7 +64,6 @@
   "name": "Buy TSLA",
   "user_notes": "Time to buy Tesla Motors stock",
   "system_notes": {},
-  "automatic_reset": true,
   "create_date": "1453673000873",
   "last_trigger_date": "145367399999",
   "last_start_date": "145367399999",

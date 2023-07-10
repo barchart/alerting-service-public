@@ -52,7 +52,6 @@
 | alert_system | <code>String</code> | true | false |  |
 | alert_type | <code>String</code> | false | false |  |
 | user_notes | <code>String</code> | false | false |  |
-| automatic_reset | <code>Boolean</code> | false | false |  |
 | conditions | <code>Array&lt;object&gt;</code> | true | false |  |
 | conditions[i].property | <code>Object</code> | false | false |  |
 | conditions[i].property.property_id | <code>Integer</code> | false | false |  |
@@ -80,7 +79,6 @@
   "alert_system": "barchart.com",
   "alert_type": "price",
   "user_notes": "Time to buy Tesla Motors stock",
-  "automatic_reset": true,
   "conditions": [
     {
       "property": {
@@ -134,7 +132,6 @@
   "name": "Buy TSLA",
   "user_notes": "Time to buy Tesla Motors stock",
   "system_notes": {},
-  "automatic_reset": true,
   "create_date": "1453673000873",
   "last_trigger_date": "145367399999",
   "last_start_date": "145367399999",
@@ -318,7 +315,6 @@
   "name": "Buy TSLA",
   "user_notes": "Time to buy Tesla Motors stock",
   "system_notes": {},
-  "automatic_reset": true,
   "create_date": "1453673000873",
   "last_trigger_date": "145367399999",
   "last_start_date": "145367399999",
@@ -498,7 +494,6 @@
   "name": "Buy TSLA",
   "user_notes": "Time to buy Tesla Motors stock",
   "system_notes": {},
-  "automatic_reset": true,
   "create_date": "1453673000873",
   "last_trigger_date": "145367399999",
   "last_start_date": "145367399999",
@@ -698,7 +693,6 @@
   "name": "Buy TSLA",
   "user_notes": "Time to buy Tesla Motors stock",
   "system_notes": {},
-  "automatic_reset": true,
   "create_date": "1453673000873",
   "last_trigger_date": "145367399999",
   "last_start_date": "145367399999",
@@ -902,7 +896,6 @@
     "name": "Buy TSLA",
     "user_notes": "Time to buy Tesla Motors stock",
     "system_notes": {},
-    "automatic_reset": true,
     "create_date": "1453673000873",
     "last_trigger_date": "145367399999",
     "last_start_date": "145367399999",
@@ -1107,7 +1100,6 @@
     "name": "Buy TSLA",
     "user_notes": "Time to buy Tesla Motors stock",
     "system_notes": {},
-    "automatic_reset": true,
     "create_date": "1453673000873",
     "last_trigger_date": "145367399999",
     "last_start_date": "145367399999",
@@ -1291,7 +1283,6 @@
     "name": "Buy TSLA",
     "user_notes": "Time to buy Tesla Motors stock",
     "system_notes": {},
-    "automatic_reset": true,
     "create_date": "1453673000873",
     "last_trigger_date": "145367399999",
     "last_start_date": "145367399999",
@@ -1778,7 +1769,6 @@
   "name": "Buy TSLA",
   "user_notes": "Time to buy Tesla Motors stock",
   "system_notes": {},
-  "automatic_reset": true,
   "create_date": "1453673000873",
   "last_trigger_date": "145367399999",
   "last_start_date": "145367399999",
