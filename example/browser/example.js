@@ -4182,7 +4182,7 @@ module.exports = (() => {
   'use strict';
 
   return {
-    version: '4.18.4'
+    version: '4.18.5'
   };
 })();
 
@@ -4261,7 +4261,6 @@ const EndpointBuilder = require('@barchart/common-js/api/http/builders/EndpointB
   ProtocolType = require('@barchart/common-js/api/http/definitions/ProtocolType'),
   ResponseInterceptor = require('@barchart/common-js/api/http/interceptors/ResponseInterceptor'),
   VerbType = require('@barchart/common-js/api/http/definitions/VerbType');
-const getJwtGeneratorForDemo = require('./demo/getJwtGenerator');
 const Configuration = require('../common/Configuration');
 module.exports = (() => {
   'use strict';
@@ -4427,7 +4426,7 @@ module.exports = (() => {
   return JwtProvider;
 })();
 
-},{"../common/Configuration":6,"./demo/getJwtGenerator":19,"@barchart/common-js/api/http/Gateway":23,"@barchart/common-js/api/http/builders/EndpointBuilder":25,"@barchart/common-js/api/http/definitions/ProtocolType":31,"@barchart/common-js/api/http/definitions/VerbType":32,"@barchart/common-js/api/http/interceptors/ResponseInterceptor":38,"@barchart/common-js/lang/Disposable":47,"@barchart/common-js/lang/assert":52,"@barchart/common-js/lang/is":55,"@barchart/common-js/lang/random":58,"@barchart/common-js/timing/Scheduler":65}],19:[function(require,module,exports){
+},{"../common/Configuration":6,"@barchart/common-js/api/http/Gateway":23,"@barchart/common-js/api/http/builders/EndpointBuilder":25,"@barchart/common-js/api/http/definitions/ProtocolType":31,"@barchart/common-js/api/http/definitions/VerbType":32,"@barchart/common-js/api/http/interceptors/ResponseInterceptor":38,"@barchart/common-js/lang/Disposable":47,"@barchart/common-js/lang/assert":52,"@barchart/common-js/lang/is":55,"@barchart/common-js/lang/random":58,"@barchart/common-js/timing/Scheduler":65}],19:[function(require,module,exports){
 const JwtPayload = require('./../JwtPayload');
 const EndpointBuilder = require('@barchart/common-js/api/http/builders/EndpointBuilder'),
   Gateway = require('@barchart/common-js/api/http/Gateway'),
