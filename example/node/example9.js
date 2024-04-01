@@ -151,7 +151,7 @@ alertManager.connect(jwtProvider)
 			}).then((context) => {
 				logger.info(`Example: Filtering templates properties for symbol [ ${symbol} ]`);
 
-				return AlertManager.filterTemplatesForSymbol(context.templates, symbol, 1)
+				return AlertManager.filterTemplatesForSymbol(context.templates, symbol, alert_system)
 					.then((filtered) => {
 						logger.info(`Example: [ ${filtered.length} ] of [ ${context.templates.length} ] templates are valid for [ ${symbol} ]`);
 

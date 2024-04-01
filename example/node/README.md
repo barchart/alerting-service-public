@@ -9,6 +9,12 @@ Three Node.js scripts which use this SDK to interact with the Barchart Alerting 
 * example.js — Instantiates an `AlertManager` and uses it to retrieves a list of alerts owned by a specific user. 
 * example2.js — Instantiates an `AlertManager` and uses it to create a new alert.
 * example3.js — Instantiates an `AlertManager` and uses it to list, create, and delete an alert template.
+* example4.js — Instantiates an `AlertManager` and uses it to set ordering for templates (with hardcoded identifiers).
+* example5.js — Instantiates an `AlertManager` and uses it to delete a template (with a hardcoded identifier).
+* example6.js — Instantiates an `AlertManager` and uses it to subscribe to changes to templates.
+* example7.js — Instantiates an `AlertManager` and uses it to retrieve properties and group them into a tree structure.
+* example8.js — Instantiates an `AlertManager` and uses it start all alerts (for the user).
+* example9.js — Instantiates an `AlertManager` and uses it get properties and templates (then filter them for validity for a symbol).
 
 These scripts also illustrate:
 
