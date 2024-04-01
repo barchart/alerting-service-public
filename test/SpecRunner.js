@@ -333,7 +333,7 @@ module.exports = (() => {
      *
      * @static
      * @public
-     * @param {*} candidate {*}
+     * @param {*} candidate
      * @returns {boolean}
      */
     number(candidate) {
