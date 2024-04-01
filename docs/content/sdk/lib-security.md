@@ -110,8 +110,8 @@
 
 | Param | Type | Description |
 | --- | --- | --- |
-| tokenGenerator | [<code>JwtTokenGenerator</code>](#CallbacksJwtTokenGenerator) | <p>An anonymous function which returns a signed JWT token.</p> |
-| [refreshInterval] | <code>Number</code> | <p>The number of milliseconds which must pass before a new JWT token is generated. A zero value means the token should never be refreshed. A null or undefined value means the token is not cached.</p> |
+| tokenGenerator | [<code>JwtTokenGenerator</code>](#CallbacksJwtTokenGenerator) | <p>An anonymous function which returns a signed JWT.</p> |
+| [refreshInterval] | <code>Number</code> | <p>The number of milliseconds which must pass before a new JWT is generated. A zero value means the token should never be refreshed. A null or undefined value means the token is not cached.</p> |
 
 
 * * *
@@ -133,7 +133,7 @@
 | contextId | <code>String</code> | <p>The context identifier of the user to impersonate.</p> |
 | alertSystem | <code>String</code> | <p>The domain of the user who will be impersonated.</p> |
 | [permissions] | <code>String</code> | <p>The desired permission level.</p> |
-| [refreshInterval] | <code>Number</code> | <p>The number of milliseconds which must pass before a new JWT token is generated. A null or undefined value means the token is not cached.</p> |
+| [refreshInterval] | <code>Number</code> | <p>The number of milliseconds which must pass before a new JWT is generated. A null or undefined value means the token is not cached.</p> |
 
 
 * * *
@@ -153,7 +153,7 @@
 | contextId | <code>String</code> | <p>The context identifier of the user to impersonate.</p> |
 | alertSystem | <code>String</code> | <p>The domain of the user who will be impersonated.</p> |
 | [permissions] | <code>String</code> | <p>The desired permission level.</p> |
-| [refreshInterval] | <code>Number</code> | <p>The number of milliseconds which must pass before a new JWT token is generated. A null or undefined value means the token is not cached.</p> |
+| [refreshInterval] | <code>Number</code> | <p>The number of milliseconds which must pass before a new JWT is generated. A null or undefined value means the token is not cached.</p> |
 
 
 * * *
@@ -173,7 +173,7 @@
 | contextId | <code>String</code> | <p>The context identifier of the user to impersonate.</p> |
 | alertSystem | <code>String</code> | <p>The domain of the user who will be impersonated.</p> |
 | [permissions] | <code>String</code> | <p>The desired permission level.</p> |
-| [refreshInterval] | <code>Number</code> | <p>The number of milliseconds which must pass before a new JWT token is generated. A null or undefined value means the token is not cached.</p> |
+| [refreshInterval] | <code>Number</code> | <p>The number of milliseconds which must pass before a new JWT is generated. A null or undefined value means the token is not cached.</p> |
 
 
 * * *
@@ -183,8 +183,8 @@
 
 | Param | Type | Description |
 | --- | --- | --- |
-| tokenGenerator | [<code>JwtTokenGenerator</code>](#CallbacksJwtTokenGenerator) | <p>An anonymous function which returns a signed JWT token.</p> |
-| [refreshInterval] | <code>Number</code> | <p>The number of milliseconds which must pass before a new JWT token is generated. A null or undefined value means the token is not cached.</p> |
+| tokenGenerator | [<code>JwtTokenGenerator</code>](#CallbacksJwtTokenGenerator) | <p>An anonymous function which returns a signed JWT.</p> |
+| [refreshInterval] | <code>Number</code> | <p>The number of milliseconds which must pass before a new JWT is generated. A null or undefined value means the token is not cached.</p> |
 
 
 * * *

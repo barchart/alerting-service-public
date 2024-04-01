@@ -1,5 +1,17 @@
 # Release Notes
 
+## 4.19.0
+**New Features**
+
+* Updated the `AlertManager.filterPropertiesForSymbol` to exclude options-flow properties for instruments that do not have options.
+* Updated the `AlertManager.filterTemplatesForSymbol` to exclude options-flow properties for instruments that do not have options.
+
+**Technical Enhancements**
+
+* Updated the [`uuid`](https://github.com/uuidjs/uuid) library to the next major version.
+* Added the `async` keyword to functions of the `AlertManager` class, as appropriate.
+* Added the `async` keyword to functions of the `JwtProvider` class, as appropriate.
+
 ## 4.18.5
 **Technical Enhancements**
 

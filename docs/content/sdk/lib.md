@@ -31,7 +31,7 @@
         * [.subscribeTemplates(query, changeCallback, deleteCallback, createCallback)](#AlertManagersubscribeTemplates) ⇒ <code>Disposable</code>
         * [.createTemplate(template)](#AlertManagercreateTemplate) ⇒ [<code>Promise.&lt;Schema.Template&gt;</code>](/content/sdk/lib-data?id=schematemplate)
         * [.updateTemplate(template)](#AlertManagerupdateTemplate) ⇒ [<code>Promise.&lt;Schema.Template&gt;</code>](/content/sdk/lib-data?id=schematemplate)
-        * [.updateTemplateOrder(template)](#AlertManagerupdateTemplateOrder) ⇒ [<code>Promise.&lt;Array.&lt;Schema.Template&gt;&gt;</code>](/content/sdk/lib-data?id=schematemplate)
+        * [.updateTemplateOrder(templates)](#AlertManagerupdateTemplateOrder) ⇒ [<code>Promise.&lt;Array.&lt;Schema.Template&gt;&gt;</code>](/content/sdk/lib-data?id=schematemplate)
         * [.deleteTemplate(template)](#AlertManagerdeleteTemplate) ⇒ [<code>Promise.&lt;Schema.Template&gt;</code>](/content/sdk/lib-data?id=schematemplate)
         * [.checkSymbol(symbol, [alertSystem])](#AlertManagercheckSymbol) ⇒ <code>Promise.&lt;String&gt;</code>
         * [.getTargets()](#AlertManagergetTargets) ⇒ [<code>Promise.&lt;Array.&lt;Schema.Target&gt;&gt;</code>](/content/sdk/lib-data?id=schematarget)
@@ -376,7 +376,7 @@
 
 * * *
 
-### alertManager.updateTemplateOrder(template) :id=alertmanagerupdatetemplateorder
+### alertManager.updateTemplateOrder(templates) :id=alertmanagerupdatetemplateorder
 > Updates the sort_order property for one (or more) templates.
 
 **Kind**: instance method of [<code>AlertManager</code>](#AlertManager)  
@@ -385,7 +385,7 @@
 
 | Param | Type |
 | --- | --- |
-| template | <code>Array.&lt;TemplateSortOrderDefinition&gt;</code> | 
+| templates | <code>Array.&lt;TemplateSortOrderDefinition&gt;</code> | 
 
 
 * * *
@@ -520,7 +520,7 @@
 * * *
 
 ### alertManager.getUser() :id=alertmanagergetuser
-> Returns the current user (according to the JWT token which is embedded
+> Returns the current user (according to the JWT which is embedded
 > in the request).
 
 **Kind**: instance method of [<code>AlertManager</code>](#AlertManager)  
