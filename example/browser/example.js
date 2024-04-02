@@ -1037,7 +1037,7 @@ var reset = function (host, system, userId, mode) {
     let port;
     let secure;
     if (host && host === 'localhost') {
-      port = 3000;
+      port = 3010;
       secure = false;
     } else {
       port = 443;
