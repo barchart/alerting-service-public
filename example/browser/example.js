@@ -2144,7 +2144,7 @@ module.exports = (() => {
             valid = false;
           }
           if (valid && (property.property_id === 238 || property.property_id === 239)) {
-            valid = instrument.hasOptions;
+            valid = instrument.hasOptions && (instrument.symbolType === 1 || instrument.symbolType === 9);
           }
           if (valid && is.number(target)) {
             valid = property.target.target_id === target;
@@ -2251,7 +2251,7 @@ module.exports = (() => {
             valid = false;
           }
           if (valid && properties.some(p => p === 238 || p === 239)) {
-            valid = instrument.hasOptions;
+            valid = instrument.hasOptions && (instrument.symbolType === 1 || instrument.symbolType === 9);
           }
           return valid;
         });
@@ -3979,6 +3979,9 @@ module.exports = (() => {
         if ((property.property_id === 238 || property.property_id === 239) && !instrument.hasOptions) {
           throw new Error(`${symbol} does not have options and cannot be used for option flow alerts`);
         }
+        if ((property.property_id === 238 || property.property_id === 239) && !(instrument.symbolType === 1 || instrument.symbolType === 9)) {
+          throw new Error(`${symbol} does not support option flow alerts`);
+        }
       }
     }
   };
@@ -4230,7 +4233,7 @@ module.exports = (() => {
   'use strict';
 
   return {
-    version: '4.19.0'
+    version: '4.19.1'
   };
 })();
 
