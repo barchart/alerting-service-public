@@ -34,5 +34,5 @@ These scripts also illustrate:
 ```shell
 node example.js --user_id=me
 node example.js --user_id=me --mode=http
-node example.js --user_id=me --host=localhost --port=3000
+node example.js --user_id=me --host=localhost --port=3010
 ```
