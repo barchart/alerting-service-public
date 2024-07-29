@@ -1623,6 +1623,32 @@ module.exports = (() => {
     }
 
     /**
+     * Gets a single alert trigger.
+     *
+     * @public
+     * @async
+     * @param {Object} query
+     * @param {String} query.alert_id
+     * @param {String} query.trigger_date
+     * @returns {Promise<Schema.Trigger|null>}
+     */
+    async retrieveTrigger(query) {
+      return Promise.resolve().then(() => {
+        checkStatus(this, 'retrieve alert trigger');
+        validate.trigger.forLookup(query);
+      }).then(() => {
+        return this._adapter.retrieveTrigger(query).then(response => {
+          console.log(response);
+          if (response.length === 1) {
+            return response[0];
+          } else {
+            return null;
+          }
+        });
+      });
+    }
+
+    /**
      * Gets a set of alert triggers, matching query criteria.
      *
      * @public
@@ -2679,6 +2705,9 @@ module.exports = (() => {
     subscribeAlerts(query) {
       return null;
     }
+    retrieveTrigger(query) {
+      return null;
+    }
     retrieveTriggers(query) {
       return null;
     }
@@ -2814,6 +2843,9 @@ module.exports = (() => {
       this._deleteAlertEndpoint = EndpointBuilder.for('delete-alert', 'Delete alert').withVerb(VerbType.DELETE).withProtocol(protocolType).withHost(host).withPort(port).withPathBuilder(pb => {
         pb.withLiteralParameter('alerts', 'alerts').withVariableParameter('alert_id', 'alert_id', 'alert_id');
       }).withRequestInterceptor(requestInterceptor).withResponseInterceptor(ResponseInterceptor.DATA).withErrorInterceptor(ErrorInterceptor.GENERAL).endpoint;
+      this._retrieveTriggerEndpoint = EndpointBuilder.for('retrieve-alert-trigger', 'Retrieve alert trigger').withVerb(VerbType.GET).withProtocol(protocolType).withHost(host).withPort(port).withPathBuilder(pb => {
+        pb.withLiteralParameter('alert', 'alert').withLiteralParameter('triggers', 'triggers').withVariableParameter('alert_id', 'alert_id', 'alert_id').withVariableParameter('trigger_date', 'trigger_date', 'trigger_date');
+      }).withRequestInterceptor(requestInterceptor).withResponseInterceptor(ResponseInterceptor.DATA).withErrorInterceptor(ErrorInterceptor.GENERAL).endpoint;
       this._retrieveTriggersEndpoint = EndpointBuilder.for('retrieve-alert-triggers', 'Retrieve alert triggers').withVerb(VerbType.GET).withProtocol(protocolType).withHost(host).withPort(port).withPathBuilder(pb => {
         pb.withLiteralParameter('alert', 'alert').withLiteralParameter('triggers', 'triggers').withLiteralParameter('users', 'users').withVariableParameter('alert_system', 'alert_system', 'alert_system').withVariableParameter('user_id', 'user_id', 'user_id');
       }).withQueryBuilder(pb => {
@@ -2933,6 +2965,9 @@ module.exports = (() => {
         deleteSubscriber(this._alertSubscriberMap, subscriber);
         subscriber.dispose();
       });
+    }
+    retrieveTrigger(query) {
+      return Gateway.invoke(this._retrieveTriggerEndpoint, query);
     }
     retrieveTriggers(query) {
       return Gateway.invoke(this._retrieveTriggersEndpoint, query).then(triggers => {
@@ -3515,6 +3550,9 @@ module.exports = (() => {
         deleteSubscriber(this._alertSubscriberMap, subscriber);
         subscriber.dispose();
       });
+    }
+    retrieveTrigger(query) {
+      return sendRequestToServer.call(this, 'alert/triggers/retrieve', query, true);
     }
     retrieveTriggers(query) {
       return sendRequestToServer.call(this, 'alert/triggers/retrieve/user', query, true);
@@ -4170,6 +4208,11 @@ module.exports = (() => {
   'use strict';
 
   const validator = {
+    forLookup: (query, description) => {
+      const d = getDescription(description);
+      assert.argumentIsRequired(query.alert_id, `${d}.alert_id`, String);
+      assert.argumentIsRequired(query.trigger_date, `${d}.trigger_date`, Number);
+    },
     forQuery: (query, description) => {
       const d = getDescription(description);
       validator.forUser(query, description);
@@ -4233,7 +4276,7 @@ module.exports = (() => {
   'use strict';
 
   return {
-    version: '4.19.2'
+    version: '4.20.0'
   };
 })();
 
