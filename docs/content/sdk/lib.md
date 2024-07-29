@@ -23,6 +23,7 @@
         * [.enableAlerts(query)](#AlertManagerenableAlerts) ⇒ <code>Promise.&lt;Boolean&gt;</code>
         * [.disableAlert(alert)](#AlertManagerdisableAlert) ⇒ [<code>Promise.&lt;Schema.Alert&gt;</code>](/content/sdk/lib-data?id=schemaalert)
         * [.disableAlerts(query)](#AlertManagerdisableAlerts) ⇒ <code>Promise.&lt;Boolean&gt;</code>
+        * [.retrieveTrigger(query)](#AlertManagerretrieveTrigger) ⇒ <code>Promise.&lt;(Schema.Trigger\|null)&gt;</code>
         * [.retrieveTriggers(query)](#AlertManagerretrieveTriggers) ⇒ [<code>Promise.&lt;Array.&lt;Schema.Trigger&gt;&gt;</code>](/content/sdk/lib-data?id=schematrigger)
         * [.subscribeTriggers(query, changeCallback, deleteCallback, createCallback)](#AlertManagersubscribeTriggers) ⇒ <code>Disposable</code>
         * [.updateTrigger(query)](#AlertManagerupdateTrigger) ⇒ [<code>Promise.&lt;Schema.Trigger&gt;</code>](/content/sdk/lib-data?id=schematrigger)
@@ -235,6 +236,22 @@
 | Param | Type |
 | --- | --- |
 | query | [<code>Schema.AlertQuery</code>](/content/sdk/lib-data?id=schemaalertquery) | 
+
+
+* * *
+
+### alertManager.retrieveTrigger(query) :id=alertmanagerretrievetrigger
+> Gets a single alert trigger.
+
+**Kind**: instance method of [<code>AlertManager</code>](#AlertManager)  
+**Returns**: <code>Promise.&lt;(Schema.Trigger\|null)&gt;</code>  
+**Access**: public  
+
+| Param | Type |
+| --- | --- |
+| query | <code>Object</code> | 
+| query.alert_id | <code>String</code> | 
+| query.trigger_date | <code>String</code> | 
 
 
 * * *

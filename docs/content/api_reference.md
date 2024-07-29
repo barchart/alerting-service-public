@@ -63,6 +63,7 @@
 * [GET /alert/publishers](/content/api/paths?id=get-alertpublishers)
 * [GET /alert/publishers/default/{alert_system}/{user_id}](/content/api/paths?id=get-alertpublishersdefaultalert_systemuser_id)
 * [PUT /alert/publishers/default/{alert_system}/{user_id}/{publisher_type_id}](/content/api/paths?id=put-alertpublishersdefaultalert_systemuser_idpublisher_type_id)
+* [GET /alert/triggers/{alert_id}/{trigger_date}](/content/api/paths?id=get-alerttriggersalert_idtrigger_date)
+* [PUT /alert/triggers/{alert_id}/{trigger_date}](/content/api/paths?id=put-alerttriggersalert_idtrigger_date)
 * [GET /alert/triggers/users/{alert_system}/{user_id}](/content/api/paths?id=get-alerttriggersusersalert_systemuser_id)
 * [PUT /alert/triggers/users/{alert_system}/{user_id}](/content/api/paths?id=put-alerttriggersusersalert_systemuser_id)
-* [PUT /alert/triggers/{alert_id}/{trigger_date}](/content/api/paths?id=put-alerttriggersalert_idtrigger_date)

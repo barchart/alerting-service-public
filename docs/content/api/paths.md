@@ -2361,6 +2361,130 @@
 
 * * *
 
+## GET /alert/triggers/{alert_id}/{trigger_date} 
+
+> Retrieves a single alert trigger status.
+
+**Summary**: Retrieve an Alert Trigger Status
+
+**Security**: 
+[JWT](/content/api/components?id=securityJWT)
+#### Path Parameters
+
+| Name | Type | Required | Nullable | Description |
+| ---- | ---- | -------- | -------- | ----------- |
+| alert_id | <code>String</code> | true | false | The alert identifier |
+| trigger_date | <code>String</code> | true | false | The timestamp of the alert trigger. |
+
+#### Responses
+
+**Status Code**: 200
+
+> A JSON document containing an array of alert trigger status objects. The array will contain zero or one items.
+
+**Content Type**: <code>application/json</code>
+
+**Response Type:** [<code>Array&lt;Trigger&gt;</code>](/content/api/components?id=schemasTrigger)
+
+**Example**:
+
+```
+[
+  {
+    "alert_id": "b78b30e3-8af5-48a5-8998-0989269ad9d0",
+    "alert_name": "Last greater than 200.00",
+    "alert_system": "barchart.com",
+    "user_id": "barchart-test-user",
+    "trigger_date": "1605874379489",
+    "trigger_status": "Read",
+    "trigger_status_date": "1606227202480",
+    "trigger_title": "MSFT",
+    "trigger_description": "MSFT traded for 214.86 at 10:34 ET on 12/14/20",
+    "trigger_additional_data": {
+      "type": "news",
+      "data": {
+        "url": "https://barchart.com/story/stocks/quotes/TSLA/news/1085745/view"
+      }
+    }
+  }
+]
+```
+
+* * *
+
+## PUT /alert/triggers/{alert_id}/{trigger_date} 
+
+> Updates all alert trigger status for the user.
+
+**Summary**: Updates an alert trigger statuses
+
+**Security**: 
+[JWT](/content/api/components?id=securityJWT)
+#### Path Parameters
+
+| Name | Type | Required | Nullable | Description |
+| ---- | ---- | -------- | -------- | ----------- |
+| alert_id | <code>String</code> | true | false | The alert id. |
+| trigger_date | <code>String</code> | true | false | The alert system. |
+
+#### Request Body
+
+**Content Type**: application/json
+
+**Type**: <code>Object</code>
+
+| Name | Type | Required | Nullable | Description |
+| ---- | ---- | -------- | -------- | ----------- |
+| trigger_status | <code>String</code> | false | false |  |
+
+**Example**:
+
+```json
+{
+  "trigger_status": "Unread"
+}
+```
+
+#### Responses
+
+**Status Code**: 200
+
+> A JSON document, conforming to the alert trigger statuses.
+
+**Content Type**: <code>application/json</code>
+
+**Response Type:** [<code>Array&lt;Trigger&gt;</code>](/content/api/components?id=schemasTrigger)
+
+**Example**:
+
+```
+[
+  {
+    "alert_id": "b78b30e3-8af5-48a5-8998-0989269ad9d0",
+    "alert_name": "Last greater than 200.00",
+    "alert_system": "barchart.com",
+    "user_id": "barchart-test-user",
+    "trigger_date": "1605874379489",
+    "trigger_status": "Read",
+    "trigger_status_date": "1606227202480",
+    "trigger_title": "MSFT",
+    "trigger_description": "MSFT traded for 214.86 at 10:34 ET on 12/14/20",
+    "trigger_additional_data": {
+      "type": "news",
+      "data": {
+        "url": "https://barchart.com/story/stocks/quotes/TSLA/news/1085745/view"
+      }
+    }
+  }
+]
+```
+
+* * *
+
+**Status Code**: 401 - [Unauthorized](/content/api/components?id=responsesunauthorized)
+
+* * *
+
 ## GET /alert/triggers/users/{alert_system}/{user_id} 
 
 > Retrieves a list of alerts trigger statuses.
@@ -2482,79 +2606,6 @@
     }
   }
 }
-```
-
-* * *
-
-**Status Code**: 401 - [Unauthorized](/content/api/components?id=responsesunauthorized)
-
-* * *
-
-## PUT /alert/triggers/{alert_id}/{trigger_date} 
-
-> Updates all alert trigger status for the user.
-
-**Summary**: Updates an alert trigger statuses
-
-**Security**: 
-[JWT](/content/api/components?id=securityJWT)
-#### Path Parameters
-
-| Name | Type | Required | Nullable | Description |
-| ---- | ---- | -------- | -------- | ----------- |
-| alert_id | <code>String</code> | true | false | The alert id. |
-| trigger_date | <code>String</code> | true | false | The alert system. |
-
-#### Request Body
-
-**Content Type**: application/json
-
-**Type**: <code>Object</code>
-
-| Name | Type | Required | Nullable | Description |
-| ---- | ---- | -------- | -------- | ----------- |
-| trigger_status | <code>String</code> | false | false |  |
-
-**Example**:
-
-```json
-{
-  "trigger_status": "Unread"
-}
-```
-
-#### Responses
-
-**Status Code**: 200
-
-> A JSON document, conforming to the alert trigger statuses.
-
-**Content Type**: <code>application/json</code>
-
-**Response Type:** [<code>Array&lt;Trigger&gt;</code>](/content/api/components?id=schemasTrigger)
-
-**Example**:
-
-```
-[
-  {
-    "alert_id": "b78b30e3-8af5-48a5-8998-0989269ad9d0",
-    "alert_name": "Last greater than 200.00",
-    "alert_system": "barchart.com",
-    "user_id": "barchart-test-user",
-    "trigger_date": "1605874379489",
-    "trigger_status": "Read",
-    "trigger_status_date": "1606227202480",
-    "trigger_title": "MSFT",
-    "trigger_description": "MSFT traded for 214.86 at 10:34 ET on 12/14/20",
-    "trigger_additional_data": {
-      "type": "news",
-      "data": {
-        "url": "https://barchart.com/story/stocks/quotes/TSLA/news/1085745/view"
-      }
-    }
-  }
-]
 ```
 
 * * *

@@ -1,10 +1,28 @@
 # Release Notes
 
+## 4.20.0
+**New Features**
+
+* Added the `AlertManager.retrieveTrigger` function.
+
+## 4.19.2
+**Bug Fixes**
+
+* Updated the `AlertManager.filterPropertiesForSymbol` function to further limit options-flow properties (to US equities, indices, and ETFs).
+* Updated the `AlertManager.filterTemplatesForSymbol` function to further limit options-flow properties (to US equities, indices, and ETFs).
+
+## 4.19.1
+**Bug Fixes**
+
+* Updated the `AlertManager.filterPropertiesForSymbol` function to further limit options-flow properties (to US equities and US indices).
+* Updated the `AlertManager.filterTemplatesForSymbol` function to further limit options-flow properties (to US equities and US indices).
+
+
 ## 4.19.0
 **New Features**
 
-* Updated the `AlertManager.filterPropertiesForSymbol` to exclude options-flow properties for instruments that do not have options.
-* Updated the `AlertManager.filterTemplatesForSymbol` to exclude options-flow properties for instruments that do not have options.
+* Updated the `AlertManager.filterPropertiesForSymbol` function to exclude options-flow properties for instruments that do not have options.
+* Updated the `AlertManager.filterTemplatesForSymbol` function to exclude options-flow properties for instruments that do not have options.
 
 **Technical Enhancements**
 

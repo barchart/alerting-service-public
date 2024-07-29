@@ -13,7 +13,7 @@ When an _alert's_ conditions are met, a _trigger_ object is created. Here is an 
 }
 ```
 
-## Trigger Retrieval
+## Trigger History
 
 A history of _trigger_ objects can be retrieved for a specific user. Also, they can be filtered for:
 
@@ -46,6 +46,35 @@ alertManager.retrieveTriggers(query)
 
 ```shell
 curl 'https://alerts-management-demo.barchart.com/alert/triggers/users/barchart.com/me?trigger_date=1606806000000&trigger_status=Unread' \
+  -X 'GET' \
+  -H 'Accept: application/json' \
+  -H 'Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoibWUiLCJ1c2VySWQiOiJtZSIsImFsZXJ0X3N5c3RlbSI6ImJhcmNoYXJ0LmNvbSIsImNvbnRleHRJZCI6ImJhcmNoYXJ0LmNvbSIsImlhdCI6MTYwODI5MzQzM30.QFY6GphC1tGXJPNExJw2nqnjfU8heYTvKw16OKusQPw' 
+```
+
+## Trigger Retrieval
+
+A single _trigger_ object can be retrieved given the alert alert identifier an trigger's timestamp.
+
+#### Using the SDK
+
+Use the [```AlertManager.retrieveTrigger```](/content/sdk/lib?id=alertmanagerretrievetrigger) function to get a single _trigger_ object.
+
+```js
+const query = { };
+
+query.alert_id = '10afba84-5373-4df9-9af8-2baf64b6dd87';
+query.trigger_date = 1722202540306;
+
+alertManager.retrieveTrigger(query)
+	.then((trigger) => {
+		console.log(trigger);
+	});
+```
+
+#### Using the API
+
+```shell
+curl 'https://alerts-management-demo.barchart.com/alert/triggers/10afba84-5373-4df9-9af8-2baf64b6dd87/1722202540306' \
   -X 'GET' \
   -H 'Accept: application/json' \
   -H 'Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoibWUiLCJ1c2VySWQiOiJtZSIsImFsZXJ0X3N5c3RlbSI6ImJhcmNoYXJ0LmNvbSIsImNvbnRleHRJZCI6ImJhcmNoYXJ0LmNvbSIsImlhdCI6MTYwODI5MzQzM30.QFY6GphC1tGXJPNExJw2nqnjfU8heYTvKw16OKusQPw' 

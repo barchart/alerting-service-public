@@ -1306,6 +1306,85 @@ paths:
                       items:
                         type: string
 
+  /alert/triggers/{alert_id}/{trigger_date}:
+    get:
+      summary: "Retrieve an Alert Trigger Status"
+      description: "Retrieves a single alert trigger status."
+      tags:
+        - Triggers
+      security:
+        - JWT: []
+      parameters:
+        - name: alert_id
+          description: The alert identifier
+          in: path
+          required: true
+          schema:
+            type: string
+            example: " 10afba84-5373-4df9-9af8-2baf64b6dd87"
+
+        - name: trigger_date
+          description: The timestamp of the alert trigger.
+          in: path
+          required: true
+          schema:
+            type: string
+            example: "1722202540306"
+      responses:
+        200:
+          description: "A JSON document containing an array of alert trigger status objects. The array will contain zero or one items."
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Trigger'
+
+    put:
+      summary: "Updates an alert trigger statuses"
+      description: "Updates all alert trigger status for the user."
+      tags:
+        - Triggers
+      security:
+        - JWT: []
+      parameters:
+        - name: alert_id
+          description: The alert id.
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+            example: "d2d4ec4e-f732-422e-801c-4637f1c9f21a"
+
+        - name: trigger_date
+          description: The alert system.
+          in: path
+          required: true
+          schema:
+            type: string
+            example: "1607960061721"
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                trigger_status:
+                  type: string
+                  example: "Unread"
+      responses:
+        '200':
+          description: "A JSON document, conforming to the alert trigger statuses."
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Trigger'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+
   /alert/triggers/users/{alert_system}/{user_id}:
     get:
       summary: "Retrieve Alert Trigger Statuses"
@@ -1396,53 +1475,5 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Trigger'
-
-        '401':
-          $ref: '#/components/responses/Unauthorized'
-
-  /alert/triggers/{alert_id}/{trigger_date}:
-    put:
-      summary: "Updates an alert trigger statuses"
-      description: "Updates all alert trigger status for the user."
-      tags:
-        - Triggers
-      security:
-        - JWT: []
-      parameters:
-        - name: alert_id
-          description: The alert id.
-          in: path
-          required: true
-          schema:
-            type: string
-            format: uuid
-            example: "d2d4ec4e-f732-422e-801c-4637f1c9f21a"
-
-        - name: trigger_date
-          description: The alert system.
-          in: path
-          required: true
-          schema:
-            type: string
-            example: "1607960061721"
-      requestBody:
-        content:
-          application/json:
-            schema:
-              type: object
-              properties:
-                trigger_status:
-                  type: string
-                  example: "Unread"
-      responses:
-        '200':
-          description: "A JSON document, conforming to the alert trigger statuses."
-          content:
-            application/json:
-              schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/Trigger'
-
         '401':
           $ref: '#/components/responses/Unauthorized'
