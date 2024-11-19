@@ -20,7 +20,6 @@
 	"dependencies": {
 		"@barchart/common-js": "^4.39.2",
 		"@barchart/marketdata-api-js": "^6.2.6",
-		"jsonwebtoken": "^8.5.1",
 		"socket.io-client": "^2.3.0",
 		"uuid": "^9.0.1"
 	},
