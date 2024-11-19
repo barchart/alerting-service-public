@@ -1,5 +1,14 @@
 # Release Notes
 
+## 4.21.0
+**New Features**
+
+* Updated the `security/demo/getJwtGenerator` function to request JWT with a 60 minute expiration window.
+
+**Technical Enhancements**
+
+* Removed unused [`jsonwebtoken`](https://github.com/auth0/node-jsonwebtoken) library as a dependency.
+
 ## 4.20.0
 **New Features**
 
