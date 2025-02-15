@@ -16,22 +16,22 @@ const timezone = require('@barchart/common-js/lang/timezone');
 const ComparatorBuilder = require('@barchart/common-js/collections/sorting/ComparatorBuilder'),
 	comparators = require('@barchart/common-js/collections/sorting/comparators');
 
-var alertManager;
+let alertManager;
 
-var utilities = AlertManager;
+const utilities = AlertManager;
 
-var targets = ko.observable();
-var properties = ko.observable();
-var operators = ko.observable();
-var modifiers = ko.observable();
-var publisherTypes = ko.observable();
-var marketDataConfiguration = ko.observable();
+const targets = ko.observable();
+const properties = ko.observable();
+const operators = ko.observable();
+const modifiers = ko.observable();
+const publisherTypes = ko.observable();
+const marketDataConfiguration = ko.observable();
 
-var currentSystem = null;
-var currentUserId = null;
+let currentSystem = null;
+let currentUserId = null;
 
 function PageModel(host, system, userId) {
-	var that = this;
+	const that = this;
 
 	that.host = ko.observable(host || 'alerts-management-demo.barchart.com');
 	that.system = ko.observable(system || 'barchart.com');
@@ -117,18 +117,18 @@ function PageModel(host, system, userId) {
 
 	that.activeTemplate = ko.observable('alert-disconnected');
 
-	var getAlertModel = function(alert) {
-		return _.find(that.alerts(), function(model) {
+	const getAlertModel = function (alert) {
+		return _.find(that.alerts(), function (model) {
 			return model.alert().alert_id === alert.alert_id;
 		});
 	};
-	var sortAlertModels = function() {
-		that.alerts.sort(function(a, b) {
+	const sortAlertModels = function () {
+		that.alerts.sort(function (a, b) {
 			return a.alert().name.localeCompare(b.alert().name);
 		});
 	};
-	var getTriggerModel = function(trigger) {
-		return _.find(that.triggers(), function(model) {
+	const getTriggerModel = function (trigger) {
+		return _.find(that.triggers(), function (model) {
 			return model.trigger().alert_id === trigger.alert_id && model.trigger().trigger_date === trigger.trigger_date;
 		});
 	};
@@ -236,7 +236,7 @@ function PageModel(host, system, userId) {
 	};
 
 	that.handleAlertCreate = function(createdAlert) {
-		var existingModel = getAlertModel(createdAlert);
+		const existingModel = getAlertModel(createdAlert);
 
 		if (!existingModel) {
 			that.alerts.push(new AlertDisplayModel(createdAlert));
@@ -245,7 +245,7 @@ function PageModel(host, system, userId) {
 		}
 	};
 	that.handleAlertChange = function(changedAlert) {
-		var existingModel = getAlertModel(changedAlert);
+		const existingModel = getAlertModel(changedAlert);
 
 		if (existingModel) {
 			existingModel.alert(changedAlert);
@@ -259,7 +259,7 @@ function PageModel(host, system, userId) {
 		that.handleAlertChange(triggeredAlert);
 	};
 	that.handleAlertDelete = function(deletedAlert) {
-		var modelToRemove = getAlertModel(deletedAlert);
+		const modelToRemove = getAlertModel(deletedAlert);
 
 		that.alerts.remove(modelToRemove);
 
@@ -325,7 +325,7 @@ function PageModel(host, system, userId) {
 	};
 }
 function AlertTriggerModel(trigger) {
-	var that = this;
+	const that = this;
 
 	that.trigger = ko.observable(trigger);
 
@@ -334,8 +334,8 @@ function AlertTriggerModel(trigger) {
 
 	that.loading = ko.observable(false);
 
-	var formatDate = function(date) {
-		var returnRef;
+	const formatDate = function (date) {
+		let returnRef;
 
 		if (date) {
 			returnRef = date.toLocaleString();
@@ -382,15 +382,15 @@ function AlertTriggerModel(trigger) {
 	}
 }
 function AlertDisplayModel(alert) {
-	var that = this;
+	const that = this;
 
 	that.alert = ko.observable(alert);
 	that.processing = ko.observable(false);
 
 	that.createDate = ko.computed(function() {
-		var alert = that.alert();
+		const alert = that.alert();
 
-		var returnRef;
+		let returnRef;
 
 		if (alert.create_date) {
 			returnRef = new Date(parseInt(alert.create_date));
@@ -402,9 +402,9 @@ function AlertDisplayModel(alert) {
 	});
 
 	that.createDateDisplay = ko.computed(function() {
-		var nullDate = new Date(0);
+		const nullDate = new Date(0);
 
-		var returnRef;
+		let returnRef;
 
 		if (that.createDate().getTime() === nullDate.getTime()) {
 			returnRef = 'Undefined';
@@ -416,12 +416,12 @@ function AlertDisplayModel(alert) {
 	});
 
 	that.lastTriggerDateDisplay = ko.computed(function() {
-		var alert = that.alert();
+		const alert = that.alert();
 
-		var returnRef;
+		let returnRef;
 
 		if (alert.last_trigger_date) {
-			var lastTriggerDate = new Date(parseInt(alert.last_trigger_date));
+			const lastTriggerDate = new Date(parseInt(alert.last_trigger_date));
 
 			returnRef = lastTriggerDate.toLocaleString();
 		} else {
@@ -432,12 +432,12 @@ function AlertDisplayModel(alert) {
 	});
 
 	that.canStart = ko.computed(function() {
-		var alert = that.alert();
+		const alert = that.alert();
 
 		return alert.alert_state === 'Inactive' || alert.alert_state === 'Triggered' || alert.alert_state === 'Orphaned' || alert.alert_state === 'Expired';
 	});
 	that.canPause = ko.computed(function() {
-		var alert = that.alert();
+		const alert = that.alert();
 
 		return alert.alert_state === 'Active';
 	});
@@ -459,7 +459,7 @@ function AlertDisplayModel(alert) {
 	};
 }
 function AlertEntryModel(alert) {
-	var that = this;
+	const that = this;
 
 	that.alert = ko.observable(alert || null);
 	that.alertType = ko.observable('none');
@@ -479,7 +479,7 @@ function AlertEntryModel(alert) {
 	that.alertTypes = ko.observable([ 'none', 'news', 'price', 'match' ]);
 
 	that.showSchedules = ko.computed(function() {
-		var ab = that.alertBehavior();
+		const ab = that.alertBehavior();
 
 		return ab === 'schedule' || ab === 'schedule_once';
 	});
@@ -502,13 +502,13 @@ function AlertEntryModel(alert) {
 		that.processing(true);
 		that.error(null);
 
-		var alertType = that.alertType();
+		let alertType = that.alertType();
 
 		if (alertType === 'none') {
 			alertType = null;
 		}
 
-		var alertBehavior = that.alertBehavior();
+		let alertBehavior = that.alertBehavior();
 
 		if (alertType === 'news' && alertBehavior === 'automatic') {
 			alertBehavior = null;
@@ -518,7 +518,7 @@ function AlertEntryModel(alert) {
 			alertBehavior = 'terminate';
 		}
 
-		var schedules;
+		let schedules;
 
 		if (that.showSchedules()) {
 			schedules = _.map(that.schedules(), function(schedule) {
@@ -532,21 +532,21 @@ function AlertEntryModel(alert) {
 			schedules = [ ];
 		}
 
-		var alert = {
+		const alert = {
 			alert_type: alertType,
 			user_notes: that.userNotes() || null,
 			user_id: currentUserId,
 			alert_system: currentSystem,
-			conditions: _.map(that.conditions(), function(condition) {
-				var property = condition.property();
-				var operator = condition.operator();
-				var operand = condition.operand();
+			conditions: _.map(that.conditions(), function (condition) {
+				const property = condition.property();
+				const operator = condition.operator();
+				let operand = condition.operand();
 
 				if (operator.operand_literal) {
 					operand = condition.operand();
 
 					if (operator.operand_type === 'Array' && _.isString(operand)) {
-						operand = _.map(operand.split(','), function(item) {
+						operand = _.map(operand.split(','), function (item) {
 							return _.trim(item);
 						});
 					}
@@ -557,7 +557,7 @@ function AlertEntryModel(alert) {
 					}
 				}
 
-				var conditionData = {
+				const conditionData = {
 					property: {
 						property_id: property.property_id,
 						target: {
@@ -570,14 +570,14 @@ function AlertEntryModel(alert) {
 					}
 				};
 
-				var modifiers = _.filter(condition.modifiers(), function(modifier) {
+				const modifiers = _.filter(condition.modifiers(), function (modifier) {
 					return modifier.modifier() !== null;
 				});
 
 				if (_.isArray(modifiers) && modifiers.length > 0) {
-					conditionData.operator.modifiers = _.map(modifiers, function(modifier) {
-						var value = modifier.value();
-						var m = modifier.modifier();
+					conditionData.operator.modifiers = _.map(modifiers, function (modifier) {
+						let value = modifier.value();
+						const m = modifier.modifier();
 
 						if (m.type === 'percent') {
 							value = parseFloat(value) / 100;
@@ -591,17 +591,17 @@ function AlertEntryModel(alert) {
 					});
 				}
 
-				var qualifiers = condition.qualifiers();
+				const qualifiers = condition.qualifiers();
 
 				if (qualifiers.length > 0) {
-					conditionData.property.target.qualifiers = _.map(qualifiers, function(qualifier) {
+					conditionData.property.target.qualifiers = _.map(qualifiers, function (qualifier) {
 						return qualifier.qualifierValue();
 					});
 				}
 
 				return conditionData;
 			}),
-			publishers: _.map(that.publishers(), function(publisher) {
+			publishers: _.map(that.publishers(), function (publisher) {
 				return {
 					type: {
 						publisher_type_id: publisher.publisherType().publisher_type_id
@@ -614,13 +614,13 @@ function AlertEntryModel(alert) {
 			schedules: schedules
 		};
 
-		var name = that.name();
+		const name = that.name();
 
 		if (_.isString(name) && name.length !== 0) {
 			alert.name = name;
 		}
 
-		var alertSystemKey = that.alertSystemKey();
+		const alertSystemKey = that.alertSystemKey();
 
 		if (_.isString(alertSystemKey) && alertSystemKey !== 0) {
 			alert.alert_system_key = alertSystemKey;
@@ -630,19 +630,19 @@ function AlertEntryModel(alert) {
 			alert.alert_behavior = alertBehavior;
 		}
 
-		var executeValidationPromise = function() {
+		const executeValidationPromise = function () {
 			return _.reduce(
-				_.map(_.filter(that.conditions(), function(condition) {
-					var property = condition.property();
+				_.map(_.filter(that.conditions(), function (condition) {
+					const property = condition.property();
 
 					return property.target.type === 'symbol';
-				}), function(condition) {
+				}), function (condition) {
 					return alertManager.checkSymbol(condition.targetIdentifier(), currentSystem)
 						.then((translatedSymbol) => {
 							const userSymbol = condition.targetIdentifier();
 
 							if (userSymbol !== translatedSymbol) {
-								_.forEach(alert.conditions, function(condition) {
+								_.forEach(alert.conditions, function (condition) {
 									if (condition.property.target.identifier === userSymbol) {
 										condition.property.target.identifier = translatedSymbol;
 									}
@@ -651,14 +651,14 @@ function AlertEntryModel(alert) {
 
 							return true;
 						});
-				}), function(aggregatePromise, symbolPromise) {
-					var returnRef;
+				}), function (aggregatePromise, symbolPromise) {
+					let returnRef;
 
 					if (aggregatePromise) {
-						returnRef = aggregatePromise.then(function() {
+						returnRef = aggregatePromise.then(function () {
 							return symbolPromise;
 						});
-					} else  {
+					} else {
 						returnRef = symbolPromise;
 					}
 
@@ -667,14 +667,14 @@ function AlertEntryModel(alert) {
 			);
 		};
 
-		var executeCreatePromise = function() {
+		const executeCreatePromise = function () {
 			return alertManager.createAlert(alert)
-				.then(function(created) {
+				.then(function (created) {
 					that.alert(created);
 				});
 		};
 
-		var promise = executeValidationPromise();
+		let promise = executeValidationPromise();
 
 		if (promise === null) {
 			promise = executeCreatePromise();
@@ -757,7 +757,7 @@ function AlertEntryModel(alert) {
 	}
 }
 function AlertScheduleModel(ready, schedule) {
-	var that = this;
+	const that = this;
 
 	that.time = ko.observable(null);
 
@@ -783,7 +783,7 @@ function AlertScheduleModel(ready, schedule) {
 	}
 }
 function AlertConditionModel(ready, condition) {
-	var that = this;
+	const that = this;
 
 	that.target = ko.observable(null);
 	that.targetIdentifier = ko.observable(null);
@@ -802,10 +802,10 @@ function AlertConditionModel(ready, condition) {
 		return targets();
 	});
 	that.operators = ko.computed(function() {
-		var p = that.property();
-		var o = operators() || [ ];
+		const p = that.property();
+		const o = operators() || [];
 
-		var returnRef;
+		let returnRef;
 
 		if (p) {
 			returnRef = utilities.getOperatorsForProperty(o, p);
@@ -818,13 +818,13 @@ function AlertConditionModel(ready, condition) {
 		return returnRef;
 	});
 	that.qualifiers = ko.computed(function() {
-		var target = that.target();
+		const target = that.target();
 
-		var returnRef;
+		let returnRef;
 
 		if (target) {
 			return _.map(target.qualifier_descriptions || [], function (description, index) {
-				var value;
+				let value;
 
 				if (_.isObject(condition) && _.isArray(condition.property.target.qualifiers)) {
 					value = condition.property.target.qualifiers[index];
@@ -841,9 +841,9 @@ function AlertConditionModel(ready, condition) {
 		return returnRef;
 	});
 	that.propertyTree = ko.computed(function() {
-		var target = that.target();
+		const target = that.target();
 
-		var targetProperties;
+		let targetProperties;
 
 		if (target) {
 			targetProperties = utilities.getPropertiesForTarget(properties(), that.target());
@@ -865,7 +865,7 @@ function AlertConditionModel(ready, condition) {
 	};
 	that.selectPropertyTree = function(tree, index) {
 		if (tree.items) {
-			var next = index + 1;
+			const next = index + 1;
 
 			that.properties.splice(next);
 			that.properties.push(new AlertConditionTreeModel(that, tree.items, 'Property', next));
@@ -884,9 +884,9 @@ function AlertConditionModel(ready, condition) {
 		that.modifiers([]);
 
 		if (!operator.modifiers.length !== 0) {
-			var all = modifiers();
+			const all = modifiers();
 
-			var eligible;
+			let eligible;
 
 			if (all.length > 0 && operator.modifiers.length > 0) {
 				eligible = _.filter(all, function(x) {
@@ -936,17 +936,17 @@ function AlertConditionModel(ready, condition) {
 			that.modifiers.push(new AlertConditionModifierModel(that, [ modifier ], modifier));
 		});
 
-		var getNode = function(items, description) {
-			return _.find(items, function(item) {
+		const getNode = function (items, description) {
+			return _.find(items, function (item) {
 				return item.description === description;
 			});
 		};
 
-		var node = { items: that.propertyTree() };
-		var descriptionPath = ([ ]).concat(condition.property.category || [ ]).concat(condition.property.description);
+		let node = {items: that.propertyTree()};
+		const descriptionPath = ([]).concat(condition.property.category || []).concat(condition.property.description);
 
-		for (var i = 0; i < descriptionPath.length; i++) {
-			var n = getNode(node.items, descriptionPath[i]);
+		for (let i = 0; i < descriptionPath.length; i++) {
+			const n = getNode(node.items, descriptionPath[i]);
 
 			that.properties.push(new AlertConditionTreeModel(that, node.items, 'Property', i, n));
 
@@ -957,7 +957,7 @@ function AlertConditionModel(ready, condition) {
 	}
 }
 function AlertConditionModifierModel(parent, eligible, m) {
-	var that = this;
+	const that = this;
 
 	that.parent = parent;
 
@@ -974,9 +974,9 @@ function AlertConditionModifierModel(parent, eligible, m) {
 	};
 
 	that.modifierDisplay = ko.computed(function() {
-		var modifier = that.modifier();
+		const modifier = that.modifier();
 
-		var returnRef;
+		let returnRef;
 
 		if (modifier) {
 			returnRef = modifier.display;
@@ -987,18 +987,18 @@ function AlertConditionModifierModel(parent, eligible, m) {
 		return returnRef;
 	});
 	that.showValue = ko.computed(function() {
-		var modifier = that.modifier();
+		const modifier = that.modifier();
 
 		return modifier !== null;
 	});
 	that.showPercent = ko.computed(function() {
-		var modifier = that.modifier();
+		const modifier = that.modifier();
 
 		return modifier !== null && modifier.type === 'percent';
 	});
 
 	if (_.isObject(m) && m.value) {
-		var v = m.value;
+		let v = m.value;
 
 		if (m.type === 'percent') {
 			v = parseFloat(v) * 100;
@@ -1009,7 +1009,7 @@ function AlertConditionModifierModel(parent, eligible, m) {
 	}
 }
 function AlertTargetQualifierModel(ready, description, value) {
-	var that = this;
+	const that = this;
 
 	that.ready = ready;
 
@@ -1017,7 +1017,7 @@ function AlertTargetQualifierModel(ready, description, value) {
 	that.qualifierValue = ko.observable(value || null);
 }
 function AlertConditionTreeModel(parent, tree, description, index, node) {
-	var that = this;
+	const that = this;
 
 	that.parent = parent;
 
@@ -1025,9 +1025,9 @@ function AlertConditionTreeModel(parent, tree, description, index, node) {
 	that.node = ko.observable(node || null);
 
 	that.description = ko.computed(function() {
-		var property = that.node();
+		const property = that.node();
 
-		var returnRef;
+		let returnRef;
 
 		if (property) {
 			returnRef = property.description;
@@ -1045,34 +1045,34 @@ function AlertConditionTreeModel(parent, tree, description, index, node) {
 	};
 
 	that.showOperator = ko.computed(function() {
-		var node = that.node();
+		const node = that.node();
 
-		var property = that.parent.property();
-		var operator = that.parent.operator();
+		const property = that.parent.property();
+		const operator = that.parent.operator();
 
 		return _.isObject(node) && _.isObject(node.item) && node.item === property && _.isObject(operator) && operator.operator_type === 'binary';
 	});
 	that.showOptions = ko.computed(function() {
-		var operator = that.parent.operator();
+		const operator = that.parent.operator();
 
 		return _.isObject(operator) && _.isArray(operator.operand_options) && operator.operand_options.length > 0;
 	});
 	that.showModifiers = ko.computed(function() {
-		var node = that.node();
+		const node = that.node();
 
-		var property = that.parent.property();
-		var operator = that.parent.operator();
+		const property = that.parent.property();
+		const operator = that.parent.operator();
 
 		return _.isObject(node) && _.isObject(node.item) && node.item === property && _.isObject(operator) && operator.modifiers.length > 0;
 	});
 	that.showPercent = ko.computed(function() {
-		var property = that.parent.property();
+		const property = that.parent.property();
 
 		return property !== null && property.type === 'percent';
 	});
 }
 function AlertPublisherModel(ready, publisher) {
-	var that = this;
+	const that = this;
 
 	that.publisherTypes = publisherTypes;
 	that.publisherType = ko.observable(_.first(that.publisherTypes()));
@@ -1101,8 +1101,8 @@ function AlertPublisherModel(ready, publisher) {
 	};
 
 	that.recipientReady = ko.computed(function() {
-		var ready = that.ready();
-		var useDefaultRecipient = that.useDefaultRecipient();
+		const ready = that.ready();
+		const useDefaultRecipient = that.useDefaultRecipient();
 
 		return ready && !useDefaultRecipient;
 	});
@@ -1118,7 +1118,7 @@ function AlertPublisherModel(ready, publisher) {
 	}
 }
 function AlertPublisherTypeDefaultsModel(publisherTypeDefaults) {
-	var that = this;
+	const that = this;
 
 	that.processing = ko.observable(false);
 
@@ -1131,18 +1131,18 @@ function AlertPublisherTypeDefaultsModel(publisherTypeDefaults) {
 	}));
 
 	that.savePreferences = function() {
-		var defaultPublisherTypes = that.publisherTypeDefaults();
-		var publishersToSave = defaultPublisherTypes.length;
+		const defaultPublisherTypes = that.publisherTypeDefaults();
+		const publishersToSave = defaultPublisherTypes.length;
 
-		var checkComplete = function() {
+		const checkComplete = function () {
 			publishersToSave = publishersToSave - 1;
 
 			if (publishersToSave === 0) {
-				alertManager.getPublisherTypeDefaults({ user_id: currentUserId, alert_system: currentSystem })
-					.then(function(saved) {
+				alertManager.getPublisherTypeDefaults({user_id: currentUserId, alert_system: currentSystem})
+					.then(function (saved) {
 
-						_.forEach(saved, function(s) {
-							_.forEach(that.publisherTypeDefaults(), function(m) {
+						_.forEach(saved, function (s) {
+							_.forEach(that.publisherTypeDefaults(), function (m) {
 								if (s.publisher_type_id === m.publisherTypeId()) {
 									m.update(s);
 								}
@@ -1159,7 +1159,7 @@ function AlertPublisherTypeDefaultsModel(publisherTypeDefaults) {
 
 			_.forEach(defaultPublisherTypes, function(defaultPublisherType) {
 				if (_.isString(defaultPublisherType.defaultRecipient())) {
-					var activeAlertTypes = [ ];
+					const activeAlertTypes = [];
 
 					if (defaultPublisherType.priceActive()) {
 						activeAlertTypes.push('price');
@@ -1173,7 +1173,7 @@ function AlertPublisherTypeDefaultsModel(publisherTypeDefaults) {
 						activeAlertTypes.push('match');
 					}
 
-					var ptd = {
+					const ptd = {
 						publisher_type_id: defaultPublisherType.publisherTypeId(),
 						alert_system: currentSystem,
 						user_id: currentUserId,
@@ -1184,13 +1184,13 @@ function AlertPublisherTypeDefaultsModel(publisherTypeDefaults) {
 						active_alert_types: activeAlertTypes
 					};
 
-					var hmac = defaultPublisherType.defaultRecipientHmac();
+					const hmac = defaultPublisherType.defaultRecipientHmac();
 
 					if (_.isString(hmac) && hmac.length > 0) {
 						ptd.default_recipient_hmac = hmac;
 					}
 
-					var actionPromise;
+					let actionPromise;
 
 					if (ptd.default_recipient) {
 						actionPromise = alertManager.assignPublisherTypeDefault(ptd);
@@ -1209,7 +1209,7 @@ function AlertPublisherTypeDefaultsModel(publisherTypeDefaults) {
 	};
 }
 function AlertPublisherTypeDefaultModel(publisherTypeDefault, ready) {
-	var that = this;
+	const that = this;
 
 	that.publisherTypeId = ko.observable(publisherTypeDefault.publisher_type_id);
 	that.transport = ko.observable(publisherTypeDefault.transport);
@@ -1246,7 +1246,7 @@ function AlertPublisherTypeDefaultModel(publisherTypeDefault, ready) {
 	that.update(publisherTypeDefault);
 }
 function MarketDataConfigurationModel(mdc) {
-	var that = this;
+	const that = this;
 
 	that.processing = ko.observable(false);
 
@@ -1304,19 +1304,19 @@ var reset = function(host, system, userId, mode) {
 				alertManager = null;
 			}
 		}).then(() => {
-			var pageModel = new PageModel(host, system, userId);
+			const pageModel = new PageModel(host, system, userId);
 
 			if (mode) {
 				pageModel.mode(mode);
 			}
 
-			var initializePromise;
+			let initializePromise;
 
 			if (alertManager) {
 				pageModel.connecting(true);
 
-				var jwtGenerator = getJwtGenerator(userId, system);
-				var jwtProvider = new JwtProvider(jwtGenerator, 60000);
+				const jwtGenerator = getJwtGenerator(userId, system, host === 'localhost' ? 'dev' : 'demo');
+				const jwtProvider = new JwtProvider(jwtGenerator, 60000);
 
 				alertManager.subscribeConnectionStatus(function(status) {
 					console.log('Connection status changed to [', status, ']');
@@ -1332,7 +1332,7 @@ var reset = function(host, system, userId, mode) {
 							throw 'Invalid user, please re-enter...';
 						}
 
-						var startupPromises = [ ];
+						const startupPromises = [];
 
 						alertManager.subscribeAlerts({ user_id: userId, alert_system: system },
 							function(changedAlert) {
