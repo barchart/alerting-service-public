@@ -1131,8 +1131,8 @@ function AlertPublisherTypeDefaultsModel(publisherTypeDefaults) {
 	}));
 
 	that.savePreferences = function() {
-		const defaultPublisherTypes = that.publisherTypeDefaults();
-		const publishersToSave = defaultPublisherTypes.length;
+		let defaultPublisherTypes = that.publisherTypeDefaults();
+		let publishersToSave = defaultPublisherTypes.length;
 
 		const checkComplete = function () {
 			publishersToSave = publishersToSave - 1;
