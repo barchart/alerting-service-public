@@ -874,7 +874,8 @@ function AlertConditionModel(ready, condition) {
 			that.operand(null);
 		} else {
 			that.property(tree.item);
-			that.operand(_.first(that.operator().operand_options) || null);
+
+			that.selectOperator(that.operator());
 		}
 	};
 	that.selectOperator = function(operator) {
@@ -883,7 +884,7 @@ function AlertConditionModel(ready, condition) {
 
 		that.modifiers([]);
 
-		if (!operator.modifiers.length !== 0) {
+		if (operator.modifiers.length !== 0) {
 			const all = modifiers();
 
 			let eligible;
