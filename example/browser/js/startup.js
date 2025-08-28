@@ -1051,12 +1051,17 @@ function AlertConditionTreeModel(parent, tree, description, index, node) {
 		const property = that.parent.property();
 		const operator = that.parent.operator();
 
-		return _.isObject(node) && _.isObject(node.item) && node.item === property && _.isObject(operator) && operator.operator_type === 'binary';
+		return _.isObject(node) && _.isObject(node.item) && node.item === property && _.isObject(operator);
 	});
-	that.showOptions = ko.computed(function() {
+	that.showOperandOptions = ko.computed(function() {
 		const operator = that.parent.operator();
 
-		return _.isObject(operator) && _.isArray(operator.operand_options) && operator.operand_options.length > 0;
+		return _.isObject(operator) && operator.operator_type === 'binary' && _.isArray(operator.operand_options) && operator.operand_options.length > 0;
+	});
+	that.showOperandInput = ko.computed(function() {
+		const operator = that.parent.operator();
+
+		return _.isObject(operator) && operator.operator_type === 'binary' && !(_.isArray(operator.operand_options) && operator.operand_options.length > 0);
 	});
 	that.showModifiers = ko.computed(function() {
 		const node = that.node();
