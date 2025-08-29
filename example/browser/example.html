@@ -460,13 +460,13 @@
                 <table class="table table-striped small" style="margin-bottom: 5px;">
                     <thead>
                         <th class="left col-md-1">Transport</th>
-                        <th class="center col-md-2">Default Recipient</th>
-                        <th class="center col-md-2">Default Recipient HMAC</th>
+                        <th class="center col-md-3">Default Recipient</th>
                         <th class="center col-md-2">Timezone</th>
                         <th class="center col-md-1">Start Time</th>
                         <th class="center col-md-1">End Time</th>
                         <th class="center col-md-1">Price Alerts</th>
                         <th class="center col-md-1">News Alerts</th>
+                        <th class="center col-md-1">Calendar Alerts</th>
                         <th class="center col-md-1">Match Alerts</th>
                     </thead>
                     <tbody data-bind="template: { name: 'publisher-type-preference-template', foreach: publisherTypeDefaults }"></tbody>
@@ -484,11 +484,8 @@
             <td class="left col-md-1">
                 <span><span data-bind="text: transport"></span> (<span data-bind="text: provider"></span>)</span>
             </td>
-            <td class="left col-md-2">
+            <td class="left col-md-3">
                 <input class="form-control" data-bind="textInput: defaultRecipient, enable: ready" type="text" placeholder="Recipient (e.g. phone number)">
-            </td>
-            <td class="left col-md-2">
-                <input class="form-control" data-bind="textInput: defaultRecipientHmac, enable: ready" type="text" placeholder="HMAC">
             </td>
             <td class="left col-md-2">
                 <div class="dropdown">
@@ -511,6 +508,9 @@
             </td>
             <td class="center col-md-1">
                 <input type="checkbox" data-bind="checked: newsActive, enable: ready">
+            </td>
+            <td class="center col-md-1">
+                <input type="checkbox" data-bind="checked: calendarActive, enable: ready">
             </td>
             <td class="center col-md-1">
                 <input type="checkbox" data-bind="checked: matchActive, enable: ready">

@@ -476,7 +476,7 @@ function AlertEntryModel(alert) {
 	that.error = ko.observable(null);
 
 	that.alertBehaviors = ko.observable([ 'continue', 'continue_daily', 'schedule', 'schedule_once', 'terminate' ]);
-	that.alertTypes = ko.observable([ 'none', 'news', 'price', 'match' ]);
+	that.alertTypes = ko.observable([ 'none', 'news', 'price', 'calendar', 'match' ]);
 
 	that.showSchedules = ko.computed(function() {
 		const ab = that.alertBehavior();
@@ -1178,6 +1178,10 @@ function AlertPublisherTypeDefaultsModel(publisherTypeDefaults) {
 						activeAlertTypes.push('news');
 					}
 
+					if (defaultPublisherType.calendarActive()) {
+						activeAlertTypes.push('calendar');
+					}
+
 					if (defaultPublisherType.matchActive()) {
 						activeAlertTypes.push('match');
 					}
@@ -1192,12 +1196,6 @@ function AlertPublisherTypeDefaultsModel(publisherTypeDefaults) {
 						allow_window_end: defaultPublisherType.allowEndTime() || null,
 						active_alert_types: activeAlertTypes
 					};
-
-					const hmac = defaultPublisherType.defaultRecipientHmac();
-
-					if (_.isString(hmac) && hmac.length > 0) {
-						ptd.default_recipient_hmac = hmac;
-					}
 
 					let actionPromise;
 
@@ -1225,22 +1223,22 @@ function AlertPublisherTypeDefaultModel(publisherTypeDefault, ready) {
 	that.provider = ko.observable(publisherTypeDefault.provider);
 
 	that.defaultRecipient = ko.observable();
-	that.defaultRecipientHmac = ko.observable();
 	that.allowTimezone = ko.observable();
 	that.allowStartTime = ko.observable();
 	that.allowEndTime = ko.observable();
 	that.priceActive = ko.observable();
 	that.newsActive = ko.observable();
+	that.calendarActive = ko.observable();
 	that.matchActive = ko.observable();
 
 	that.update = function(ptd) {
 		that.defaultRecipient(ptd.default_recipient);
-		that.defaultRecipientHmac(ptd.default_recipient_hmac);
 		that.allowTimezone(ptd.allow_window_timezone || timezone.guessTimezone());
 		that.allowStartTime(ptd.allow_window_start);
 		that.allowEndTime(ptd.allow_window_end);
 		that.priceActive(_.includes(ptd.active_alert_types, 'price'));
 		that.newsActive(_.includes(ptd.active_alert_types, 'news'));
+		that.calendarActive(_.includes(ptd.active_alert_types, 'calendar'));
 		that.matchActive(_.includes(ptd.active_alert_types, 'match'));
 	};
 
