@@ -398,7 +398,7 @@ function AlertEntryModel(alert) {
   that.processing = ko.observable(false);
   that.error = ko.observable(null);
   that.alertBehaviors = ko.observable(['continue', 'continue_daily', 'schedule', 'schedule_once', 'terminate']);
-  that.alertTypes = ko.observable(['none', 'news', 'price', 'match']);
+  that.alertTypes = ko.observable(['none', 'news', 'price', 'calendar', 'match']);
   that.showSchedules = ko.computed(function () {
     const ab = that.alertBehavior();
     return ab === 'schedule' || ab === 'schedule_once';
@@ -716,14 +716,14 @@ function AlertConditionModel(ready, condition) {
       that.operand(null);
     } else {
       that.property(tree.item);
-      that.operand(_.first(that.operator().operand_options) || null);
+      that.selectOperator(that.operator());
     }
   };
   that.selectOperator = function (operator) {
     that.operator(operator);
     that.operand(_.first(that.operator().operand_options) || null);
     that.modifiers([]);
-    if (!operator.modifiers.length !== 0) {
+    if (operator.modifiers.length !== 0) {
       const all = modifiers();
       let eligible;
       if (all.length > 0 && operator.modifiers.length > 0) {
@@ -850,11 +850,18 @@ function AlertConditionTreeModel(parent, tree, description, index, node) {
     const node = that.node();
     const property = that.parent.property();
     const operator = that.parent.operator();
-    return _.isObject(node) && _.isObject(node.item) && node.item === property && _.isObject(operator) && operator.operator_type === 'binary';
+    return _.isObject(node) && _.isObject(node.item) && node.item === property && _.isObject(operator);
   });
-  that.showOptions = ko.computed(function () {
+  that.showOperandOptions = ko.computed(function () {
     const operator = that.parent.operator();
-    return _.isObject(operator) && _.isArray(operator.operand_options) && operator.operand_options.length > 0;
+    return _.isObject(operator) && operator.operator_type === 'binary' && !!!operator.operand_assumed && _.isArray(operator.operand_options) && operator.operand_options.length > 0;
+  });
+  that.showOperandInput = ko.computed(function () {
+    const operator = that.parent.operator();
+    return _.isObject(operator) && operator.operator_type === 'binary' && !!!operator.operand_assumed && !(_.isArray(operator.operand_options) && operator.operand_options.length > 0);
+  });
+  that.hideOperand = ko.computed(function () {
+    return !that.showOperandOptions() && !that.showOperandInput();
   });
   that.showModifiers = ko.computed(function () {
     const node = that.node();
@@ -944,6 +951,9 @@ function AlertPublisherTypeDefaultsModel(publisherTypeDefaults) {
           if (defaultPublisherType.newsActive()) {
             activeAlertTypes.push('news');
           }
+          if (defaultPublisherType.calendarActive()) {
+            activeAlertTypes.push('calendar');
+          }
           if (defaultPublisherType.matchActive()) {
             activeAlertTypes.push('match');
           }
@@ -957,10 +967,6 @@ function AlertPublisherTypeDefaultsModel(publisherTypeDefaults) {
             allow_window_end: defaultPublisherType.allowEndTime() || null,
             active_alert_types: activeAlertTypes
           };
-          const hmac = defaultPublisherType.defaultRecipientHmac();
-          if (_.isString(hmac) && hmac.length > 0) {
-            ptd.default_recipient_hmac = hmac;
-          }
           let actionPromise;
           if (ptd.default_recipient) {
             actionPromise = alertManager.assignPublisherTypeDefault(ptd);
@@ -983,21 +989,21 @@ function AlertPublisherTypeDefaultModel(publisherTypeDefault, ready) {
   that.transport = ko.observable(publisherTypeDefault.transport);
   that.provider = ko.observable(publisherTypeDefault.provider);
   that.defaultRecipient = ko.observable();
-  that.defaultRecipientHmac = ko.observable();
   that.allowTimezone = ko.observable();
   that.allowStartTime = ko.observable();
   that.allowEndTime = ko.observable();
   that.priceActive = ko.observable();
   that.newsActive = ko.observable();
+  that.calendarActive = ko.observable();
   that.matchActive = ko.observable();
   that.update = function (ptd) {
     that.defaultRecipient(ptd.default_recipient);
-    that.defaultRecipientHmac(ptd.default_recipient_hmac);
     that.allowTimezone(ptd.allow_window_timezone || timezone.guessTimezone());
     that.allowStartTime(ptd.allow_window_start);
     that.allowEndTime(ptd.allow_window_end);
     that.priceActive(_.includes(ptd.active_alert_types, 'price'));
     that.newsActive(_.includes(ptd.active_alert_types, 'news'));
+    that.calendarActive(_.includes(ptd.active_alert_types, 'calendar'));
     that.matchActive(_.includes(ptd.active_alert_types, 'match'));
   };
   that.selectTimezone = function (timezone) {
@@ -4276,7 +4282,7 @@ module.exports = (() => {
   'use strict';
 
   return {
-    version: '4.21.2'
+    version: '4.21.3'
   };
 })();
 
