@@ -1,9 +1,31 @@
 # Release Notes
 
+## 4.21.4
+**Other**
+
+* Removed references to HMAC (previously used for SMS validation).
+
+## 4.21.3
+**Other**
+
+* Corrected example page failure to show modifiers for unary operators.
+* Updated example page, removing HMAC text input (which is no longer used).
+* Updated example page, adding support for calendar-type alerts.
+
+## 4.21.2
+**Bug Fixes**
+
+* Correct minor issue in example page.
+
+## 4.21.1
+**Technical Enhancements**
+
+* Added optional `environment` parameter to the `getJwtGenerator` function.
+
 ## 4.21.0
 **New Features**
 
-* Updated the `security/demo/getJwtGenerator` function to request JWT with a 60 minute expiration window.
+* Updated the `security/demo/getJwtGenerator` function to request JSON web tokens with 60 minute expiration windows.
 
 **Technical Enhancements**
 

@@ -2228,7 +2228,6 @@
 | user_id | <code>String</code> | false | false |  |
 | alert_system | <code>String</code> | false | false |  |
 | default_recipient | <code>String</code> | false | true |  |
-| default_recipient_hmac | <code>String</code> | false | true |  |
 | allow_window_timezone | <code>String</code> | false | true |  |
 | allow_window_start | <code>String</code> | false | true |  |
 | allow_window_end | <code>String</code> | false | true |  |
@@ -2246,7 +2245,6 @@
     "user_id": "string",
     "alert_system": "barchart.com",
     "default_recipient": "2489539701",
-    "default_recipient_hmac": "94b6239ae1d309a46163bb1e2f64213170ef201fb3f99ed1908caee899a34d2b",
     "allow_window_timezone": "America/Chicago",
     "allow_window_start": "06:00",
     "allow_window_end": "20:30",
@@ -2330,7 +2328,6 @@
 | user_id | <code>String</code> | false | false |  |
 | alert_system | <code>String</code> | false | false |  |
 | default_recipient | <code>String</code> | false | false |  |
-| default_recipient_hmac | <code>String</code> | false | true |  |
 | allow_window_timezone | <code>String</code> | false | false |  |
 | allow_window_start | <code>String</code> | false | true |  |
 | allow_window_end | <code>String</code> | false | true |  |
@@ -2348,7 +2345,6 @@
     "user_id": "string",
     "alert_system": "barchart.com",
     "default_recipient": "2489539701",
-    "default_recipient_hmac": "94b6239ae1d309a46163bb1e2f64213170ef201fb3f99ed1908caee899a34d2b",
     "allow_window_timezone": "America/Chicago",
     "allow_window_start": "06:00",
     "allow_window_end": "20:30",

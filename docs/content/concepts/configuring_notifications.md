@@ -56,7 +56,6 @@ User preferences are stored as [```PublisherTypeDefault```](/content/sdk/lib-dat
 	"user_id": "me",
 	"alert_system": "barchart.com",
 	"default_recipient": "312-867-5309",
-	"default_recipient_hmac": null,
 	"allow_window_timezone": "America/Chicago",
 	"allow_window_start": "06:00",
 	"allow_window_end": "22:00",

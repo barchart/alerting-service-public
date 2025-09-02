@@ -1169,10 +1169,6 @@ paths:
                       type: string
                       example: "2489539701"
                       nullable: true
-                    default_recipient_hmac:
-                      type: string
-                      nullable: true
-                      example: "94b6239ae1d309a46163bb1e2f64213170ef201fb3f99ed1908caee899a34d2b"
                     allow_window_timezone:
                       type: string
                       example: "America/Chicago"
@@ -1285,10 +1281,6 @@ paths:
                     default_recipient:
                       type: string
                       example: "2489539701"
-                    default_recipient_hmac:
-                      type: string
-                      nullable: true
-                      example: "94b6239ae1d309a46163bb1e2f64213170ef201fb3f99ed1908caee899a34d2b"
                     allow_window_timezone:
                       type: string
                       example: "America/Chicago"

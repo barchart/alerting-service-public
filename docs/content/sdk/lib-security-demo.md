@@ -5,7 +5,7 @@
 
 * * *
 
-### Functions.getJwtGenerator(userId, alertSystem) :id=functionsgetjwtgenerator
+### Functions.getJwtGenerator(userId, alertSystem, [environment]) :id=functionsgetjwtgenerator
 > Returns a [Callbacks.JwtTokenGenerator](/content/sdk/lib-security?id=callbacksjwttokengenerator) function. The resulting function will
 > generate a token allowing you to impersonate any user in the test environment. It will
 > not work in the production environment. Instead, connection to the production environment
@@ -22,6 +22,7 @@
 | --- | --- | --- |
 | userId | <code>String</code> | <p>The identifier of the user to impersonate.</p> |
 | alertSystem | <code>String</code> | <p>The domain of the user who will be impersonated.</p> |
+| [environment] | <code>String</code> | <p>The environment the token will be used in (e.g. dev, stage, demo, etc).</p> |
 
 
 * * *
