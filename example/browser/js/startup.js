@@ -283,23 +283,23 @@ function PageModel(host, system, userId) {
 			model = new AlertTriggerModel(trigger);
 
 			that.triggers.push(model);
+
+			if (trigger.trigger_status === 'Unread') {
+				const onclick = (() => {
+					let clicked = false;
+
+					return () => {
+						if (!clicked) {
+							model.toggle();
+
+							clicked = true;
+						}
+					};
+				})();
+
+				toastr.info(trigger.trigger_description, trigger.trigger_title, { onclick: onclick, progressBar: true });
+			}
 		});
-
-		if (triggers.length === 1) {
-			const onclick = (() => {
-				let clicked = false;
-
-				return () => {
-					if (!clicked) {
-						model.toggle();
-
-						clicked = true;
-					}
-				};
-			})();
-
-			toastr.info(triggers[0].trigger_description, triggers[0].trigger_title, { onclick: onclick, progressBar: true });
-		}
 	};
 	that.handleTriggersChange = function(triggers) {
 		triggers.forEach((trigger) => {
