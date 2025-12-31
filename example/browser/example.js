@@ -234,22 +234,22 @@ function PageModel(host, system, userId) {
     triggers.forEach(trigger => {
       model = new AlertTriggerModel(trigger);
       that.triggers.push(model);
+      if (trigger.trigger_status === 'Unread') {
+        const onclick = (() => {
+          let clicked = false;
+          return () => {
+            if (!clicked) {
+              model.toggle();
+              clicked = true;
+            }
+          };
+        })();
+        toastr.info(trigger.trigger_description, trigger.trigger_title, {
+          onclick: onclick,
+          progressBar: true
+        });
+      }
     });
-    if (triggers.length === 1) {
-      const onclick = (() => {
-        let clicked = false;
-        return () => {
-          if (!clicked) {
-            model.toggle();
-            clicked = true;
-          }
-        };
-      })();
-      toastr.info(triggers[0].trigger_description, triggers[0].trigger_title, {
-        onclick: onclick,
-        progressBar: true
-      });
-    }
   };
   that.handleTriggersChange = function (triggers) {
     triggers.forEach(trigger => {
@@ -1202,7 +1202,7 @@ $(document).ready(function () {
   reset(null, null, null, null);
 });
 
-},{"./../../../lib/AlertManager":2,"./../../../lib/adapters/AdapterForHttp":4,"./../../../lib/adapters/AdapterForSocketIo":5,"./../../../lib/security/JwtProvider":18,"./../../../lib/security/demo/getJwtGenerator":19,"@barchart/common-js/collections/sorting/ComparatorBuilder":41,"@barchart/common-js/collections/sorting/comparators":42,"@barchart/common-js/lang/timezone":60}],2:[function(require,module,exports){
+},{"./../../../lib/AlertManager":2,"./../../../lib/adapters/AdapterForHttp":4,"./../../../lib/adapters/AdapterForSocketIo":5,"./../../../lib/security/JwtProvider":18,"./../../../lib/security/demo/getJwtGenerator":19,"@barchart/common-js/collections/sorting/ComparatorBuilder":41,"@barchart/common-js/collections/sorting/comparators":42,"@barchart/common-js/lang/timezone":61}],2:[function(require,module,exports){
 const array = require('@barchart/common-js/lang/array'),
   assert = require('@barchart/common-js/lang/assert'),
   is = require('@barchart/common-js/lang/is'),
@@ -1276,26 +1276,24 @@ module.exports = (() => {
      * @returns {Promise<AlertManager>}
      */
     async connect(jwtProvider) {
-      return Promise.resolve().then(() => {
-        assert.argumentIsRequired(jwtProvider, 'jwtProvider', JwtProvider, 'JwtProvider');
-        checkDispose(this, 'connect');
-      }).then(() => {
-        if (this._connectPromise === null) {
-          const alertAdapterPromise = Promise.resolve().then(() => {
-            const AdapterClazz = this._adapterClazz;
-            const adapter = new AdapterClazz(this._host, this._port, this._secure, onAlertCreated.bind(this), onAlertMutated.bind(this), onAlertDeleted.bind(this), onAlertTriggered.bind(this), onTriggersCreated.bind(this), onTriggersMutated.bind(this), onTriggersDeleted.bind(this), onTemplateCreated.bind(this), onTemplateMutated.bind(this), onTemplateDeleted.bind(this), onConnectionStatusChanged.bind(this));
-            return promise.timeout(adapter.connect(jwtProvider), 10000, 'Alert service is temporarily unavailable. Please try again later.');
-          });
-          this._connectPromise = Promise.all([alertAdapterPromise]).then(results => {
-            this._adapter = results[0];
-            return this;
-          }).catch(e => {
-            this._connectPromise = null;
-            throw e;
-          });
-        }
+      assert.argumentIsRequired(jwtProvider, 'jwtProvider', JwtProvider, 'JwtProvider');
+      checkDispose(this, 'connect');
+      if (this._connectPromise !== null) {
         return this._connectPromise;
-      });
+      }
+      this._connectPromise = (async () => {
+        try {
+          const AdapterClazz = this._adapterClazz;
+          const adapter = new AdapterClazz(this._host, this._port, this._secure, onAlertCreated.bind(this), onAlertMutated.bind(this), onAlertDeleted.bind(this), onAlertTriggered.bind(this), onTriggersCreated.bind(this), onTriggersMutated.bind(this), onTriggersDeleted.bind(this), onTemplateCreated.bind(this), onTemplateMutated.bind(this), onTemplateDeleted.bind(this), onConnectionStatusChanged.bind(this));
+          await promise.timeout(adapter.connect(jwtProvider), 10000, 'Alert service is temporarily unavailable. Please try again later.');
+          this._adapter = adapter;
+        } catch (e) {
+          this._connectPromise = null;
+          throw e;
+        }
+        return this;
+      })();
+      return this._connectPromise;
     }
 
     /**
@@ -1321,12 +1319,9 @@ module.exports = (() => {
      * @returns {Promise<Schema.Alert>}
      */
     async retrieveAlert(alert) {
-      return Promise.resolve().then(() => {
-        checkStatus(this, 'retrieve alert');
-        validate.alert.forQuery(alert);
-      }).then(() => {
-        return this._adapter.retrieveAlert(alert);
-      });
+      checkStatus(this, 'retrieve alert');
+      validate.alert.forQuery(alert);
+      return this._adapter.retrieveAlert(alert);
     }
 
     /**
@@ -1338,36 +1333,22 @@ module.exports = (() => {
      * @returns {Promise<Schema.Alert[]>}
      */
     async retrieveAlerts(query) {
-      return Promise.resolve().then(() => {
-        checkStatus(this, 'retrieve alerts');
-        validate.alert.forUser(query);
-      }).then(() => {
-        return this._adapter.retrieveAlerts(query);
-      }).then(results => {
-        if (query.filter && query.filter.alert_type) {
-          return results.filter(result => result.alert_type === query.filter.alert_type);
-        } else {
-          return results;
-        }
-      }).then(results => {
-        if (query.filter && query.filter.symbol) {
-          return results.filter(result => result.conditions.some(c => c.property.target.type === 'symbol' && c.property.target.identifier === query.filter.symbol || c.property.type === 'symbol' && c.operator.operand === query.filter.symbol));
-        } else {
-          return results;
-        }
-      }).then(results => {
-        if (query.filter && query.filter.target && query.filter.target.identifier) {
-          return results.filter(result => result.conditions.some(c => c.property.target.identifier === query.filter.target.identifier));
-        } else {
-          return results;
-        }
-      }).then(results => {
-        if (query.filter && query.filter.condition && (typeof query.filter.condition.operand === 'string' || typeof query.filter.condition.operand === 'number')) {
-          return results.filter(result => result.conditions.some(c => c.operator.operand === query.filter.condition.operand.toString()));
-        } else {
-          return results;
-        }
-      });
+      checkStatus(this, 'retrieve alerts');
+      validate.alert.forUser(query);
+      let results = await this._adapter.retrieveAlerts(query);
+      if (query.filter && query.filter.alert_type) {
+        results = results.filter(result => result.alert_type === query.filter.alert_type);
+      }
+      if (query.filter && query.filter.symbol) {
+        results = results.filter(result => result.conditions.some(c => c.property.target.type === 'symbol' && c.property.target.identifier === query.filter.symbol || c.property.type === 'symbol' && c.operator.operand === query.filter.symbol));
+      }
+      if (query.filter && query.filter.target && query.filter.target.identifier) {
+        results = results.filter(result => result.conditions.some(c => c.property.target.identifier === query.filter.target.identifier));
+      }
+      if (query.filter && query.filter.condition && (typeof query.filter.condition.operand === 'string' || typeof query.filter.condition.operand === 'number')) {
+        results = results.filter(result => result.conditions.some(c => c.operator.operand === query.filter.condition.operand.toString()));
+      }
+      return results;
     }
 
     /**
@@ -1436,66 +1417,56 @@ module.exports = (() => {
      * @returns {Promise<Schema.Alert>}
      */
     async createAlert(alert) {
-      return Promise.resolve().then(() => {
-        checkStatus(this, 'create alert');
-        validate.alert.forCreate(alert);
-      }).then(() => {
-        return Promise.all([this.getProperties(), this.getOperators()]);
-      }).then(results => {
-        const properties = results[0];
-        const operators = results[1];
-        const propertyMap = alert.conditions.reduce((map, c) => {
-          const property = properties.find(p => p.property_id === c.property.property_id);
-          map[property.property_id] = property;
-          return map;
-        }, {});
-        const operatorMap = alert.conditions.reduce((map, c) => {
-          const operator = operators.find(o => o.operator_id === c.operator.operator_id);
-          map[operator.operator_id] = operator;
-          return map;
-        }, {});
-        const instrumentMap = alert.conditions.reduce((map, c) => {
-          const property = propertyMap[c.property.property_id];
-          if (property.target.type === 'symbol') {
-            const symbol = c.property.target.identifier;
-            if (!map.hasOwnProperty(symbol)) {
-              map[symbol] = lookupInstrument(symbol, alert.alert_system);
+      checkStatus(this, 'create alert');
+      validate.alert.forCreate(alert);
+      const [properties, operators] = await Promise.all([this.getProperties(), this.getOperators()]);
+      const propertyMap = alert.conditions.reduce((map, c) => {
+        const property = properties.find(p => p.property_id === c.property.property_id);
+        map[property.property_id] = property;
+        return map;
+      }, {});
+      const operatorMap = alert.conditions.reduce((map, c) => {
+        const operator = operators.find(o => o.operator_id === c.operator.operator_id);
+        map[operator.operator_id] = operator;
+        return map;
+      }, {});
+      const instrumentMap = alert.conditions.reduce((map, c) => {
+        const property = propertyMap[c.property.property_id];
+        if (property.target.type === 'symbol') {
+          const symbol = c.property.target.identifier;
+          if (!map.hasOwnProperty(symbol)) {
+            map[symbol] = lookupInstrument(symbol, alert.alert_system);
+          }
+        }
+        return map;
+      }, {});
+      await Promise.all(alert.conditions.map((c, i) => {
+        const property = propertyMap[c.property.property_id];
+        const operator = operatorMap[c.operator.operator_id];
+        if (property.target.type !== 'symbol') {
+          return Promise.resolve();
+        }
+        const symbol = c.property.target.identifier;
+        return instrumentMap[symbol].then(result => {
+          const instrument = result.instrument;
+          validate.instrument.forCreate(symbol, instrument, property);
+          if (property.format === 'price' && operator.operand_type === 'number' && operator.operand_literal) {
+            let operandToParse = c.operator.operand;
+            if (is.string(operandToParse) && operandToParse.match(/^(-?)([0-9,]+)$/) !== null) {
+              operandToParse = operandToParse + '.0';
             }
+            const unitcode = convertBaseCodeToUnitCode(instrument.unitcode);
+            const price = valueParser(operandToParse, unitcode, ',');
+            if (!is.number(price)) {
+              throw new Error('Condition [' + i + '] is invalid. The price cannot be parsed.');
+            }
+            c.operator.operand_display = c.operator.operand;
+            c.operator.operand_format = formatPrice(price, unitcode, '-', false, ',');
+            c.operator.operand = price;
           }
-          return map;
-        }, {});
-        return Promise.all(alert.conditions.map((c, i) => {
-          let validatePromise;
-          const property = propertyMap[c.property.property_id];
-          const operator = operatorMap[c.operator.operator_id];
-          if (property.target.type === 'symbol') {
-            const symbol = c.property.target.identifier;
-            validatePromise = instrumentMap[symbol].then(result => {
-              const instrument = result.instrument;
-              validate.instrument.forCreate(symbol, instrument, property);
-              if (property.format === 'price' && operator.operand_type === 'number' && operator.operand_literal) {
-                let operandToParse = c.operator.operand;
-                if (is.string(operandToParse) && operandToParse.match(/^(-?)([0-9,]+)$/) !== null) {
-                  operandToParse = operandToParse + '.0';
-                }
-                const unitcode = convertBaseCodeToUnitCode(instrument.unitcode);
-                const price = valueParser(operandToParse, unitcode, ',');
-                if (!is.number(price)) {
-                  throw new Error('Condition [' + i + '] is invalid. The price cannot be parsed.');
-                }
-                c.operator.operand_display = c.operator.operand;
-                c.operator.operand_format = formatPrice(price, unitcode, '-', false, ',');
-                c.operator.operand = price;
-              }
-            });
-          } else {
-            validatePromise = Promise.resolve();
-          }
-          return validatePromise;
-        }));
-      }).then(() => {
-        return this._adapter.createAlert(alert);
-      });
+        });
+      }));
+      return this._adapter.createAlert(alert);
     }
 
     /**
@@ -1509,14 +1480,10 @@ module.exports = (() => {
      * @returns {Promise<Schema.Alert>}
      */
     async editAlert(alert) {
-      return Promise.resolve().then(() => {
-        checkStatus(this, 'edit alert');
-        validate.alert.forEdit(alert);
-      }).then(() => {
-        return this.deleteAlert(alert);
-      }).then(() => {
-        return this.createAlert(alert);
-      });
+      checkStatus(this, 'edit alert');
+      validate.alert.forEdit(alert);
+      await this.deleteAlert(alert);
+      return this.createAlert(alert);
     }
 
     /**
@@ -1528,13 +1495,10 @@ module.exports = (() => {
      * @returns {Promise<Schema.Alert>}
      */
     async deleteAlert(alert) {
-      return Promise.resolve().then(() => {
-        checkStatus(this, 'delete alert');
-        validate.alert.forQuery(alert);
-      }).then(() => {
-        return this._adapter.deleteAlert({
-          alert_id: alert.alert_id
-        });
+      checkStatus(this, 'delete alert');
+      validate.alert.forQuery(alert);
+      return this._adapter.deleteAlert({
+        alert_id: alert.alert_id
       });
     }
 
@@ -1547,17 +1511,14 @@ module.exports = (() => {
      * @returns {Promise<Schema.Alert>}
      */
     async enableAlert(alert) {
-      return Promise.resolve().then(() => {
-        checkStatus(this, 'enable alert');
-        validate.alert.forQuery(alert);
-      }).then(() => {
-        const clone = Object.assign({}, alert);
-        clone.alert_state = 'Starting';
-        onAlertMutated.call(this, clone);
-        return this._adapter.updateAlert({
-          alert_id: alert.alert_id,
-          alert_state: 'Starting'
-        });
+      checkStatus(this, 'enable alert');
+      validate.alert.forQuery(alert);
+      const clone = Object.assign({}, alert);
+      clone.alert_state = 'Starting';
+      onAlertMutated.call(this, clone);
+      return this._adapter.updateAlert({
+        alert_id: alert.alert_id,
+        alert_state: 'Starting'
       });
     }
 
@@ -1570,17 +1531,14 @@ module.exports = (() => {
      * @returns {Promise<Boolean>}
      */
     async enableAlerts(query) {
-      return Promise.resolve().then(() => {
-        checkStatus(this, 'enable alerts');
-        validate.alert.forUser(query);
-        return this._adapter.updateAlertsForUser({
-          user_id: query.user_id,
-          alert_system: query.alert_system,
-          alert_state: 'Starting'
-        });
-      }).then(() => {
-        return true;
+      checkStatus(this, 'enable alerts');
+      validate.alert.forUser(query);
+      await this._adapter.updateAlertsForUser({
+        user_id: query.user_id,
+        alert_system: query.alert_system,
+        alert_state: 'Starting'
       });
+      return true;
     }
 
     /**
@@ -1592,17 +1550,14 @@ module.exports = (() => {
      * @returns {Promise<Schema.Alert>}
      */
     async disableAlert(alert) {
-      return Promise.resolve().then(() => {
-        checkStatus(this, 'disable alert');
-        validate.alert.forQuery(alert);
-      }).then(() => {
-        const clone = Object.assign({}, alert);
-        clone.alert_state = 'Stopping';
-        onAlertMutated.call(this, clone);
-        return this._adapter.updateAlert({
-          alert_id: alert.alert_id,
-          alert_state: 'Stopping'
-        });
+      checkStatus(this, 'disable alert');
+      validate.alert.forQuery(alert);
+      const clone = Object.assign({}, alert);
+      clone.alert_state = 'Stopping';
+      onAlertMutated.call(this, clone);
+      return this._adapter.updateAlert({
+        alert_id: alert.alert_id,
+        alert_state: 'Stopping'
       });
     }
 
@@ -1615,17 +1570,14 @@ module.exports = (() => {
      * @returns {Promise<Boolean>}
      */
     async disableAlerts(query) {
-      return Promise.resolve().then(() => {
-        checkStatus(this, 'disable alerts');
-        validate.alert.forUser(query);
-        return this._adapter.updateAlertsForUser({
-          user_id: query.user_id,
-          alert_system: query.alert_system,
-          alert_state: 'Stopping'
-        });
-      }).then(() => {
-        return true;
+      checkStatus(this, 'disable alerts');
+      validate.alert.forUser(query);
+      await this._adapter.updateAlertsForUser({
+        user_id: query.user_id,
+        alert_system: query.alert_system,
+        alert_state: 'Stopping'
       });
+      return true;
     }
 
     /**
@@ -1639,19 +1591,13 @@ module.exports = (() => {
      * @returns {Promise<Schema.Trigger|null>}
      */
     async retrieveTrigger(query) {
-      return Promise.resolve().then(() => {
-        checkStatus(this, 'retrieve alert trigger');
-        validate.trigger.forLookup(query);
-      }).then(() => {
-        return this._adapter.retrieveTrigger(query).then(response => {
-          console.log(response);
-          if (response.length === 1) {
-            return response[0];
-          } else {
-            return null;
-          }
-        });
-      });
+      checkStatus(this, 'retrieve alert trigger');
+      validate.trigger.forLookup(query);
+      const response = await this._adapter.retrieveTrigger(query);
+      if (response.length !== 1) {
+        return null;
+      }
+      return response[0];
     }
 
     /**
@@ -1667,12 +1613,9 @@ module.exports = (() => {
      * @returns {Promise<Schema.Trigger[]>}
      */
     async retrieveTriggers(query) {
-      return Promise.resolve().then(() => {
-        checkStatus(this, 'retrieve alert triggers');
-        validate.trigger.forQuery(query);
-      }).then(() => {
-        return this._adapter.retrieveTriggers(query);
-      });
+      checkStatus(this, 'retrieve alert triggers');
+      validate.trigger.forQuery(query);
+      return this._adapter.retrieveTriggers(query);
     }
 
     /**
@@ -1739,12 +1682,9 @@ module.exports = (() => {
      * @returns {Promise<Schema.Trigger>}
      */
     async updateTrigger(query) {
-      return Promise.resolve().then(() => {
-        checkStatus(this, 'updates alert trigger');
-        validate.trigger.forUpdate(query);
-      }).then(() => {
-        return this._adapter.updateTrigger(query);
-      });
+      checkStatus(this, 'updates alert trigger');
+      validate.trigger.forUpdate(query);
+      return this._adapter.updateTrigger(query);
     }
 
     /**
@@ -1760,12 +1700,9 @@ module.exports = (() => {
      * @returns {Promise<Schema.Trigger[]>}
      */
     async updateTriggers(query) {
-      return Promise.resolve().then(() => {
-        checkStatus(this, 'updates alert triggers');
-        validate.trigger.forBatch(query);
-      }).then(() => {
-        return this._adapter.updateTriggers(query);
-      });
+      checkStatus(this, 'updates alert triggers');
+      validate.trigger.forBatch(query);
+      return this._adapter.updateTriggers(query);
     }
 
     /**
@@ -1777,12 +1714,9 @@ module.exports = (() => {
      * @returns {Promise<Schema.Template[]>}
      */
     async retrieveTemplates(query) {
-      return Promise.resolve().then(() => {
-        checkStatus(this, 'get templates');
-        validate.template.forUser(query);
-      }).then(() => {
-        return this._adapter.retrieveTemplates(query);
-      });
+      checkStatus(this, 'get templates');
+      validate.template.forUser(query);
+      return this._adapter.retrieveTemplates(query);
     }
 
     /**
@@ -1846,12 +1780,9 @@ module.exports = (() => {
      * @returns {Promise<Schema.Template>}
      */
     async createTemplate(template) {
-      return Promise.resolve().then(() => {
-        checkStatus(this, 'create template');
-        validate.template.forCreate(template);
-      }).then(() => {
-        return this._adapter.createTemplate(template);
-      });
+      checkStatus(this, 'create template');
+      validate.template.forCreate(template);
+      return this._adapter.createTemplate(template);
     }
 
     /**
@@ -1863,12 +1794,9 @@ module.exports = (() => {
      * @returns {Promise<Schema.Template>}
      */
     async updateTemplate(template) {
-      return Promise.resolve().then(() => {
-        checkStatus(this, 'update template');
-        validate.template.forUpdate(template);
-      }).then(() => {
-        return this._adapter.updateTemplate(template);
-      });
+      checkStatus(this, 'update template');
+      validate.template.forUpdate(template);
+      return this._adapter.updateTemplate(template);
     }
 
     /**
@@ -1880,12 +1808,9 @@ module.exports = (() => {
      * @returns {Promise<Schema.Template[]>}
      */
     async updateTemplateOrder(templates) {
-      return Promise.resolve().then(() => {
-        checkStatus(this, 'update template order');
-      }).then(() => {
-        return this._adapter.updateTemplateOrder({
-          templates
-        });
+      checkStatus(this, 'update template order');
+      return this._adapter.updateTemplateOrder({
+        templates
       });
     }
 
@@ -1898,13 +1823,10 @@ module.exports = (() => {
      * @returns {Promise<Schema.Template>}
      */
     async deleteTemplate(template) {
-      return Promise.resolve().then(() => {
-        checkStatus(this, 'delete template');
-        validate.template.forQuery(template);
-      }).then(() => {
-        return this._adapter.deleteTemplate({
-          template_id: template.template_id
-        });
+      checkStatus(this, 'delete template');
+      validate.template.forQuery(template);
+      return this._adapter.deleteTemplate({
+        template_id: template.template_id
       });
     }
 
@@ -1923,15 +1845,12 @@ module.exports = (() => {
      * @returns {Promise<String>}
      */
     async checkSymbol(symbol, alertSystem) {
-      return Promise.resolve().then(() => {
-        checkStatus(this, 'check symbol');
-        assert.argumentIsRequired(symbol, 'symbol', String);
-        assert.argumentIsOptional(alertSystem, 'alertSystem', String);
-        return lookupInstrument(symbol, alertSystem || null);
-      }).then(result => {
-        validate.instrument.forCreate(symbol, result.instrument);
-        return result.instrument.symbol;
-      });
+      checkStatus(this, 'check symbol');
+      assert.argumentIsRequired(symbol, 'symbol', String);
+      assert.argumentIsOptional(alertSystem, 'alertSystem', String);
+      const result = await lookupInstrument(symbol, alertSystem || null);
+      validate.instrument.forCreate(symbol, result.instrument);
+      return result.instrument.symbol;
     }
 
     /**
@@ -1943,10 +1862,8 @@ module.exports = (() => {
      * @returns {Promise<Schema.Target[]>}
      */
     async getTargets() {
-      return Promise.resolve().then(() => {
-        checkStatus(this, 'get targets');
-        return this._adapter.getTargets();
-      });
+      checkStatus(this, 'get targets');
+      return this._adapter.getTargets();
     }
 
     /**
@@ -1958,10 +1875,8 @@ module.exports = (() => {
      * @returns {Promise<Schema.Property[]>}
      */
     async getProperties() {
-      return Promise.resolve().then(() => {
-        checkStatus(this, 'get properties');
-        return this._adapter.getProperties();
-      });
+      checkStatus(this, 'get properties');
+      return this._adapter.getProperties();
     }
 
     /**
@@ -1973,16 +1888,12 @@ module.exports = (() => {
      * @returns {Promise<Schema.Operator[]>}
      */
     async getOperators() {
-      return Promise.resolve().then(() => {
-        checkStatus(this, 'get operators');
-        return this._adapter.getOperators();
-      });
+      checkStatus(this, 'get operators');
+      return this._adapter.getOperators();
     }
     async getModifiers() {
-      return Promise.resolve().then(() => {
-        checkStatus(this, 'get modifiers');
-        return this._adapter.getModifiers();
-      });
+      checkStatus(this, 'get modifiers');
+      return this._adapter.getModifiers();
     }
 
     /**
@@ -1994,10 +1905,8 @@ module.exports = (() => {
      * @returns {Promise<Schema.PublisherType[]>}
      */
     async getPublisherTypes() {
-      return Promise.resolve().then(() => {
-        checkStatus(this, 'get publisher types');
-        return this._adapter.getPublisherTypes();
-      });
+      checkStatus(this, 'get publisher types');
+      return this._adapter.getPublisherTypes();
     }
 
     /**
@@ -2011,12 +1920,9 @@ module.exports = (() => {
      * @returns {Promise<Schema.PublisherTypeDefault[]>}
      */
     async getPublisherTypeDefaults(query) {
-      return Promise.resolve().then(() => {
-        checkStatus(this, 'get publisher type defaults');
-        validate.publisherTypeDefault.forUser(query);
-      }).then(() => {
-        return this._adapter.getPublisherTypeDefaults(query);
-      });
+      checkStatus(this, 'get publisher type defaults');
+      validate.publisherTypeDefault.forUser(query);
+      return this._adapter.getPublisherTypeDefaults(query);
     }
 
     /**
@@ -2029,12 +1935,9 @@ module.exports = (() => {
      * @returns {Promise<Schema.PublisherTypeDefault>}
      */
     async assignPublisherTypeDefault(publisherTypeDefault) {
-      return Promise.resolve().then(() => {
-        checkStatus(this, 'assign publisher type default');
-        validate.publisherTypeDefault.forCreate(publisherTypeDefault);
-      }).then(() => {
-        return this._adapter.assignPublisherTypeDefault(publisherTypeDefault);
-      });
+      checkStatus(this, 'assign publisher type default');
+      validate.publisherTypeDefault.forCreate(publisherTypeDefault);
+      return this._adapter.assignPublisherTypeDefault(publisherTypeDefault);
     }
 
     /**
@@ -2047,30 +1950,21 @@ module.exports = (() => {
      * @returns {Promise<Schema.PublisherTypeDefault>}
      */
     async deletePublisherTypeDefault(publisherTypeDefault) {
-      return Promise.resolve().then(() => {
-        checkStatus(this, 'clear publisher type default');
-        validate.publisherTypeDefault.forClear(publisherTypeDefault);
-      }).then(() => {
-        const payload = {};
-        payload.user_id = publisherTypeDefault.user_id;
-        payload.alert_system = publisherTypeDefault.alert_system;
-        payload.publisher_type_id = publisherTypeDefault.publisher_type_id;
-        return this._adapter.deletePublisherTypeDefault(payload);
-      });
+      checkStatus(this, 'clear publisher type default');
+      validate.publisherTypeDefault.forClear(publisherTypeDefault);
+      const payload = {};
+      payload.user_id = publisherTypeDefault.user_id;
+      payload.alert_system = publisherTypeDefault.alert_system;
+      payload.publisher_type_id = publisherTypeDefault.publisher_type_id;
+      return this._adapter.deletePublisherTypeDefault(payload);
     }
     async getMarketDataConfiguration(query) {
-      return Promise.resolve().then(() => {
-        checkStatus(this, 'get market data configuration');
-      }).then(() => {
-        return this._adapter.getMarketDataConfiguration(query);
-      });
+      checkStatus(this, 'get market data configuration');
+      return this._adapter.getMarketDataConfiguration(query);
     }
     async assignMarketDataConfiguration(marketDataConfiguration) {
-      return Promise.resolve().then(() => {
-        checkStatus(this, 'assign market data configuration');
-      }).then(() => {
-        return this._adapter.assignMarketDataConfiguration(marketDataConfiguration);
-      });
+      checkStatus(this, 'assign market data configuration');
+      return this._adapter.assignMarketDataConfiguration(marketDataConfiguration);
     }
 
     /**
@@ -2081,11 +1975,8 @@ module.exports = (() => {
      * @returns {Promise<String>}
      */
     async getServerVersion() {
-      return Promise.resolve().then(() => {
-        checkStatus(this, 'get server version');
-      }).then(() => {
-        return this._adapter.getServerVersion();
-      });
+      checkStatus(this, 'get server version');
+      return this._adapter.getServerVersion();
     }
 
     /**
@@ -2097,11 +1988,8 @@ module.exports = (() => {
      * @returns {Promise<Schema.UserIdentifier>}
      */
     async getUser() {
-      return Promise.resolve().then(() => {
-        checkStatus(this, 'get authenticated user');
-      }).then(() => {
-        return this._adapter.getUser();
-      });
+      checkStatus(this, 'get authenticated user');
+      return this._adapter.getUser();
     }
 
     /**
@@ -2112,7 +2000,7 @@ module.exports = (() => {
      * @param {Schema.Template} template
      * @param {String} symbol
      * @param {Schema.Alert=} alert
-     * @returns {Promise<Schema.Alert>}
+     * @returns {Schema.Alert}
      */
     static createAlertFromTemplate(template, symbol, alert) {
       const newAlert = {};
@@ -2158,31 +2046,28 @@ module.exports = (() => {
      * @returns {Promise<Array<Object>>}
      */
     static async filterPropertiesForSymbol(properties, symbol, target, alertSystem) {
-      return Promise.resolve().then(() => {
-        assert.argumentIsArray(properties, properties);
-        assert.argumentIsRequired(symbol, 'symbol', String);
-        assert.argumentIsOptional(target, 'target', Number);
-        assert.argumentIsOptional(alertSystem, 'alertSystem', String);
-        return lookupInstrument(symbol, alertSystem || null).then(result => {
-          return result.instrument;
-        });
-      }).then(instrument => {
-        return properties.filter(property => {
-          let valid = instrument !== null;
-          if (valid && instrument.symbolType === 12) {
-            valid = property.property_id > 0 && property.property_id < 9;
-          }
-          if (valid && instrument.symbolType === 34) {
-            valid = false;
-          }
-          if (valid && (property.property_id === 238 || property.property_id === 239)) {
-            valid = instrument.hasOptions && (instrument.symbolType === 1 || instrument.symbolType === 7 || instrument.symbolType === 9);
-          }
-          if (valid && is.number(target)) {
-            valid = property.target.target_id === target;
-          }
-          return valid;
-        });
+      assert.argumentIsArray(properties, properties);
+      assert.argumentIsRequired(symbol, 'symbol', String);
+      assert.argumentIsOptional(target, 'target', Number);
+      assert.argumentIsOptional(alertSystem, 'alertSystem', String);
+      const {
+        instrument
+      } = await lookupInstrument(symbol, alertSystem || null);
+      return properties.filter(property => {
+        let valid = instrument !== null;
+        if (valid && instrument.symbolType === 12) {
+          valid = property.property_id > 0 && property.property_id < 9;
+        }
+        if (valid && instrument.symbolType === 34) {
+          valid = false;
+        }
+        if (valid && (property.property_id === 238 || property.property_id === 239)) {
+          valid = instrument.hasOptions && (instrument.symbolType === 1 || instrument.symbolType === 7 || instrument.symbolType === 9);
+        }
+        if (valid && is.number(target)) {
+          valid = property.target.target_id === target;
+        }
+        return valid;
       });
     }
     static getPropertiesForTarget(properties, target) {
@@ -2263,30 +2148,27 @@ module.exports = (() => {
      * @returns {Promise<Array<Object>>}
      */
     static async filterTemplatesForSymbol(templates, symbol, alertSystem) {
-      return Promise.resolve().then(() => {
-        assert.argumentIsArray(templates, templates);
-        assert.argumentIsRequired(symbol, 'symbol', String);
-        assert.argumentIsOptional(alertSystem, 'alertSystem', String);
-        return lookupInstrument(symbol, alertSystem || null).then(result => {
-          return result.instrument;
+      assert.argumentIsArray(templates, templates);
+      assert.argumentIsRequired(symbol, 'symbol', String);
+      assert.argumentIsOptional(alertSystem, 'alertSystem', String);
+      const {
+        instrument
+      } = await lookupInstrument(symbol, alertSystem || null);
+      return templates.filter(template => {
+        let valid = instrument !== null;
+        const properties = template.conditions.map(condition => {
+          return condition.property.property_id;
         });
-      }).then(instrument => {
-        return templates.filter(template => {
-          let valid = instrument !== null;
-          const properties = template.conditions.map(condition => {
-            return condition.property.property_id;
-          });
-          if (valid && instrument.symbolType === 12) {
-            valid = properties.every(p => p > 0 && p < 9);
-          }
-          if (valid && instrument.symbolType === 34) {
-            valid = false;
-          }
-          if (valid && properties.some(p => p === 238 || p === 239)) {
-            valid = instrument.hasOptions && (instrument.symbolType === 1 || instrument.symbolType === 7 || instrument.symbolType === 9);
-          }
-          return valid;
-        });
+        if (valid && instrument.symbolType === 12) {
+          valid = properties.every(p => p > 0 && p < 9);
+        }
+        if (valid && instrument.symbolType === 34) {
+          valid = false;
+        }
+        if (valid && properties.some(p => p === 238 || p === 239)) {
+          valid = instrument.hasOptions && (instrument.symbolType === 1 || instrument.symbolType === 7 || instrument.symbolType === 9);
+        }
+        return valid;
       });
     }
 
@@ -2312,11 +2194,9 @@ module.exports = (() => {
      * @returns {Promise<AlertManager>}
      */
     static async forStaging(jwtProvider, adapterClazz) {
-      return Promise.resolve().then(() => {
-        assert.argumentIsRequired(jwtProvider, 'jwtProvider', JwtProvider, 'JwtProvider');
-        assert.argumentIsRequired(adapterClazz, 'adapter', Function);
-        return start(new AlertManager(Configuration.stagingHost, DEFAULT_SECURE_PORT, true, adapterClazz), jwtProvider);
-      });
+      assert.argumentIsRequired(jwtProvider, 'jwtProvider', JwtProvider, 'JwtProvider');
+      assert.argumentIsRequired(adapterClazz, 'adapter', Function);
+      return start(new AlertManager(Configuration.stagingHost, DEFAULT_SECURE_PORT, true, adapterClazz), jwtProvider);
     }
 
     /**
@@ -2330,11 +2210,9 @@ module.exports = (() => {
      * @returns {Promise<AlertManager>}
      */
     static async forProduction(jwtProvider, adapterClazz) {
-      return Promise.resolve().then(() => {
-        assert.argumentIsRequired(jwtProvider, 'jwtProvider', JwtProvider, 'JwtProvider');
-        assert.argumentIsRequired(adapterClazz, 'adapter', Function);
-        return start(new AlertManager(Configuration.productionHost, DEFAULT_SECURE_PORT, true, adapterClazz), jwtProvider);
-      });
+      assert.argumentIsRequired(jwtProvider, 'jwtProvider', JwtProvider, 'JwtProvider');
+      assert.argumentIsRequired(adapterClazz, 'adapter', Function);
+      return start(new AlertManager(Configuration.productionHost, DEFAULT_SECURE_PORT, true, adapterClazz), jwtProvider);
     }
 
     /**
@@ -2348,11 +2226,9 @@ module.exports = (() => {
      * @returns {Promise<AlertManager>}
      */
     static async forAdmin(jwtProvider, adapterClazz) {
-      return Promise.resolve().then(() => {
-        assert.argumentIsRequired(jwtProvider, 'jwtProvider', JwtProvider, 'JwtProvider');
-        assert.argumentIsRequired(adapterClazz, 'adapter', Function);
-        return start(new AlertManager(Configuration.adminHost, DEFAULT_SECURE_PORT, true, adapterClazz), jwtProvider);
-      });
+      assert.argumentIsRequired(jwtProvider, 'jwtProvider', JwtProvider, 'JwtProvider');
+      assert.argumentIsRequired(adapterClazz, 'adapter', Function);
+      return start(new AlertManager(Configuration.adminHost, DEFAULT_SECURE_PORT, true, adapterClazz), jwtProvider);
     }
 
     /**
@@ -2366,11 +2242,9 @@ module.exports = (() => {
      * @returns {Promise<AlertManager>}
      */
     static async forDemo(jwtProvider, adapterClazz) {
-      return Promise.resolve().then(() => {
-        assert.argumentIsRequired(jwtProvider, 'jwtProvider', JwtProvider, 'JwtProvider');
-        assert.argumentIsRequired(adapterClazz, 'adapter', Function);
-        return start(new AlertManager(Configuration.demoHost, DEFAULT_SECURE_PORT, true, adapterClazz), jwtProvider);
-      });
+      assert.argumentIsRequired(jwtProvider, 'jwtProvider', JwtProvider, 'JwtProvider');
+      assert.argumentIsRequired(adapterClazz, 'adapter', Function);
+      return start(new AlertManager(Configuration.demoHost, DEFAULT_SECURE_PORT, true, adapterClazz), jwtProvider);
     }
     _onDispose() {
       if (this._adapter) {
@@ -2386,10 +2260,9 @@ module.exports = (() => {
       return '[AlertManager]';
     }
   }
-  function start(gateway, jwtProvider) {
-    return gateway.connect(jwtProvider).then(() => {
-      return gateway;
-    });
+  async function start(gateway, jwtProvider) {
+    await gateway.connect(jwtProvider);
+    return gateway;
   }
   function getMutationEvents(map, alert) {
     let returnRef = null;
@@ -2404,7 +2277,7 @@ module.exports = (() => {
     return returnRef;
   }
   function checkDispose(manager, operation) {
-    if (manager.getIsDisposed()) {
+    if (manager.disposed) {
       throw new Error(`Unable to perform ${operation}, the alert manager has been disposed`);
     }
   }
@@ -2561,7 +2434,7 @@ module.exports = (() => {
     }).withResponseInterceptor(ResponseInterceptor.DATA).withErrorInterceptor(ErrorInterceptor.GENERAL).endpoint;
   }
   const instrumentLookupCache = new TimeMap(60 * 60 * 1000);
-  function lookupInstrument(symbol, alertSystem) {
+  async function lookupInstrument(symbol, alertSystem) {
     let host;
     if (is.string(alertSystem) && (alertSystem === 'webstation.barchart.com' || alertSystem === 'webstation')) {
       host = 'instruments-cmdtyview.aws.barchart.com';
@@ -2582,7 +2455,7 @@ module.exports = (() => {
   return AlertManager;
 })();
 
-},{"./adapters/AdapterBase":3,"./common/Configuration":6,"./data/validators/validate":15,"./meta":16,"./security/JwtProvider":18,"@barchart/common-js/api/http/Gateway":23,"@barchart/common-js/api/http/builders/EndpointBuilder":25,"@barchart/common-js/api/http/definitions/ProtocolType":31,"@barchart/common-js/api/http/definitions/VerbType":32,"@barchart/common-js/api/http/interceptors/ErrorInterceptor":36,"@barchart/common-js/api/http/interceptors/ResponseInterceptor":38,"@barchart/common-js/collections/specialized/TimeMap":43,"@barchart/common-js/lang/Disposable":48,"@barchart/common-js/lang/array":52,"@barchart/common-js/lang/assert":53,"@barchart/common-js/lang/is":56,"@barchart/common-js/lang/object":57,"@barchart/common-js/lang/promise":58,"@barchart/common-js/messaging/Event":61,"@barchart/marketdata-api-js/lib/utilities/convert/baseCodeToUnitCode":67,"@barchart/marketdata-api-js/lib/utilities/format/price":71,"@barchart/marketdata-api-js/lib/utilities/parse/ddf/value":72}],3:[function(require,module,exports){
+},{"./adapters/AdapterBase":3,"./common/Configuration":6,"./data/validators/validate":15,"./meta":16,"./security/JwtProvider":18,"@barchart/common-js/api/http/Gateway":23,"@barchart/common-js/api/http/builders/EndpointBuilder":25,"@barchart/common-js/api/http/definitions/ProtocolType":31,"@barchart/common-js/api/http/definitions/VerbType":32,"@barchart/common-js/api/http/interceptors/ErrorInterceptor":36,"@barchart/common-js/api/http/interceptors/ResponseInterceptor":38,"@barchart/common-js/collections/specialized/TimeMap":43,"@barchart/common-js/lang/Disposable":49,"@barchart/common-js/lang/array":53,"@barchart/common-js/lang/assert":54,"@barchart/common-js/lang/is":57,"@barchart/common-js/lang/object":58,"@barchart/common-js/lang/promise":59,"@barchart/common-js/messaging/Event":62,"@barchart/marketdata-api-js/lib/utilities/convert/baseCodeToUnitCode":68,"@barchart/marketdata-api-js/lib/utilities/format/price":72,"@barchart/marketdata-api-js/lib/utilities/parse/ddf/value":73}],3:[function(require,module,exports){
 const assert = require('@barchart/common-js/lang/assert'),
   Disposable = require('@barchart/common-js/lang/Disposable');
 module.exports = (() => {
@@ -2684,100 +2557,101 @@ module.exports = (() => {
      * Connects to the backend.
      *
      * @public
+     * @async
      * @param {JwtProvider} jwtProvider
      * @returns {Promise<AdapterBase>}
      */
-    connect(jwtProvider) {
+    async connect(jwtProvider) {
       return Promise.reject();
     }
-    createAlert(alert) {
+    async createAlert(alert) {
       return null;
     }
-    retrieveAlert(alert) {
+    async retrieveAlert(alert) {
       return null;
     }
-    retrieveAlerts(query) {
+    async retrieveAlerts(query) {
       return null;
     }
-    updateAlert(alert) {
+    async updateAlert(alert) {
       return null;
     }
-    updateAlertsForUser(query) {
+    async updateAlertsForUser(query) {
       return null;
     }
-    deleteAlert(alert) {
+    async deleteAlert(alert) {
       return null;
     }
     subscribeAlerts(query) {
       return null;
     }
-    retrieveTrigger(query) {
+    async retrieveTrigger(query) {
       return null;
     }
-    retrieveTriggers(query) {
+    async retrieveTriggers(query) {
       return null;
     }
-    updateTrigger(query) {
+    async updateTrigger(query) {
       return null;
     }
-    updateTriggers(query) {
+    async updateTriggers(query) {
       return null;
     }
     subscribeTriggers(query) {
       return null;
     }
-    createTemplate(template) {
+    async createTemplate(template) {
       return null;
     }
-    retrieveTemplates(query) {
+    async retrieveTemplates(query) {
       return null;
     }
-    updateTemplate(template) {
+    async updateTemplate(template) {
       return null;
     }
-    updateTemplateOrder(templates) {
+    async updateTemplateOrder(templates) {
       return null;
     }
-    deleteTemplate(template) {
+    async deleteTemplate(template) {
       return null;
     }
     subscribeTemplates(query) {
       return null;
     }
-    getTargets() {
+    async getTargets() {
       return null;
     }
-    getProperties() {
+    async getProperties() {
       return null;
     }
-    getOperators() {
+    async getOperators() {
       return null;
     }
-    getModifiers() {
+    async getModifiers() {
       return null;
     }
-    getPublisherTypes() {
+    async getPublisherTypes() {
       return null;
     }
-    getPublisherTypeDefaults(query) {
+    async getPublisherTypeDefaults(query) {
       return null;
     }
-    assignPublisherTypeDefault(publisherTypeDefault) {
+    async assignPublisherTypeDefault(publisherTypeDefault) {
       return null;
     }
-    deletePublisherTypeDefault(publisherTypeDefault) {
+    async deletePublisherTypeDefault(publisherTypeDefault) {
       return null;
     }
-    getMarketDataConfiguration(query) {
+    async getMarketDataConfiguration(query) {
       return null;
     }
-    assignMarketDataConfiguration(marketDataConfiguration) {
+    async assignMarketDataConfiguration(marketDataConfiguration) {
       return null;
     }
-    getUser() {
+    async getUser() {
       return null;
     }
-    getServerVersion() {
+    async getServerVersion() {
       return null;
     }
     toString() {
@@ -2788,7 +2662,7 @@ module.exports = (() => {
   return AdapterBase;
 })();
 
-},{"@barchart/common-js/lang/Disposable":48,"@barchart/common-js/lang/assert":53}],4:[function(require,module,exports){
+},{"@barchart/common-js/lang/Disposable":49,"@barchart/common-js/lang/assert":54}],4:[function(require,module,exports){
 const array = require('@barchart/common-js/lang/array'),
   assert = require('@barchart/common-js/lang/assert'),
   Disposable = require('@barchart/common-js/lang/Disposable'),
@@ -2919,45 +2793,54 @@ module.exports = (() => {
       this._triggerSubscriberMap = {};
       this._templateSubscriberMap = {};
     }
-    connect(jwtProvider) {
-      return Promise.resolve().then(() => {
-        assert.argumentIsOptional(jwtProvider, 'jwtProvider', JwtProvider, 'JwtProvider');
-        this._jwtProvider = jwtProvider;
-        return this.getServerVersion().then(() => {
-          this._onConnectionStatusChanged('connected');
-          return Promise.resolve(this);
-        }).catch(e => {
-          return Promise.reject(`Unable to connect to server using HTTP adapter [ ${this.host} ] [ ${this.port} ] [ ${this.secure} ]`);
-        });
-      });
+    async connect(jwtProvider) {
+      assert.argumentIsOptional(jwtProvider, 'jwtProvider', JwtProvider, 'JwtProvider');
+      this._jwtProvider = jwtProvider;
+      try {
+        await this.getServerVersion();
+      } catch (e) {
+        throw new Error(`Unable to connect to server using HTTP adapter [ ${this.host} ] [ ${this.port} ] [ ${this.secure} ]`);
+      }
+      this._onConnectionStatusChanged('connected');
+      return this;
     }
-    createAlert(alert) {
+    async createAlert(alert) {
       return Gateway.invoke(this._createAlertEndpoint, alert);
     }
-    retrieveAlert(alert) {
+    async retrieveAlert(alert) {
       return Gateway.invoke(this._retrieveAlertEndpoint, alert);
     }
-    retrieveAlerts(query) {
-      return Gateway.invoke(this._retrieveAlertsEndpoint, query).then(alerts => {
-        const subscriber = getSubscriber(this._alertSubscriberMap, query);
-        if (subscriber) {
-          const clones = alerts.map(alert => {
-            return object.clone(alert);
-          });
-          subscriber.processAlerts(clones);
-        }
-        return alerts;
-      }).catch(e => {
-        console.log(e);
-      });
+    async retrieveAlerts(query) {
+      let alerts;
+      try {
+        alerts = await Gateway.invoke(this._retrieveAlertsEndpoint, query);
+      } catch (e) {
+        console.error(e);
+        return [];
+      }
+      const subscriber = getSubscriber(this._alertSubscriberMap, query);
+      if (subscriber) {
+        subscriber.processAlerts(alerts.map(a => object.clone(a)));
+      }
+      return alerts;
     }
-    updateAlert(alert) {
+    async updateAlert(alert) {
+      const subscribers = getSubscribers(this._alertSubscriberMap);
+
+      // 2025/12/30, BRI. The AlertManager triggers an immediate alert mutation (so that
+      // the UI appears to be responsive). As a result, the internal state of the subscriber
+      // must be updated (otherwise subsequent mutation may not be triggered). For example, this
+      // happens when an expired alert is started (and state goes from expired > starting > expired).
+
+      subscribers.forEach(subscriber => {
+        subscriber.synchronizeState(alert.alert_id, alert.alert_state);
+      });
       return Gateway.invoke(this._updateAlertEndpoint, alert);
     }
-    updateAlertsForUser(query) {
+    async updateAlertsForUser(query) {
       return Gateway.invoke(this._updateAlertsForUserEndpoint, query);
     }
-    deleteAlert(alert) {
+    async deleteAlert(alert) {
       return Gateway.invoke(this._deleteAlertEndpoint, alert);
     }
     subscribeAlerts(query) {
@@ -2972,27 +2855,21 @@ module.exports = (() => {
         subscriber.dispose();
       });
     }
-    retrieveTrigger(query) {
+    async retrieveTrigger(query) {
       return Gateway.invoke(this._retrieveTriggerEndpoint, query);
     }
-    retrieveTriggers(query) {
-      return Gateway.invoke(this._retrieveTriggersEndpoint, query).then(triggers => {
-        const subscriber = getSubscriber(this._triggerSubscriberMap, query);
-        if (subscriber) {
-          const clones = triggers.map(trigger => {
-            return object.clone(trigger);
-          });
-          subscriber.processTriggers(clones);
-        }
-        return triggers;
-      }).catch(e => {
-        console.log(e);
-      });
+    async retrieveTriggers(query) {
+      const triggers = await Gateway.invoke(this._retrieveTriggersEndpoint, query);
+      const subscriber = getSubscriber(this._triggerSubscriberMap, query);
+      if (subscriber) {
+        subscriber.processTriggers(triggers.map(t => object.clone(t)));
+      }
+      return triggers;
     }
-    updateTrigger(query) {
+    async updateTrigger(query) {
       return Gateway.invoke(this._updateTriggerEndpoint, query);
     }
-    updateTriggers(query) {
+    async updateTriggers(query) {
       return Gateway.invoke(this._updateTriggersEndpoint, query);
     }
     subscribeTriggers(query) {
@@ -3007,30 +2884,24 @@ module.exports = (() => {
         subscriber.dispose();
       });
     }
-    createTemplate(template) {
+    async createTemplate(template) {
       return Gateway.invoke(this._createTemplateEndpoint, template);
     }
-    retrieveTemplates(query) {
-      return Gateway.invoke(this._retrieveTemplatesEndpoint, query).then(templates => {
-        const subscriber = getSubscriber(this._templateSubscriberMap, query);
-        if (subscriber) {
-          const clones = templates.map(template => {
-            return object.clone(template);
-          });
-          subscriber.processTemplates(clones);
-        }
-        return templates;
-      }).catch(e => {
-        console.log(e);
-      });
+    async retrieveTemplates(query) {
+      const templates = await Gateway.invoke(this._retrieveTemplatesEndpoint, query);
+      const subscriber = getSubscriber(this._templateSubscriberMap, query);
+      if (subscriber) {
+        subscriber.processTemplates(templates.map(t => object.clone(t)));
+      }
+      return templates;
     }
-    updateTemplate(template) {
+    async updateTemplate(template) {
       return Gateway.invoke(this._updateTemplateEndpoint, template);
     }
-    updateTemplateOrder(templates) {
+    async updateTemplateOrder(templates) {
       return Gateway.invoke(this._updateTemplateOrderEndpoint, templates);
     }
-    deleteTemplate(template) {
+    async deleteTemplate(template) {
       return Gateway.invoke(this._deleteTemplateEndpoint, template);
     }
     subscribeTemplates(query) {
@@ -3045,40 +2916,40 @@ module.exports = (() => {
         subscriber.dispose();
       });
     }
-    getTargets() {
+    async getTargets() {
       return Gateway.invoke(this._retrieveTargetsEndpoint);
     }
-    getProperties() {
+    async getProperties() {
       return Gateway.invoke(this._retrievePropertiesEndpoint);
     }
-    getOperators() {
+    async getOperators() {
       return Gateway.invoke(this._retrieveOperatorsEndpoint);
     }
-    getModifiers() {
+    async getModifiers() {
       return Gateway.invoke(this._retrieveModifiersEndpoint);
     }
-    getPublisherTypes() {
+    async getPublisherTypes() {
       return Gateway.invoke(this._retrievePublisherTypesEndpoint);
     }
-    getPublisherTypeDefaults(query) {
+    async getPublisherTypeDefaults(query) {
       return Gateway.invoke(this._retrievePublisherTypeDefaultsEndpoint, query);
     }
-    assignPublisherTypeDefault(publisherTypeDefault) {
+    async assignPublisherTypeDefault(publisherTypeDefault) {
       return Gateway.invoke(this._assignPublisherTypeDefaultEndpoint, publisherTypeDefault);
     }
-    deletePublisherTypeDefault(publisherTypeDefault) {
+    async deletePublisherTypeDefault(publisherTypeDefault) {
       return Gateway.invoke(this._deletePublisherTypeDefaultEndpoint, publisherTypeDefault);
     }
-    getMarketDataConfiguration(query) {
+    async getMarketDataConfiguration(query) {
       return Gateway.invoke(this._retrieveMarketDataConfigurationEndpoint, query);
     }
-    assignMarketDataConfiguration(marketDataConfiguration) {
+    async assignMarketDataConfiguration(marketDataConfiguration) {
       return Gateway.invoke(this._assignMarketDataConfigurationEndpoint, marketDataConfiguration);
     }
-    getUser() {
+    async getUser() {
       return Gateway.invoke(this._retrieveUserEndpoint);
     }
-    getServerVersion() {
+    async getServerVersion() {
       return Gateway.invoke(this._retrieveVersionEndpoint);
     }
     _onDispose() {
@@ -3141,10 +3012,17 @@ module.exports = (() => {
       this._parent = parent;
       this._query = query;
       this._alerts = {};
+      this._pollCounter = 0;
       this._started = false;
     }
     getQuery() {
       return this._query;
+    }
+    synchronizeState(alertId, alertState) {
+      const alert = this._alerts[alertId] || null;
+      if (alert !== null) {
+        alert.alert_state = alertState;
+      }
     }
     processAlerts(alerts) {
       const currentAlerts = array.indexBy(alerts, alert => alert.alert_id);
@@ -3178,7 +3056,11 @@ module.exports = (() => {
         delete this._alerts[alert.alert_id];
       });
       createdAlerts.forEach(alert => {
-        this._parent._onAlertCreated(alert);
+        if (this._pollCounter === 0) {
+          this._parent._onAlertMutated(alert);
+        } else {
+          this._parent._onAlertCreated(alert);
+        }
       });
       mutatedAlerts.forEach(alert => {
         this._parent._onAlertMutated(alert);
@@ -3194,7 +3076,7 @@ module.exports = (() => {
       if (this._started) {
         throw new Error('The alert subscriber has already been started.');
       }
-      if (this.getIsDisposed()) {
+      if (this.disposed) {
         throw new Error('The alert subscriber has been disposed.');
       }
       this._started = true;
@@ -3204,6 +3086,7 @@ module.exports = (() => {
         }
         this._parent._scheduler.schedule(() => {
           return this._parent.retrieveAlerts(this._query).catch(e => {}).then(() => {
+            this._pollCounter++;
             poll(delay || 5000);
           });
         }, delay);
@@ -3223,6 +3106,7 @@ module.exports = (() => {
       this._parent = parent;
       this._query = query;
       this._triggers = {};
+      this._pollCounter = 0;
       this._started = false;
     }
     getQuery() {
@@ -3252,7 +3136,11 @@ module.exports = (() => {
         delete this._triggers[extractKey(trigger)];
       });
       if (createdTriggers.length > 0) {
-        this._parent._onTriggersCreated(createdTriggers);
+        if (this._pollCounter === 0) {
+          this._parent._onTriggersMutated(createdTriggers);
+        } else {
+          this._parent._onTriggersCreated(createdTriggers);
+        }
       }
       if (mutatedTriggers.length > 0) {
         this._parent._onTriggersMutated(mutatedTriggers);
@@ -3265,7 +3153,7 @@ module.exports = (() => {
       if (this._started) {
         throw new Error('The trigger subscriber has already been started.');
       }
-      if (this.getIsDisposed()) {
+      if (this.disposed) {
         throw new Error('The trigger subscriber has been disposed.');
       }
       this._started = true;
@@ -3275,6 +3163,7 @@ module.exports = (() => {
         }
         this._parent._scheduler.schedule(() => {
           return this._parent.retrieveTriggers(this._query).catch(e => {}).then(() => {
+            this._pollCounter++;
             poll(delay || 5000);
           });
         }, delay);
@@ -3294,6 +3183,7 @@ module.exports = (() => {
       this._parent = parent;
       this._query = query;
       this._templates = {};
+      this._pollCounter = 0;
       this._started = false;
     }
     getQuery() {
@@ -3322,7 +3212,11 @@ module.exports = (() => {
         delete this._templates[template.template_id];
       });
       createdTemplates.forEach(template => {
-        this._parent._onTemplateCreated(template);
+        if (this._pollCounter === 0) {
+          this._parent._onTemplateMutated(template);
+        } else {
+          this._parent._onTemplateCreated(template);
+        }
       });
       mutatedTemplates.forEach(template => {
         this._parent._onTemplateMutated(template);
@@ -3335,7 +3229,7 @@ module.exports = (() => {
       if (this._started) {
         throw new Error('The template subscriber has already been started.');
       }
-      if (this.getIsDisposed()) {
+      if (this.disposed) {
         throw new Error('The template subscriber has been disposed.');
       }
       this._started = true;
@@ -3345,6 +3239,7 @@ module.exports = (() => {
         }
         this._parent._scheduler.schedule(() => {
           return this._parent.retrieveTemplates(this._query).catch(e => {}).then(() => {
+            this._pollCounter++;
             poll(delay || 5000);
           });
         }, delay);
@@ -3381,7 +3276,7 @@ module.exports = (() => {
   return AdapterForHttp;
 })();
 
-},{"../security/JwtProvider":18,"./AdapterBase":3,"@barchart/common-js/api/failures/FailureReason":20,"@barchart/common-js/api/failures/FailureType":22,"@barchart/common-js/api/http/Gateway":23,"@barchart/common-js/api/http/builders/EndpointBuilder":25,"@barchart/common-js/api/http/definitions/ProtocolType":31,"@barchart/common-js/api/http/definitions/VerbType":32,"@barchart/common-js/api/http/interceptors/ErrorInterceptor":36,"@barchart/common-js/api/http/interceptors/RequestInterceptor":37,"@barchart/common-js/api/http/interceptors/ResponseInterceptor":38,"@barchart/common-js/lang/Disposable":48,"@barchart/common-js/lang/array":52,"@barchart/common-js/lang/assert":53,"@barchart/common-js/lang/object":57,"@barchart/common-js/timing/Scheduler":66}],5:[function(require,module,exports){
+},{"../security/JwtProvider":18,"./AdapterBase":3,"@barchart/common-js/api/failures/FailureReason":20,"@barchart/common-js/api/failures/FailureType":22,"@barchart/common-js/api/http/Gateway":23,"@barchart/common-js/api/http/builders/EndpointBuilder":25,"@barchart/common-js/api/http/definitions/ProtocolType":31,"@barchart/common-js/api/http/definitions/VerbType":32,"@barchart/common-js/api/http/interceptors/ErrorInterceptor":36,"@barchart/common-js/api/http/interceptors/RequestInterceptor":37,"@barchart/common-js/api/http/interceptors/ResponseInterceptor":38,"@barchart/common-js/lang/Disposable":49,"@barchart/common-js/lang/array":53,"@barchart/common-js/lang/assert":54,"@barchart/common-js/lang/object":58,"@barchart/common-js/timing/Scheduler":67}],5:[function(require,module,exports){
 const io = require('socket.io-client'),
   uuid = require('uuid');
 const assert = require('@barchart/common-js/lang/assert'),
@@ -3448,101 +3343,103 @@ module.exports = (() => {
       this._templateSubscriberMap = {};
       this._jwtProvider = null;
     }
-    connect(jwtProvider) {
+    async connect(jwtProvider) {
       return promise.build((resolveCallback, rejectCallback) => {
         assert.argumentIsOptional(jwtProvider, 'jwtProvider', JwtProvider, 'JwtProvider');
-        this._jwtProvider = jwtProvider || null;
-        if (this._connectionState.getCanConnect()) {
-          changeConnectionState.call(this, ConnectionState.Connecting);
-          let protocol;
-          if (this.secure) {
-            protocol = 'https';
-          } else {
-            protocol = 'http';
-          }
-          this._socket = io.connect(`${protocol}://${this.host}:${this.port}`, {
-            transports: ['websocket'],
-            secure: this.secure,
-            forceNew: true
-          });
-          this._socket.on('connect', () => {
-            this._requestMap = {};
-            changeConnectionState.call(this, ConnectionState.Connected);
-            resolveCallback(this);
-          });
-          this._socket.on('reconnecting', () => {
-            changeConnectionState.call(this, ConnectionState.Connecting);
-          });
-          this._socket.on('reconnect', () => {
-            changeConnectionState.call(this, ConnectionState.Connected);
-            getSubscribers(this._alertSubscriberMap).forEach(subscriber => {
-              subscriber.subscribe();
-            });
-            getSubscribers(this._triggerSubscriberMap).forEach(subscriber => {
-              subscriber.subscribe();
-            });
-          });
-          this._socket.on('response', data => {
-            const requestId = data.requestId;
-            if (requestId) {
-              const requestCallback = this._requestMap[requestId];
-              if (requestCallback) {
-                delete this._requestMap[requestId];
-                requestCallback(data.response);
-              }
-            }
-          });
-          this._socket.on('alert/created', alert => {
-            this._onAlertCreated(alert);
-          });
-          this._socket.on('alert/mutated', alert => {
-            this._onAlertMutated(alert);
-          });
-          this._socket.on('alert/deleted', alert => {
-            this._onAlertDeleted(alert);
-          });
-          this._socket.on('alert/triggered', alert => {
-            this._onAlertTriggered(alert);
-          });
-          this._socket.on('template/created', template => {
-            this._onTemplateCreated(template);
-          });
-          this._socket.on('template/mutated', template => {
-            this._onTemplateMutated(template);
-          });
-          this._socket.on('template/deleted', template => {
-            this._onTemplateDeleted(template);
-          });
-          this._socket.on('triggers/created', triggers => {
-            this._onTriggersCreated(triggers);
-          });
-          this._socket.on('triggers/mutated', triggers => {
-            this._onTriggersMutated(triggers);
-          });
-          this._socket.on('triggers/deleted', triggers => {
-            this._onTriggersDeleted(triggers);
-          });
-        } else {
-          rejectCallback('Unable to connect.');
+        if (!this._connectionState.getCanConnect()) {
+          throw new Error('Unable to connect.');
         }
+        this._jwtProvider = jwtProvider || null;
+        changeConnectionState.call(this, ConnectionState.Connecting);
+        let protocol;
+        if (this.secure) {
+          protocol = 'https';
+        } else {
+          protocol = 'http';
+        }
+        this._socket = io.connect(`${protocol}://${this.host}:${this.port}`, {
+          transports: ['websocket'],
+          secure: this.secure,
+          forceNew: true
+        });
+        this._socket.on('connect', () => {
+          this._requestMap = {};
+          changeConnectionState.call(this, ConnectionState.Connected);
+          resolveCallback(this);
+        });
+        this._socket.on('reconnecting', () => {
+          changeConnectionState.call(this, ConnectionState.Connecting);
+        });
+        this._socket.on('reconnect', () => {
+          changeConnectionState.call(this, ConnectionState.Connected);
+          getSubscribers(this._alertSubscriberMap).forEach(subscriber => {
+            subscriber.subscribe();
+          });
+          getSubscribers(this._triggerSubscriberMap).forEach(subscriber => {
+            subscriber.subscribe();
+          });
+          getSubscribers(this._templateSubscriberMap).forEach(subscriber => {
+            subscriber.subscribe();
+          });
+        });
+        this._socket.on('response', data => {
+          const requestId = data.requestId;
+          if (requestId) {
+            const requestCallback = this._requestMap[requestId];
+            if (requestCallback) {
+              delete this._requestMap[requestId];
+              requestCallback(data.response);
+            }
+          }
+        });
+        this._socket.on('alert/created', alert => {
+          this._onAlertCreated(alert);
+        });
+        this._socket.on('alert/mutated', alert => {
+          this._onAlertMutated(alert);
+        });
+        this._socket.on('alert/deleted', alert => {
+          this._onAlertDeleted(alert);
+        });
+        this._socket.on('alert/triggered', alert => {
+          this._onAlertTriggered(alert);
+        });
+        this._socket.on('template/created', template => {
+          this._onTemplateCreated(template);
+        });
+        this._socket.on('template/mutated', template => {
+          this._onTemplateMutated(template);
+        });
+        this._socket.on('template/deleted', template => {
+          this._onTemplateDeleted(template);
+        });
+        this._socket.on('triggers/created', triggers => {
+          this._onTriggersCreated(triggers);
+        });
+        this._socket.on('triggers/mutated', triggers => {
+          this._onTriggersMutated(triggers);
+        });
+        this._socket.on('triggers/deleted', triggers => {
+          this._onTriggersDeleted(triggers);
+        });
       });
     }
-    createAlert(alert) {
+    async createAlert(alert) {
       return sendRequestToServer.call(this, 'alerts/create', alert, true);
     }
-    retrieveAlert(alert) {
+    async retrieveAlert(alert) {
       return sendRequestToServer.call(this, 'alerts/retrieve', alert, true);
     }
-    retrieveAlerts(query) {
+    async retrieveAlerts(query) {
       return sendRequestToServer.call(this, 'alerts/retrieve/user', query, true);
     }
-    updateAlert(alert) {
+    async updateAlert(alert) {
       return sendRequestToServer.call(this, 'alerts/update', alert, true);
     }
-    updateAlertsForUser(query) {
+    async updateAlertsForUser(query) {
       return sendRequestToServer.call(this, 'alerts/update/user', query, true);
     }
-    deleteAlert(alert) {
+    async deleteAlert(alert) {
       return sendRequestToServer.call(this, 'alerts/delete', alert, true);
     }
     subscribeAlerts(query) {
@@ -3557,16 +3454,16 @@ module.exports = (() => {
         subscriber.dispose();
       });
     }
-    retrieveTrigger(query) {
+    async retrieveTrigger(query) {
       return sendRequestToServer.call(this, 'alert/triggers/retrieve', query, true);
     }
-    retrieveTriggers(query) {
+    async retrieveTriggers(query) {
       return sendRequestToServer.call(this, 'alert/triggers/retrieve/user', query, true);
     }
-    updateTrigger(query) {
+    async updateTrigger(query) {
       return sendRequestToServer.call(this, 'alert/triggers/update', query, true);
     }
-    updateTriggers(query) {
+    async updateTriggers(query) {
       return sendRequestToServer.call(this, 'alert/triggers/update/user', query, true);
     }
     subscribeTriggers(query) {
@@ -3581,19 +3478,19 @@ module.exports = (() => {
         subscriber.dispose();
       });
     }
-    createTemplate(template) {
+    async createTemplate(template) {
       return sendRequestToServer.call(this, 'templates/create', template, true);
     }
-    retrieveTemplates(query) {
+    async retrieveTemplates(query) {
       return sendRequestToServer.call(this, 'templates/retrieve/user', query, true);
     }
-    updateTemplate(template) {
+    async updateTemplate(template) {
       return sendRequestToServer.call(this, 'templates/update', template, true);
     }
-    updateTemplateOrder(template) {
+    async updateTemplateOrder(template) {
       return sendRequestToServer.call(this, 'templates/batch/sorting', template, true);
     }
-    deleteTemplate(template) {
+    async deleteTemplate(template) {
       return sendRequestToServer.call(this, 'templates/delete', template, true);
     }
     subscribeTemplates(query) {
@@ -3608,40 +3505,40 @@ module.exports = (() => {
         subscriber.dispose();
       });
     }
-    getTargets() {
+    async getTargets() {
       return sendRequestToServer.call(this, 'alert/targets/retrieve', {});
     }
-    getProperties() {
+    async getProperties() {
       return sendRequestToServer.call(this, 'alert/targets/properties/retrieve', {});
     }
-    getOperators() {
+    async getOperators() {
       return sendRequestToServer.call(this, 'alert/operators/retrieve', {});
     }
-    getModifiers() {
+    async getModifiers() {
       return sendRequestToServer.call(this, 'alert/modifiers/retrieve', {});
     }
-    getPublisherTypes() {
+    async getPublisherTypes() {
       return sendRequestToServer.call(this, 'alert/publishers/retrieve', {});
     }
-    getPublisherTypeDefaults(query) {
+    async getPublisherTypeDefaults(query) {
       return sendRequestToServer.call(this, 'alert/publishers/default/retrieve', query, true);
     }
-    assignPublisherTypeDefault(publisherTypeDefault) {
+    async assignPublisherTypeDefault(publisherTypeDefault) {
       return sendRequestToServer.call(this, 'alert/publishers/default/update', publisherTypeDefault, true);
     }
-    deletePublisherTypeDefault(publisherTypeDefault) {
+    async deletePublisherTypeDefault(publisherTypeDefault) {
       return sendRequestToServer.call(this, 'alert/publishers/default/delete', publisherTypeDefault, true);
     }
-    getMarketDataConfiguration(query) {
+    async getMarketDataConfiguration(query) {
       return sendRequestToServer.call(this, 'alert/market/configuration/retrieve', query, true);
     }
-    assignMarketDataConfiguration(marketDataConfiguration) {
+    async assignMarketDataConfiguration(marketDataConfiguration) {
       return sendRequestToServer.call(this, 'alert/market/configuration/update', marketDataConfiguration, true);
     }
-    getUser() {
+    async getUser() {
       return sendRequestToServer.call(this, 'user/retrieve', {}, true);
     }
-    getServerVersion() {
+    async getServerVersion() {
       return sendRequestToServer.call(this, 'server/version', {});
     }
     _onDispose() {
@@ -3656,32 +3553,23 @@ module.exports = (() => {
       return '[AdapterForSocketIo]';
     }
   }
-  function sendToServer(channel, payload, secure) {
-    if (this._connectionState.getCanTransmit()) {
-      return Promise.resolve().then(() => {
-        let jwtPromise;
-        if (this._jwtProvider === null || !secure) {
-          jwtPromise = Promise.resolve(null);
-        } else {
-          jwtPromise = this._jwtProvider.getToken().then(token => {
-            const data = {};
-            data.token = token;
-            data.source = this._jwtProvider.source;
-            return data;
-          });
-        }
-        return jwtPromise;
-      }).then(jwtData => {
-        if (jwtData !== null) {
-          payload.context = jwtData;
-        }
-        return this._socket.emit(channel, payload);
-      });
-    } else {
-      return Promise.reject('Unable to send data. The socket is not connected.');
+  async function sendToServer(channel, payload, secure) {
+    if (!this._connectionState.getCanTransmit()) {
+      throw new Error('Unable to send data. The socket is not connected.');
     }
+    let jwtData = null;
+    if (!(this._jwtProvider === null || !secure)) {
+      const token = await this._jwtProvider.getToken();
+      jwtData = {};
+      jwtData.token = token;
+      jwtData.source = this._jwtProvider.source;
+    }
+    if (jwtData !== null) {
+      payload.context = jwtData;
+    }
+    return this._socket.emit(channel, payload);
   }
-  function sendRequestToServer(channel, payload, secure) {
+  async function sendRequestToServer(channel, payload, secure) {
     return promise.build((resolveCallback, rejectCallback) => {
       const requestId = uuid.v4();
       this._requestMap[requestId] = resolveCallback;
@@ -3694,7 +3582,7 @@ module.exports = (() => {
       });
     });
   }
-  function sendSubscriptionToServer(channel, payload, secure) {
+  async function sendSubscriptionToServer(channel, payload, secure) {
     return sendToServer.call(this, 'subscribe/' + channel, payload, secure);
   }
   function changeConnectionState(connectionState) {
@@ -3746,22 +3634,20 @@ module.exports = (() => {
     getQuery() {
       return this._query;
     }
-    subscribe() {
-      if (this.getIsDisposed()) {
+    async subscribe() {
+      if (this.disposed) {
         throw new Error('The alert subscriber has been disposed.');
       }
-      sendSubscriptionToServer.call(this._parent, 'alerts/events', this._query, true).then(() => {
-        if (this.getIsDisposed()) {
-          return;
-        }
-        this._parent.retrieveAlerts(this._query).then(alerts => {
-          if (this.getIsDisposed()) {
-            return;
-          }
-          alerts.forEach(alert => {
-            this._parent._onAlertMutated(alert);
-          });
-        });
+      await sendSubscriptionToServer.call(this._parent, 'alerts/events', this._query, true);
+      if (this.disposed) {
+        return;
+      }
+      const alerts = await this._parent.retrieveAlerts(this._query);
+      if (this.disposed) {
+        return;
+      }
+      alerts.forEach(alert => {
+        this._parent._onAlertMutated(alert);
       });
     }
     toString() {
@@ -3777,21 +3663,19 @@ module.exports = (() => {
     getQuery() {
       return this._query;
     }
-    subscribe() {
-      if (this.getIsDisposed()) {
+    async subscribe() {
+      if (this.disposed) {
         throw new Error('The trigger subscriber has been disposed.');
       }
-      sendSubscriptionToServer.call(this._parent, 'triggers/events', this._query, true).then(() => {
-        if (this.getIsDisposed()) {
-          return;
-        }
-        this._parent.retrieveTriggers(this._query).then(triggers => {
-          if (this.getIsDisposed()) {
-            return;
-          }
-          this._parent._onTriggersMutated(triggers);
-        });
-      });
+      await sendSubscriptionToServer.call(this._parent, 'triggers/events', this._query, true);
+      if (this.disposed) {
+        return;
+      }
+      const triggers = await this._parent.retrieveTriggers(this._query);
+      if (this.disposed) {
+        return;
+      }
+      this._parent._onTriggersMutated(triggers);
     }
     toString() {
       return '[AdapterForSocketIo.TriggerSubscriber]';
@@ -3806,22 +3690,20 @@ module.exports = (() => {
     getQuery() {
       return this._query;
     }
-    subscribe() {
-      if (this.getIsDisposed()) {
+    async subscribe() {
+      if (this.disposed) {
         throw new Error('The template subscriber has been disposed.');
       }
-      sendSubscriptionToServer.call(this._parent, 'templates/events', this._query, true).then(() => {
-        if (this.getIsDisposed()) {
-          return;
-        }
-        this._parent.retrieveTemplates(this._query).then(templates => {
-          if (this.getIsDisposed()) {
-            return;
-          }
-          templates.forEach(alert => {
-            this._parent._onTemplateMutated(alert);
-          });
-        });
+      await sendSubscriptionToServer.call(this._parent, 'templates/events', this._query, true);
+      if (this.disposed) {
+        return;
+      }
+      const templates = await this._parent.retrieveTemplates(this._query);
+      if (this.disposed) {
+        return;
+      }
+      templates.forEach(alert => {
+        this._parent._onTemplateMutated(alert);
       });
     }
     toString() {
@@ -3831,7 +3713,7 @@ module.exports = (() => {
   return AdapterForSocketIo;
 })();
 
-},{"../security/JwtProvider":18,"./AdapterBase":3,"@barchart/common-js/lang/Disposable":48,"@barchart/common-js/lang/assert":53,"@barchart/common-js/lang/promise":58,"socket.io-client":142,"uuid":152}],6:[function(require,module,exports){
+},{"../security/JwtProvider":18,"./AdapterBase":3,"@barchart/common-js/lang/Disposable":49,"@barchart/common-js/lang/assert":54,"@barchart/common-js/lang/promise":59,"socket.io-client":143,"uuid":153}],6:[function(require,module,exports){
 module.exports = (() => {
   'use strict';
 
@@ -3957,7 +3839,7 @@ module.exports = (() => {
   return validator;
 })();
 
-},{"./condition":8,"./publisher":10,"@barchart/common-js/lang/assert":53,"@barchart/common-js/lang/is":56}],8:[function(require,module,exports){
+},{"./condition":8,"./publisher":10,"@barchart/common-js/lang/assert":54,"@barchart/common-js/lang/is":57}],8:[function(require,module,exports){
 const assert = require('@barchart/common-js/lang/assert'),
   is = require('@barchart/common-js/lang/is');
 module.exports = (() => {
@@ -3998,7 +3880,7 @@ module.exports = (() => {
   return validator;
 })();
 
-},{"@barchart/common-js/lang/assert":53,"@barchart/common-js/lang/is":56}],9:[function(require,module,exports){
+},{"@barchart/common-js/lang/assert":54,"@barchart/common-js/lang/is":57}],9:[function(require,module,exports){
 const assert = require('@barchart/common-js/lang/assert'),
   is = require('@barchart/common-js/lang/is');
 module.exports = (() => {
@@ -4032,7 +3914,7 @@ module.exports = (() => {
   return validator;
 })();
 
-},{"@barchart/common-js/lang/assert":53,"@barchart/common-js/lang/is":56}],10:[function(require,module,exports){
+},{"@barchart/common-js/lang/assert":54,"@barchart/common-js/lang/is":57}],10:[function(require,module,exports){
 const assert = require('@barchart/common-js/lang/assert'),
   is = require('@barchart/common-js/lang/is');
 module.exports = (() => {
@@ -4067,7 +3949,7 @@ module.exports = (() => {
   return validator;
 })();
 
-},{"@barchart/common-js/lang/assert":53,"@barchart/common-js/lang/is":56}],11:[function(require,module,exports){
+},{"@barchart/common-js/lang/assert":54,"@barchart/common-js/lang/is":57}],11:[function(require,module,exports){
 const assert = require('@barchart/common-js/lang/assert'),
   is = require('@barchart/common-js/lang/is');
 module.exports = (() => {
@@ -4120,7 +4002,7 @@ module.exports = (() => {
   return validator;
 })();
 
-},{"@barchart/common-js/lang/assert":53,"@barchart/common-js/lang/is":56}],12:[function(require,module,exports){
+},{"@barchart/common-js/lang/assert":54,"@barchart/common-js/lang/is":57}],12:[function(require,module,exports){
 const assert = require('@barchart/common-js/lang/assert'),
   is = require('@barchart/common-js/lang/is');
 const templateCondition = require('./templateCondition');
@@ -4170,7 +4052,7 @@ module.exports = (() => {
   return validator;
 })();
 
-},{"./templateCondition":13,"@barchart/common-js/lang/assert":53,"@barchart/common-js/lang/is":56}],13:[function(require,module,exports){
+},{"./templateCondition":13,"@barchart/common-js/lang/assert":54,"@barchart/common-js/lang/is":57}],13:[function(require,module,exports){
 const assert = require('@barchart/common-js/lang/assert'),
   is = require('@barchart/common-js/lang/is');
 module.exports = (() => {
@@ -4207,7 +4089,7 @@ module.exports = (() => {
   return validator;
 })();
 
-},{"@barchart/common-js/lang/assert":53,"@barchart/common-js/lang/is":56}],14:[function(require,module,exports){
+},{"@barchart/common-js/lang/assert":54,"@barchart/common-js/lang/is":57}],14:[function(require,module,exports){
 const assert = require('@barchart/common-js/lang/assert'),
   is = require('@barchart/common-js/lang/is');
 module.exports = (() => {
@@ -4253,7 +4135,7 @@ module.exports = (() => {
   return validator;
 })();
 
-},{"@barchart/common-js/lang/assert":53,"@barchart/common-js/lang/is":56}],15:[function(require,module,exports){
+},{"@barchart/common-js/lang/assert":54,"@barchart/common-js/lang/is":57}],15:[function(require,module,exports){
 const alert = require('./alert'),
   condition = require('./condition'),
   instrument = require('./instrument'),
@@ -4282,7 +4164,7 @@ module.exports = (() => {
   'use strict';
 
   return {
-    version: '4.21.4'
+    version: '4.21.5'
   };
 })();
 
@@ -4350,7 +4232,7 @@ module.exports = (() => {
   return JwtPayload;
 })();
 
-},{"@barchart/common-js/lang/assert":53}],18:[function(require,module,exports){
+},{"@barchart/common-js/lang/assert":54}],18:[function(require,module,exports){
 const assert = require('@barchart/common-js/lang/assert'),
   Disposable = require('@barchart/common-js/lang/Disposable'),
   is = require('@barchart/common-js/lang/is'),
@@ -4404,25 +4286,23 @@ module.exports = (() => {
      * @returns {Promise<String>}
      */
     async getToken() {
-      return Promise.resolve().then(() => {
-        if (this._refreshPending) {
-          return this._tokenPromise;
-        }
-        if (this._tokenPromise === null || this._refreshInterval === null || this._refreshInterval > 0 && getTime() > this._refreshTimestamp + this._refreshInterval + this._refreshJitter) {
-          this._refreshPending = true;
-          this._tokenPromise = this._scheduler.backoff(() => this._tokenGenerator(), 100, 'Read JWT', 3).then(token => {
-            this._refreshTimestamp = getTime();
-            this._refreshPending = false;
-            return token;
-          }).catch(e => {
-            this._tokenPromise = null;
-            this._refreshTimestamp = null;
-            this._refreshPending = false;
-            return Promise.reject(e);
-          });
-        }
+      if (this._refreshPending && this._tokenPromise) {
         return this._tokenPromise;
-      });
+      }
+      if (this._tokenPromise === null || this._refreshInterval === null || this._refreshInterval > 0 && getTime() > this._refreshTimestamp + this._refreshInterval + this._refreshJitter) {
+        this._refreshPending = true;
+        this._tokenPromise = this._scheduler.backoff(() => this._tokenGenerator(), 100, 'Read JWT', 3).then(token => {
+          this._refreshTimestamp = getTime();
+          this._refreshPending = false;
+          return token;
+        }).catch(e => {
+          this._tokenPromise = null;
+          this._refreshTimestamp = null;
+          this._refreshPending = false;
+          return Promise.reject(e);
+        });
+      }
+      return this._tokenPromise;
     }
 
     /**
@@ -4527,7 +4407,7 @@ module.exports = (() => {
   return JwtProvider;
 })();
 
-},{"../common/Configuration":6,"@barchart/common-js/api/http/Gateway":23,"@barchart/common-js/api/http/builders/EndpointBuilder":25,"@barchart/common-js/api/http/definitions/ProtocolType":31,"@barchart/common-js/api/http/definitions/VerbType":32,"@barchart/common-js/api/http/interceptors/ResponseInterceptor":38,"@barchart/common-js/lang/Disposable":48,"@barchart/common-js/lang/assert":53,"@barchart/common-js/lang/is":56,"@barchart/common-js/lang/random":59,"@barchart/common-js/timing/Scheduler":66}],19:[function(require,module,exports){
+},{"../common/Configuration":6,"@barchart/common-js/api/http/Gateway":23,"@barchart/common-js/api/http/builders/EndpointBuilder":25,"@barchart/common-js/api/http/definitions/ProtocolType":31,"@barchart/common-js/api/http/definitions/VerbType":32,"@barchart/common-js/api/http/interceptors/ResponseInterceptor":38,"@barchart/common-js/lang/Disposable":49,"@barchart/common-js/lang/assert":54,"@barchart/common-js/lang/is":57,"@barchart/common-js/lang/random":60,"@barchart/common-js/timing/Scheduler":67}],19:[function(require,module,exports){
 const JwtPayload = require('./../JwtPayload');
 const EndpointBuilder = require('@barchart/common-js/api/http/builders/EndpointBuilder'),
   Gateway = require('@barchart/common-js/api/http/Gateway'),
@@ -4797,7 +4677,7 @@ module.exports = (() => {
   return FailureReason;
 })();
 
-},{"./../../collections/Tree":40,"./../../lang/assert":53,"./../../lang/is":56,"./../../serialization/json/Schema":65,"./FailureReasonItem":21,"./FailureType":22}],21:[function(require,module,exports){
+},{"./../../collections/Tree":40,"./../../lang/assert":54,"./../../lang/is":57,"./../../serialization/json/Schema":66,"./FailureReasonItem":21,"./FailureType":22}],21:[function(require,module,exports){
 const assert = require('./../../lang/assert'),
   attributes = require('./../../lang/attributes');
 const FailureType = require('./FailureType');
@@ -4882,7 +4762,7 @@ module.exports = (() => {
   return FailureReasonItem;
 })();
 
-},{"./../../lang/assert":53,"./../../lang/attributes":54,"./FailureType":22}],22:[function(require,module,exports){
+},{"./../../lang/assert":54,"./../../lang/attributes":55,"./FailureType":22}],22:[function(require,module,exports){
 const assert = require('./../../lang/assert'),
   Enum = require('./../../lang/Enum'),
   is = require('./../../lang/is');
@@ -5093,7 +4973,7 @@ module.exports = (() => {
   return FailureType;
 })();
 
-},{"./../../lang/Enum":49,"./../../lang/assert":53,"./../../lang/is":56}],23:[function(require,module,exports){
+},{"./../../lang/Enum":50,"./../../lang/assert":54,"./../../lang/is":57}],23:[function(require,module,exports){
 const axios = require('axios');
 const array = require('./../../lang/array'),
   assert = require('./../../lang/assert'),
@@ -5277,7 +5157,7 @@ module.exports = (() => {
   return Gateway;
 })();
 
-},{"./../../lang/array":52,"./../../lang/assert":53,"./../../lang/attributes":54,"./../../lang/is":56,"./../../lang/promise":58,"./../failures/FailureReason":20,"./../failures/FailureType":22,"./definitions/Endpoint":28,"./definitions/VerbType":32,"axios":75}],24:[function(require,module,exports){
+},{"./../../lang/array":53,"./../../lang/assert":54,"./../../lang/attributes":55,"./../../lang/is":57,"./../../lang/promise":59,"./../failures/FailureReason":20,"./../failures/FailureType":22,"./definitions/Endpoint":28,"./definitions/VerbType":32,"axios":76}],24:[function(require,module,exports){
 const assert = require('./../../../lang/assert');
 const Credentials = require('./../definitions/Credentials');
 module.exports = (() => {
@@ -5357,7 +5237,7 @@ module.exports = (() => {
   return CredentialsBuilder;
 })();
 
-},{"./../../../lang/assert":53,"./../definitions/Credentials":27}],25:[function(require,module,exports){
+},{"./../../../lang/assert":54,"./../definitions/Credentials":27}],25:[function(require,module,exports){
 const assert = require('./../../../lang/assert');
 const CredentialsBuilder = require('./CredentialsBuilder'),
   ParametersBuilder = require('./ParametersBuilder');
@@ -5630,7 +5510,7 @@ module.exports = (() => {
   return EndpointBuilder;
 })();
 
-},{"./../../../lang/assert":53,"./../definitions/Endpoint":28,"./../definitions/Parameters":30,"./../definitions/ProtocolType":31,"./../definitions/VerbType":32,"./../interceptors/CompositeErrorInterceptor":33,"./../interceptors/CompositeRequestInterceptor":34,"./../interceptors/CompositeResponseInterceptor":35,"./../interceptors/ErrorInterceptor":36,"./../interceptors/RequestInterceptor":37,"./../interceptors/ResponseInterceptor":38,"./CredentialsBuilder":24,"./ParametersBuilder":26}],26:[function(require,module,exports){
+},{"./../../../lang/assert":54,"./../definitions/Endpoint":28,"./../definitions/Parameters":30,"./../definitions/ProtocolType":31,"./../definitions/VerbType":32,"./../interceptors/CompositeErrorInterceptor":33,"./../interceptors/CompositeRequestInterceptor":34,"./../interceptors/CompositeResponseInterceptor":35,"./../interceptors/ErrorInterceptor":36,"./../interceptors/RequestInterceptor":37,"./../interceptors/ResponseInterceptor":38,"./CredentialsBuilder":24,"./ParametersBuilder":26}],26:[function(require,module,exports){
 const assert = require('./../../../lang/assert'),
   attributes = require('./../../../lang/attributes'),
   is = require('./../../../lang/is');
@@ -5748,7 +5628,7 @@ module.exports = (() => {
   return ParametersBuilder;
 })();
 
-},{"./../../../lang/assert":53,"./../../../lang/attributes":54,"./../../../lang/is":56,"./../definitions/Parameter":29,"./../definitions/Parameters":30}],27:[function(require,module,exports){
+},{"./../../../lang/assert":54,"./../../../lang/attributes":55,"./../../../lang/is":57,"./../definitions/Parameter":29,"./../definitions/Parameters":30}],27:[function(require,module,exports){
 const is = require('./../../../lang/is');
 module.exports = (() => {
   'use strict';
@@ -5806,7 +5686,7 @@ module.exports = (() => {
   return Credentials;
 })();
 
-},{"./../../../lang/is":56}],28:[function(require,module,exports){
+},{"./../../../lang/is":57}],28:[function(require,module,exports){
 const is = require('./../../../lang/is');
 const Parameters = require('./Parameters'),
   ProtocolType = require('./ProtocolType'),
@@ -6045,7 +5925,7 @@ module.exports = (() => {
   return Endpoint;
 })();
 
-},{"./../../../lang/is":56,"./../interceptors/ErrorInterceptor":36,"./../interceptors/RequestInterceptor":37,"./../interceptors/ResponseInterceptor":38,"./Parameters":30,"./ProtocolType":31,"./VerbType":32}],29:[function(require,module,exports){
+},{"./../../../lang/is":57,"./../interceptors/ErrorInterceptor":36,"./../interceptors/RequestInterceptor":37,"./../interceptors/ResponseInterceptor":38,"./Parameters":30,"./ProtocolType":31,"./VerbType":32}],29:[function(require,module,exports){
 const is = require('./../../../lang/is');
 module.exports = (() => {
   'use strict';
@@ -6138,7 +6018,7 @@ module.exports = (() => {
   return Parameter;
 })();
 
-},{"./../../../lang/is":56}],30:[function(require,module,exports){
+},{"./../../../lang/is":57}],30:[function(require,module,exports){
 const is = require('./../../../lang/is');
 const Parameter = require('./Parameter');
 module.exports = (() => {
@@ -6189,7 +6069,7 @@ module.exports = (() => {
   return Parameters;
 })();
 
-},{"./../../../lang/is":56,"./Parameter":29}],31:[function(require,module,exports){
+},{"./../../../lang/is":57,"./Parameter":29}],31:[function(require,module,exports){
 const assert = require('./../../../lang/assert'),
   Enum = require('./../../../lang/Enum'),
   is = require('./../../../lang/is');
@@ -6274,7 +6154,7 @@ module.exports = (() => {
   return ProtocolType;
 })();
 
-},{"./../../../lang/Enum":49,"./../../../lang/assert":53,"./../../../lang/is":56}],32:[function(require,module,exports){
+},{"./../../../lang/Enum":50,"./../../../lang/assert":54,"./../../../lang/is":57}],32:[function(require,module,exports){
 const Enum = require('./../../../lang/Enum');
 module.exports = (() => {
   'use strict';
@@ -6341,7 +6221,7 @@ module.exports = (() => {
   return VerbType;
 })();
 
-},{"./../../../lang/Enum":49}],33:[function(require,module,exports){
+},{"./../../../lang/Enum":50}],33:[function(require,module,exports){
 const assert = require('./../../../lang/assert');
 const ErrorInterceptor = require('./ErrorInterceptor');
 module.exports = (() => {
@@ -6375,7 +6255,7 @@ module.exports = (() => {
   return CompositeErrorInterceptor;
 })();
 
-},{"./../../../lang/assert":53,"./ErrorInterceptor":36}],34:[function(require,module,exports){
+},{"./../../../lang/assert":54,"./ErrorInterceptor":36}],34:[function(require,module,exports){
 const assert = require('./../../../lang/assert');
 const RequestInterceptor = require('./RequestInterceptor');
 module.exports = (() => {
@@ -6409,7 +6289,7 @@ module.exports = (() => {
   return CompositeRequestInterceptor;
 })();
 
-},{"./../../../lang/assert":53,"./RequestInterceptor":37}],35:[function(require,module,exports){
+},{"./../../../lang/assert":54,"./RequestInterceptor":37}],35:[function(require,module,exports){
 const assert = require('./../../../lang/assert');
 const ResponseInterceptor = require('./ResponseInterceptor');
 module.exports = (() => {
@@ -6443,7 +6323,7 @@ module.exports = (() => {
   return CompositeResponseInterceptor;
 })();
 
-},{"./../../../lang/assert":53,"./ResponseInterceptor":38}],36:[function(require,module,exports){
+},{"./../../../lang/assert":54,"./ResponseInterceptor":38}],36:[function(require,module,exports){
 const assert = require('./../../../lang/assert'),
   is = require('./../../../lang/is');
 const FailureReason = require('./../../failures/FailureReason'),
@@ -6564,7 +6444,7 @@ module.exports = (() => {
   return ErrorInterceptor;
 })();
 
-},{"./../../../lang/assert":53,"./../../../lang/is":56,"./../../failures/FailureReason":20,"./../../failures/FailureType":22}],37:[function(require,module,exports){
+},{"./../../../lang/assert":54,"./../../../lang/is":57,"./../../failures/FailureReason":20,"./../../failures/FailureType":22}],37:[function(require,module,exports){
 const assert = require('./../../../lang/assert');
 module.exports = (() => {
   'use strict';
@@ -6654,7 +6534,7 @@ module.exports = (() => {
   return RequestInterceptor;
 })();
 
-},{"./../../../lang/assert":53}],38:[function(require,module,exports){
+},{"./../../../lang/assert":54}],38:[function(require,module,exports){
 const assert = require('./../../../lang/assert');
 module.exports = (() => {
   'use strict';
@@ -6745,7 +6625,7 @@ module.exports = (() => {
   return ResponseInterceptor;
 })();
 
-},{"./../../../lang/assert":53}],39:[function(require,module,exports){
+},{"./../../../lang/assert":54}],39:[function(require,module,exports){
 module.exports = (() => {
   'use strict';
 
@@ -7119,7 +6999,7 @@ module.exports = (() => {
   return Tree;
 })();
 
-},{"./../lang/is":56}],41:[function(require,module,exports){
+},{"./../lang/is":57}],41:[function(require,module,exports){
 const assert = require('./../../lang/assert'),
   comparators = require('./comparators');
 module.exports = (() => {
@@ -7222,7 +7102,7 @@ module.exports = (() => {
   return ComparatorBuilder;
 })();
 
-},{"./../../lang/assert":53,"./comparators":42}],42:[function(require,module,exports){
+},{"./../../lang/assert":54,"./comparators":42}],42:[function(require,module,exports){
 const assert = require('./../../lang/assert');
 module.exports = (() => {
   'use strict';
@@ -7329,7 +7209,7 @@ module.exports = (() => {
   };
 })();
 
-},{"./../../lang/assert":53}],43:[function(require,module,exports){
+},{"./../../lang/assert":54}],43:[function(require,module,exports){
 const assert = require('./../../lang/assert'),
   is = require('./../../lang/is');
 module.exports = (() => {
@@ -7451,7 +7331,7 @@ module.exports = (() => {
   return TimeMap;
 })();
 
-},{"./../../lang/assert":53,"./../../lang/is":56}],44:[function(require,module,exports){
+},{"./../../lang/assert":54,"./../../lang/is":57}],44:[function(require,module,exports){
 const assert = require('./assert');
 module.exports = (() => {
   'use strict';
@@ -7510,7 +7390,7 @@ module.exports = (() => {
   return AdHoc;
 })();
 
-},{"./assert":53}],45:[function(require,module,exports){
+},{"./assert":54}],45:[function(require,module,exports){
 const assert = require('./assert'),
   Enum = require('./Enum'),
   is = require('./is');
@@ -7706,10 +7586,11 @@ module.exports = (() => {
   return Currency;
 })();
 
-},{"./Enum":49,"./assert":53,"./is":56}],46:[function(require,module,exports){
+},{"./Enum":50,"./assert":54,"./is":57}],46:[function(require,module,exports){
 const assert = require('./assert'),
   ComparatorBuilder = require('./../collections/sorting/ComparatorBuilder'),
   comparators = require('./../collections/sorting/comparators'),
+  DayFormatType = require('.//DayFormatType'),
   is = require('./is');
 module.exports = (() => {
   'use strict';
@@ -8050,15 +7931,22 @@ module.exports = (() => {
      * @public
      * @static
      * @param {String} value
+     * @param {DayFormatType=} type
      * @returns {Day}
      */
-    static parse(value) {
+    static parse(value, type) {
       assert.argumentIsRequired(value, 'value', String);
-      const match = value.match(dayRegex);
+      let t;
+      if (type instanceof DayFormatType) {
+        t = type;
+      } else {
+        t = DayFormatType.YYYY_MM_DD;
+      }
+      const match = value.match(t.regex);
       if (match === null) {
         throw new Error(`Unable to parse value as Day [ ${value} ]`);
       }
-      return new Day(parseInt(match[1]), parseInt(match[2]), parseInt(match[3]));
+      return new Day(parseInt(match[t.yearIndex]) + t.yearShift, parseInt(match[t.monthIndex]), parseInt(match[t.dayIndex]));
     }
 
     /**
@@ -8216,7 +8104,6 @@ module.exports = (() => {
       return '[Day]';
     }
   }
-  const dayRegex = /^([0-9]{4}).?([0-9]{2}).?([0-9]{2})$/;
   function leftPad(value, digits, character) {
     let string = value.toString();
     let padding = digits - string.length;
@@ -8228,7 +8115,126 @@ module.exports = (() => {
   return Day;
 })();
 
-},{"./../collections/sorting/ComparatorBuilder":41,"./../collections/sorting/comparators":42,"./assert":53,"./is":56}],47:[function(require,module,exports){
+},{"./../collections/sorting/ComparatorBuilder":41,"./../collections/sorting/comparators":42,".//DayFormatType":47,"./assert":54,"./is":57}],47:[function(require,module,exports){
+const Enum = require('./Enum');
+module.exports = (() => {
+  'use strict';
+
+  /**
+   * Describes for a day can be formatted.
+   *
+   * @public
+   * @extends {Enum}
+   * @param {String} description
+   */
+  class DayFormatType extends Enum {
+    constructor(description, regex, yearIndex, monthIndex, dayIndex, yearShift) {
+      super(description, description);
+      this._regex = regex;
+      this._yearIndex = yearIndex;
+      this._monthIndex = monthIndex;
+      this._dayIndex = dayIndex;
+      this._yearShift = yearShift;
+    }
+
+    /**
+     * A regular expression for parsing the day type.
+     *
+     * @public
+     * @returns {RegExp}
+     */
+    get regex() {
+      return this._regex;
+    }
+
+    /**
+     * The index used to read the year from a regular expression match.
+     *
+     * @public
+     * @returns {number}
+     */
+    get yearIndex() {
+      return this._yearIndex;
+    }
+
+    /**
+     * The index used to read the month from a regular expression match.
+     *
+     * @public
+     * @returns {number}
+     */
+    get monthIndex() {
+      return this._monthIndex;
+    }
+
+    /**
+     * The index used to read the day from a regular expression match.
+     *
+     * @public
+     * @returns {number}
+     */
+    get dayIndex() {
+      return this._dayIndex;
+    }
+
+    /**
+     * The amount to add to the year (extracted from a formatted string) to get the
+     * full year (e.g. for "11-31-25" of a MM-DD-YY string, the value will be 2000).
+     *
+     * @public
+     * @returns {number}
+     */
+    get yearShift() {
+      return this._yearShift;
+    }
+
+    /**
+     * Specifies date formatting as four-digit year, then month, then day (e.g. 2025-11-31).
+     *
+     * @public
+     * @static
+     * @returns {DayFormatType}
+     */
+    static get YYYY_MM_DD() {
+      return yyyymmdd;
+    }
+
+    /**
+     * Specifies date formatting as month, then day, then four-digit year (e.g. 11-31-2025).
+     *
+     * @public
+     * @static
+     * @returns {DayFormatType}
+     */
+    static get MM_DD_YYYY() {
+      return mmddyyyy;
+    }
+
+    /**
+     * Specifies date formatting as month, then day, then two-digit year (e.g. 11-31-25).
+     *
+     * @public
+     * @static
+     * @returns {DayFormatType}
+     */
+    static get MM_DD_YY() {
+      return mmddyy;
+    }
+    toString() {
+      return `[DayFormatType (description=${this.description})]`;
+    }
+  }
+  function getMillenniumShift() {
+    const today = new Date();
+    return Math.floor(today.getFullYear() / 100) * 100;
+  }
+  const yyyymmdd = new DayFormatType('YYYY_MM_DD', /^([0-9]{4})[-/.]?([0-9]{1,2})[-/.]?([0-9]{1,2})$/, 1, 2, 3, 0);
+  const mmddyyyy = new DayFormatType('MM_DD_YYYY', /^([0-9]{1,2})[-/.]?([0-9]{1,2})[-/.]?([0-9]{4})$/, 3, 1, 2, 0);
+  const mmddyy = new DayFormatType('MM_DD_YY', /^([0-9]{1,2})[-/.]?([0-9]{1,2})[-/.]?([0-9]{2})$/, 3, 1, 2, getMillenniumShift());
+  return DayFormatType;
+})();
+
+},{"./Enum":50}],48:[function(require,module,exports){
 const assert = require('./assert'),
   Enum = require('./Enum'),
   is = require('./is');
@@ -8817,7 +8823,7 @@ module.exports = (() => {
   return Decimal;
 })();
 
-},{"./Enum":49,"./assert":53,"./is":56,"big.js":107}],48:[function(require,module,exports){
+},{"./Enum":50,"./assert":54,"./is":57,"big.js":108}],49:[function(require,module,exports){
 const assert = require('./assert');
 module.exports = (() => {
   'use strict';
@@ -8830,6 +8836,16 @@ module.exports = (() => {
   class Disposable {
     constructor() {
       this._disposed = false;
+    }
+
+    /**
+     * Indicates if the dispose action has been executed.
+     *
+     * @public
+     * @returns {boolean}
+     */
+    get disposed() {
+      return this._disposed;
     }
 
     /**
@@ -8852,18 +8868,17 @@ module.exports = (() => {
      * @abstract
      * @ignore
      */
-    _onDispose() {
-      return;
-    }
+    _onDispose() {}
 
     /**
      * Returns true if the {@link Disposable#dispose} function has been invoked.
      *
      * @public
+     * @deprecated
      * @returns {boolean}
      */
     getIsDisposed() {
-      return this._disposed || false;
+      return this._disposed;
     }
     toString() {
       return '[Disposable]';
@@ -8892,9 +8907,7 @@ module.exports = (() => {
      * @returns {Disposable}
      */
     static getEmpty() {
-      return Disposable.fromAction(() => {
-        return;
-      });
+      return Disposable.fromAction(() => {});
     }
   }
   class DisposableAction extends Disposable {
@@ -8913,7 +8926,7 @@ module.exports = (() => {
   return Disposable;
 })();
 
-},{"./assert":53}],49:[function(require,module,exports){
+},{"./assert":54}],50:[function(require,module,exports){
 const assert = require('./assert'),
   is = require('./is');
 module.exports = (() => {
@@ -9059,7 +9072,7 @@ module.exports = (() => {
   return Enum;
 })();
 
-},{"./assert":53,"./is":56}],50:[function(require,module,exports){
+},{"./assert":54,"./is":57}],51:[function(require,module,exports){
 const assert = require('./assert'),
   is = require('./is');
 const Decimal = require('./Decimal'),
@@ -9148,7 +9161,7 @@ module.exports = (() => {
   return Money;
 })();
 
-},{"./Currency":45,"./Decimal":47,"./assert":53,"./is":56}],51:[function(require,module,exports){
+},{"./Currency":45,"./Decimal":48,"./assert":54,"./is":57}],52:[function(require,module,exports){
 const assert = require('./assert'),
   is = require('./is');
 const moment = require('moment-timezone');
@@ -9326,7 +9339,7 @@ module.exports = (() => {
   return Timestamp;
 })();
 
-},{"./assert":53,"./is":56,"moment-timezone":135}],52:[function(require,module,exports){
+},{"./assert":54,"./is":57,"moment-timezone":136}],53:[function(require,module,exports){
 const assert = require('./assert'),
   is = require('./is');
 module.exports = (() => {
@@ -9775,7 +9788,7 @@ module.exports = (() => {
   }
 })();
 
-},{"./assert":53,"./is":56}],53:[function(require,module,exports){
+},{"./assert":54,"./is":57}],54:[function(require,module,exports){
 const is = require('./is');
 module.exports = (() => {
   'use strict';
@@ -9903,7 +9916,7 @@ module.exports = (() => {
   };
 })();
 
-},{"./is":56}],54:[function(require,module,exports){
+},{"./is":57}],55:[function(require,module,exports){
 const assert = require('./assert'),
   is = require('./is');
 module.exports = (() => {
@@ -10044,7 +10057,7 @@ module.exports = (() => {
   };
 })();
 
-},{"./assert":53,"./is":56}],55:[function(require,module,exports){
+},{"./assert":54,"./is":57}],56:[function(require,module,exports){
 module.exports = (() => {
   'use strict';
 
@@ -10083,7 +10096,7 @@ module.exports = (() => {
   };
 })();
 
-},{}],56:[function(require,module,exports){
+},{}],57:[function(require,module,exports){
 module.exports = (() => {
   'use strict';
 
@@ -10285,7 +10298,7 @@ module.exports = (() => {
   };
 })();
 
-},{}],57:[function(require,module,exports){
+},{}],58:[function(require,module,exports){
 const array = require('./array'),
   is = require('./is');
 module.exports = (() => {
@@ -10431,7 +10444,7 @@ module.exports = (() => {
   return object;
 })();
 
-},{"./array":52,"./is":56}],58:[function(require,module,exports){
+},{"./array":53,"./is":57}],59:[function(require,module,exports){
 const assert = require('./assert');
 module.exports = (() => {
   'use strict';
@@ -10621,7 +10634,7 @@ module.exports = (() => {
   };
 })();
 
-},{"./assert":53}],59:[function(require,module,exports){
+},{"./assert":54}],60:[function(require,module,exports){
 const assert = require('./assert');
 module.exports = (() => {
   'use strict';
@@ -10645,7 +10658,7 @@ module.exports = (() => {
   };
 })();
 
-},{"./assert":53}],60:[function(require,module,exports){
+},{"./assert":54}],61:[function(require,module,exports){
 const assert = require('./assert');
 module.exports = (() => {
   'use strict';
@@ -10716,7 +10729,7 @@ module.exports = (() => {
   return timezone;
 })();
 
-},{"./assert":53}],61:[function(require,module,exports){
+},{"./assert":54}],62:[function(require,module,exports){
 const assert = require('./../lang/assert'),
   Disposable = require('./../lang/Disposable');
 module.exports = (() => {
@@ -10748,7 +10761,7 @@ module.exports = (() => {
       assert.argumentIsRequired(handler, 'handler', Function);
       addRegistration.call(this, handler);
       return Disposable.fromAction(() => {
-        if (this.getIsDisposed()) {
+        if (this.disposed) {
           return;
         }
         removeRegistration.call(this, handler);
@@ -10780,7 +10793,7 @@ module.exports = (() => {
      * Triggers the event, calling all previously registered handlers.
      *
      * @public
-     * @param {*) data - The data to pass each handler.
+     * @param {*} data - The data to pass each handler.
      */
     fire(data) {
       let observers = this._observers;
@@ -10791,7 +10804,7 @@ module.exports = (() => {
     }
 
     /**
-     * Returns true, if no handlers are currently registered.
+     * Returns true if no handlers are currently registered.
      *
      * @public
      * @returns {boolean}
@@ -10830,7 +10843,7 @@ module.exports = (() => {
   return Event;
 })();
 
-},{"./../lang/Disposable":48,"./../lang/assert":53}],62:[function(require,module,exports){
+},{"./../lang/Disposable":49,"./../lang/assert":54}],63:[function(require,module,exports){
 const Currency = require('./../../lang/Currency'),
   Money = require('./../../lang/Money');
 const DataType = require('./DataType'),
@@ -10897,7 +10910,7 @@ module.exports = (() => {
   return Component;
 })();
 
-},{"./../../lang/Currency":45,"./../../lang/Money":50,"./DataType":63,"./Field":64}],63:[function(require,module,exports){
+},{"./../../lang/Currency":45,"./../../lang/Money":51,"./DataType":64,"./Field":65}],64:[function(require,module,exports){
 const moment = require('moment');
 const AdHoc = require('./../../lang/AdHoc'),
   assert = require('./../../lang/assert'),
@@ -11181,7 +11194,7 @@ module.exports = (() => {
   return DataType;
 })();
 
-},{"./../../lang/AdHoc":44,"./../../lang/Day":46,"./../../lang/Decimal":47,"./../../lang/Enum":49,"./../../lang/Timestamp":51,"./../../lang/assert":53,"./../../lang/is":56,"moment":137}],64:[function(require,module,exports){
+},{"./../../lang/AdHoc":44,"./../../lang/Day":46,"./../../lang/Decimal":48,"./../../lang/Enum":50,"./../../lang/Timestamp":52,"./../../lang/assert":54,"./../../lang/is":57,"moment":138}],65:[function(require,module,exports){
 const assert = require('./../../lang/assert'),
   is = require('./../../lang/is');
 const DataType = require('./DataType');
@@ -11255,7 +11268,7 @@ module.exports = (() => {
   return Field;
 })();
 
-},{"./../../lang/assert":53,"./../../lang/is":56,"./DataType":63}],65:[function(require,module,exports){
+},{"./../../lang/assert":54,"./../../lang/is":57,"./DataType":64}],66:[function(require,module,exports){
 const attributes = require('./../../lang/attributes'),
   functions = require('./../../lang/functions'),
   is = require('./../../lang/is');
@@ -11539,7 +11552,7 @@ module.exports = (() => {
   return Schema;
 })();
 
-},{"./../../collections/LinkedList":39,"./../../collections/Tree":40,"./../../lang/attributes":54,"./../../lang/functions":55,"./../../lang/is":56,"./Component":62,"./Field":64}],66:[function(require,module,exports){
+},{"./../../collections/LinkedList":39,"./../../collections/Tree":40,"./../../lang/attributes":55,"./../../lang/functions":56,"./../../lang/is":57,"./Component":63,"./Field":65}],67:[function(require,module,exports){
 const assert = require('./../lang/assert'),
   Disposable = require('./../lang/Disposable'),
   is = require('./../lang/is'),
@@ -11565,57 +11578,56 @@ module.exports = (() => {
      * Schedules an action to execute in the future, returning a Promise.
      *
      * @public
+     * @async
      * @param {Function} actionToSchedule - The action to execute.
      * @param {number} millisecondDelay - Milliseconds before the action can be started.
      * @param {string=} actionDescription - A description of the action, used for logging purposes.
      * @returns {Promise}
      */
-    schedule(actionToSchedule, millisecondDelay, actionDescription) {
-      return Promise.resolve().then(() => {
-        assert.argumentIsRequired(actionToSchedule, 'actionToSchedule', Function);
-        assert.argumentIsRequired(millisecondDelay, 'millisecondDelay', Number);
-        assert.argumentIsOptional(actionDescription, 'actionDescription', String);
-        if (this.getIsDisposed()) {
-          throw new Error('The Scheduler has been disposed.');
-        }
-        let token;
-        const schedulePromise = promise.build((resolveCallback, rejectCallback) => {
-          const wrappedAction = () => {
-            const disposable = this._timeoutBindings[token];
+    async schedule(actionToSchedule, millisecondDelay, actionDescription) {
+      assert.argumentIsRequired(actionToSchedule, 'actionToSchedule', Function);
+      assert.argumentIsRequired(millisecondDelay, 'millisecondDelay', Number);
+      assert.argumentIsOptional(actionDescription, 'actionDescription', String);
+      if (this.disposed) {
+        throw new Error('The Scheduler has been disposed.');
+      }
+      let token;
+      const schedulePromise = promise.build((resolveCallback, rejectCallback) => {
+        const wrappedAction = () => {
+          const disposable = this._timeoutBindings[token];
 
-            // 2021/05/18, BRI. Invoking dispose cases the clearTimeout function to run.
-            // Running clearTimeout should not be necessary because the timer has elapsed
-            // and the callback is being invoked. However, failing to call clearTimeout in
-            // a Node.js environment (after version 10) leads to a memory leak. Notice that
-            // this function has a reference to the Scheduler instance (via closure). In my
-            // view, this is breaking change between versions 10 and 12 of Node.js. I have
-            // been unable to locate any documentation regarding this change; however, a changes
-            // to did occur (which becomes obvious when inspecting the data structure returned by
-            // the setTimeout function).
+          // 2021/05/18, BRI. Invoking dispose cases the clearTimeout function to run.
+          // Running clearTimeout should not be necessary because the timer has elapsed
+          // and the callback is being invoked. However, failing to call clearTimeout in
+          // a Node.js environment (after version 10) leads to a memory leak. Notice that
+          // this function has a reference to the Scheduler instance (via closure). In my
+          // view, this is breaking change between versions 10 and 12 of Node.js. I have
+          // been unable to locate any documentation regarding this change; however, a changes
+          // to did occur (which becomes obvious when inspecting the data structure returned by
+          // the setTimeout function).
 
-            if (disposable) {
-              disposable.dispose();
-            }
-            try {
-              resolveCallback(actionToSchedule());
-            } catch (e) {
-              rejectCallback(e);
-            }
-          };
-          token = setTimeout(wrappedAction, millisecondDelay);
-          this._timeoutBindings[token] = Disposable.fromAction(() => {
-            clearTimeout(token);
-            delete this._timeoutBindings[token];
-          });
+          if (disposable) {
+            disposable.dispose();
+          }
+          try {
+            resolveCallback(actionToSchedule());
+          } catch (e) {
+            rejectCallback(e);
+          }
+        };
+        token = setTimeout(wrappedAction, millisecondDelay);
+        this._timeoutBindings[token] = Disposable.fromAction(() => {
+          clearTimeout(token);
+          delete this._timeoutBindings[token];
         });
-        return schedulePromise;
       });
+      return schedulePromise;
     }
     repeat(actionToRepeat, millisecondInterval, actionDescription) {
       assert.argumentIsRequired(actionToRepeat, 'actionToRepeat', Function);
       assert.argumentIsRequired(millisecondInterval, 'millisecondInterval', Number);
       assert.argumentIsOptional(actionDescription, 'actionDescription', String);
-      if (this.getIsDisposed()) {
+      if (this.disposed) {
         throw new Error('The Scheduler has been disposed.');
       }
       const wrappedAction = () => {
@@ -11635,6 +11647,7 @@ module.exports = (() => {
      * Attempts an action, repeating if necessary, using an exponential backoff.
      *
      * @public
+     * @async
      * @param {Function} actionToBackoff - The action to attempt. If it fails -- because an error is thrown, a promise is rejected, or the function returns a falsey value -- the action will be invoked again.
      * @param {number=} millisecondDelay - The amount of time to wait to execute the action. Subsequent failures are multiply this value by 2 ^ [number of failures]. So, a 1000 millisecond backoff would schedule attempts using the following delays: 0, 1000, 2000, 4000, 8000, etc. If not specified, the first attempt will execute immediately, then a value of 1000 will be used.
      * @param {string=} actionDescription - Description of the action to attempt, used for logging purposes.
@@ -11644,70 +11657,68 @@ module.exports = (() => {
      * @param {number=} maximumDelay - The maximum delay that can be used for the backoff. If not provided, the delay will continue to double until the maximum number of attempts is reached.
      * @returns {Promise}
      */
-    backoff(actionToBackoff, millisecondDelay, actionDescription, maximumAttempts, failureCallback, failureValue, maximumDelay) {
-      return Promise.resolve().then(() => {
-        assert.argumentIsRequired(actionToBackoff, 'actionToBackoff', Function);
-        assert.argumentIsOptional(millisecondDelay, 'millisecondDelay', Number);
-        assert.argumentIsOptional(actionDescription, 'actionDescription', String);
-        assert.argumentIsOptional(maximumAttempts, 'maximumAttempts', Number);
-        assert.argumentIsOptional(failureCallback, 'failureCallback', Function);
-        assert.argumentIsOptional(maximumDelay, 'maximumDelay', Number);
-        if (this.getIsDisposed()) {
-          throw new Error('The Scheduler has been disposed.');
-        }
-        const processAction = attempts => {
-          return Promise.resolve().then(() => {
-            let delay;
-            if (attempts === 0) {
-              delay = 0;
+    async backoff(actionToBackoff, millisecondDelay, actionDescription, maximumAttempts, failureCallback, failureValue, maximumDelay) {
+      assert.argumentIsRequired(actionToBackoff, 'actionToBackoff', Function);
+      assert.argumentIsOptional(millisecondDelay, 'millisecondDelay', Number);
+      assert.argumentIsOptional(actionDescription, 'actionDescription', String);
+      assert.argumentIsOptional(maximumAttempts, 'maximumAttempts', Number);
+      assert.argumentIsOptional(failureCallback, 'failureCallback', Function);
+      assert.argumentIsOptional(maximumDelay, 'maximumDelay', Number);
+      if (this.disposed) {
+        throw new Error('The Scheduler has been disposed.');
+      }
+      const processAction = attempts => {
+        return Promise.resolve().then(() => {
+          let delay;
+          if (attempts === 0) {
+            delay = 0;
+          } else {
+            delay = (millisecondDelay || 1000) * Math.pow(2, attempts - 1);
+            if (maximumDelay && delay > maximumDelay) {
+              delay = maximumDelay;
+            }
+          }
+          if (delay === 0) {
+            return Promise.resolve().then(() => {
+              return actionToBackoff();
+            });
+          } else {
+            return this.schedule(actionToBackoff, delay, `Attempt [ ${attempts} ] for [ ${actionDescription || 'unnamed action'} ]`);
+          }
+        }).then(result => {
+          let resultPromise;
+          if (!is.undefined(failureValue) && object.equals(result, failureValue)) {
+            resultPromise = Promise.reject(`Attempt [ ${attempts} ] for [ ${actionDescription || 'unnamed action'} ] failed due to invalid result`);
+          } else {
+            resultPromise = Promise.resolve(result);
+          }
+          return resultPromise;
+        }).catch(e => {
+          if (is.fn(failureCallback)) {
+            failureCallback(attempts);
+          }
+          return Promise.reject(e);
+        });
+      };
+      let attempts = 0;
+      const processActionRecursive = () => {
+        return processAction(attempts++).catch(e => {
+          if (maximumAttempts > 0 && attempts === maximumAttempts) {
+            let message = `Maximum failures reached for ${actionDescription || 'unnamed action'}`;
+            let rejectPromise;
+            if (is.object(e)) {
+              e.backoff = message;
+              rejectPromise = Promise.reject(e);
             } else {
-              delay = (millisecondDelay || 1000) * Math.pow(2, attempts - 1);
-              if (maximumDelay && delay > maximumDelay) {
-                delay = maximumDelay;
-              }
+              rejectPromise = Promise.reject(message);
             }
-            if (delay === 0) {
-              return Promise.resolve().then(() => {
-                return actionToBackoff();
-              });
-            } else {
-              return this.schedule(actionToBackoff, delay, `Attempt [ ${attempts} ] for [ ${actionDescription || 'unnamed action'} ]`);
-            }
-          }).then(result => {
-            let resultPromise;
-            if (!is.undefined(failureValue) && object.equals(result, failureValue)) {
-              resultPromise = Promise.reject(`Attempt [ ${attempts} ] for [ ${actionDescription || 'unnamed action'} ] failed due to invalid result`);
-            } else {
-              resultPromise = Promise.resolve(result);
-            }
-            return resultPromise;
-          }).catch(e => {
-            if (is.fn(failureCallback)) {
-              failureCallback(attempts);
-            }
-            return Promise.reject(e);
-          });
-        };
-        let attempts = 0;
-        const processActionRecursive = () => {
-          return processAction(attempts++).catch(e => {
-            if (maximumAttempts > 0 && attempts === maximumAttempts) {
-              let message = `Maximum failures reached for ${actionDescription || 'unnamed action'}`;
-              let rejectPromise;
-              if (is.object(e)) {
-                e.backoff = message;
-                rejectPromise = Promise.reject(e);
-              } else {
-                rejectPromise = Promise.reject(message);
-              }
-              return rejectPromise;
-            } else {
-              return processActionRecursive();
-            }
-          });
-        };
-        return processActionRecursive();
-      });
+            return rejectPromise;
+          } else {
+            return processActionRecursive();
+          }
+        });
+      };
+      return processActionRecursive();
     }
     _onDispose() {
       object.keys(this._timeoutBindings).forEach(key => {
@@ -11719,24 +11730,25 @@ module.exports = (() => {
       this._timeoutBindings = null;
       this._intervalBindings = null;
     }
-    static schedule(actionToSchedule, millisecondDelay, actionDescription) {
+    static async schedule(actionToSchedule, millisecondDelay, actionDescription) {
       const scheduler = new Scheduler();
-      scheduler.schedule(actionToSchedule, millisecondDelay, actionDescription).then(result => {
+      let result;
+      try {
+        result = await scheduler.schedule(actionToSchedule, millisecondDelay, actionDescription);
+      } finally {
         scheduler.dispose();
-        return result;
-      }).catch(e => {
-        scheduler.dispose();
-        throw e;
-      });
+      }
+      return result;
     }
-    static backoff(actionToBackoff, millisecondDelay, actionDescription, maximumAttempts, failureCallback, failureValue, maximumDelay) {
-      return Promise.resolve().then(() => {
-        const scheduler = new Scheduler();
-        return scheduler.backoff(actionToBackoff, millisecondDelay, actionDescription, maximumAttempts, failureCallback, failureValue, maximumDelay).catch(e => {
-          scheduler.dispose();
-          return Promise.reject(e);
-        });
-      });
+    static async backoff(actionToBackoff, millisecondDelay, actionDescription, maximumAttempts, failureCallback, failureValue, maximumDelay) {
+      const scheduler = new Scheduler();
+      let result;
+      try {
+        result = await scheduler.backoff(actionToBackoff, millisecondDelay, actionDescription, maximumAttempts, failureCallback, failureValue, maximumDelay);
+      } finally {
+        scheduler.dispose();
+      }
+      return result;
     }
     toString() {
       return '[Scheduler]';
@@ -11745,7 +11757,7 @@ module.exports = (() => {
   return Scheduler;
 })();
 
-},{"./../lang/Disposable":48,"./../lang/assert":53,"./../lang/is":56,"./../lang/object":57,"./../lang/promise":58}],67:[function(require,module,exports){
+},{"./../lang/Disposable":49,"./../lang/assert":54,"./../lang/is":57,"./../lang/object":58,"./../lang/promise":59}],68:[function(require,module,exports){
 const is = require('@barchart/common-js/lang/is');
 const UnitCode = require('./../data/UnitCode');
 module.exports = (() => {
@@ -11772,7 +11784,7 @@ module.exports = (() => {
   return convertBaseCodeToUnitCode;
 })();
 
-},{"./../data/UnitCode":68,"@barchart/common-js/lang/is":56}],68:[function(require,module,exports){
+},{"./../data/UnitCode":69,"@barchart/common-js/lang/is":57}],69:[function(require,module,exports){
 const assert = require('@barchart/common-js/lang/assert'),
   Decimal = require('@barchart/common-js/lang/Decimal'),
   is = require('@barchart/common-js/lang/is');
@@ -12043,7 +12055,7 @@ module.exports = (() => {
   return UnitCode;
 })();
 
-},{"@barchart/common-js/lang/Decimal":47,"@barchart/common-js/lang/Enum":49,"@barchart/common-js/lang/assert":53,"@barchart/common-js/lang/is":56}],69:[function(require,module,exports){
+},{"@barchart/common-js/lang/Decimal":48,"@barchart/common-js/lang/Enum":50,"@barchart/common-js/lang/assert":54,"@barchart/common-js/lang/is":57}],70:[function(require,module,exports){
 const is = require('@barchart/common-js/lang/is');
 module.exports = (() => {
   'use strict';
@@ -12105,7 +12117,7 @@ module.exports = (() => {
   return formatDecimal;
 })();
 
-},{"@barchart/common-js/lang/is":56}],70:[function(require,module,exports){
+},{"@barchart/common-js/lang/is":57}],71:[function(require,module,exports){
 const is = require('@barchart/common-js/lang/is');
 module.exports = (() => {
   'use strict';
@@ -12178,7 +12190,7 @@ module.exports = (() => {
   return formatFraction;
 })();
 
-},{"@barchart/common-js/lang/is":56}],71:[function(require,module,exports){
+},{"@barchart/common-js/lang/is":57}],72:[function(require,module,exports){
 const is = require('@barchart/common-js/lang/is');
 const formatDecimal = require('./decimal'),
   formatFraction = require('./fraction');
@@ -12227,7 +12239,7 @@ module.exports = (() => {
   return formatPrice;
 })();
 
-},{"./../data/UnitCode":68,"./decimal":69,"./fraction":70,"@barchart/common-js/lang/is":56}],72:[function(require,module,exports){
+},{"./../data/UnitCode":69,"./decimal":70,"./fraction":71,"@barchart/common-js/lang/is":57}],73:[function(require,module,exports){
 module.exports = (() => {
   'use strict';
 
@@ -12307,7 +12319,7 @@ module.exports = (() => {
   return parseValue;
 })();
 
-},{}],73:[function(require,module,exports){
+},{}],74:[function(require,module,exports){
 module.exports = after
 
 function after(count, callback, err_cb) {
@@ -12337,7 +12349,7 @@ function after(count, callback, err_cb) {
 
 function noop() {}
 
-},{}],74:[function(require,module,exports){
+},{}],75:[function(require,module,exports){
 /**
  * An abstraction for slicing an arraybuffer even when
  * ArrayBuffer.prototype.slice is not supported
@@ -12368,9 +12380,9 @@ module.exports = function(arraybuffer, start, end) {
   return result.buffer;
 };
 
-},{}],75:[function(require,module,exports){
+},{}],76:[function(require,module,exports){
 module.exports = require('./lib/axios');
-},{"./lib/axios":77}],76:[function(require,module,exports){
+},{"./lib/axios":78}],77:[function(require,module,exports){
 'use strict';
 
 var utils = require('./../utils');
@@ -12561,7 +12573,7 @@ module.exports = function xhrAdapter(config) {
   });
 };
 
-},{"../core/buildFullPath":83,"../core/createError":84,"./../core/settle":88,"./../helpers/buildURL":92,"./../helpers/cookies":94,"./../helpers/isURLSameOrigin":97,"./../helpers/parseHeaders":99,"./../utils":102}],77:[function(require,module,exports){
+},{"../core/buildFullPath":84,"../core/createError":85,"./../core/settle":89,"./../helpers/buildURL":93,"./../helpers/cookies":95,"./../helpers/isURLSameOrigin":98,"./../helpers/parseHeaders":100,"./../utils":103}],78:[function(require,module,exports){
 'use strict';
 
 var utils = require('./utils');
@@ -12619,7 +12631,7 @@ module.exports = axios;
 // Allow use of default import syntax in TypeScript
 module.exports.default = axios;
 
-},{"./cancel/Cancel":78,"./cancel/CancelToken":79,"./cancel/isCancel":80,"./core/Axios":81,"./core/mergeConfig":87,"./defaults":90,"./helpers/bind":91,"./helpers/isAxiosError":96,"./helpers/spread":100,"./utils":102}],78:[function(require,module,exports){
+},{"./cancel/Cancel":79,"./cancel/CancelToken":80,"./cancel/isCancel":81,"./core/Axios":82,"./core/mergeConfig":88,"./defaults":91,"./helpers/bind":92,"./helpers/isAxiosError":97,"./helpers/spread":101,"./utils":103}],79:[function(require,module,exports){
 'use strict';
 
 /**
@@ -12640,7 +12652,7 @@ Cancel.prototype.__CANCEL__ = true;
 
 module.exports = Cancel;
 
-},{}],79:[function(require,module,exports){
+},{}],80:[function(require,module,exports){
 'use strict';
 
 var Cancel = require('./Cancel');
@@ -12699,14 +12711,14 @@ CancelToken.source = function source() {
 
 module.exports = CancelToken;
 
-},{"./Cancel":78}],80:[function(require,module,exports){
+},{"./Cancel":79}],81:[function(require,module,exports){
 'use strict';
 
 module.exports = function isCancel(value) {
   return !!(value && value.__CANCEL__);
 };
 
-},{}],81:[function(require,module,exports){
+},{}],82:[function(require,module,exports){
 'use strict';
 
 var utils = require('./../utils');
@@ -12856,7 +12868,7 @@ utils.forEach(['post', 'put', 'patch'], function forEachMethodWithData(method) {
 
 module.exports = Axios;
 
-},{"../helpers/buildURL":92,"../helpers/validator":101,"./../utils":102,"./InterceptorManager":82,"./dispatchRequest":85,"./mergeConfig":87}],82:[function(require,module,exports){
+},{"../helpers/buildURL":93,"../helpers/validator":102,"./../utils":103,"./InterceptorManager":83,"./dispatchRequest":86,"./mergeConfig":88}],83:[function(require,module,exports){
 'use strict';
 
 var utils = require('./../utils');
@@ -12912,7 +12924,7 @@ InterceptorManager.prototype.forEach = function forEach(fn) {
 
 module.exports = InterceptorManager;
 
-},{"./../utils":102}],83:[function(require,module,exports){
+},{"./../utils":103}],84:[function(require,module,exports){
 'use strict';
 
 var isAbsoluteURL = require('../helpers/isAbsoluteURL');
@@ -12934,7 +12946,7 @@ module.exports = function buildFullPath(baseURL, requestedURL) {
   return requestedURL;
 };
 
-},{"../helpers/combineURLs":93,"../helpers/isAbsoluteURL":95}],84:[function(require,module,exports){
+},{"../helpers/combineURLs":94,"../helpers/isAbsoluteURL":96}],85:[function(require,module,exports){
 'use strict';
 
 var enhanceError = require('./enhanceError');
@@ -12954,7 +12966,7 @@ module.exports = function createError(message, config, code, request, response) 
   return enhanceError(error, config, code, request, response);
 };
 
-},{"./enhanceError":86}],85:[function(require,module,exports){
+},{"./enhanceError":87}],86:[function(require,module,exports){
 'use strict';
 
 var utils = require('./../utils');
@@ -13038,7 +13050,7 @@ module.exports = function dispatchRequest(config) {
   });
 };
 
-},{"../cancel/isCancel":80,"../defaults":90,"./../utils":102,"./transformData":89}],86:[function(require,module,exports){
+},{"../cancel/isCancel":81,"../defaults":91,"./../utils":103,"./transformData":90}],87:[function(require,module,exports){
 'use strict';
 
 /**
@@ -13082,7 +13094,7 @@ module.exports = function enhanceError(error, config, code, request, response) {
   return error;
 };
 
-},{}],87:[function(require,module,exports){
+},{}],88:[function(require,module,exports){
 'use strict';
 
 var utils = require('../utils');
@@ -13171,7 +13183,7 @@ module.exports = function mergeConfig(config1, config2) {
   return config;
 };
 
-},{"../utils":102}],88:[function(require,module,exports){
+},{"../utils":103}],89:[function(require,module,exports){
 'use strict';
 
 var createError = require('./createError');
@@ -13198,7 +13210,7 @@ module.exports = function settle(resolve, reject, response) {
   }
 };
 
-},{"./createError":84}],89:[function(require,module,exports){
+},{"./createError":85}],90:[function(require,module,exports){
 'use strict';
 
 var utils = require('./../utils');
@@ -13222,7 +13234,7 @@ module.exports = function transformData(data, headers, fns) {
   return data;
 };
 
-},{"./../defaults":90,"./../utils":102}],90:[function(require,module,exports){
+},{"./../defaults":91,"./../utils":103}],91:[function(require,module,exports){
 (function (process){(function (){
 'use strict';
 
@@ -13360,7 +13372,7 @@ utils.forEach(['post', 'put', 'patch'], function forEachMethodWithData(method) {
 module.exports = defaults;
 
 }).call(this)}).call(this,require('_process'))
-},{"./adapters/http":76,"./adapters/xhr":76,"./core/enhanceError":86,"./helpers/normalizeHeaderName":98,"./utils":102,"_process":141}],91:[function(require,module,exports){
+},{"./adapters/http":77,"./adapters/xhr":77,"./core/enhanceError":87,"./helpers/normalizeHeaderName":99,"./utils":103,"_process":142}],92:[function(require,module,exports){
 'use strict';
 
 module.exports = function bind(fn, thisArg) {
@@ -13373,7 +13385,7 @@ module.exports = function bind(fn, thisArg) {
   };
 };
 
-},{}],92:[function(require,module,exports){
+},{}],93:[function(require,module,exports){
 'use strict';
 
 var utils = require('./../utils');
@@ -13445,7 +13457,7 @@ module.exports = function buildURL(url, params, paramsSerializer) {
   return url;
 };
 
-},{"./../utils":102}],93:[function(require,module,exports){
+},{"./../utils":103}],94:[function(require,module,exports){
 'use strict';
 
 /**
@@ -13461,7 +13473,7 @@ module.exports = function combineURLs(baseURL, relativeURL) {
     : baseURL;
 };
 
-},{}],94:[function(require,module,exports){
+},{}],95:[function(require,module,exports){
 'use strict';
 
 var utils = require('./../utils');
@@ -13516,7 +13528,7 @@ module.exports = (
     })()
 );
 
-},{"./../utils":102}],95:[function(require,module,exports){
+},{"./../utils":103}],96:[function(require,module,exports){
 'use strict';
 
 /**
@@ -13532,7 +13544,7 @@ module.exports = function isAbsoluteURL(url) {
   return /^([a-z][a-z\d\+\-\.]*:)?\/\//i.test(url);
 };
 
-},{}],96:[function(require,module,exports){
+},{}],97:[function(require,module,exports){
 'use strict';
 
 /**
@@ -13545,7 +13557,7 @@ module.exports = function isAxiosError(payload) {
   return (typeof payload === 'object') && (payload.isAxiosError === true);
 };
 
-},{}],97:[function(require,module,exports){
+},{}],98:[function(require,module,exports){
 'use strict';
 
 var utils = require('./../utils');
@@ -13615,7 +13627,7 @@ module.exports = (
     })()
 );
 
-},{"./../utils":102}],98:[function(require,module,exports){
+},{"./../utils":103}],99:[function(require,module,exports){
 'use strict';
 
 var utils = require('../utils');
@@ -13629,7 +13641,7 @@ module.exports = function normalizeHeaderName(headers, normalizedName) {
   });
 };
 
-},{"../utils":102}],99:[function(require,module,exports){
+},{"../utils":103}],100:[function(require,module,exports){
 'use strict';
 
 var utils = require('./../utils');
@@ -13684,7 +13696,7 @@ module.exports = function parseHeaders(headers) {
   return parsed;
 };
 
-},{"./../utils":102}],100:[function(require,module,exports){
+},{"./../utils":103}],101:[function(require,module,exports){
 'use strict';
 
 /**
@@ -13713,7 +13725,7 @@ module.exports = function spread(callback) {
   };
 };
 
-},{}],101:[function(require,module,exports){
+},{}],102:[function(require,module,exports){
 'use strict';
 
 var pkg = require('./../../package.json');
@@ -13820,7 +13832,7 @@ module.exports = {
   validators: validators
 };
 
-},{"./../../package.json":103}],102:[function(require,module,exports){
+},{"./../../package.json":104}],103:[function(require,module,exports){
 'use strict';
 
 var bind = require('./helpers/bind');
@@ -14171,7 +14183,7 @@ module.exports = {
   stripBOM: stripBOM
 };
 
-},{"./helpers/bind":91}],103:[function(require,module,exports){
+},{"./helpers/bind":92}],104:[function(require,module,exports){
 module.exports={
   "name": "axios",
   "version": "0.21.4",
@@ -14257,7 +14269,7 @@ module.exports={
   ]
 }
 
-},{}],104:[function(require,module,exports){
+},{}],105:[function(require,module,exports){
 
 /**
  * Expose `Backoff`.
@@ -14344,7 +14356,7 @@ Backoff.prototype.setJitter = function(jitter){
 };
 
 
-},{}],105:[function(require,module,exports){
+},{}],106:[function(require,module,exports){
 /*
  * base64-arraybuffer
  * https://github.com/niklasvh/base64-arraybuffer
@@ -14405,7 +14417,7 @@ Backoff.prototype.setJitter = function(jitter){
   };
 })("ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/");
 
-},{}],106:[function(require,module,exports){
+},{}],107:[function(require,module,exports){
 'use strict'
 
 exports.byteLength = byteLength
@@ -14557,7 +14569,7 @@ function fromByteArray (uint8) {
   return parts.join('')
 }
 
-},{}],107:[function(require,module,exports){
+},{}],108:[function(require,module,exports){
 /*
  *  big.js v6.2.2
  *  A small, fast, easy-to-use library for arbitrary-precision decimal arithmetic.
@@ -15602,7 +15614,7 @@ function fromByteArray (uint8) {
   }
 })(this);
 
-},{}],108:[function(require,module,exports){
+},{}],109:[function(require,module,exports){
 /**
  * Create a blob builder even when vendor prefixes exist
  */
@@ -15704,9 +15716,9 @@ module.exports = (function() {
   }
 })();
 
-},{}],109:[function(require,module,exports){
-
 },{}],110:[function(require,module,exports){
+
+},{}],111:[function(require,module,exports){
 (function (Buffer){(function (){
 /*!
  * The buffer module from node.js, for the browser.
@@ -17487,7 +17499,7 @@ function numberIsNaN (obj) {
 }
 
 }).call(this)}).call(this,require("buffer").Buffer)
-},{"base64-js":106,"buffer":110,"ieee754":132}],111:[function(require,module,exports){
+},{"base64-js":107,"buffer":111,"ieee754":133}],112:[function(require,module,exports){
 /**
  * Slice reference.
  */
@@ -17512,7 +17524,7 @@ module.exports = function(obj, fn){
   }
 };
 
-},{}],112:[function(require,module,exports){
+},{}],113:[function(require,module,exports){
 
 /**
  * Expose `Emitter`.
@@ -17689,7 +17701,7 @@ Emitter.prototype.hasListeners = function(event){
   return !! this.listeners(event).length;
 };
 
-},{}],113:[function(require,module,exports){
+},{}],114:[function(require,module,exports){
 
 module.exports = function(a, b){
   var fn = function(){};
@@ -17697,7 +17709,7 @@ module.exports = function(a, b){
   a.prototype = new fn;
   a.prototype.constructor = a;
 };
-},{}],114:[function(require,module,exports){
+},{}],115:[function(require,module,exports){
 (function (process){(function (){
 /**
  * This is the web browser implementation of `debug()`.
@@ -17896,7 +17908,7 @@ function localstorage() {
 }
 
 }).call(this)}).call(this,require('_process'))
-},{"./debug":115,"_process":141}],115:[function(require,module,exports){
+},{"./debug":116,"_process":142}],116:[function(require,module,exports){
 
 /**
  * This is the common logic for both the Node.js and web browser
@@ -18123,7 +18135,7 @@ function coerce(val) {
   return val;
 }
 
-},{"ms":138}],116:[function(require,module,exports){
+},{"ms":139}],117:[function(require,module,exports){
 module.exports = (function () {
   if (typeof self !== 'undefined') {
     return self;
@@ -18134,7 +18146,7 @@ module.exports = (function () {
   }
 })();
 
-},{}],117:[function(require,module,exports){
+},{}],118:[function(require,module,exports){
 
 module.exports = require('./socket');
 
@@ -18146,7 +18158,7 @@ module.exports = require('./socket');
  */
 module.exports.parser = require('engine.io-parser');
 
-},{"./socket":118,"engine.io-parser":126}],118:[function(require,module,exports){
+},{"./socket":119,"engine.io-parser":127}],119:[function(require,module,exports){
 /**
  * Module dependencies.
  */
@@ -18896,7 +18908,7 @@ Socket.prototype.filterUpgrades = function (upgrades) {
   return filteredUpgrades;
 };
 
-},{"./transport":119,"./transports/index":120,"component-emitter":112,"debug":114,"engine.io-parser":126,"indexof":133,"parseqs":139,"parseuri":140}],119:[function(require,module,exports){
+},{"./transport":120,"./transports/index":121,"component-emitter":113,"debug":115,"engine.io-parser":127,"indexof":134,"parseqs":140,"parseuri":141}],120:[function(require,module,exports){
 /**
  * Module dependencies.
  */
@@ -19059,7 +19071,7 @@ Transport.prototype.onClose = function () {
   this.emit('close');
 };
 
-},{"component-emitter":112,"engine.io-parser":126}],120:[function(require,module,exports){
+},{"component-emitter":113,"engine.io-parser":127}],121:[function(require,module,exports){
 /**
  * Module dependencies
  */
@@ -19114,7 +19126,7 @@ function polling (opts) {
   }
 }
 
-},{"./polling-jsonp":121,"./polling-xhr":122,"./websocket":124,"./xmlhttprequest":125}],121:[function(require,module,exports){
+},{"./polling-jsonp":122,"./polling-xhr":123,"./websocket":125,"./xmlhttprequest":126}],122:[function(require,module,exports){
 /**
  * Module requirements.
  */
@@ -19346,7 +19358,7 @@ JSONPPolling.prototype.doWrite = function (data, fn) {
   }
 };
 
-},{"../globalThis":116,"./polling":123,"component-inherit":113}],122:[function(require,module,exports){
+},{"../globalThis":117,"./polling":124,"component-inherit":114}],123:[function(require,module,exports){
 /* global attachEvent */
 
 /**
@@ -19766,7 +19778,7 @@ function unloadHandler () {
   }
 }
 
-},{"../globalThis":116,"./polling":123,"./xmlhttprequest":125,"component-emitter":112,"component-inherit":113,"debug":114}],123:[function(require,module,exports){
+},{"../globalThis":117,"./polling":124,"./xmlhttprequest":126,"component-emitter":113,"component-inherit":114,"debug":115}],124:[function(require,module,exports){
 /**
  * Module dependencies.
  */
@@ -20013,7 +20025,7 @@ Polling.prototype.uri = function () {
   return schema + '://' + (ipv6 ? '[' + this.hostname + ']' : this.hostname) + port + this.path + query;
 };
 
-},{"../transport":119,"./xmlhttprequest":125,"component-inherit":113,"debug":114,"engine.io-parser":126,"parseqs":139,"yeast":168}],124:[function(require,module,exports){
+},{"../transport":120,"./xmlhttprequest":126,"component-inherit":114,"debug":115,"engine.io-parser":127,"parseqs":140,"yeast":169}],125:[function(require,module,exports){
 (function (Buffer){(function (){
 /**
  * Module dependencies.
@@ -20262,6 +20274,7 @@ WS.prototype.onClose = function () {
 
 WS.prototype.doClose = function () {
   if (typeof this.ws !== 'undefined') {
+    this.ws.onerror = () => {};
     this.ws.close();
   }
 };
@@ -20316,7 +20329,7 @@ WS.prototype.check = function () {
 };
 
 }).call(this)}).call(this,require("buffer").Buffer)
-},{"../transport":119,"buffer":110,"component-inherit":113,"debug":114,"engine.io-parser":126,"parseqs":139,"ws":109,"yeast":168}],125:[function(require,module,exports){
+},{"../transport":120,"buffer":111,"component-inherit":114,"debug":115,"engine.io-parser":127,"parseqs":140,"ws":110,"yeast":169}],126:[function(require,module,exports){
 // browser shim for xmlhttprequest module
 
 var hasCORS = require('has-cors');
@@ -20356,7 +20369,7 @@ module.exports = function (opts) {
   }
 };
 
-},{"../globalThis":116,"has-cors":131}],126:[function(require,module,exports){
+},{"../globalThis":117,"has-cors":132}],127:[function(require,module,exports){
 /**
  * Module dependencies.
  */
@@ -20963,7 +20976,7 @@ exports.decodePayloadAsBinary = function (data, binaryType, callback) {
   });
 };
 
-},{"./keys":127,"./utf8":128,"after":73,"arraybuffer.slice":74,"base64-arraybuffer":105,"blob":108,"has-binary2":129}],127:[function(require,module,exports){
+},{"./keys":128,"./utf8":129,"after":74,"arraybuffer.slice":75,"base64-arraybuffer":106,"blob":109,"has-binary2":130}],128:[function(require,module,exports){
 
 /**
  * Gets the keys for an object.
@@ -20984,7 +20997,7 @@ module.exports = Object.keys || function keys (obj){
   return arr;
 };
 
-},{}],128:[function(require,module,exports){
+},{}],129:[function(require,module,exports){
 /*! https://mths.be/utf8js v2.1.2 by @mathias */
 
 var stringFromCharCode = String.fromCharCode;
@@ -21196,7 +21209,7 @@ module.exports = {
 	decode: utf8decode
 };
 
-},{}],129:[function(require,module,exports){
+},{}],130:[function(require,module,exports){
 (function (Buffer){(function (){
 /* global Blob File */
 
@@ -21264,14 +21277,14 @@ function hasBinary (obj) {
 }
 
 }).call(this)}).call(this,require("buffer").Buffer)
-},{"buffer":110,"isarray":130}],130:[function(require,module,exports){
+},{"buffer":111,"isarray":131}],131:[function(require,module,exports){
 var toString = {}.toString;
 
 module.exports = Array.isArray || function (arr) {
   return toString.call(arr) == '[object Array]';
 };
 
-},{}],131:[function(require,module,exports){
+},{}],132:[function(require,module,exports){
 
 /**
  * Module exports.
@@ -21290,7 +21303,7 @@ try {
   module.exports = false;
 }
 
-},{}],132:[function(require,module,exports){
+},{}],133:[function(require,module,exports){
 /*! ieee754. BSD-3-Clause License. Feross Aboukhadijeh <https://feross.org/opensource> */
 exports.read = function (buffer, offset, isLE, mLen, nBytes) {
   var e, m
@@ -21377,7 +21390,7 @@ exports.write = function (buffer, value, offset, isLE, mLen, nBytes) {
   buffer[offset + i - d] |= s * 128
 }
 
-},{}],133:[function(require,module,exports){
+},{}],134:[function(require,module,exports){
 
 var indexOf = [].indexOf;
 
@@ -21388,7 +21401,7 @@ module.exports = function(arr, obj){
   }
   return -1;
 };
-},{}],134:[function(require,module,exports){
+},{}],135:[function(require,module,exports){
 module.exports={
 	"version": "2025b",
 	"zones": [
@@ -22242,11 +22255,11 @@ module.exports={
 		"ZW|Africa/Maputo Africa/Harare"
 	]
 }
-},{}],135:[function(require,module,exports){
+},{}],136:[function(require,module,exports){
 var moment = module.exports = require("./moment-timezone");
 moment.tz.load(require('./data/packed/latest.json'));
 
-},{"./data/packed/latest.json":134,"./moment-timezone":136}],136:[function(require,module,exports){
+},{"./data/packed/latest.json":135,"./moment-timezone":137}],137:[function(require,module,exports){
 //! moment-timezone.js
 //! version : 0.5.48
 //! Copyright (c) JS Foundation and other contributors
@@ -22977,7 +22990,7 @@ moment.tz.load(require('./data/packed/latest.json'));
 	return moment;
 }));
 
-},{"moment":137}],137:[function(require,module,exports){
+},{"moment":138}],138:[function(require,module,exports){
 //! moment.js
 //! version : 2.30.1
 //! authors : Tim Wood, Iskren Chernev, Moment.js contributors
@@ -28667,7 +28680,7 @@ moment.tz.load(require('./data/packed/latest.json'));
 
 })));
 
-},{}],138:[function(require,module,exports){
+},{}],139:[function(require,module,exports){
 /**
  * Helpers.
  */
@@ -28821,7 +28834,7 @@ function plural(ms, n, name) {
   return Math.ceil(ms / n) + ' ' + name + 's';
 }
 
-},{}],139:[function(require,module,exports){
+},{}],140:[function(require,module,exports){
 /**
  * Compiles a querystring
  * Returns string representation of the object
@@ -28860,7 +28873,7 @@ exports.decode = function(qs){
   return qry;
 };
 
-},{}],140:[function(require,module,exports){
+},{}],141:[function(require,module,exports){
 /**
  * Parses an URI
  *
@@ -28930,7 +28943,7 @@ function queryKey(uri, query) {
     return data;
 }
 
-},{}],141:[function(require,module,exports){
+},{}],142:[function(require,module,exports){
 // shim for using process in browser
 var process = module.exports = {};
 
@@ -29116,7 +29129,7 @@ process.chdir = function (dir) {
 };
 process.umask = function() { return 0; };
 
-},{}],142:[function(require,module,exports){
+},{}],143:[function(require,module,exports){
 
 /**
  * Module dependencies.
@@ -29212,7 +29225,7 @@ exports.connect = lookup;
 exports.Manager = require('./manager');
 exports.Socket = require('./socket');
 
-},{"./manager":143,"./socket":145,"./url":146,"debug":114,"socket.io-parser":148}],143:[function(require,module,exports){
+},{"./manager":144,"./socket":146,"./url":147,"debug":115,"socket.io-parser":149}],144:[function(require,module,exports){
 
 /**
  * Module dependencies.
@@ -29791,7 +29804,7 @@ Manager.prototype.onreconnect = function () {
   this.emitAll('reconnect', attempt);
 };
 
-},{"./on":144,"./socket":145,"backo2":104,"component-bind":111,"component-emitter":112,"debug":114,"engine.io-client":117,"indexof":133,"socket.io-parser":148}],144:[function(require,module,exports){
+},{"./on":145,"./socket":146,"backo2":105,"component-bind":112,"component-emitter":113,"debug":115,"engine.io-client":118,"indexof":134,"socket.io-parser":149}],145:[function(require,module,exports){
 
 /**
  * Module exports.
@@ -29817,7 +29830,7 @@ function on (obj, ev, fn) {
   };
 }
 
-},{}],145:[function(require,module,exports){
+},{}],146:[function(require,module,exports){
 
 /**
  * Module dependencies.
@@ -30257,7 +30270,7 @@ Socket.prototype.binary = function (binary) {
   return this;
 };
 
-},{"./on":144,"component-bind":111,"component-emitter":112,"debug":114,"has-binary2":129,"parseqs":139,"socket.io-parser":148,"to-array":151}],146:[function(require,module,exports){
+},{"./on":145,"component-bind":112,"component-emitter":113,"debug":115,"has-binary2":130,"parseqs":140,"socket.io-parser":149,"to-array":152}],147:[function(require,module,exports){
 
 /**
  * Module dependencies.
@@ -30334,7 +30347,7 @@ function url (uri, loc) {
   return obj;
 }
 
-},{"debug":114,"parseuri":140}],147:[function(require,module,exports){
+},{"debug":115,"parseuri":141}],148:[function(require,module,exports){
 /*global Blob,File*/
 
 /**
@@ -30485,7 +30498,7 @@ exports.removeBlobs = function(data, callback) {
   }
 };
 
-},{"./is-buffer":149,"isarray":150}],148:[function(require,module,exports){
+},{"./is-buffer":150,"isarray":151}],149:[function(require,module,exports){
 
 /**
  * Module dependencies.
@@ -30921,7 +30934,7 @@ function error(msg) {
   };
 }
 
-},{"./binary":147,"./is-buffer":149,"component-emitter":112,"debug":114,"isarray":150}],149:[function(require,module,exports){
+},{"./binary":148,"./is-buffer":150,"component-emitter":113,"debug":115,"isarray":151}],150:[function(require,module,exports){
 (function (Buffer){(function (){
 
 module.exports = isBuf;
@@ -30945,9 +30958,9 @@ function isBuf(obj) {
 }
 
 }).call(this)}).call(this,require("buffer").Buffer)
-},{"buffer":110}],150:[function(require,module,exports){
-arguments[4][130][0].apply(exports,arguments)
-},{"dup":130}],151:[function(require,module,exports){
+},{"buffer":111}],151:[function(require,module,exports){
+arguments[4][131][0].apply(exports,arguments)
+},{"dup":131}],152:[function(require,module,exports){
 module.exports = toArray
 
 function toArray(list, index) {
@@ -30962,7 +30975,7 @@ function toArray(list, index) {
     return array
 }
 
-},{}],152:[function(require,module,exports){
+},{}],153:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -31042,7 +31055,7 @@ var _stringify = _interopRequireDefault(require("./stringify.js"));
 var _parse = _interopRequireDefault(require("./parse.js"));
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-},{"./nil.js":155,"./parse.js":156,"./stringify.js":160,"./v1.js":161,"./v3.js":162,"./v4.js":164,"./v5.js":165,"./validate.js":166,"./version.js":167}],153:[function(require,module,exports){
+},{"./nil.js":156,"./parse.js":157,"./stringify.js":161,"./v1.js":162,"./v3.js":163,"./v4.js":165,"./v5.js":166,"./validate.js":167,"./version.js":168}],154:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -31266,7 +31279,7 @@ function md5ii(a, b, c, d, x, s, t) {
 
 var _default = md5;
 exports.default = _default;
-},{}],154:[function(require,module,exports){
+},{}],155:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -31278,7 +31291,7 @@ var _default = {
   randomUUID
 };
 exports.default = _default;
-},{}],155:[function(require,module,exports){
+},{}],156:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -31287,7 +31300,7 @@ Object.defineProperty(exports, "__esModule", {
 exports.default = void 0;
 var _default = '00000000-0000-0000-0000-000000000000';
 exports.default = _default;
-},{}],156:[function(require,module,exports){
+},{}],157:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -31333,7 +31346,7 @@ function parse(uuid) {
 
 var _default = parse;
 exports.default = _default;
-},{"./validate.js":166}],157:[function(require,module,exports){
+},{"./validate.js":167}],158:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -31342,7 +31355,7 @@ Object.defineProperty(exports, "__esModule", {
 exports.default = void 0;
 var _default = /^(?:[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}|00000000-0000-0000-0000-000000000000)$/i;
 exports.default = _default;
-},{}],158:[function(require,module,exports){
+},{}],159:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -31368,7 +31381,7 @@ function rng() {
 
   return getRandomValues(rnds8);
 }
-},{}],159:[function(require,module,exports){
+},{}],160:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -31473,7 +31486,7 @@ function sha1(bytes) {
 
 var _default = sha1;
 exports.default = _default;
-},{}],160:[function(require,module,exports){
+},{}],161:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -31518,7 +31531,7 @@ function stringify(arr, offset = 0) {
 
 var _default = stringify;
 exports.default = _default;
-},{"./validate.js":166}],161:[function(require,module,exports){
+},{"./validate.js":167}],162:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -31626,7 +31639,7 @@ function v1(options, buf, offset) {
 
 var _default = v1;
 exports.default = _default;
-},{"./rng.js":158,"./stringify.js":160}],162:[function(require,module,exports){
+},{"./rng.js":159,"./stringify.js":161}],163:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -31643,7 +31656,7 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 const v3 = (0, _v.default)('v3', 0x30, _md.default);
 var _default = v3;
 exports.default = _default;
-},{"./md5.js":153,"./v35.js":163}],163:[function(require,module,exports){
+},{"./md5.js":154,"./v35.js":164}],164:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -31724,7 +31737,7 @@ function v35(name, version, hashfunc) {
   generateUUID.URL = URL;
   return generateUUID;
 }
-},{"./parse.js":156,"./stringify.js":160}],164:[function(require,module,exports){
+},{"./parse.js":157,"./stringify.js":161}],165:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -31768,7 +31781,7 @@ function v4(options, buf, offset) {
 
 var _default = v4;
 exports.default = _default;
-},{"./native.js":154,"./rng.js":158,"./stringify.js":160}],165:[function(require,module,exports){
+},{"./native.js":155,"./rng.js":159,"./stringify.js":161}],166:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -31785,7 +31798,7 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 const v5 = (0, _v.default)('v5', 0x50, _sha.default);
 var _default = v5;
 exports.default = _default;
-},{"./sha1.js":159,"./v35.js":163}],166:[function(require,module,exports){
+},{"./sha1.js":160,"./v35.js":164}],167:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -31803,7 +31816,7 @@ function validate(uuid) {
 
 var _default = validate;
 exports.default = _default;
-},{"./regex.js":157}],167:[function(require,module,exports){
+},{"./regex.js":158}],168:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -31825,7 +31838,7 @@ function version(uuid) {
 
 var _default = version;
 exports.default = _default;
-},{"./validate.js":166}],168:[function(require,module,exports){
+},{"./validate.js":167}],169:[function(require,module,exports){
 'use strict';
 
 var alphabet = '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz-_'.split('')
