@@ -1322,7 +1322,19 @@ var reset = function(host, system, userId, mode) {
 			if (alertManager) {
 				pageModel.connecting(true);
 
-				const jwtGenerator = getJwtGenerator(userId, system, host === 'localhost' ? 'dev' : 'demo');
+				let environment;
+
+				const regex = /tgam/i;
+
+				if (regex.test(host)) {
+					environment = 'tgam_stage';
+				} else if (host === 'localhost') {
+					environment = 'dev';
+				} else {
+					environment = 'demo';
+				}
+
+				const jwtGenerator = getJwtGenerator(userId, system, environment);
 				const jwtProvider = new JwtProvider(jwtGenerator, 60000);
 
 				alertManager.subscribeConnectionStatus(function(status) {
