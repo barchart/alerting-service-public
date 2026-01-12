@@ -1068,7 +1068,16 @@ var reset = function (host, system, userId, mode) {
     let initializePromise;
     if (alertManager) {
       pageModel.connecting(true);
-      const jwtGenerator = getJwtGenerator(userId, system, host === 'localhost' ? 'dev' : 'demo');
+      let environment;
+      const regex = /tgam/i;
+      if (regex.test(host)) {
+        environment = 'tgam_stage';
+      } else if (host === 'localhost') {
+        environment = 'dev';
+      } else {
+        environment = 'demo';
+      }
+      const jwtGenerator = getJwtGenerator(userId, system, environment);
       const jwtProvider = new JwtProvider(jwtGenerator, 60000);
       alertManager.subscribeConnectionStatus(function (status) {
         console.log('Connection status changed to [', status, ']');
@@ -4164,7 +4173,7 @@ module.exports = (() => {
   'use strict';
 
   return {
-    version: '4.21.5'
+    version: '4.22.0'
   };
 })();
 
@@ -4374,6 +4383,9 @@ module.exports = (() => {
     static forAdmin(userId, contextId, alertSystem, permissions, refreshInterval) {
       return getJwtProviderForImpersonation(Configuration.getJwtImpersonationHost, 'admin', userId, contextId, alertSystem, permissions, refreshInterval);
     }
+    static forEnvironment(environment, userId, contextId, alertSystem, permissions, refreshInterval) {
+      return getJwtProviderForImpersonation(Configuration.getJwtImpersonationHost, environment, userId, contextId, alertSystem, permissions, refreshInterval);
+    }
     _onDispose() {
       this._scheduler.dispose();
       this._scheduler = null;
@@ -4390,7 +4402,9 @@ module.exports = (() => {
     assert.argumentIsRequired(alertSystem, 'alertSystem', String);
     assert.argumentIsOptional(permissions, 'permissions', String);
     assert.argumentIsOptional(refreshInterval, 'refreshInterval', Number);
-    const tokenEndpoint = EndpointBuilder.for('generate-impersonation-jwt-for-test', 'generate JWT for test environment').withVerb(VerbType.POST).withProtocol(ProtocolType.HTTPS).withHost(host).withPathBuilder(pb => pb.withLiteralParameter('version', 'v1').withLiteralParameter('tokens', 'tokens').withLiteralParameter('impersonate', 'impersonate').withLiteralParameter('service', 'alerts').withLiteralParameter('environment', environment)).withBody().withResponseInterceptor(ResponseInterceptor.DATA).endpoint;
+    const tokenEndpoint = EndpointBuilder.for('generate-impersonation-jwt-for-test', 'generate JWT for test environment').withVerb(VerbType.POST).withProtocol(ProtocolType.HTTPS).withHost(host).withPathBuilder(pb => pb.withLiteralParameter('version', 'v1').withLiteralParameter('tokens', 'tokens').withLiteralParameter('impersonate', 'impersonate').withLiteralParameter('service', 'alerts').withLiteralParameter('environment', environment)).withQueryBuilder(qb => {
+      qb.withLiteralParameter('expirationInMinutes', 'expirationInMinutes', '60');
+    }).withBody().withResponseInterceptor(ResponseInterceptor.DATA).endpoint;
     const payload = {};
     payload.userId = userId;
     payload.user_id = userId;
